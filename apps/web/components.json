@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "../../packages/ui/src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@/components",
+    "utils": "@pacepard/ui/lib/utils",
+    "ui": "@pacepard/ui/components",
+    "lib": "@pacepard/ui/lib",
+    "hooks": "@pacepard/ui/hooks"
+  },
+  "registries": {
+    "@formcn": "https://formcn.dev/r/{name}.json",
+    "@tailark": "https://tailark.com/r/{name}.json"
+  }
+}

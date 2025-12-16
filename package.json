@@ -1,0 +1,45 @@
+{
+  "name": "pacepard",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "clean:modules": "rimraf node_modules apps/**/node_modules packages/**/node_modules",
+    "clean:all": "rimraf node_modules apps/**/node_modules packages/**/node_modules pnpm-lock.yaml",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:ui": "turbo run dev --ui=tui",
+    "dev:fe": "turbo run dev --filter=@pacepard/app --filter=@pacepard/web",
+    "dev:be": "turbo run dev --filter=@pacepard/api --filter=@pacepard/api-docs",
+    "dev:api": "turbo run dev --filter=@pacepard/api",
+    "dev:web": "turbo run dev --filter=@pacepard/web",
+    "dev:app": "turbo run dev --filter=@pacepard/app",
+    "dev:service": "turbo run dev --filter=@pacepard/service",
+    "dev:docs": "turbo run dev --filter=@pacepard/api-docs",
+    "test": "turbo run test",
+    "check-types": "turbo run check-types",
+    "lint": "turbo lint",
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
+    "build:docs": "turbo run build --filter=@pacepard/docs",
+    "preview:docs": "pnpm --filter @pacepard/docs dev"
+  },
+  "dependencies": {
+    "colors": "^1.4.0",
+    "scheduler": "^0.27.0"
+  },
+  "devDependencies": {
+    "@pacepard/configs/eslint": "workspace:*",
+    "@pacepard/configs/typescript": "workspace:*",
+    "@swc/helpers": "^0.5.17",
+    "@types/node": "^25.0.2",
+    "del-cli": "^7.0.0",
+    "mintlify": "^4.2.240",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.1.2",
+    "turbo": "^2.6.3",
+    "typescript": "~5.9.3"
+  }
+}

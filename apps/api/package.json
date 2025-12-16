@@ -1,0 +1,23 @@
+{
+    "name": "@pacepard/api",
+    "private": true,
+    "main": "server.ts",
+    "version": "0.10.00",
+    "scripts": {
+        "clean:js": "find src -name '*.js' -type f -delete",
+        "dev": "tsx watch src/server.ts",
+        "dev:worker": "tsx watch  src/queues/workers/runWorker.ts",
+        "start": "node dist/server.js",
+        "start:worker": "node dist/src/queues/workers/runWorker.js",
+        "build": "tsc --noEmit false && tsc-alias && copyfiles -u 1 src/_data/**/* dist/ && copyfiles -u 1 src/views/**/* dist/",
+        "staging": "NODE_ENV=staging node dist/server.js",
+        "prod": "NODE_ENV=production node dist/server.js"
+    },
+    "dependencies": {
+        "express": "^5.2.1"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "tsx": "^4.21.0"
+    }
+}
