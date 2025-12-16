@@ -14,7 +14,6 @@
 
 By using Pacepard, African talents, organisations, and EdTech providers can collaborate, track talent skill mastery progress, and host competitions while leveraging our AI-powered engagement analytics.
 
----
 
 ## Table of Contents
 
@@ -27,7 +26,6 @@ By using Pacepard, African talents, organisations, and EdTech providers can coll
 - [Scripts Reference](#scripts-reference)
 - [Contributing](#contributing)
 
----
 
 ## Prerequisites
 
@@ -44,8 +42,6 @@ node --version  # Should be >= 20
 pnpm --version  # Should be >= 9.0.0
 git --version
 ```
-
----
 
 ## Getting Started
 
@@ -66,15 +62,6 @@ pnpm install
 
 This will install dependencies for all apps and packages in the workspace.
 
-### Verify Installation
-
-After installation, you can verify everything is set up correctly:
-
-```bash
-pnpm run build
-```
-
----
 
 ## Project Structure
 
