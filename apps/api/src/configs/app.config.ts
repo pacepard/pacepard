@@ -3,9 +3,11 @@ import cookieParser from "cookie-parser";
 import 'dotenv/config';
 import errorHandler from "../middlewares/error.mdw";
 import apiRoutes from "../routes/v1/routes.router";
-
-
-
+import path from "path"
+import expressSanitize from "express-mongo-sanitize";
+import helmet from "helmet";
+import hpp from "hpp";
+import cors from "cors";
 
 const app = express();
 
@@ -21,6 +23,14 @@ app.use((req: Request, res: Response, next: Function) => {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
+
+app.use(expressSanitize());
+app.use(helmet());
+app.use(hpp());
+app.use(cors({origin: true, credentials: true}));
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.use("/api/v1", apiRoutes);
 
