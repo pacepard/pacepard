@@ -6,8 +6,6 @@
     "node": ">=20"
   },
   "scripts": {
-    "clean:modules": "rimraf node_modules apps/**/node_modules packages/**/node_modules",
-    "clean:all": "rimraf node_modules apps/**/node_modules packages/**/node_modules pnpm-lock.yaml",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:ui": "turbo run dev --ui=tui",
