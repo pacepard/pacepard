@@ -132,10 +132,20 @@ All packages use the `@pacepard/*` namespace:
 
 ### Running All Applications
 
-Start all applications in development mode:
+Start all applications in development mode
+
+For a single terminal view of builds and tasks:
 
 ```bash
 pnpm dev
+```
+
+OR 
+
+For a visual interface with Turbo UI to monitor builds and tasks (best option):
+
+```bash
+pnpm dev:ui
 ```
 
 ### Running Specific Applications
@@ -150,26 +160,20 @@ pnpm dev:fe
 pnpm dev:be
 
 # Individual applications
-pnpm dev:web      # Next.js web app (port 3020)
+pnpm dev:web      # Next.js web app
 pnpm dev:api      # Express API server
 pnpm dev:app      # Main application
 pnpm dev:service  # Service application
 pnpm dev:docs     # API documentation
 ```
 
-### Running with Turbo UI
-
-For a visual interface to monitor builds and tasks:
-
-```bash
-pnpm dev:ui
-```
-
 ### Development URLs
 
-- **Web App**: http://localhost:3020
-- **API**: Check the API app's configuration for its port
-- **Docs**: Check the docs app's configuration for its port
+- **Main App**: http://localhost:5176
+- **Website App**: http://localhost:3020
+- **Services App**: http://localhost:3015
+- **API**: http://localhost:5015
+- **API Docs**: http://localhost:3010
 
 ---
 
@@ -455,9 +459,3 @@ If you discover a bug or have a suggestion, raise an issue via the GitHub Issues
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Support
-
-For questions, issues, or contributions, please open an issue on GitHub or contact the maintainers.
