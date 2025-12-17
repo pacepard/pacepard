@@ -2,9 +2,18 @@
   export enum UserType {
     SUPER = "super",
     ADMIN = "admin",
-    ORGANISATION = "organization",
-    TALENT = "talent"
+    BUSINESS = "business",
+    TALENT = "talent",
+    USER = 'user'
   }
+
+  export enum BusinessType {
+    EDTECH = "edtech",
+    PARTNER = "partner",
+    OTHER = "other"
+    
+}
+
   
   export enum OtpType {
     REGISTER = "register",

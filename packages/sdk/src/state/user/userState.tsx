@@ -11,8 +11,8 @@ import {
     SET_RESPONSE,
     SET_TOAST,
     UNSET_LOADING,
-} from '../types';
-import { collection, sidebar, toast } from '../seed';
+} from '../helpers/types';
+import { collection, sidebar, toast } from '../helpers/seed';
 import {
     ISetLoading,
     ISidebarProps,
@@ -21,7 +21,7 @@ import {
 } from '@/utils/interfaces';
 import storage from '@/storage/local-storage';
 import sidebarRoutes from '@/routes/sidebar.route';
-import { ICollection } from '../interface';
+import { ICollection } from '../helpers/interface';
 
 const UserState = (props: any) => {
     const initialState = {

@@ -8,7 +8,7 @@ import type {
   ResendOtpDTO,
   ResetPasswordDTO,
   VerifyOtpDTO,
-} from "../dtos/auth.dto";
+} from "../../dtos/auth.dto";
 
 import { IAPIResponse } from "../types";
 import AxiosService from "../core/axios";
@@ -105,6 +105,7 @@ class AuthAPI {
    * @description Request that a new OTP be sent to the user.
    * @param {ResendOtpDTO} payload The resend request data.
    * @param {string} payload.email The email that should receive the new OTP.
+   * @param {string} payload.otpType The type of OTP that should be sent by the app.
    * @returns {Promise<IAPIResponse>} OTP resend status.
    */
   resendOTP(payload: ResendOtpDTO): Promise<IAPIResponse> {
@@ -167,6 +168,24 @@ class AuthAPI {
       payload,
     });
   }
+
+    /**
+   * @name logoutUser
+   * @description Log the user out of the system.
+   * @param {LogoutDTO} payload Data needed to logout.
+   * @param {string} payload.userId The id of the user logging out.
+   * @returns {Promise<IAPIResponse>} Logout confirmation.
+   */
+    logout(): Promise<IAPIResponse> {
+      return AxiosService.call({
+        type: "default",
+        method: "POST",
+        path: URL_LOGOUT,
+        isAuth: true,
+        payload: {},
+      });
+    }
+  
 
   /**
    * @name forgotPassword

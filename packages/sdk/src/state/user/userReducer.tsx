@@ -20,7 +20,7 @@ import {
     GET_TALENT,
     GET_SUBSCRIPTION,
     GET_PLAN,
-} from '../types';
+} from '../helpers/types';
 
 
 const reducer = (state: any, action: any) => {

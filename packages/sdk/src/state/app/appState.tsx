@@ -1,9 +1,9 @@
 import { useMemo, useReducer } from 'react';
-import { collection } from '../seed';
+import { collection } from '../helpers/seed';
 import appReducer from './appReducer';
-import { SET_LOADING, UNSET_LOADING } from '../types';
+import { SET_LOADING, UNSET_LOADING } from '../helpers/types';
 import { ISetLoading, IUnsetLoading } from '@/utils/interfaces';
-import { IClearResource, ICollection } from '../interface';
+import { IClearResource, ICollection } from '../helpers/interface';
 import AppContext from './appContext';
 
 

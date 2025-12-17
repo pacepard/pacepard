@@ -6,7 +6,7 @@ import {
     SET_LOADING,
     SET_SEARCH,
     UNSET_LOADING,
-} from '../types';
+} from '../helpers/types';
 
 
 

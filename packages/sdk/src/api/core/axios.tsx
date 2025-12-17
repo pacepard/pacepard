@@ -1,7 +1,7 @@
 
 
 import Axios from 'axios'
-import { CallApiDTO } from '../dtos/axios.dto';
+import { CallApiDTO } from '../../dtos/axios.dto';
 import storage from '../../storage/local-storage';
 import { IAPIResponse } from '../types';
 
