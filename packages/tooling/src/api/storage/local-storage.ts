@@ -1,5 +1,6 @@
-import { cookieService } from "@pacepard/tooling";
-import type { IStorage } from "./interfaces";
+import cookieService from "@/cookies";
+import { IStorage } from "../utils/interfaces";
+
 
 const storeAuth = (token: string, id: string, userType: string, email: string) => {
     

@@ -2,6 +2,7 @@ import { AuthLayout } from "@/components/layouts/auth-layout";
 import RegisterForm from "@/components/shared/auth/register-form";
 import useLocationDetection from "@/hooks/useLocationDetection";
 import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 const Register = () => {
   const { detectUserLocation } = useLocationDetection();
@@ -11,12 +12,16 @@ const Register = () => {
     detectUserLocation();
   }, [detectUserLocation]);
 
+  const navigate = useNavigate();
+
   return (
     <>
     <AuthLayout
-      title="Create your Pacepard account"
-      description="Enter your information below to create your account"
-      maxWidth="sm"
+      title="Get Started with Pacepard"
+      description="Already have an account?"
+      maxWidth="sm" 
+      buttonLabel="Sign in"
+      onButtonClick={() => navigate("/login")}
     >
       <RegisterForm />
     </AuthLayout>
