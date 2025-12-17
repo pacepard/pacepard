@@ -25,7 +25,9 @@ const useAuth = () => {
         users,
         user,
         userType,
+        businessType,
         setUserType,
+        setBusinessType,
         currentSidebar,
         setLoading,
         unsetLoading,
@@ -33,7 +35,9 @@ const useAuth = () => {
 
     useEffect(() => {
         let ut = cookieService.getUserType();
+        let bt = cookieService.getBusinessType();
         setUserType(ut ? ut : '');
+        setBusinessType(bt ? bt : '');
     }, []);
 
     useEffect(() => {
@@ -64,17 +68,22 @@ const useAuth = () => {
 
     useEffect(() => {
         let ut = cookieService.getUserType();
+        let bt = cookieService.getBusinessType();
         setUserType(ut ? ut : '');
+        setBusinessType(bt ? bt : '');
     }, [isLoggedIn]);
 
 
     const redirect = useCallback( (roles: Array<string>) => {
+
         if (!storage.checkToken() || !storage.checkUserID()) {
-            !PacepardAPI.auth.logout();
+            PacepardAPI.auth.logout();
             goTo('/login');
         } else {
             const userType = cookieService.getUserType();
+            //const businessType = cookieService.getBusinessType();
             const token = storage.getToken();
+            
 
             if (token) {
                 if (userType && !roles.includes(userType)) {
@@ -114,6 +123,7 @@ const useAuth = () => {
                         response.data._id,
                         response.data.userType,
                         response.data.email,
+
                     );
 
                     cookieService.setData({
@@ -128,7 +138,7 @@ const useAuth = () => {
 
                 if (
                     response.data.userType === UserType.BUSINESS &&
-                    response.data.businessType === BusinessType.EDTECH
+                    response.data.businessType === BusinessType.EDUCATION
                 ) {
                     // store auth credentials
                     storage.storeAuth(
@@ -136,6 +146,7 @@ const useAuth = () => {
                         response.data._id,
                         response.data.userType,
                         response.data.email,
+                        response.data.businessType,
                     );
 
                     cookieService.setData({
@@ -147,7 +158,39 @@ const useAuth = () => {
 
                     setIsLoggedIn(true);
                 }
+
                 if (response.data.userType === UserType.BUSINESS) {
+                    // store auth credentials
+                    storage.storeAuth(
+                        response.token!,
+                        response.data._id,
+                        response.data.userType,
+                        response.data.email,
+                        response.data.businessType,
+                    );
+
+                    cookieService.setData({
+                        key: 'userType',
+                        payload: response.data.userType,
+                        expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                        path: '/',
+                    });
+
+                    cookieService.setData({
+                        key: 'businessType',
+                        payload: response.data.businessType,
+                        expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+                        path: '/',
+                    });
+                    
+                    setUserType(response.data.userType);
+                    setBusinessType(response.data.businessType);
+
+                    setIsLoggedIn(true);
+                }
+
+                
+                if (response.data.userType === UserType.TALENT) {
                     // store auth credentials
                     storage.storeAuth(
                         response.token!,
@@ -162,6 +205,8 @@ const useAuth = () => {
                         expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
                         path: '/',
                     });
+                    
+                    setUserType(response.data.userType);
 
                     setIsLoggedIn(true);
                 }
@@ -175,9 +220,21 @@ const useAuth = () => {
     };
 
     const logout = async () => {
-        await PacepardAPI.auth.logoutUser({ userId: storage.getUserID() });
+        await PacepardAPI.auth.logout();
+        storage.clearAuth();
+        cookieService.removeData({ key: 'userType' });
+        cookieService.removeData({ key: 'token' });
+        cookieService.removeData({ key: 'userID' });
+        cookieService.removeData({ key: 'email' });
+        cookieService.removeData({ key: 'userType' });
+        cookieService.removeData({ key: 'businessType' });
+
+        setUserType('');
+        setBusinessType(''); 
+
         goTo('/login');
         setIsLoggedIn(false);
+
     };
 
     const logoutUser = useCallback(
@@ -195,6 +252,10 @@ const useAuth = () => {
                 cookieService.removeData({ key: 'userID' });
                 cookieService.removeData({ key: 'email' });
                 cookieService.removeData({ key: 'userType' });
+                cookieService.removeData({ key: 'businessType' });
+
+                setUserType('');
+                setBusinessType('');
 
                 unsetLoading({ option: 'default', message: 'successful' });
 
@@ -322,7 +383,8 @@ const useAuth = () => {
         users,
         user,
         userType,
-
+        businessType,
+        
         redirect,
         login,
         register,

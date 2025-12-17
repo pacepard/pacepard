@@ -8,7 +8,10 @@
   }
 
   export enum BusinessType {
-    EDTECH = "edtech",
+    COMPANY = "company",
+    NONPROFIT = "non-profit",
+    GOVERNMENT = "government",
+    EDUCATION = "education",
     PARTNER = "partner",
     OTHER = "other"
     

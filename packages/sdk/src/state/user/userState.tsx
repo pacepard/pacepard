@@ -11,6 +11,7 @@ import {
     SET_RESPONSE,
     SET_TOAST,
     UNSET_LOADING,
+    SET_BUSINESSTYPE,
 } from '../helpers/types';
 import { collection, sidebar, toast } from '../helpers/seed';
 import {
@@ -33,6 +34,7 @@ const UserState = (props: any) => {
         plan: {},
         growth: {},
         userType: '',
+        businessType: '',
         response: {},
         loading: false,
         toast: toast,
@@ -112,6 +114,18 @@ const UserState = (props: any) => {
             payload: data,
         });
     };
+
+    /**
+ * @name setBusinessType
+ * @param type - BusinessType string
+ */
+const setBusinessType = (type: string) => {
+    dispatch({
+        type: SET_BUSINESSTYPE, // You'll need to add this action type
+        payload: type,
+    });
+};
+
 
     /**
      * @name setResponse
@@ -213,6 +227,7 @@ const UserState = (props: any) => {
             talent: state.talent,
             mainCareer: state.mainCareer,
             userType: state.userType,
+            businessType: state.businessType,
             loading: state.loading,
             toast: state.toast,
             subscription: state.subscription,
@@ -224,6 +239,7 @@ const UserState = (props: any) => {
             setToast: setToast,
             clearToast: clearToast,
             setUserType: setUserType,
+            setBusinessType: setBusinessType,
             setSidebar: setSidebar,
             currentSidebar: currentSidebar,
             setCollection: setCollection,
@@ -237,6 +253,7 @@ const UserState = (props: any) => {
             state.talent,
             state.mainCareer,
             state.userType,
+            state.businessType,
             state.loading,
             state.toast,
             state.subscription,
@@ -249,6 +266,7 @@ const UserState = (props: any) => {
             setToast,
             clearToast,
             setUserType,
+            setBusinessType,
             setSidebar,
             currentSidebar,
             setCollection,

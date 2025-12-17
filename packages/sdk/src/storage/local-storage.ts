@@ -2,12 +2,16 @@ import cookieService from "@/services/cookies";
 import { IStorage } from "../utils/interfaces";
 
 
-const storeAuth = (token: string, id: string, userType: string, email: string) => {
+const storeAuth = (token: string, id: string, userType: string, email: string, businessType?: string) => {
     
     localStorage.setItem('token', token);
     localStorage.setItem('userId', id);
     localStorage.setItem('role', userType);
     localStorage.setItem('userEmail', email) 
+
+    if (businessType) {
+        localStorage.setItem('businessType', businessType);
+    }
 
     cookieService.setData({
         key: 'token',
@@ -34,6 +38,15 @@ const storeAuth = (token: string, id: string, userType: string, email: string) =
         expireAt: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
         path: '/'
     })
+
+    if (businessType) {
+        cookieService.setData({
+            key: 'businessType',
+            payload: businessType,
+            expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            path: '/'
+        });
+    }
 }
 
 const checkToken = () => {
@@ -66,6 +79,14 @@ const checkUserType = () => {
 
 const getUserType = () => {
     return localStorage.getItem('userType')
+}
+
+const checkBusinessType = () => {
+    return localStorage.getItem('businessType') ? true : false;
+}
+
+const getBusinessType = () => {
+    return localStorage.getItem('businessType');
 }
 
 
@@ -125,12 +146,13 @@ const clearAuth = () => {
     localStorage.removeItem('role');
     localStorage.removeItem('userType');
     localStorage.removeItem('userEmail');
-    
+    localStorage.removeItem('businessType');
     // Clear cookies
     cookieService.removeData({ key: 'token' });
     cookieService.removeData({ key: 'userId' });
     cookieService.removeData({ key: 'userType' });
     cookieService.removeData({ key: 'userEmail' });
+    cookieService.removeData({ key: 'businessType' });
 }
 
 const keep = (key: string, data: any) => {
@@ -236,6 +258,9 @@ const storage: IStorage = {
     getUserID: getUserID,
     checkUserEmail: checkUserEmail,
     getUserEmail: getUserEmail,
+    checkBusinessType: checkBusinessType,
+    getBusinessType: getBusinessType,
+    
     getConfig: getConfig,
     getConfigWithBearer: getConfigWithBearer,
     clearAuth: clearAuth,

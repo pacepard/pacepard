@@ -20,6 +20,7 @@ import {
     GET_TALENT,
     GET_SUBSCRIPTION,
     GET_PLAN,
+    SET_BUSINESSTYPE,
 } from '../helpers/types';
 
 
@@ -80,6 +81,11 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 userType: action.payload
+            }
+        case SET_BUSINESSTYPE:
+            return {
+                ...state,
+                businessType: action.payload
             }
         case SET_SIDEBAR:
             return {

@@ -31,6 +31,7 @@ export interface IUserContext {
     subscription: Subscription,
     plan: Plan,
     userType: string,
+    businessType: string,
     loading: boolean,
     sidebar: ISidebarProps,
     toast: IToastState,
@@ -39,6 +40,7 @@ export interface IUserContext {
     setSidebar(data: ISidebarProps): void,
     currentSidebar(collapse: boolean): ISidebarProps | null,
     setUserType(type: string): void,
+    setBusinessType(type: string): void,
     setCollection(type: string, data: ICollection): void,
     setResource(type: string, data: any): void
     setLoading(data: ISetLoading): void,

@@ -37,6 +37,7 @@ export const GET_LEADERBOARD = 'GET_LEADERBOARD';
 export const GET_ASSESSMENTS = 'GET_ASSESSMENTS';
 export const GET_ASSESSMENT = 'GET_ASSESSMENT';
 export const GET_GROWTH_METRICS = 'GET_GROWTH_METRICS';
+export const GET_BUSINESS = 'GET_BUSINESS';
 
 // generics
 export const SET_PAGINATION = 'SET_PAGINATION';
@@ -48,6 +49,11 @@ export const SET_LOADING = 'SET_LOADING';
 export const SET_TOAST = 'SET_TOAST';
 export const UNSET_LOADING = 'UNSET_LOADING';
 export const SET_USERTYPE = 'SET_USERTYPE';
+export const SET_BUSINESSTYPE = 'SET_BUSINESSTYPE';
+
+export const SET_BUSINESS = 'SET_BUSINESS';
+
+
 export const SET_RESPONSE = 'SET_RESPONSE';
 export const SET_IS_SUPER = 'SET_IS_SUPER';
 export const SET_IS_ADMIN = 'SET_IS_ADMIN';
