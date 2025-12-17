@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
-import { OtpType, UserType } from "../utils/eums.util";
-import { IUserDoc } from "../utils/interfaces.util";
+import { OtpType, UserType } from "../../utils/eums.util";
+import { IUserDoc } from "../../utils/interfaces.util";
 
 export interface RegisterUserDTO {
   firstName: string;

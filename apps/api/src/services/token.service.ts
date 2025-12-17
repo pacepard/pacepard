@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
-import { IUserDoc, IResult } from "../../utils/interfaces.util";
-import ErrorResponse from "/Users/mac/Documents/start-up/pacepard/apps/api/src/utils/error.util.ts";
-import User from "../user/user.model";
+import { IUserDoc, IResult } from "../utils/interfaces.util.ts"
+import ErrorResponse from "../utils/error.util.ts"
+import User from "../modules/user/user.model.ts";
 import dotenv from 'dotenv';
+import { format } from "node:path";
 
 
 dotenv.config();

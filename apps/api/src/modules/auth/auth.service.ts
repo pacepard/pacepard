@@ -6,18 +6,16 @@ import {
   dateToday,
   strIncludesEs6,
 } from "@btffamily/pacitude";
-import SystemService from "./system.service";
-// import userRepository from "../repositories/user.repository";
+import SystemService from "../../services/system.service";
 import { OtpType, UserType } from "../../utils/eums.util";
 import {
   LoginDTO,
   MatchEncryptedPasswordDTO,
   RegisterUserDTO,
   verifyOtpDTO,
-} from "../../dtos/auth.dto";
-import User from "/Users/mac/Documents/start-up/pacepard/apps/api/src/modules/user/user.model.ts";
-import Role from "/Users/mac/Documents/start-up/pacepard/apps/api/src/modules/role/role.model.ts";
-// import ErrorResponse from "../utils/error.util";
+} from "./auth.dto";
+import User from "../../modules/user/user.model";
+import Role from "../../modules/role/role.model";
 import { format } from "node:path";
 import userRepository from "../user/user.repository";
 import ErrorResponse from "../../utils/error.util";
