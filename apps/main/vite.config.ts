@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
         "@pacepard/ui/lib": path.resolve(__dirname, "../../packages/ui/src/lib"),
         "@pacepard/ui/components": path.resolve(__dirname, "../../packages/ui/src/components"),
         "@pacepard/ui/hooks": path.resolve(__dirname, "../../packages/ui/src/hooks"),
-        "@pacepard/tooling": path.resolve(__dirname, "../../packages/tooling/src"),
+        "@pacepard/sdk": path.resolve(__dirname, "../../packages/sdk/src"),
       },
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       preserveSymlinks: true,
@@ -28,11 +28,9 @@ export default defineConfig(({ mode }) => {
     },
     optimizeDeps: {
       include: [
-        '@pacepard/core',
         '@pacepard/ui',
         '@pacepard/editor',
-        '@pacepard/auth',
-        '@pacepard/tooling',
+        '@pacepard/sdk',
         'react',
         'react-dom',
         'react-router',

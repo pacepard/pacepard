@@ -84,18 +84,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.68.0(react@19.2.3))
-      '@pacepard/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@pacepard/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@pacepard/editor':
         specifier: workspace:*
         version: link:../../packages/editor
-      '@pacepard/tooling':
+      '@pacepard/sdk':
         specifier: workspace:*
-        version: link:../../packages/tooling
+        version: link:../../packages/sdk
       '@pacepard/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -314,12 +308,6 @@ importers:
       '@next/mdx':
         specifier: ^16.0.1
         version: 16.0.10(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1(@types/react@19.2.7)(react@19.1.0))
-      '@pacepard/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@pacepard/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@pacepard/editor':
         specifier: workspace:*
         version: link:../../packages/editor
@@ -504,13 +492,9 @@ importers:
 
   configs/typescript: {}
 
-  packages/auth: {}
-
-  packages/core: {}
-
   packages/editor: {}
 
-  packages/tooling:
+  packages/sdk:
     dependencies:
       '@tanstack/react-query':
         specifier: ^5.90.5

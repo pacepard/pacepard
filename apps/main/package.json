@@ -11,10 +11,8 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@pacepard/auth": "workspace:*",
-    "@pacepard/core": "workspace:*",
     "@pacepard/editor": "workspace:*",
-    "@pacepard/tooling": "workspace:*",
+    "@pacepard/sdk": "workspace:*",
     "@pacepard/ui": "workspace:*",
     "@phosphor-icons/react": "^2.1.10",
     "@tanstack/query-core": "^5.90.5",
