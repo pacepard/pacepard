@@ -1,7 +1,7 @@
 import { FilterQuery, Model } from "mongoose";
 import User from "./user.model";
 import { IResult, IUserDoc } from "../../utils/interfaces.util";
-import tokenService from "../auth/token.service";
+import tokenService from "/Users/mac/Documents/start-up/pacepard/apps/api/src/services/token.service.ts";
 
 
 class UserRepository {
