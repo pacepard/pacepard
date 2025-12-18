@@ -1,14 +1,14 @@
-import { ProjectRepository } from "@/repositories/project.repository";
-import { IProjectDoc, IResult } from "@/utils/interfaces.util";
+import { ProjectRepository } from "../modules/projects/project.repository";
+import { IProjectDoc, IResult } from "../utils/interfaces.util";
 import {
   CreateProjectDTO,
   UpdateProjectDTO,
-} from "@/dtos/project.dto";
+} from "../modules/projects/project.dto";
 import {
   SubmissionStatus,
   ProjectStageType,
   EvaluationStatusType,
-} from "@/utils/enums.util";
+} from "../utils/eums.util"
 
 class ProjectService {
   /** ── VALIDATION ── */
@@ -243,10 +243,10 @@ class ProjectService {
   public async calculateRank(hackathonId: string): Promise<IResult> {
     const projects = await ProjectRepository.findByHackathon(hackathonId);
     const sorted = projects
-      .filter(p => p.score != null)
-      .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+      .filter((p: { score: null; }) => p.score != null)
+      .sort((a: { score: any; }, b: { score: any; }) => (b.score ?? 0) - (a.score ?? 0));
 
-    sorted.forEach((p, index) => {
+    sorted.forEach((p: { rank: any; save: () => void; }, index: number) => {
       p.rank = index + 1;
       p.save();
     });
@@ -290,7 +290,7 @@ class ProjectService {
       return { error: true, message: "Project not found", code: 404, data: {} };
     }
 
-    project.likes = project.likes.filter(id => id.toString() !== userId);
+    project.likes = project.likes.filter((id: { toString: () => string; }) => id.toString() !== userId);
     await project.save();
 
     return { error: false, message: "Project unliked", code: 200, data: project };
