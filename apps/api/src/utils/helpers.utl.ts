@@ -1,6 +1,32 @@
 import slugify from "slugify";
 import { S3Folder } from "./eums.util";
 
+export const generatePassword = (length: number = 16) => {
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const special = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+  
+  const getRandomChar = (charset: string) => charset[Math.floor(Math.random() * charset.length)];
+  
+  // Ensure password meets all requirements
+  let password = [
+    getRandomChar(uppercase),
+    getRandomChar(lowercase),
+    getRandomChar(numbers),
+    getRandomChar(special),
+  ];
+
+
+  const allChars = uppercase + lowercase + numbers + special;
+  for (let i = password.length; i < length; i++) {
+    password.push(getRandomChar(allChars));
+  }
+
+  // Shuffle the password to make it more random
+  return password.sort(() => Math.random() - 0.5).join("");
+};
+
 /**
  * Generates random characters
  * @param length - The length of the characters to generate.

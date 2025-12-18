@@ -1,9 +1,10 @@
-import { IResult, IUserDoc, IAdminDoc } from "../utils/interfaces.util";
+import { IResult, IUserDoc } from "../utils/interfaces.util";
 import { UserType } from "../utils/eums.util";
 import { generateRandomChars } from "../utils/helpers.utl"
 import SystemService from "./system.service";
 import { CreateAdminDTO } from "../modules/admin/admin.dto";
 import Admin from "../modules/admin/admin.model";
+import { IAdminDoc } from "../modules/admin/admin.interface";
 
 class AdminService {
 

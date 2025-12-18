@@ -1,4 +1,4 @@
-import { IOnboardingProgress, ISimplifiedOnboardingProgress } from "../../utils/interfaces.util";
+import { IOnboardingProgress, ISimplifiedOnboardingProgress, ObjectId } from "../../utils/interfaces.util";
 import { MainOnboardingPhase, PasswordType, TalentOnboardingStep, UserType, SimplifiedOnboardingStep } from "../../utils/eums.util";
 
 export interface inviteUserDTO {
@@ -18,7 +18,7 @@ export interface createUserDTO {
   password: string;
   passwordType: PasswordType
   userType: UserType;
-  createdBy?: string
+  createdBy?: string | ObjectId
   role?: string;
   permissions?: Array<string>;
   location?: {
