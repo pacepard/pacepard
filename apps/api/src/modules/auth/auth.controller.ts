@@ -14,7 +14,7 @@ import authService from "../auth/auth.service";
 import { OtpType, PasswordType, UserType } from "../../utils/eums.util";
 import emailService from "../../services/email.service.ts";
 import tokenService from "../../services/token.service.ts";
-import { IUserDoc } from "../../utils/interfaces.util.ts";
+import { IUserDoc } from "../../modules/user/user.interface.ts";
 import userService from "../../modules/user/user.service.ts";
 import onboardingService from "../../services/onboarding.service.ts";
 import authMapper from "../../mappers/auth.mapper.ts";
