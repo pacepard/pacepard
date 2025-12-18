@@ -1,4 +1,4 @@
-import ErrorUI from "@/app/error/error-ui";
+import ErrorUI from "@/app/generics/error-ui";
 import { NotFound } from "@pacepard/ui/components/not-found";
 
 

@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 
 const Login = lazy(() => import("@/app/auth/Login"));
 const Register = lazy(() => import("@/app/auth/Register"));
+const ActivateAccount = lazy(() => import("@/app/auth/ActivateAccount"));
 
 
 export const publicRoutes = [
@@ -18,6 +19,10 @@ export const publicRoutes = [
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/activate-account",
+    element: <ActivateAccount />,
   },
   
 ];
