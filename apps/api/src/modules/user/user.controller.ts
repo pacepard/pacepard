@@ -24,7 +24,7 @@ export const InviteUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
       
     const { firstName, lastName, email, userType }: inviteUserDTO = req.body;
-    const inviterId = req.user?.id;
+    const inviterId = (req as any).user?.id;
     if (!inviterId) return next(new ErrorResponse("Unauthorized", 401, []));
 
       // Validate input
@@ -94,7 +94,7 @@ export const InviteUser = asyncHandler(
  */
 export const getUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id;
+    const userId = (req as any).user?.id;
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
 
     // Find the user by ID
@@ -132,7 +132,7 @@ export const getUser = asyncHandler(
  */
 export const editUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id; // Assuming user ID is available in the request
+    const userId = (req as any).user?.id; // Assuming user ID is available in the request
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
     const {
       username,
@@ -179,7 +179,7 @@ export const editUser = asyncHandler(
  */
 export const deactivateAccount = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id;
+    const userId = (req as any).user?.id;
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
 
     // Find the user by ID
