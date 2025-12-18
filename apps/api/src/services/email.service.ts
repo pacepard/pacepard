@@ -1,22 +1,19 @@
 import { renderFile } from "ejs";
 import nodemailer from "nodemailer";
 import appRootPath from "app-root-path";
-import sgMail from "@sendgrid/mail";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { SendMailClient } from "zeptomail";
-
-import transporter from "../utils/sendgrid.util";
-import { SendEmailDTO, SendOtpDTO } from "../dtos/email.dto";
-import { EmailService, EmailTemplate, OtpType } from "../utils/enums.util";
+import { SendEmailDTO, SendOtpDTO } from '../dtos/email.dto'
+import { EmailService, EmailTemplate, OtpType } from '../utils/eums.util'
 import {
   EmailConfig,
   IEmailJob,
   IResult,
   IUserDoc,
 } from "../utils/interfaces.util";
-import { EMAIL_CONFIG } from "../config/email.config";
-import { addJob } from "@/tasks/jobs/job";
-import { JobChannel, QueueChannel } from "@/queues/channel.queue";
+import { EMAIL_CONFIG } from '../configs/email.config'
+import { addJob } from '../tasks/jobs/job'
+import { JobChannel, QueueChannel } from '../queues/channel.queue';
 
 const BASE_FOLDER = `${appRootPath.path}/src`;
 
@@ -34,10 +31,6 @@ class AppEmailService {
       case EmailService.MAILSEND:
         
         this.mailersend = new MailerSend({ apiKey: this.config.apiKey as string });
-        break;
-
-      case EmailService.SENDGRID:
-        sgMail.setApiKey(this.config.apiKey!);
         break;
 
       case EmailService.SMTP:
@@ -113,19 +106,6 @@ class AppEmailService {
       });
 
       const sendFnMap: Partial<Record<EmailService, () => Promise<void>>> = {
-        [EmailService.SENDGRID]: async () => {
-          await transporter.send(
-            { auth: { apiKey: this.config.apiKey! } },
-            {
-              to: data.user.email,
-              from: `${this.config.fromName} <${this.config.fromEmail}>`,
-              subject: data.subject,
-              text: "email",
-              html,
-            }
-          );
-        },
-
         [EmailService.MAILSEND]: async () => {
           const params = new EmailParams()
             .setFrom(new Sender(this.config.fromEmail!, this.config.fromName!))
