@@ -104,3 +104,41 @@ export interface NotificationPreferencesDTO {
   push: boolean;
   sms: boolean;
 }
+
+export interface MapActivatedUserDTO {
+  id: ObjectId;
+
+  firstName: string;
+  lastName: string;
+  email: string;
+
+  phoneNumber: string;
+  country: string;
+  dateOfBirth: Date;
+  gender: string;
+
+  avatar?: string;
+  userType: UserType;
+
+  //onboarding
+  onboard: {
+    step: number;
+    status: string;
+  };
+  status: {
+    profile: string;
+  };
+  inviteStatus: string;
+
+  isSuper: boolean;
+  isAdmin: boolean;
+  isOrganisation: boolean;
+  isTalent: boolean;
+
+  isActive: boolean;
+  isLocked: boolean;
+  lockedUntil?: Date | null;
+
+  roles: Array<ObjectId | any>;
+}
+
