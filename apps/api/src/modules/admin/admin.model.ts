@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model, ObjectId } from "mongoose";
-import { IAdminDoc } from "../../utils/interfaces.util";
+import { IAdminDoc } from './admin.interface'
 import { DbModels } from "../../utils/eums.util";
 
 const AdminSchema = new Schema<IAdminDoc>(
