@@ -1,4 +1,4 @@
-import type { IUserDoc } from '../modules/user/user.interface';
+import type { IUserDoc } from "../utils/interfaces.util";
 
 declare global {
   namespace Express {
