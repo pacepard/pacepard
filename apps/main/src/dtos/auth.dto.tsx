@@ -1,4 +1,4 @@
-import { OtpType, UserType } from "@/utils/interfaces";
+import { OtpType, UserType } from "@pacepard/sdk";
 
 
 export interface RegisterUserDTO {

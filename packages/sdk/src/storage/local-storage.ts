@@ -1,4 +1,4 @@
-import cookieService from "@/services/cookies";
+import cookieService from "../services/cookies";
 import { IStorage } from "../utils/interfaces";
 
 

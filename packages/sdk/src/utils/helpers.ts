@@ -1,10 +1,10 @@
 // urls.ts
 
 function getAppUrl(): string {
-    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_URL) {
-      return import.meta.env.VITE_APP_URL;
+    if (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_APP_URL) {
+      return (import.meta as any).env.VITE_APP_URL;
     }
-    if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_APP_URL) {
+    if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_APP_URL) {
       return process.env.NEXT_PUBLIC_APP_URL;
     }
     throw new Error('App URL not defined in environment');

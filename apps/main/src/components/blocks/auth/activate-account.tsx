@@ -8,7 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { VerifyOtpFormValues, verifyOtpSchema } from './validation';
 import { CircleNotchIcon } from '@phosphor-icons/react';
 import { OAuthButtons } from './oauth-buttons';
-//import { OtpType, pacepardAPI, storage } from '@pacepard/sdk';
+import { OtpType, storage } from '@pacepard/sdk';
+import { pacepardAPI } from '@/config/pacepard';
 
 export interface IForm extends React.ComponentProps<'form'> {
     className?: string;
@@ -48,9 +49,11 @@ const ActivateUserForm = (data: IForm) => {
 
     const maskEmail = (value?: string) => {
         if (!value) return '';
-        const [local, domain] = value.split('@');
-        if (local.length <= 2) return value;
-        return `${local[0]}${'*'.repeat(local.length - 2)}${local.at(-1)}@${domain}`;
+        const parts = value.split('@');
+        if (parts.length !== 2) return value;
+        const [local, domain] = parts;
+        if (!local || local.length <= 2) return value;
+        return `${local[0]}${'*'.repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
     };
 
     const handleOtpChange = (index: number, value: string) => {
@@ -97,8 +100,7 @@ const ActivateUserForm = (data: IForm) => {
         await pacepardAPI.auth.activateUser({
             email: cleanEmail,
             otp: Number(otp),
-            otpType: 'activate-account',
-            //otpType: OtpType.REGISTER,
+            otpType: OtpType.ACTIVATEACCOUNT,
         });
     };
 

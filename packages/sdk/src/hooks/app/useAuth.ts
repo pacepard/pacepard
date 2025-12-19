@@ -3,7 +3,7 @@ import useContextType from '@/state/useContextType';
 import storage from '@/storage/local-storage';
 import { useCallback, useEffect, useState } from 'react';
 import useGoTo from '../shared/useGoTo';
-import PacepardAPI from '@/api/clients/pacepard';
+
 import {
     ActivateDTO,
     ForgotPasswordDTO,
@@ -15,6 +15,7 @@ import {
     VerifyOtpDTO,
 } from '@/dtos/auth.dto';
 import { BusinessType, UserType } from '@/utils/enums';
+import { getGlobalInstance } from '../../index';
 
 const useAuth = () => {
     const { userContext } = useContextType();
@@ -49,7 +50,7 @@ const useAuth = () => {
             ) {
                 goTo(location.pathname);
             } else {
-                PacepardAPI.auth.logout();
+                getGlobalInstance().auth.logout();
                 goTo('/login');
             }
         } else {
@@ -77,7 +78,7 @@ const useAuth = () => {
     const redirect = useCallback( (roles: Array<string>) => {
 
         if (!storage.checkToken() || !storage.checkUserID()) {
-            PacepardAPI.auth.logout();
+            getGlobalInstance().auth.logout();
             goTo('/login');
         } else {
             const userType = cookieService.getUserType();
@@ -88,7 +89,7 @@ const useAuth = () => {
             if (token) {
                 if (userType && !roles.includes(userType)) {
                     goTo('/login');
-                    PacepardAPI.auth.logout();
+                    getGlobalInstance().auth.logout();
                 } else {
                     setIsLoggedIn(true);
                     currentSidebar(false); // set sidebar
@@ -102,14 +103,14 @@ const useAuth = () => {
                     }
                 }
             } else {
-                PacepardAPI.auth.logout();
+                getGlobalInstance().auth.logout();
                 goTo('/login');
             }
         }
     }, [navigate])
 
     const login = async (data: LoginDTO) => {
-        const response = await PacepardAPI.auth.loginUser(data);
+        const response = await getGlobalInstance().auth.loginUser(data);
 
         if (!response.error) {
             if (response.status === 200) {
@@ -220,7 +221,7 @@ const useAuth = () => {
     };
 
     const logout = async () => {
-        await PacepardAPI.auth.logout();
+        await getGlobalInstance().auth.logout();
         storage.clearAuth();
         cookieService.removeData({ key: 'userType' });
         cookieService.removeData({ key: 'token' });
@@ -241,7 +242,7 @@ const useAuth = () => {
         async (data: LogoutDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await PacepardAPI.auth.logoutUser({
+            const response = await getGlobalInstance().auth.logoutUser({
                 userId: data.userId || storage.getUserID(),
             });
             if (!response.error) {
@@ -270,7 +271,7 @@ const useAuth = () => {
         async (data: RegisterUserDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await PacepardAPI.auth.registerUser(data);
+            const response = await getGlobalInstance().auth.registerUser(data);
 
             if (!response.error) {
                 setIsLoggedIn(false);
@@ -289,7 +290,7 @@ const useAuth = () => {
         async (data: VerifyOtpDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await PacepardAPI.auth.verifyOTP({
+            const response = await getGlobalInstance().auth.verifyOTP({
                 email: data.email,
                 otp: data.otp,
                 otpType: data.otpType,
@@ -307,7 +308,7 @@ const useAuth = () => {
         async (data: ActivateDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await PacepardAPI.auth.activateUser({
+            const response = await getGlobalInstance().auth.activateUser({
                 otp: data.otp,
                 otpType: data.otpType,
                 email: data.email,
@@ -329,7 +330,7 @@ const useAuth = () => {
     const resendOtp = useCallback(
         async (data: ResendOtpDTO) => {
             const { email, otpType } = data;
-            const response = await PacepardAPI.auth.resendOTP({
+            const response = await getGlobalInstance().auth.resendOTP({
                 email,
                 otpType,
             });
@@ -347,7 +348,7 @@ const useAuth = () => {
         async (data: ForgotPasswordDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await PacepardAPI.auth.forgotPassword({
+            const response = await getGlobalInstance().auth.forgotPassword({
                 email: data.email,
             });
 
@@ -366,7 +367,7 @@ const useAuth = () => {
 
             setLoading({ option: 'default' });
 
-            const response = await PacepardAPI.auth.resetPassword({
+            const response = await getGlobalInstance().auth.resetPassword({
                 newPassword,
                 email,
             });

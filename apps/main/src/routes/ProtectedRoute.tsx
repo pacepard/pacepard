@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Navigate } from "react-router-dom";
-import storage from "@/utils/storage";
+import { storage } from "@pacepard/sdk";
 import { useAuthStore } from "@/contexts/auth.store";
 
 interface ProtectedRouteProps {

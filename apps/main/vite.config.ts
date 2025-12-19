@@ -23,6 +23,9 @@ export default defineConfig(({ mode }) => {
       preserveSymlinks: true,
       dedupe: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/query-core', '@tanstack/query-devtools'],
     },
+    define: {
+      'import.meta.env.VITE_APP_API_URL': JSON.stringify(env.VITE_APP_API_URL || ''),
+    },
     server: {
       port: PORT,
     },
@@ -38,6 +41,9 @@ export default defineConfig(({ mode }) => {
         '@tanstack/react-query',
         '@tanstack/query-core',
         '@tanstack/query-devtools',
+        '@radix-ui/react-menu',
+        '@radix-ui/react-dropdown-menu',
+        '@radix-ui/react-roving-focus',
       ],
       esbuildOptions: {
         resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs'],

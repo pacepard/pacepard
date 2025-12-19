@@ -16,6 +16,7 @@ import {
 import { strengthColors } from '@/utils/helpers';
 import { OAuthButtons } from './oauth-buttons';
 import { LockSimpleIcon } from '@phosphor-icons/react/dist/ssr';
+import { pacepardAPI } from '@/config/pacepard';
 
 
 const LoginForm = () => {
