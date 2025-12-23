@@ -1,0 +1,193 @@
+import { FilterQuery, Model } from "mongoose";
+import User from "../../modules/user/user.model";
+import { IResult, IUserDoc } from "../../utils/interfaces.util";
+import tokenService from "../../services/token.service";
+import mongoose from "mongoose";
+
+
+class UserRepository {
+  private model: Model<IUserDoc>;
+
+  constructor() {
+    this.model = User;
+  }
+
+
+  
+  /**
+   * @name findByIdOrSlug
+   * @description Find a user by either MongoDB ObjectId or slug (e.g. username).
+   * @param input - The user ID (ObjectId or string) or username slug
+   * @param populate - Whether to populate related fields (e.g. events)
+   * @returns Promise<IResult>
+   */
+  public async findUser(input: string | number, populate = false): Promise<IResult> {
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    // normalize input to string to satisfy Mongoose ObjectId APIs
+    const inputStr = String(input);
+
+    const isObjectId =
+      mongoose.Types.ObjectId.isValid(inputStr) &&
+      new mongoose.Types.ObjectId(inputStr).toString() === inputStr;
+
+    let query = isObjectId
+      ? this.model.findById(inputStr)
+      : this.model.findOne({ slug: inputStr });
+
+    if (populate) {
+      query = query.populate("");
+    }
+
+    const user = await query.lean();
+
+    if (!user) {
+      return {
+        error: true,
+        message: "User not found",
+        code: 404,
+        data: {},
+      };
+    }
+
+    result.message = "User found";
+    result.data = user;
+    return result;
+  }
+
+  /**
+   * @name findById
+   * @param id
+   * @param populate 
+   * @returns user
+   * @description Find a user by ID and populate related data
+   */
+  public async findById(id: string, populate: boolean = false): Promise<IUserDoc | null> {
+    
+    const dataPop = [
+      { path: 'sermons'}
+    ]
+
+    const pop = populate ? dataPop : [];
+
+    // define filter query
+    const query: FilterQuery<IUserDoc> = { _id: id };
+
+    const user = await this.model.findById(query).populate(pop).lean();
+    return user
+  }
+
+  /**
+   * @name findByEmail
+   * @param email
+   * @returns {Promise<IResult>}
+   */
+  public async findByEmail(email: string): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    const user = await this.model.findOne({ email }).lean();
+    if (!user) {
+      result.error = true;
+      result.code = 404;
+      result.message = "User not found";
+    } else {
+      result.data = user;
+    }
+
+    return result;
+  }
+
+  /**
+   * @name getUsers
+   * @returns {Promise<IResult>}
+   */
+  public async getUsers(): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    const users = await this.model.find({}).lean();
+    result.data = users;
+
+    return result;
+  }
+
+  /**
+   * @name createUser
+   * @param userData
+   * @returns {Promise<IResult>}
+   */
+  public async createUser(userData: Partial<IUserDoc>): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 201, data: {} };
+
+    const newUser = await this.model.create(userData);
+    result.data = newUser;
+    result.message = "User created successfully";
+
+    return result;
+  }
+
+  /**
+   * @name deleteUser
+   * @param id
+   * @returns {Promise<IResult>}
+   */
+  public async deleteUser(id: string): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    const deletedUser = await this.model.findByIdAndDelete(id);
+    if (!deletedUser) {
+      result.error = true;
+      result.code = 404;
+      result.message = "User not found";
+    } else {
+      result.message = "User deleted successfully";
+      result.data = deletedUser;
+    }
+
+    return result;
+  }
+
+  /**
+   * @name updateUser
+   * @param id
+   * @param updateData
+   * @returns {Promise<IResult>}
+   */
+  public async updateUser(id: string, updateData: Partial<IUserDoc>): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    const updatedUser = await this.model.findByIdAndUpdate(id, updateData, { new: true });
+    if (!updatedUser) {
+      result.error = true;
+      result.code = 404;
+      result.message = "User not found";
+    } else {
+      result.message = "User updated successfully";
+      result.data = updatedUser;
+    }
+
+    return result;
+  }
+
+  /**
+   * @name getAuthToken
+   * @param user
+   * @returns {Promise<IResult>}
+   */
+  public async getAuthToken(user: IUserDoc): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    const tokenResult = await tokenService.attachToken(user);
+    if (tokenResult.error) {
+      result.error = true;
+      result.code = 500;
+      result.message = tokenResult.message;
+    } else {
+      result.message = "Token generated successfully";
+      result.data = { token: tokenResult.data.token };
+    }
+
+    return result;
+  }
+}
+
+export default new UserRepository();
