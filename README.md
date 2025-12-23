@@ -14,7 +14,6 @@
 
 By using Pacepard, African talents, organisations, and EdTech providers can collaborate, track talent skill mastery progress, and host competitions while leveraging our AI-powered engagement analytics.
 
----
 
 ## Table of Contents
 
@@ -27,7 +26,6 @@ By using Pacepard, African talents, organisations, and EdTech providers can coll
 - [Scripts Reference](#scripts-reference)
 - [Contributing](#contributing)
 
----
 
 ## Prerequisites
 
@@ -44,8 +42,6 @@ node --version  # Should be >= 20
 pnpm --version  # Should be >= 9.0.0
 git --version
 ```
-
----
 
 ## Getting Started
 
@@ -66,15 +62,6 @@ pnpm install
 
 This will install dependencies for all apps and packages in the workspace.
 
-### Verify Installation
-
-After installation, you can verify everything is set up correctly:
-
-```bash
-pnpm run build
-```
-
----
 
 ## Project Structure
 
@@ -91,9 +78,8 @@ pacepard/
 │   └── main/         # Main app entry point
 ├── packages/          # Shared packages
 │   ├── ui/           # UI component library (@pacepard/ui)
-│   ├── core/         # Core utilities (@pacepard/core)
 │   ├── editor/       # Editor package (@pacepard/editor)
-│   └── auth/         # Authentication package (@pacepard/auth)
+│   └── sdk/          # SDK package (@pacepard/sdk)
 ├── configs/          # Shared configurations
 │   ├── eslint/       # ESLint configuration (@pacepard/configs/eslint)
 │   └── typescript/   # TypeScript configuration (@pacepard/configs/typescript)
@@ -118,9 +104,8 @@ All packages use the `@pacepard/*` namespace:
 
 - **Packages:**
   - `@pacepard/ui` - Shared UI component library (shadcn/ui based)
-  - `@pacepard/core` - Core utilities and shared logic
   - `@pacepard/editor` - Editor functionality
-  - `@pacepard/auth` - Authentication utilities
+  - `@pacepard/sdk` - SDK utilities and shared logic
 
 - **Configs:**
   - `@pacepard/configs/eslint` - Shared ESLint configuration
@@ -188,6 +173,7 @@ To add a dependency to a specific workspace package:
 pnpm add <package-name> --filter @pacepard/web
 pnpm add <package-name> --filter @pacepard/api
 pnpm add <package-name> --filter @pacepard/ui
+pnpm add <package-name> --filter @pacepard/sdk
 ```
 
 ### Adding a Dev Dependency
@@ -220,7 +206,7 @@ To use a workspace package in another package, reference it in `package.json`:
 {
   "dependencies": {
     "@pacepard/ui": "workspace:*",
-    "@pacepard/core": "workspace:*"
+    "@pacepard/sdk": "workspace:*"
   }
 }
 ```
@@ -433,7 +419,7 @@ If you discover a bug or have a suggestion, raise an issue via the GitHub Issues
 ### Project-Specific Guidelines
 
 - **UI Components**: Add new components to `@pacepard/ui` package
-- **Shared Logic**: Put shared utilities in `@pacepard/core`
+- **Shared Logic**: Put shared utilities in `@pacepard/sdk`
 - **API Changes**: Update API documentation in `apps/docs`
 - **Environment Variables**: Use `.env` files (they're gitignored)
 

@@ -11,10 +11,8 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@pacepard/core": "workspace:*",
     "@pacepard/ui": "workspace:*",
     "@pacepard/editor": "workspace:*",
-    "@pacepard/auth": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",

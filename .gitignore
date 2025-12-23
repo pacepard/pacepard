@@ -41,6 +41,7 @@ build/
 /.txt
 *.txt
 */.txt
+docs
 
 # testing
 /coverage
