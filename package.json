@@ -6,13 +6,11 @@
     "node": ">=20"
   },
   "scripts": {
-    "clean:modules": "rimraf node_modules apps/**/node_modules packages/**/node_modules",
-    "clean:all": "rimraf node_modules apps/**/node_modules packages/**/node_modules pnpm-lock.yaml",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:ui": "turbo run dev --ui=tui",
-    "dev:fe": "turbo run dev --filter=@pacepard/app --filter=@pacepard/web",
-    "dev:be": "turbo run dev --filter=@pacepard/api --filter=@pacepard/api-docs",
+    "dev:fe": "turbo run dev --ui=tui --filter=@pacepard/app --filter=@pacepard/web",
+    "dev:be": "turbo run dev --ui=tui --filter=@pacepard/api --filter=@pacepard/api-docs",
     "dev:api": "turbo run dev --filter=@pacepard/api",
     "dev:web": "turbo run dev --filter=@pacepard/web",
     "dev:app": "turbo run dev --filter=@pacepard/app",

@@ -1,12 +1,12 @@
-import js from "@eslint/js"
-import pluginNext from "@next/eslint-plugin-next"
-import eslintConfigPrettier from "eslint-config-prettier"
-import pluginReact from "eslint-plugin-react"
-import pluginReactHooks from "eslint-plugin-react-hooks"
-import globals from "globals"
-import tseslint from "typescript-eslint"
+import js from "@eslint/js";
+import pluginNext from "@next/eslint-plugin-next";
+import eslintConfigPrettier from "eslint-config-prettier";
+import pluginReact from "eslint-plugin-react";
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
-import { config as baseConfig } from "./base.js"
+import { config as baseConfig } from "./base.js";
 
 /**
  * A custom ESLint configuration for libraries that use Next.js.
@@ -43,9 +43,18 @@ export const nextJsConfig = [
     settings: { react: { version: "detect" } },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
-      // React scope no longer necessary with new JSX transform.
+
+      // indentation
+      indent: ["error", 4],
+      "@typescript-eslint/indent": ["error", 4],
+
+      // spacing
+      "react/jsx-indent": ["error", 4],
+      "react/jsx-indent-props": ["error", 4],
+
+      // react settings
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
     },
   },
-]
+];
