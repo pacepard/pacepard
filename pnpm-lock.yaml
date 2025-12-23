@@ -1157,21 +1157,8 @@ packages:
     resolution: {integrity: sha512-0Zx3Ntdpu+z9Wlm7JKUBOzS9EunwKAb4KdGUQQxDqh5Lc3ta5uBoub+FgmVuzwnmBu9U1Os8UuwVTH0Lgu+P5w==}
     engines: {node: '>=18.0.0'}
 
-<<<<<<< HEAD
   '@aws-sdk/util-locate-window@3.953.0':
     resolution: {integrity: sha512-mPxK+I1LcrgC/RSa3G5AMAn8eN2Ay0VOgw8lSRmV1jCtO+iYvNeCqOdxoJUjOW6I5BA4niIRWqVORuRP07776Q==}
-=======
-  '@aws-sdk/util-endpoints@3.953.0':
-    resolution: {integrity: sha512-rjaS6jrFksopXvNg6YeN+D1lYwhcByORNlFuYesFvaQNtPOufbE5tJL4GJ3TMXyaY0uFR28N5BHHITPyWWfH/g==}
-    engines: {node: '>=18.0.0'}
-
-  '@aws-sdk/util-format-url@3.953.0':
-    resolution: {integrity: sha512-fs70vtTiBhp/T9ss52OuW2LGJqPoNBbd1+wxqh82CMdzkOvCzI3qa/cK8tR0jCFeIjGeiV74lAskImRxu/V4lg==}
-    engines: {node: '>=18.0.0'}
-
-  '@aws-sdk/util-locate-window@3.893.0':
-    resolution: {integrity: sha512-T89pFfgat6c8nMmpI8eKjBcDcgJq36+m9oiXbcUzeU55MP9ZuGgBomGjGnHaEyF36jenW9gmg3NfZDm0AO2XPg==}
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
     engines: {node: '>=18.0.0'}
 
   '@aws-sdk/util-user-agent-browser@3.936.0':
@@ -4164,11 +4151,6 @@ packages:
   '@types/urijs@1.19.26':
     resolution: {integrity: sha512-wkXrVzX5yoqLnndOwFsieJA7oKM8cNkOKJtf/3vVGSUFkWDKZvFHpIl9Pvqb/T9UsawBBFMTTD8xu7sK5MWuvg==}
 
-<<<<<<< HEAD
-  '@types/uuid@11.0.0':
-    resolution: {integrity: sha512-HVyk8nj2m+jcFRNazzqyVKiZezyhDKrGUA3jlEcg/nZ6Ms+qHwocba1Y/AaVaznJTAM9xpdFSh+ptbNrhOGvZA==}
-    deprecated: This is a stub types definition. uuid provides its own type definitions, so you do not need this installed.
-=======
   '@types/webidl-conversions@7.0.3':
     resolution: {integrity: sha512-CiJJvcRtIgzadHCYXw7dqEnMNRjhGZlYK05Mj9OyktqV8uVT8fD2BFOB7S1uwBE3Kj2Z+4UyPmFw/Ixgw/LAlA==}
 
@@ -4177,7 +4159,6 @@ packages:
 
   '@types/whatwg-url@13.0.0':
     resolution: {integrity: sha512-N8WXpbE6Wgri7KUSvrmQcqrMllKZ9uxkYWMt+mCSGwNc0Hsw9VQTW7ApqI4XNrx6/SaM2QQJCzMPDEXE058s+Q==}
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -6437,11 +6418,6 @@ packages:
     resolution: {integrity: sha512-NQO+lgVUCtHxZ792FodgW0zflK+ozS9X9dwGp9XvvmPlH7pyxd588cn24TD3rmPm/N0AIRXF10Otah8yKqGw4w==}
     engines: {node: '>=12'}
 
-<<<<<<< HEAD
-  hono@4.11.1:
-    resolution: {integrity: sha512-KsFcH0xxHes0J4zaQgWbYwmz3UPOOskdqZmItstUG93+Wk1ePBLkLGwbP9zlmh1BFUiL8Qp+Xfu9P7feJWpGNg==}
-    engines: {node: '>=16.9.0'}
-=======
   hosted-git-info@4.1.0:
     resolution: {integrity: sha512-kyCuEOWjJqZuDbRHzL8V93NzQhwIB71oFWSyzVo+KPZI+pnQPPxucdkrOZvkLRnrf5URsQM+IJ09Dw29cRALIA==}
     engines: {node: '>=10'}
@@ -6449,7 +6425,9 @@ packages:
   hpp@0.2.3:
     resolution: {integrity: sha512-4zDZypjQcxK/8pfFNR7jaON7zEUpXZxz4viyFmqjb3kWNWAHsLEUmWXcdn25c5l76ISvnD6hbOGO97cXUI3Ryw==}
     engines: {node: '>=0.10.0'}
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
+  hono@4.11.1:
+    resolution: {integrity: sha512-KsFcH0xxHes0J4zaQgWbYwmz3UPOOskdqZmItstUG93+Wk1ePBLkLGwbP9zlmh1BFUiL8Qp+Xfu9P7feJWpGNg==}
+    engines: {node: '>=16.9.0'}
 
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
@@ -9693,17 +9671,8 @@ packages:
   until-async@3.0.2:
     resolution: {integrity: sha512-IiSk4HlzAMqTUseHHe3VhIGyuFmN90zMTpD3Z3y8jeQbzLIq500MVM7Jq2vUAnTKAFPJrqwkzr6PoTcPhGcOiw==}
 
-<<<<<<< HEAD
   update-browserslist-db@1.2.3:
     resolution: {integrity: sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==}
-=======
-  untildify@4.0.0:
-    resolution: {integrity: sha512-KK8xQ1mkzZeg9inewmFVDNkg3l5LUhoq9kN6iWYB/CC9YMG8HA+c1Q8HwDe6dEX7kErrEVNVBO3fWsVq5iDgtw==}
-    engines: {node: '>=8'}
-
-  update-browserslist-db@1.2.2:
-    resolution: {integrity: sha512-E85pfNzMQ9jpKkA7+TJAi4TJN+tBCuWh5rUcS/sv6cFi+1q9LYDwDI5dpUL0u/73EElyQ8d3TEaeW4sPedBqYA==}
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
@@ -11018,26 +10987,7 @@ snapshots:
       '@smithy/util-endpoints': 3.2.6
       tslib: 2.8.1
 
-<<<<<<< HEAD
   '@aws-sdk/util-locate-window@3.953.0':
-=======
-  '@aws-sdk/util-endpoints@3.953.0':
-    dependencies:
-      '@aws-sdk/types': 3.953.0
-      '@smithy/types': 4.10.0
-      '@smithy/url-parser': 4.2.6
-      '@smithy/util-endpoints': 3.2.6
-      tslib: 2.8.1
-
-  '@aws-sdk/util-format-url@3.953.0':
-    dependencies:
-      '@aws-sdk/types': 3.953.0
-      '@smithy/querystring-builder': 4.2.6
-      '@smithy/types': 4.10.0
-      tslib: 2.8.1
-
-  '@aws-sdk/util-locate-window@3.893.0':
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
     dependencies:
       tslib: 2.8.1
 
@@ -15084,11 +15034,6 @@ snapshots:
 
   '@types/urijs@1.19.26': {}
 
-<<<<<<< HEAD
-  '@types/uuid@11.0.0':
-    dependencies:
-      uuid: 11.1.0
-=======
   '@types/webidl-conversions@7.0.3': {}
 
   '@types/whatwg-url@11.0.5':
@@ -15098,7 +15043,9 @@ snapshots:
   '@types/whatwg-url@13.0.0':
     dependencies:
       '@types/webidl-conversions': 7.0.3
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
+  '@types/uuid@11.0.0':
+    dependencies:
+      uuid: 11.1.0
 
   '@types/yauzl@2.10.3':
     dependencies:
@@ -17742,9 +17689,6 @@ snapshots:
 
   hex-rgb@5.0.0: {}
 
-<<<<<<< HEAD
-  hono@4.11.1: {}
-=======
   hosted-git-info@4.1.0:
     dependencies:
       lru-cache: 6.0.0
@@ -17753,7 +17697,7 @@ snapshots:
     dependencies:
       lodash: 4.17.21
       type-is: 1.6.18
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
+  hono@4.11.1: {}
 
   html-void-elements@3.0.0: {}
 
@@ -21887,13 +21831,7 @@ snapshots:
 
   until-async@3.0.2: {}
 
-<<<<<<< HEAD
   update-browserslist-db@1.2.3(browserslist@4.28.1):
-=======
-  untildify@4.0.0: {}
-
-  update-browserslist-db@1.2.2(browserslist@4.28.1):
->>>>>>> 084e44484d07099d34867d9d9d7da4cd06ff50cb
     dependencies:
       browserslist: 4.28.1
       escalade: 3.2.0
