@@ -46,7 +46,9 @@ const useAuth = () => {
             if (
                 location.pathname.includes('/invite') ||
                 location.pathname.includes('/register') ||
-                location.pathname.includes('/verify')
+                location.pathname.includes('/verify-otp') || 
+                location.pathname.includes('/activate-account') || 
+
             ) {
                 goTo(location.pathname);
             } else {

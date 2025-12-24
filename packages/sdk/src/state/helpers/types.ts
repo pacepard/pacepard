@@ -5,6 +5,22 @@ export const GET_LOCATIONS = 'GET_LOCATIONS';
 export const GET_COUNTRY = 'GET_COUNTRY';
 export const GET_IP_ADDRESS = 'GET_IP_ADDRESS';
 export const GET_TALENT = 'GET_TALENT';
+
+export const GET_BUSINESS = 'GET_BUSINESS';
+export const GET_ADMIN = 'GET_ADMIN';
+export const GET_HACKATHON = 'GET_HACKATHON';
+export const GET_ENTRY = 'GET_ENTRY';
+export const GET_SUBMISSION = 'GET_SUBMISSION';
+export const GET_SQUAD = 'GET_SQUAD';
+export const GET_PROJECT = 'GET_PROJECT';
+export const GET_TEAM = 'GET_TEAM';
+export const GET_TASK = 'GET_TASK';
+
+
+
+
+
+
 export const GET_SUBSCRIPTION = 'GET_SUBSCRIPTION';
 export const GET_PLANS = 'GET_PLANS';
 export const GET_PLAN = 'GET_PLAN';
@@ -37,7 +53,7 @@ export const GET_LEADERBOARD = 'GET_LEADERBOARD';
 export const GET_ASSESSMENTS = 'GET_ASSESSMENTS';
 export const GET_ASSESSMENT = 'GET_ASSESSMENT';
 export const GET_GROWTH_METRICS = 'GET_GROWTH_METRICS';
-export const GET_BUSINESS = 'GET_BUSINESS';
+
 
 // generics
 export const SET_PAGINATION = 'SET_PAGINATION';

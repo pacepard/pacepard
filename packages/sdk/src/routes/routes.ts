@@ -1,14 +1,21 @@
-import navbar from './navbar.route'
 import footer from './footer.route'
-import sidebar from './sidebar.route'
 import appRoutes from './app.route';
 import { IRoute } from '@/utils/interfaces';
+import productRoutes from './product.route';
+import helpRoutes from './help.route';
+import businessRoutes from './business.route';
+import adminRoutes from './admin.route';
+import talentRoutes from './talent.route';
 
 const routes: Array<IRoute> = [
     ...appRoutes,
-    ...navbar,
     ...footer,
-    ...sidebar
+    ...productRoutes,
+    ...helpRoutes,
+
+    ...adminRoutes,
+    ...businessRoutes,
+    ...talentRoutes,
 ];
 
 export default routes;

@@ -44,6 +44,7 @@ export interface IRouteItem {
     title?: string;
     displayTitle?: string;
     url: string;
+    redirect?: string;
     isAuth: boolean;
     iconName?: string;
     action?: RouteActionType;

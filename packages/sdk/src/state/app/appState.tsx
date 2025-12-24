@@ -9,22 +9,50 @@ import AppContext from './appContext';
 
 
 const AppState = (props: any) => {
+
     const initialState = {
         users: collection, // all users
         user: {}, // a single user
 
-        plans: collection,
-        plan: {},
-        transactions: collection,
-        transaction: {},
+        talents: collection,
+        talent: {},
 
+        businesses: collection,
+        business: {},
+
+        admins: collection,
+        admin: {},
+
+        // hackathon 
         hackathons: collection, // list of hackathons
         hackathon: {}, // currently selected hackathon
+        
+        entries: collection, // list of created project hackathonsideas 
+        entry: {}, // currently selected project hackathon idea
+        
+        submissions: collection, // all final project submissions
+        submission: {}, // single final submission
+
+
+        // oss products (superhumans)
         projects: collection, // all projects
         project: {}, // one selected project
 
-        submissions: collection, // all submissions
-        submission: {},
+        teams: collection,
+        team: {},
+
+        tasks: collection,
+        task: {},
+
+
+        //payments 
+        plans: collection,
+        plan: {},
+
+        transactions: collection,
+        transaction: {},
+
+        // app
         search: collection, // search results
         filters: collection, // filters results
         loading: false,
@@ -125,6 +153,19 @@ const AppState = (props: any) => {
 
     const contextValues = useMemo(
         () => ({
+            hackthons: state.hackathons,
+            hackthon: state.hackathon,
+            entries: state.entries,
+            entry: state.entry,
+            submissions: state.submissions,
+            submission: state.submission,
+            projects: state.projects,
+            project: state.project,
+            teams: state.teams,
+            team: state.team,
+            tasks: state.tasks,
+            task: state.task,
+            
             plans: state.plans,
             plan: state.plan,
             transactions: state.transactions,
@@ -139,6 +180,19 @@ const AppState = (props: any) => {
             setResource: setResource,
         }),
         [
+            state.hackathons,
+            state.hackathon,
+            state.entries,
+            state.entry,
+            state.submissions,
+            state.submission,
+            state.projects,
+            state.project,
+            state.teams,
+            state.team,
+            state.tasks,
+            state.task,
+
             state.plans,
             state.plan,
             state.transactions,

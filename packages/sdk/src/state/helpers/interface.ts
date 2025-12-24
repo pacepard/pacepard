@@ -1,6 +1,15 @@
+import { Admin } from "@/dtos/admin.dto"
+import { Business } from "@/dtos/business.dto"
+import { Entry } from "@/dtos/entry.dto"
+import { Hackathon } from "@/dtos/hackathon.dto"
 import Plan from "@/dtos/plan.dto"
+import { Project } from "@/dtos/project.dto"
+import { Squad } from "@/dtos/squad.dto"
+import { Submission } from "@/dtos/submission.dto"
 import Subscription from "@/dtos/subscription"
 import Talent from "@/dtos/talent.dto"
+import { Task } from "@/dtos/task.dto"
+import { Team } from "@/dtos/team.dto"
 import Transaction from "@/dtos/transaction.dto"
 import User from "@/dtos/user.dto"
 import { IAPIReport, IPagination, ISetLoading, ISidebarProps, IToastState, IUnsetLoading } from "@/utils/interfaces"
@@ -27,11 +36,26 @@ export interface ICollection {
 export interface IUserContext {
     users: ICollection,
     user: User,
-    talent: Talent,
-    subscription: Subscription,
-    plan: Plan,
     userType: string,
     businessType: string,
+
+    talent: Talent,
+    business: Business,
+    admin: Admin,
+
+    hackathon: Hackathon,
+    entry: Entry,
+    submission: Submission,
+    squad: Squad,
+
+    project: Project,
+    team: Team,
+    task: Task,
+
+
+    subscription: Subscription,
+    plan: Plan,
+    
     loading: boolean,
     sidebar: ISidebarProps,
     toast: IToastState,
@@ -49,13 +73,27 @@ export interface IUserContext {
 
 export interface IAppContext {
 
-    search: ICollection,
-    items: Array<any>
+    talent: Talent,
+    business: Business,
+    admin: Admin,
+
+    hackathon: Hackathon,
+    entry: Entry,
+    submission: Submission,
+    squad: Squad
+
+    project: Project,
+    team: Team,
+    task: Task,
 
     plans: ICollection,
     plan: Plan,
     transactions: ICollection,
     transaction: Transaction,
+    
+    search: ICollection,
+    items: Array<any>
+
     message: string,
     loading: boolean,
     clearResource(data: IClearResource): void,

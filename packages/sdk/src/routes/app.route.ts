@@ -4,20 +4,37 @@ import { IRoute } from "@/utils/interfaces";
 const appRoutes: Array<IRoute> = [
 
     {
-        name: '/',
+        name: 'home',
         url: '/',
         isAuth: false,
+        redirect: '/login',
         params: [],
         content: {}
     },
 
     {
-        name: 'render',
-        url: '/render',
+        name: 'preview',
+        url: '/preview',
         isAuth: false,
         params: [],
         content: {}
     },
+    
+    {
+        name: 'no-network',
+        url: '/no-network',
+        isAuth: false,
+        params: [],
+        content: {}
+    },
+    {
+        name: 'not-found',
+        url: '/not-found',
+        isAuth: false,
+        params: [],
+        content: {}
+    },
+
 
     {
         name: 'login',
@@ -36,21 +53,20 @@ const appRoutes: Array<IRoute> = [
     },
 
     {
-        name: 'verify',
-        url: '/verify',
+        name: 'verify-otp',
+        url: '/verify-otp',
         isAuth: false,
         params: [],
         content: {}
     },
 
     {
-        name: 'no-network',
-        url: '/no-network',
+        name: 'activate-account',
+        url: '/activate-account',
         isAuth: false,
         params: [],
         content: {}
     },
-
     {
         name: 'reset-password',
         url: '/reset-password',
