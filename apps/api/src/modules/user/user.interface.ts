@@ -1,150 +1,134 @@
-import { ObjectId, Document, Model} from "mongoose";
-import { OtpType, PasswordType, UserType, FileType, UploadStatus } from "../../utils/eums.util";
-import { Nullable } from "../../utils/interfaces.util";
-import { MainOnboardingPhase, TalentOnboardingStep } from "../../utils/eums.util";
+import { Types, Document } from 'mongoose';
+import { Nullable } from '../../utils/interfaces.util';
+import { IAPIKey, IAPIKeyDoc } from '../apikey/apikey.interface';
+import { IRoleDoc } from '../role/role.interface'
+import { IPermissionDoc } from '../permission/permission.interface'
+import { INotificationDoc } from '../notification/notification.interface';
 
-/**
- * Legacy Onboarding Progress Interface
- * @deprecated Use ISimplifiedOnboardingProgress instead
- */
-export interface IOnboardingProgress {
-  // Overall onboarding status - for quick check if onboarding is required
-  isOnboarded: boolean; // true if overall MainOnboardingPhase is COMPLETED
-
-  // The current main phase the user is on (maps to TalentOnboardingItems array)
-  mainPhase: MainOnboardingPhase;
-
-  // Tracks progress within the PACEPARD_SETUP phase (for Talent users)
-  talentStep: TalentOnboardingStep;
-
-  // Status for each main phase, to quickly determine completion.
-  // Using an object for potential future expansion beyond Talent
-  phaseStatus: {
-    getStarted: boolean; // Corresponds to id: "1"
-    pacepardSetup: boolean; // Corresponds to id: "2"
-    hackathonSetup: boolean; // Corresponds to id: "3"
-    termsReview: boolean; // Corresponds to id: "4"
-  };
-
-  // Timestamp of last update
-  lastUpdated: string;
-
-  // Steps for storing step-specific data
-  steps?: any;
-}
-
-/**
- * Simplified Onboarding Progress Interface
- * Focused on hackathon onboarding flow
- */
-export interface ISimplifiedOnboardingProgress {
-  isOnboarded: boolean;
-  currentPhase: 'talent_setup' | 'hackathon_setup' | 'terms_acceptance' | 'completed';
-  
-  // Step completion flags
-  talentCompleted: boolean;
-  hackathonDecision: boolean | null; // null = not decided, true/false = decided
-  projectCreated: boolean;
-  termsAccepted: boolean;
-  
-  // Project details (if created)
-  projectId?: string;
-  projectName?: string;
-  projectTags?: string[];
-  projectImage?: string;
-  projectDescription?: string;
-  
-  // Team members (if invited)
-  teamMembers?: string[]; // email addresses
-  
-  // Timestamps
-  lastUpdated: string;
-  completedAt?: string;
-}
+type ObjectId = Types.ObjectId;
 
 export interface IUserDoc extends Document {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  passwordType: PasswordType; // encrypt this data
-  userType: UserType;
+    code: string; // user public ID
+    firstName: string;
+    lastName: string;
+    slug: string;
+    email: string;
+    password: string; // encrypt this data
+    passwordType: PasswordType;
+    userType: UserType;
 
-  inviteStatus: string;
+    avatar: {
+        fileName: string;
+        s3Key: string;
+    };
 
-  //user: string;
-  phoneNumber: string;
-  phoneCode: string;
-  country: string;
-  countryPhone: string;
-  city: string;
+    coverImage: {
+        fileName: string;
+        s3Key: string;
+    };
 
-  businessName: string;
-  businessType: string;
+    image: {
+        fileName: string;
+        s3Key: string;
+    };
 
-  avatar: {
-    fileName: string;
-    fileSize: number;
-    fileType: FileType;
-    mimetype: string;
-    uploadedBy: ObjectId | any;
-    uploadStatus: UploadStatus;
-    uploadId: string;
-    s3Key: string;
-    rawFile: string;
-  };
+    location: ILocation;
+    timeZone: string;
 
-  dateOfBirth: Date;
-  gender: string;
-  location: string;
+    login: {
+        last: string;
+        method: string;
+    };
+    onboard: {
+        step: number;
+        status: string;
+    };
 
-  onboarding: IOnboardingProgress | ISimplifiedOnboardingProgress;
+    inviteStatus: string;
 
+    apiKey: IAPIKey;
+    keys: Array<IAPIKeyDoc | any>;
 
-  Otp: string;
-  OtpExpiry: number;
-  otpType: OtpType;
-  accessToken: string;
-  accessTokenExpiry: Date;
-  tokenVersion: number;
+    Otp: string;
+    OtpExpiry: number;
+    otpType: OtpType;
+    accessToken: string;
+    accessTokenExpiry: Date;
+    tokenVersion: number;
 
-  isSuper: boolean;
-  isAdmin: boolean;
-  isOrganisation: boolean;
-  isTalent: boolean;
-  isUser: boolean;
+    isSuper: boolean;
+    isAdmin: boolean;
+    isBusiness: boolean;
+    isTalent: boolean;
+    isUser: boolean;
 
-  isEmailVerified: boolean;
-  isPhoneVerified: boolean;
-  isActivated: boolean;
-  isDeactivated: boolean;
+    isActivated: boolean;
+    isDeactivated: boolean;
+    isSuspended: boolean;
+    isActive: boolean;
+    loginLimit: number;
+    isLocked: boolean;
+    lockedUntil: Nullable<Date>;
+    twoFactorEnabled: boolean;
 
-  lastLogin: string;
-  isActive: boolean;
-  loginLimit: number;
-  isLocked: boolean;
-  lockedUntil: Nullable<Date>;
-  twoFactorEnabled: boolean;
+    devices: Array<IDevice>;
 
-  // Notification Preferences
-  notificationPreferences: {
-    email: boolean;
-    push: boolean;
-    sms: boolean;
-  };
+    // relationships
+    roles: Array<IRoleDoc | any>;
+    permissions: Array<IPermissionDoc | any>;
+    notifications: Array<INotificationDoc | any>;
 
-  // relationships
-  roles: Array<ObjectId | any>;
-  // convenience singular role (some parts of the codebase still reference `role`)
-  role?: ObjectId | any;
+    matchPassword: (password: string) => boolean;
+    getAuthToken: () => string;
 
-  matchPassword: (password: string) => boolean;
-  getAuthToken: () => string;
+    // time stamps
+    createdAt: Date;
+    updatedAt: Date;
+    _version: number;
+    _id: ObjectId;
+    id: ObjectId;
+}
 
-  // time stamps
-  createdAt: Date;
-  updatedAt: Date;
-  _version: number;
-  //_id: ObjectId;
-  id: string;
+export enum PasswordType {
+    USERGENERATED = 'user-generated',
+    SYSTEMGENERATED = 'system-generated',
+    TEMPORARY = 'temporary',
+    RESET = 'reset',
+}
+
+export enum UserType {
+    SUPERADMIN = 'super-admin',
+    ADMIN = 'admin',
+    ORGANISATION = 'organisation',
+    TALENT = 'talent',
+    MENTOR = 'mentor',
+    EVALUATOR = 'evaluator',
+    USER = 'user',
+}
+
+export enum OtpType {
+    REGISTER = 'register',
+    LOGIN = 'login',
+    VERIFY = 'verify',
+    GENERIC = 'generic',
+    PASSWORD_RESET = 'password-reset',
+    ACTIVATEACCOUNT = 'activate-account',
+    CHANGEPASSWORD = 'change-password',
+    FORGOTPASSWORD = 'forgot-password',
+    MENTOR_INVITE = 'mentor-type',
+    TEAM_INVITE = 'team-invite',
+}
+
+export interface ILocation {
+    phoneCode: string;
+    phoneNumber: string;
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+}
+
+export interface IDevice {
+
 }
