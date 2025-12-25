@@ -12,35 +12,6 @@ export enum AppChannel {
   WATCH = "watch",
 }
 
-export enum PasswordType {
-  USERGENERATED = "user-generated",
-  SYSTEMGENERATED = "system-generated",
-  TEMPORARY = "temporary",
-  RESET = "reset",
-}
-
-export enum UserType {
-  SUPERADMIN = "super-admin",
-  ADMIN = "admin",
-  ORGANISATION = "organisation",
-  TALENT = "talent",
-  MENTOR = "mentor",
-  EVALUATOR = "evaluator",
-  USER = "user",
-}
-
-export enum OtpType {
-  REGISTER = "register",
-  LOGIN = "login",
-  VERIFY = "verify",
-  GENERIC = "generic",
-  PASSWORD_RESET = "password-reset",
-  ACTIVATEACCOUNT = "activate-account",
-  CHANGEPASSWORD = "change-password",
-  FORGOTPASSWORD = "forgot-password",
-  MENTOR_INVITE = "mentor-type",
-  TEAM_INVITE = "team-invite",
-}
 
 export enum FileType {
   AUDIO = "audio",
