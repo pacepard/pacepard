@@ -4,7 +4,7 @@ import Herobanner from "@/app/components/shared/hero-banner";
 import { getAllProjects } from "@/lib/markdown";
 import { Metadata } from "next";
 export const metadata: Metadata = {
-    title: "Projects | Studiova",
+    title: "Projects | Pacepard",
 };
 
 export default function Page() {

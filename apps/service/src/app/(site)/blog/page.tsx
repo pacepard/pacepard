@@ -2,7 +2,7 @@ import BlogList from "@/app/components/blog/blog-list";
 import Herobanner from "@/app/components/shared/hero-banner";
 import { Metadata } from "next";
 export const metadata: Metadata = {
-    title: "Blog | Studiova",
+    title: "Blog | Pacepard",
 };
 
 export default function Page() {

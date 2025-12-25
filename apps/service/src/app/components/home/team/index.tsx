@@ -36,7 +36,7 @@ const Team = (props: {teamdataNumber: string}) => {
                             <div className="flex flex-col gap-11">
                                 <div className="flex flex-col gap-5 ">
                                     <h2 className="max-w-3xl">Meet our team</h2>
-                                    <p className="max-w-2xl text-secondary/70 dark:text-white/70">Our team is committed to redefining digital experiences through innovative web solutions while fostering a diverse and collaborative environment.</p>
+                                    <p className="max-w-2xl text-secondary/70 dark:text-white/70">Meet the visionaries, builders, and dreamers who turn bold ideas into tangible realities, crafting innovations that shape the future and inspire the world.</p>
                                 </div>
                             </div>
                         </div>
