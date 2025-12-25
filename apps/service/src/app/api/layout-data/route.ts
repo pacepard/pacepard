@@ -47,7 +47,7 @@ const MenuData = [
 
 
 const footerData = {
-    name: "Studiova",
+    name: "Pacepard",
     tagline: "Build something together?",
     info: [
         {
@@ -75,7 +75,7 @@ const footerData = {
         { name: "Instagram", href: "https://www.instagram.com/" },
         { name: "Twitter", href: "https://x.com/" }
     ],
-    copyright: "© Studiova copyright 2025"
+    copyright: "© Pacepard copyright 2025"
 };
 
 export const GET = async () => {

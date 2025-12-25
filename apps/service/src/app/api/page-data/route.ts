@@ -22,22 +22,22 @@ const avatarList = [
 const statsFactData = {
     number: '01',
     name: "Stats & facts",
-    heading: "High quality web design solutions you can trust.",
-    description: "When selecting a web design agency, it's essential to consider its reputation, experience, and the specific needs of your project.",
+    heading: "The trusted gateway to innovation, skill mastery and adoption.",
+    description: "Pacepard is a community-as-a-service platform linking African talent with tech companies through innovative hackathons.",
     scoreData: [
         {
             number: 40,
             numberValue: 'K',
-            scoreDescp: "People who have launched their websites"
+            scoreDescp: "Talents who have launched their websites"
         },
         {
             number: 238,
-            scoreDescp: "Experienced professionals ready to assist"
+            scoreDescp: "Tech talent who are fostering ideas and building products."
         },
         {
             number: 3,
             numberValue: 'M',
-            scoreDescp: "Support through messages and live consultations"
+            scoreDescp: "Providing support through messages and live consultations."
         },
     ]
 };
@@ -46,32 +46,32 @@ const servicesData = {
     number: '03',
     name: "Services",
     heading: "What we do",
-    description: "A glimpse into our creativity—exploring innovative designs, successful collaborations, and transformative digital experiences.",
+    description: "Discover our creativity—where innovative talent meets seamless hackathon experiences.",
     data: [
         {
             id: 1,
-            image: "/images/home/services/services_1.png",
-            heading: "Brand identity",
-            descp: "When selecting a web design agency, it's essential to consider its reputation, experience, and the specific needs of your project."
+            image: "/images/home/services/Hackathon3.jpeg",
+            heading: "Talent Growth Hack",
+            descp: "Smart strategies that fast-track talent development and innovation through hackathons and project challenges."
         },
         {
             id: 2,
-            image: "/images/home/services/services_2.png",
-            heading: "Web development",
-            descp: "When selecting a web design agency, it's essential to consider its reputation, experience, and the specific needs of your project."
+            image: "/images/home/services/Hackathon2.jpg",
+            heading: "Tech Forge",
+            descp: "we transform innovative ideas into fully functional digital products. Leveraging top-tier talent, collaborative hackathons, and agile development."
         },
         {
             id: 3,
-            image: "/images/home/services/services_3.png",
-            heading: "Content creation",
-            descp: "When selecting a web design agency, it's essential to consider its reputation, experience, and the specific needs of your project."
+            image: "/images/home/services/Hackathon1.jpeg",
+            heading: "Mentor the Builders",
+            descp: "Where mentors meet makers, a space for bold thinkers, doers, and innovators. Lead workshops, spark ideas, and guide emerging talent as they turn concepts into real-world solutions."
         },
-        {
-            id: 4,
-            image: "/images/home/services/services_4.png",
-            heading: "Motion & 3d modeling",
-            descp: "When selecting a web design agency, it's essential to consider its reputation, experience, and the specific needs of your project."
-        },
+        // {
+        //     id: 4,
+        //     image: "/images/home/services/services_4.png",
+        //     heading: "Motion & 3d modeling",
+        //     descp: "When selecting a web design agency, it's essential to consider its reputation, experience, and the specific needs of your project."
+        // },
     ]
 };
 
@@ -100,78 +100,135 @@ const teamData = {
     number: '06',
     data: [
         {
-            image: "/images/home/team/team-img-1.png",
-            name: "Martha Finley",
-            position: "Creative Director",
+            image: "/images/home/team/TeamA.jpeg",
+            name: "Damola Oladipo",
+            position: "CEO/Co-Founder",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
-                    link: "https://twitter.com"
+                    // link: "https://twitter.com"
                 },
                 {
                     icon: "/images/socialIcon/Be.svg",
-                    link: "https://www.behance.net/"
+                    // link: "https://www.behance.net/"
                 },
                 {
                     icon: "/images/socialIcon/linkedin.svg",
-                    link: "https://linkedin.com"
+                    // link: "https://linkedin.com"
                 }
             ]
         },
         {
-            image: "/images/home/team/team-img-2.png",
-            name: "Floyd Miles",
-            position: "Marketing Strategist",
+            image: "/images/home/team/TeamC.jpeg",
+            name: "Okuselu Temitope",
+            position: "CTO",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
-                    link: "https://twitter.com"
+                    // link: "https://twitter.com"
                 },
                 {
                     icon: "/images/socialIcon/Be.svg",
-                    link: "https://www.behance.net/"
+                    // link: "https://www.behance.net/"
                 },
                 {
                     icon: "/images/socialIcon/linkedin.svg",
-                    link: "https://linkedin.com"
+                    // link: "https://linkedin.com"
                 }
             ]
         },
         {
-            image: "/images/home/team/team-img-3.png",
-            name: "Glenna Snyder",
-            position: "Lead Designer",
+            image: "/images/home/team/Team7.jpeg",
+            name: "Brodrick Favour",
+            position: "COO",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
-                    link: "https://twitter.com"
+                    // link: "https://twitter.com"
                 },
                 {
                     icon: "/images/socialIcon/Be.svg",
-                    link: "https://www.behance.net/"
+                    // link: "https://www.behance.net/"
                 },
                 {
                     icon: "/images/socialIcon/linkedin.svg",
-                    link: "https://linkedin.com"
+                    // link: "https://linkedin.com"
                 }
             ]
         },
         {
-            image: "/images/home/team/team-img-4.png",
-            name: "Albert Flores",
-            position: "UX/UI Developer",
+            image: "/images/home/team/Team1.jpeg",
+            name: "Stephanie Onwuagbaizu",
+            position: "Backend Developer",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
-                    link: "https://twitter.com"
+                    // link: "https://twitter.com"
                 },
                 {
                     icon: "/images/socialIcon/Be.svg",
-                    link: "https://www.behance.net/"
+                    // link: "https://www.behance.net/"
                 },
                 {
                     icon: "/images/socialIcon/linkedin.svg",
-                    link: "https://linkedin.com"
+                    // link: "https://linkedin.com"
+                }
+            ]
+        },
+        {
+            image: "/images/home/team/TeamD..jpeg",
+            name: "Happiness Peter",
+            position: "Backend Developer",
+            socialLinks: [
+                {
+                    icon: "/images/socialIcon/twitter.svg",
+                    // link: "https://twitter.com"
+                },
+                {
+                    icon: "/images/socialIcon/Be.svg",
+                    // link: "https://www.behance.net/"
+                },
+                {
+                    icon: "/images/socialIcon/linkedin.svg",
+                    // link: "https://linkedin.com"
+                }
+            ]
+        },
+        {
+            image: "/images/home/team/Team5.jpeg",
+            name: "Damola Ifati",
+            position: "Frontend Developer",
+            socialLinks: [
+                {
+                    icon: "/images/socialIcon/twitter.svg",
+                    // link: "https://twitter.com"
+                },
+                {
+                    icon: "/images/socialIcon/Be.svg",
+                    // link: "https://www.behance.net/"
+                },
+                {
+                    icon: "/images/socialIcon/linkedin.svg",
+                    // link: "https://linkedin.com"
+                }
+            ]
+        },
+        {
+            image: "/images/home/team/TeamB.jpeg",
+            name: "Toyosi Odewenwa",
+            position: "UI/UX",
+            socialLinks: [
+                {
+                    icon: "/images/socialIcon/twitter.svg",
+                    // link: "https://twitter.com"
+                },
+                {
+                    icon: "/images/socialIcon/Be.svg",
+                    // link: "https://www.behance.net/"
+                },
+                {
+                    icon: "/images/socialIcon/linkedin.svg",
+                    // link: "https://linkedin.com"
                 }
             ]
         },
