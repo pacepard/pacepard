@@ -146,34 +146,61 @@ export enum OAuthProvider {
 }
 
 export enum DbModels {
+
   USER = "user",
   ADMIN = "admin",
   ROLE = "role",
   PERMISSION = "permission",
+
   CAMPAIGN = "hackathon_campaign",
   TALENT = "talent",
-  ORGANIZATION = "organization",
-  COMPETITION = "competition",
+  BUSINESS = "business",
+  SETTINGS = "settings",
+
+  WORKSPACE = "workspace",
+  SUBSCRIPTION = "subscription",
+  TRANSACTION = "transaction",
+
   TEAM = "team",
   PROJECT = "project",
+  TASK = "task",
+
+  COMPETITION = "competition",
+  HACKATHON = "hackathon",
+  ENTRY = "entry",
+  SUBMISSION = "submission",
+
+  RESOURCE = "resource",
+  DISCOVERY = "discovery",
+  DOMAIN = "domain",
+  TEMPLATE = "template",
+
+  INVITES = "invites",
+  NOTIFICATIONS = "notifications",
+
   PORTFOLIO = "portfolio",
   ACHIEVEMENT = "achievement",
   MENTOR = "mentor",
-  RESOURCE = "resource",
   EVALUATOR = "evaluator",
-  HACKATHON = "hackathon",
-  TASK = "task",
-  SUBMISSION = "submission",
   SUBMISSION_COMMENT = "submissionComment",
   BADGE = "badge",
   MEDAL = "medal",
   MEDAL_AWARD = "medalAward",
   LEADERBOARD = "leaderboard",
   JUDGE_SCORE = "judgeScore",
-  INVITES = "invites",
-  NOTIFICATIONS = "notifications",
-
   BADGE_AWARD = "badgeAward",
+}
+
+export enum VerificationType {
+  UNVERIFIED = "unverified",
+  PENDING = "pending",
+  VERIFIED = "verified",
+  REJECTED = "rejected",
+}
+
+export enum InvitationType {
+  AS_MENTOR = "mentor",
+  AS_TEAM_MEMBER = "team-member",
 }
 
 export enum UploadStatus {
@@ -403,10 +430,6 @@ export enum ExplicitStep {
   PROFILE_SETUP = "PROFILE_SETUP",
   EXPERIENCE_INFO = "EXPERIENCE_INFO",
 }
-export enum InvitationType {
-  AS_MENTOR = "mentor",
-  AS_TEAM_MEMBER = "team-member",
-}
 
 export enum InvitationStatus {
   PENDING = "pending",
@@ -423,4 +446,5 @@ export enum InviteSendType {
 export enum InvitedTo {
   HACKATHON = "hackathon",
   TEAM = "team",
+  PROJECT = "project",
 }
