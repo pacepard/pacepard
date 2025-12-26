@@ -1,4 +1,5 @@
-import { ENVType } from "./eums.util";
+import { ENVType } from "./enums.util";
+
 
 
 class AppENV {

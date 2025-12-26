@@ -2,11 +2,10 @@ import mongoose, { Schema, Model, ObjectId } from "mongoose";
 import { IOrganisationDoc } from "../../utils/interfaces.util";
 import {
   DbModels,
-  PasswordType,
-  UserType,
   FileType,
   UploadStatus,
-} from "../../utils/eums.util";
+} from "../../utils/enums.util";
+import { PasswordType, UserType } from "../user/user.interface";
 
 const OrganisationSchema = new Schema<IOrganisationDoc>(
   {

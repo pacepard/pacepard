@@ -1,12 +1,23 @@
+import { Types } from "mongoose";
+import { dateToday, IDateToday } from "@btffamily/pacitude";
 import { IBusinessDoc, VerificationType } from "./business.interface";
 import { CreateBusinessDTO, UpdateBusinessDTO } from "./business.dto";
 import businessRepository from "./business.repository";
 import { IResult } from "../../utils/interfaces.util";
-import { IUserDoc } from "../user/user.interface";
-import { generateRandomChars } from "../../utils/helpers.util";
+import { IUserDoc, UserType } from "../user/user.interface";
+import { genSlug } from "../../utils/helpers.util";
+import { genUserCode } from "../../utils/code.util";
+
+type ObjectId = Types.ObjectId;
 
 class BusinessService {
-  constructor() {}
+  public result: IResult;
+  public today: IDateToday;
+
+  constructor() {
+    this.today = dateToday(new Date());
+    this.result = { error: false, message: "", code: 200, data: {} };
+  }
 
   /**
    * @method createBusiness
@@ -22,23 +33,15 @@ class BusinessService {
       error: false,
       message: "",
       code: 200,
-      data: {},
+      data: {} as { business: IBusinessDoc; user: IUserDoc },
     };
 
     const {
       user, 
       businessName,
       businessType,
-      description,
-      size,
       industry,
-      tags,
-      website,
-      socials,
-      verification,
-      registration,
-      isPublic,
-      code,
+      createdBy,
     } = data;
 
     if (!user) {
@@ -63,43 +66,22 @@ class BusinessService {
       return result;
     }
 
-    const businessCode = code || `BUS-${generateRandomChars(8).toUpperCase()}`;
-
     const businessData = {
-      code: businessCode,
+      code: genUserCode(UserType.BUSINESS),
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      slug: `${businessName}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      slug: genSlug(businessName),
       
       // Business details from DTO
       businessName,
       businessType,
-      description: description || '',
-      size: size || '',
       industry,
-      tags: tags || [],
-      website: website || '',
-      socials: socials || [],
-
-      // Verification & Registration
-      verification: verification || {
-        status: VerificationType.UNVERIFIED,
-        verifiedBy: null,
-        verifiedAt: new Date(),
-        reason: '',
-      },
-      registration: registration || {
-        RegisteredBusinessName: businessName,
-        registrationNumber: '',
-        registrationDate: new Date(),
-        registrationCountry: '',
-      },
-      isPublic: isPublic || false,
+      isPublic: false,
 
       // Relationships
-      user: user._id || user.id,
-      createdBy: user._id || user.id,
+      user: user.id,
+      createdBy: createdBy || user._id || user.id,
       
       // Initialize relationship arrays
       workspaces: [],
@@ -182,7 +164,6 @@ class BusinessService {
           { path: 'projects' },
           { path: 'subscription' },
         ],
-        cache: true,
       }
     );
 
@@ -194,6 +175,7 @@ class BusinessService {
     }
 
     result.data = businessResult.data;
+    result.message = "Business profile retrieved successfully";
     return result;
   }
 

@@ -1,5 +1,5 @@
 import { S3Client } from "@aws-sdk/client-s3";
-import { ENVType } from "../utils/eums.util";
+import { ENVType } from "../utils/enums.util";
 import { AWSConfig } from "../utils/interfaces.util";
 
 let config: AWSConfig;

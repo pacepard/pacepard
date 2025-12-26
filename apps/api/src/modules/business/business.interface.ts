@@ -40,7 +40,7 @@ export interface IBusinessDoc extends Document {
 
     
     createdBy: ObjectId | any;
-    settings: ObjectId | any;
+    settings: Array<string>;
     
     // relationships
     user: IUserDoc | any;

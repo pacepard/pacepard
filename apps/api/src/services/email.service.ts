@@ -4,16 +4,16 @@ import appRootPath from "app-root-path";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { SendMailClient } from "zeptomail";
 import { SendEmailDTO, SendOtpDTO } from '../dtos/email.dto'
-import { EmailService, EmailTemplate, OtpType } from '../utils/eums.util'
+import { EmailService, EmailTemplate } from '../utils/enums.util'
 import {
   EmailConfig,
   IEmailJob,
   IResult,
-  IUserDoc,
 } from "../utils/interfaces.util";
 import { EMAIL_CONFIG } from '../configs/email.config'
 import { addJob } from '../tasks/jobs/job'
 import { JobChannel, QueueChannel } from '../queues/channel.queue';
+import { IUserDoc, OtpType } from "../modules/user/user.interface";
 
 const BASE_FOLDER = `${appRootPath.path}/src`;
 

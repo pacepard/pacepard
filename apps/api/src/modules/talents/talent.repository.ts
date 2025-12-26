@@ -7,12 +7,11 @@ import { IResult, IPagination } from "../../utils/interfaces.util";
 /**
  * Talent Repository
  * Extends the generic repository with talent-specific methods
- * Includes Redis caching and query middleware features
+ * Caching is handled at the service/controller layer, not here
  */
 class TalentRepository extends RepositoryService<ITalentDoc> {
   constructor() {
-    // Enable caching with 5 minute default TTL
-    super(Talent, "Talent", true, 300);
+    super(Talent, "Talent");
   }
 
   /**
@@ -32,8 +31,8 @@ class TalentRepository extends RepositoryService<ITalentDoc> {
   /**
    * @name getTalents
    * @param filter - Optional filter query
-   * @param options - Query options (select, sort, page, limit, populate, cache)
-   * @returns {Promise<IResult & { pagination?: any; count?: number; total?: number }>}
+   * @param options - Query options (select, sort, page, limit, populate)
+   * @returns {Promise<IResult>}
    * @description Get all talents with query middleware features (pagination, sorting, field selection)
    */
   public async getTalents(
@@ -44,11 +43,10 @@ class TalentRepository extends RepositoryService<ITalentDoc> {
       page?: number;
       limit?: number;
       populate?: string | any;
-      cache?: boolean;
     }
-  ): Promise<IResult & { pagination?: any; count?: number; total?: number }> {
+  ): Promise<IResult> {
     if (options) {
-      return this.findAll(filter || {}, options) as any;
+      return this.findAll(filter || {}, options);
     }
     return this.findAll(filter);
   }

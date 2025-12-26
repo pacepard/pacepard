@@ -1,29 +1,27 @@
 import { Types } from "mongoose";
 import { dateToday, IDateToday, UIID } from "@btffamily/pacitude";
-import { IUserDoc, OnboardStatus, PasswordType, UserType } from "./user.interface.ts";
-import { IResult } from "../../utils/interfaces.util.ts";
-import { createUserDTO, createUserProfileDTO, IBulkUser } from "../../modules/user/user.dto.ts";
-import userRepository from "../../modules/user/user.repository.ts";
-import talentService from "../../services/talent.service.ts";
-import talentRepository from "../../modules/talents/talent.repository.ts";
-import businessRepository from "../../modules/business/business.repository.ts";
-import adminRepository from "../../modules/admin/admin.repository.ts";
-import { GenderType } from "../talents/talent.interface.ts";
-import { BusinessType, VerificationType } from "../business/business.interface.ts";
+import { IUserDoc, OnboardStatus, PasswordType, UserType } from "./user.interface";
+import { IResult } from "../../utils/interfaces.util";
+import { createUserDTO, createUserProfileDTO, IBulkUser } from "../../modules/user/user.dto";
+import userRepository from "../../modules/user/user.repository";
+import talentService from "../../modules/talents/talent.service";
+import talentRepository from "../../modules/talents/talent.repository";
+import businessRepository from "../../modules/business/business.repository";
+//import adminRepository from "../../modules/admin/admin.repository";
+import { GenderType } from "../talents/talent.interface";
+import { BusinessType, VerificationType } from "../business/business.interface";
 import { 
   OnboardStep1DTO, 
   OnboardStep2DTO, 
   OnboardStep3TalentDTO, 
   OnboardStep3BusinessDTO 
-} from "../auth/auth.dto.ts";
-
-
-import adminService from "../../services/admin.service.ts";
-import authService from "../../modules/auth/auth.service.ts";   
-import PermissionService from "../../services/permission.service.ts";
-import businessService from "../business/business.service.ts";
-import { genSlug } from "../../utils/helpers.util.ts";
-import { genUserCode } from "../../utils/code.util.ts";
+} from "../auth/auth.dto";
+  
+import authService from "../../modules/auth/auth.service";   
+import PermissionService from "../../services/permission.service";
+import businessService from "../business/business.service";
+import { genSlug } from "../../utils/helpers.util";
+import { genUserCode } from "../../utils/code.util";
 
 type ObjectId = Types.ObjectId;
 
@@ -156,9 +154,12 @@ class UserService {
       if (existingTalentResult.error || !existingTalentResult.data) {
 
         const talentResult = await talentService.createTalent({ 
-            user: user, 
-            email: user.email 
-            // userType: user.userType
+            code: genUserCode(UserType.TALENT),
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            user: user,
+            createdBy: String(user._id || user.id)
         });
         if (talentResult.error) throw new Error(talentResult.message);
         user = talentResult.data.user;
@@ -171,9 +172,6 @@ class UserService {
       if (existingOrgResult.error || !existingOrgResult.data) {
         const orgResult = await businessService.createBusiness({
           user: user,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
           businessName: "",
           businessType: BusinessType.COMPANY,
           industry: "",
@@ -189,17 +187,17 @@ class UserService {
     // JUDGE CHECK
 
     // ADMIN CHECK & CREATE
-    if (user.userType === UserType.ADMIN) {
-      const existingAdminResult = await adminRepository.findOne({ user: user._id });
-      if (existingAdminResult.error || !existingAdminResult.data) {
-        const adminResult = await adminService.createAdmin({ 
-            user: user, 
-            email: user.email 
-        });
-        if (adminResult.error) throw new Error(adminResult.message);
-        user = adminResult.data.user;
-      }
-    }
+    // if (user.userType === UserType.ADMIN) {
+    //   const existingAdminResult = await adminRepository.findOne({ user: user._id });
+    //   if (existingAdminResult.error || !existingAdminResult.data) {
+    //     const adminResult = await adminService.createAdmin({ 
+    //         user: user, 
+    //         email: user.email 
+    //     });
+    //     if (adminResult.error) throw new Error(adminResult.message);
+    //     user = adminResult.data.user;
+    //   }
+    // }
     await user.save();
 
     return user;
@@ -467,15 +465,12 @@ class UserService {
     } else {
       // Create new talent document
       const talentCreateResult = await talentService.createTalent({
-        user: user,
         code: genUserCode(UserType.TALENT),
         firstName: user.firstName,
         lastName: user.lastName,
-        slug: genSlug(`${user.firstName} ${user.lastName}`),
         email: user.email,
-        specialties: [data.specialty],
-        gender: data.gender,
-        dateOfBirth: data.dateOfBirth,
+        user: user,
+        createdBy: String(user._id || user.id),
       });
 
       if (talentCreateResult.error) {

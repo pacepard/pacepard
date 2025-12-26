@@ -1,5 +1,5 @@
 import { EmailConfig } from '../utils/interfaces.util'
-import { EmailService, ENVType } from "../utils/eums.util";
+import { EmailService, ENVType } from "../utils/enums.util";
 
 
 export function getEmailConfig(): EmailConfig {

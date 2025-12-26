@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler } from "@btffamily/pacitude";
+import asyncHandler from "../../middlewares/async.mdw";
 import ErrorResponse from '../../utils/error.util'
-import authMapper from "../../mappers/auth.mapper";
+import authMapper from "../auth/auth.mapper";
 import userService from '../../modules/user/user.service';
 import userRepository from './user.repository';
 import { IUserDoc } from './user.interface';

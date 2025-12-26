@@ -1,4 +1,5 @@
-import { UserType, FileType, UploadStatus } from "../../utils/eums.util";
+import { FileType, UploadStatus } from "../../utils/enums.util";
+import { UserType } from "../user/user.interface";
 import { IUserDoc } from "../../utils/interfaces.util";
 
 // The SocialLinks object as defined in your ITalentDoc
