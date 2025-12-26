@@ -183,7 +183,6 @@ export enum OAuthProvider {
   GITHUB = "github",
 }
 
-
 export enum UploadStatus {
   PENDING = "pending",
   UPLOADING = "uploading",
@@ -411,10 +410,6 @@ export enum ExplicitStep {
   PROFILE_SETUP = "PROFILE_SETUP",
   EXPERIENCE_INFO = "EXPERIENCE_INFO",
 }
-export enum InvitationType {
-  AS_MENTOR = "mentor",
-  AS_TEAM_MEMBER = "team-member",
-}
 
 export enum InvitationStatus {
   PENDING = "pending",
@@ -431,4 +426,5 @@ export enum InviteSendType {
 export enum InvitedTo {
   HACKATHON = "hackathon",
   TEAM = "team",
+  PROJECT = "project",
 }
