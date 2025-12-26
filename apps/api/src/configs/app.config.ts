@@ -8,7 +8,7 @@ import expressSanitize from "express-mongo-sanitize";
 import helmet from "helmet";
 import hpp from "hpp";
 import cors from "cors";
-import { ENVType } from "../utils/eums.util";
+import { ENVType } from "../utils/enums.util";
 
 const app = express();
 

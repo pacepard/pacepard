@@ -18,31 +18,33 @@ class AuthMapper {
       lastName: user.lastName,
       email: user.email,
 
-      phoneNumber: user.phoneNumber,
-      phoneCode: user.phoneCode,
-      country: user.country,
-      dateOfBirth: user.dateOfBirth,
-      gender: user.gender,
+      phoneNumber: user.location?.phoneNumber || "",
+      phoneCode: user.location?.phoneCode || "",
+      country: user.location?.country || "",
+      dateOfBirth: (user as any).dateOfBirth || null,
+      gender: (user as any).gender || "",
 
-      passwordType: String(user.passwordType),
+      avatar: user.avatar?.s3Key || undefined,
       userType: user.userType,
+      passwordType: user.passwordType,
+
       isSuper: user.isSuper,
       isAdmin: user.isAdmin,
-      isOrganisation: user.isOrganisation,
+      isOrganisation: user.isBusiness,
       isTalent: user.isTalent,
 
       isActive: user.isActive,
       isLocked: user.isLocked,
       lockedUntil: user.lockedUntil,
 
-      roles: user.roles,
+      roles: user.role ? [user.role] : [],
     };
 
     return result;
   }
 
   /**
-   * @name mapRegisteredUser
+   * @name mapActivatedUser
    * @param user - IUserDoc
    * @returns result
    */
@@ -53,31 +55,33 @@ class AuthMapper {
       lastName: user.lastName,
       email: user.email,
 
-      phoneNumber: user.phoneNumber,
-      country: user.country,
-      dateOfBirth: user.dateOfBirth,
-      gender: user.gender,
+      phoneNumber: user.location?.phoneNumber || "",
+      country: user.location?.country || "",
+      dateOfBirth: (user as any).dateOfBirth || null,
+      gender: (user as any).gender || "",
+
+      avatar: user.avatar?.s3Key || undefined,
+      userType: user.userType,
 
       onboard: {
-        step: user.onboarding?.isOnboarded ? 3 : 1,
-        status: user.onboarding?.isOnboarded ? 'completed' : 'pending'
+        step: user.onboard?.step || 1,
+        status: user.onboard?.status || 'not-started'
       },
       status: {
         profile: user.isActive ? 'active' : 'inactive'
       },
-      inviteStatus: user.inviteStatus,
+      inviteStatus: user.inviteStatus || 'pending',
 
-      userType: user.userType,
       isSuper: user.isSuper,
       isAdmin: user.isAdmin,
-      isOrganisation: user.isOrganisation,
+      isOrganisation: user.isBusiness,
       isTalent: user.isTalent,
 
       isActive: user.isActive,
       isLocked: user.isLocked,
       lockedUntil: user.lockedUntil,
 
-      roles: user.roles,
+      roles: user.role ? [user.role] : [],
     };
 
     return result;

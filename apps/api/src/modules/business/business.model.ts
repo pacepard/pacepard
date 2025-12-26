@@ -1,51 +1,9 @@
 import mongoose, { Schema, Model, Types } from "mongoose";
 import { IBusinessDoc, VerificationType } from "./business.interface";
-import { DbModels } from "../../utils/eums.util";
+import { DbModels, } from "../../utils/enums.util";
+ 
 
-const ObjectId = Types.ObjectId;
 
-/**
- * Embedded Schemas
- */
-const SocialSchema = new Schema(
-  {
-    name: { type: String, required: true },
-    url: { type: String, required: true },
-    username: { type: String },
-  },
-  { _id: false }
-);
-
-const BusinessRegistrationSchema = new Schema(
-  {
-    RegisteredBusinessName: { type: String },
-    registrationNumber: { type: String },
-    registrationDate: { type: Date },
-    registrationCountry: { type: String },
-  },
-  { _id: false }
-);
-
-const VerificationSchema = new Schema(
-  {
-    status: {
-      type: String,
-      enum: Object.values(VerificationType),
-      default: VerificationType.UNVERIFIED,
-    },
-    verifiedBy: {
-      type: Schema.Types.ObjectId,
-      ref: DbModels.ADMIN,
-    },
-    verifiedAt: { type: Date },
-    reason: { type: String },
-  },
-  { _id: false }
-);
-
-/**
- * Business Schema
- */
 const BusinessSchema = new Schema<IBusinessDoc>(
   {
     code: { type: String, required: true, unique: true, index: true },
@@ -55,17 +13,39 @@ const BusinessSchema = new Schema<IBusinessDoc>(
     slug: { type: String, required: true, unique: true, lowercase: true },
     email: { type: String, required: true, lowercase: true, index: true },
 
-    businessName: { type: String, required: true },
+    businessName: { type: String },
     businessType: { type: String },
     description: { type: String },
     size: { type: String },
     industry: { type: String },
     tags: { type: [String], default: [] },
     website: { type: String },
-    socials: { type: [SocialSchema] as any, default: [] },
+    socials:  {
+      name: { type: String, required: true },
+      url: { type: String, required: true },
+      username: { type: String },
+    },
+    //socials: { type: [SocialSchema] as any, default: [] },
 
-    verification: { type: VerificationSchema, default: {} },
-    registration: { type: BusinessRegistrationSchema },
+    verification:  {
+      status: {
+        type: String,
+        enum: Object.values(VerificationType),
+        default: VerificationType.UNVERIFIED,
+      },
+      verifiedBy: {
+        type: Schema.Types.ObjectId,
+        ref: DbModels.ADMIN,
+      },
+      verifiedAt: { type: Date },
+      reason: { type: String },
+    },
+    registration: {
+      RegisteredBusinessName: { type: String },
+      registrationNumber: { type: String },
+      registrationDate: { type: Date },
+      registrationCountry: { type: String },
+    },
 
     verifiedBy: {
       type: Schema.Types.ObjectId,
@@ -80,18 +60,9 @@ const BusinessSchema = new Schema<IBusinessDoc>(
       required: true,
     },
 
-    settings: {
-      type: Schema.Types.ObjectId,
-      ref: DbModels.SETTINGS,
-    },
+    settings: { type: [String], default: [] },
 
-    /**
-     * Relationships
-     */
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: DbModels.USER,
-    },
+    user: { type: Schema.Types.ObjectId, ref: DbModels.USER },
 
     workspaces: [{ type: Schema.Types.ObjectId, ref: DbModels.WORKSPACE }],
     subscription: {
@@ -127,10 +98,7 @@ const BusinessSchema = new Schema<IBusinessDoc>(
   }
 );
 
-/**
- * 🔒 Invariants
- * Business becomes public ONLY when verified
- */
+
 BusinessSchema.pre("save" as any, function (this: mongoose.Document & IBusinessDoc, next: (err?: mongoose.CallbackError) => void) {
   if (this.verification?.status === VerificationType.VERIFIED) {
     this.isPublic = true;

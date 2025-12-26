@@ -1,6 +1,5 @@
-import { UserType } from "../../utils/eums.util";
-import { IUserDoc } from "../../utils/interfaces.util";
-import { ObjectId } from "mongoose";
+import { UserType } from "../user/user.interface";    
+import { IUserDoc } from "../user/user.interface"; 
 
 export interface CreateAdminDTO {
   firstName?: string;

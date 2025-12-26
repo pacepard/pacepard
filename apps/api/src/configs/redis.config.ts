@@ -1,4 +1,4 @@
-import { ENVType } from "../utils/eums.util"
+import { ENVType } from "../utils/enums.util"
 import { IRedisOptions } from "../utils/interfaces.util";
 
 

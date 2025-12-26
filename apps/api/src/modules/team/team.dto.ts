@@ -1,4 +1,4 @@
-import { TeamVisibilty } from "../../utils/eums.util"
+import { TeamVisibilty } from "../../utils/enums.util"
 
 export interface createTeamDto {
   teamName: string;

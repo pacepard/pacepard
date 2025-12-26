@@ -1,7 +1,8 @@
 import mongoose, { Schema, Types, Model, ObjectId } from "mongoose";
 import { IRoleDoc } from "../../utils/interfaces.util";
 import slugify from "slugify";
-import { DbModels, UserType } from "../../utils/eums.util";
+import { DbModels } from "../../utils/enums.util";
+import { UserType } from "../user/user.interface";
     import { format } from "node:path";
 
 const RoleSchema = new mongoose.Schema<IRoleDoc>(

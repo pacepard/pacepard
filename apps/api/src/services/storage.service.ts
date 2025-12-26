@@ -9,8 +9,8 @@ import { s3, AWS_BUCKET_NAME } from "../configs/aws.config" // use the shared co
 import { IFile, IResult } from "../utils/interfaces.util";
 
 import { Upload } from "@aws-sdk/lib-storage";
-import { UploadStatus } from "../utils/eums.util";
-import { getS3Folder } from "../utils/helpers.utl";
+import { UploadStatus } from "../utils/enums.util";
+import { getS3Folder } from "../utils/helpers.util";
 
 class StorageService {
   private s3Client: S3Client = s3;

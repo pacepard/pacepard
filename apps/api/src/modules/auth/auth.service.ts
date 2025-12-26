@@ -11,7 +11,6 @@ import SystemService from "../../services/system.service";
 import {
   LoginDTO,
   MatchEncryptedPasswordDTO,
-  OnboardStep1DTO,
   RegisterUserDTO,
   VerifyOtpDTO,
 } from "./auth.dto";
@@ -19,7 +18,7 @@ import User from "../../modules/user/user.model";
 import Role from "../../modules/role/role.model";
 import userRepository from "../user/user.repository";
 import ErrorResponse from "../../utils/error.util";
-import { IUserDoc, LoginMethod, OnboardStatus, OtpType, UserType } from "../user/user.interface";
+import { IUserDoc, LoginMethod, OtpType, UserType } from "../user/user.interface";
 
 class AuthService {
   public result: IResult;
@@ -543,8 +542,8 @@ class AuthService {
     } else if (
       user &&
       isAdmin === false &&
-      (user.userType === UserType.ADMIN ||
-        user.userType === UserType.SUPERADMIN)
+      ((user as any).userType === UserType.ADMIN ||
+        (user as any).userType === UserType.SUPERADMIN)
     ) {
       result.error = true;
       result.message = `user is not authorized to access this route`;

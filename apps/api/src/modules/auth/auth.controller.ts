@@ -15,10 +15,11 @@ import emailService from "../../services/email.service";
 import tokenService from "../../services/token.service";
 import { IUserDoc } from "../user/user.interface";
 import userService from "../user/user.service";
-import onboardingService from "../../services/onboarding.service";
-import authMapper from "../../mappers/auth.mapper";
+
+
 import userRepository from "../user/user.repository";
 import User from "../user/user.model";
+import authMapper from "./auth.mapper";
 
 
 /**
@@ -260,15 +261,6 @@ export const loginUser = asyncHandler(
 
     if (token.error) {
       return next(new ErrorResponse(token.message, token.code!, []));
-    }
-
-    // Get detailed onboarding progress for talent users
-    let onboardingResult = null;
-    if (userDoc.userType === UserType.TALENT) {
-      const progressResult = await onboardingService.getOnboardingStatus(userDoc);
-      if (!progressResult.error) {
-        onboardingResult = progressResult.data;
-      }
     }
 
     const mappedUser = await authMapper.mapActivatedUser(userDoc);

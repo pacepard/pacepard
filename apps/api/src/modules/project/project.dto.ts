@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 import { IProjectDoc } from "../../utils/interfaces.util";
-import { SubmissionStatus, ProjectStageType, EvaluationStatusType } from "../../utils/eums.util";
+import { SubmissionStatus, ProjectStageType, EvaluationStatusType } from "../../utils/enums.util";
 
 //
 // CREATE DTO

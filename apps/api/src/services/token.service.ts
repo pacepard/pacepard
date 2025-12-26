@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { IUserDoc, IResult } from "../utils/interfaces.util.ts"
-import ErrorResponse from "../utils/error.util.ts"
-import User from "../modules/user/user.model.ts";
+import { IUserDoc, IResult } from "../utils/interfaces.util"
+import ErrorResponse from "../utils/error.util"
+import User from "../modules/user/user.model";
 import dotenv from 'dotenv';
 import { format } from "node:path";
 

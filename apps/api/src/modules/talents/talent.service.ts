@@ -1,12 +1,21 @@
+import { dateToday, IDateToday } from "@btffamily/pacitude";
 import { ITalentDoc } from "./talent.interface";
 import { CreateTalentDTO, UpdateTalentDTO } from "./talent.dto";
 import talentRepository from "./talent.repository";
 import { IResult } from "../../utils/interfaces.util";
-import { IUserDoc } from "../user/user.interface";
-import { generateRandomChars } from "../../utils/helpers.util";
+import { IUserDoc, UserType } from "../user/user.interface";
+import { genSlug } from "../../utils/helpers.util";
+import { genUserCode } from "../../utils/code.util";
+
 
 class TalentService {
-  constructor() {}
+  public result: IResult;
+  public today: IDateToday;
+
+  constructor() {
+    this.today = dateToday(new Date());
+    this.result = { error: false, message: "", code: 200, data: {} };
+  }
 
   /**
    * @method createTalent
@@ -22,21 +31,16 @@ class TalentService {
       error: false,
       message: "",
       code: 200,
-      data: {},
+      data: {} as { talent: ITalentDoc; user: IUserDoc },
     };
 
     const {
-      user, 
-      bio,
-      skils,
-      specialties,
-      intrests,
-      employment,
-      education,
-      gender,
-      dateOfBirth,
-      occupation,
-      socials,
+      code,
+      firstName,
+      lastName,
+      email,
+      user,
+      createdBy,
     } = data;
 
     if (!user) {
@@ -54,32 +58,23 @@ class TalentService {
       return result;
     }
 
-    const talentCode = `TLN-${generateRandomChars(8).toUpperCase()}`
-
     const talentData = {
-      
-    code: talentCode,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      slug: user.slug || `${user.firstName}-${user.lastName}`.toLowerCase(),
-      
+      code: code || genUserCode(UserType.TALENT),
+      firstName,
+      lastName,
+      email,
+      slug: genSlug(`${firstName} ${lastName}`),
 
-      // Profile details from DTO
-      bio,
-      skils: skils || [],
-      specialties: specialties || [],
-      intrests: intrests || [],
-      gender,
-      dateOfBirth,
-      occupation,
-      employment,
-      education,
-      socials: socials || [],
+      // Default values for fields not in DTO
+      bio: '',
+      skils: [],
+      specialties: [],
+      intrests: [],
+      socials: [],
 
       // Relationships
-      user: user._id,
-      createdBy: user._id,
+      user: user._id || user.id,
+      createdBy: createdBy || user._id || user.id,
       
       // Initialize relationship arrays
       workspaces: [],
@@ -161,7 +156,6 @@ class TalentService {
           { path: 'projects' },
           { path: 'squad' },
         ],
-        cache: true,
       }
     );
 
@@ -173,6 +167,7 @@ class TalentService {
     }
 
     result.data = talentResult.data;
+    result.message = "Talent profile retrieved successfully";
     return result;
   }
 

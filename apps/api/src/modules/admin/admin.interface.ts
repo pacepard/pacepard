@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose';
-import { IUserDoc } '../../user/user.interface'
-import { DbModels } '../../user/enums.util'
+import { IUserDoc } from '../user/user.interface';
+import { DbModels } from '../../utils/enums.util';
 
 type ObjectId = Types.ObjectId;
 

@@ -26,11 +26,11 @@ import {
   InvitationType,
   InvitationStatus,
   InvitedTo,
-} from "./enums.util.ts";
+} from "./enums.util";
 import { FileInfo } from "busboy";
 import { PassThrough } from "stream";
-import { IMentorImage } from "../modules/mentor/mentor.dto.ts";
-import { IUserDoc, OtpType } from "../modules/user/user.interface.ts";
+import { IMentorImage } from "../modules/mentor/mentor.dto";
+import { IUserDoc, OtpType } from "../modules/user/user.interface";
 
 export type Nullable<T> = T | null;
 

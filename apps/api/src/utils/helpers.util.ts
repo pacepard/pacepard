@@ -1,5 +1,5 @@
 import slugify from "slugify";
-import { S3Folder } from "./eums.util";
+import { S3Folder } from "./enums.util";
 
 export const generatePassword = (length: number = 16) => {
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -7,12 +7,11 @@ import { IResult, IPagination } from "../../utils/interfaces.util";
 /**
  * Business Repository
  * Extends the generic repository with business-specific methods
- * Includes Redis caching and query middleware features
+ * Caching is handled at the service/controller layer, not here
  */
 class BusinessRepository extends RepositoryService<IBusinessDoc> {
   constructor() {
-    // Enable caching with 5 minute default TTL
-    super(Business, "Business", true, 300);
+    super(Business, "Business");
   }
 
   /**
@@ -32,8 +31,8 @@ class BusinessRepository extends RepositoryService<IBusinessDoc> {
   /**
    * @name getBusinesses
    * @param filter - Optional filter query
-   * @param options - Query options (select, sort, page, limit, populate, cache)
-   * @returns {Promise<IResult & { pagination?: any; count?: number; total?: number }>}
+   * @param options - Query options (select, sort, page, limit, populate)
+   * @returns {Promise<IResult>}
    * @description Get all businesses with query middleware features (pagination, sorting, field selection)
    */
   public async getBusinesses(
@@ -44,11 +43,10 @@ class BusinessRepository extends RepositoryService<IBusinessDoc> {
       page?: number;
       limit?: number;
       populate?: string | any;
-      cache?: boolean;
     }
-  ): Promise<IResult & { pagination?: any; count?: number; total?: number }> {
+  ): Promise<IResult> {
     if (options) {
-      return this.findAll(filter || {}, options) as any;
+      return this.findAll(filter || {}, options);
     }
     return this.findAll(filter);
   }
