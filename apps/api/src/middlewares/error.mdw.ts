@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import ENV from "../utils/env.util";
 import ErrorResponse from "../utils/error.util";
 import logger from "../utils/logger.util";
+import { AppError } from "../utils/projectError.utils";
+
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   let customError = {
@@ -11,8 +13,18 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
     data: {},
   };
 
+  // ✅ Domain / semantic errors
+  if (err instanceof AppError) {
+    customError = {
+      statusCode: err.statusCode,
+      message: err.message,
+      errors: err.errors,
+      data: err.data || {},
+    };
+  }
+
   // Uses your ErrorResponse class properly
-  if (err instanceof ErrorResponse) {
+  else if (err instanceof ErrorResponse) {
     customError = {
       statusCode: err.statusCode,
       message: err.message,
@@ -58,6 +70,7 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
   });
 };
 
+  
 export default errorHandler;
 
 // import { Request, Response, NextFunction } from "express";
