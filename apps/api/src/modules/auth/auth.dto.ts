@@ -1,35 +1,95 @@
-import mongoose, { Types } from "mongoose";
-import { OtpType, UserType } from "../../utils/eums.util";
-import { IUserDoc } from "../../utils/interfaces.util";
+import { Types } from "mongoose";
+import { IUserDoc, OnboardStatus, OtpType, UserType } from "../user/user.interface";
+import { GenderType } from "../talents/talent.interface";
+import { BusinessType } from "../business/business.interface";
+
 
 export type ObjectId = Types.ObjectId;
 
 
 export interface RegisterUserDTO {
-  firstName: string;
-  lastName: string;
   email: string;
   password: string;
-  userType?: UserType;
+  userType: UserType;
 }
 export interface LoginDTO {
   email: string;
   password: string;
 }
 
-export interface ForgotPasswordDTO {
-  email: string;
-}
-export interface verifyOtpDTO {
+export interface ActivateDTO {
   email: string;
   otp: number;
   otpType: OtpType
 }
 
-export interface resendOtpDTO {
+export interface OnboardDTO {
+
+}
+
+
+export interface OnboardStep1DTO {
+  userType: UserType; 
+}
+
+export interface OnboardStep2DTO {
+  firstName: string;
+  lastName: string;
+  location: {
+    phoneCode?: string;
+    phoneNumber?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    country: string; // Required
+    postalCode?: string;
+  };
+  timeZone: string; // IANA timezone string
+}
+
+export interface OnboardStep3TalentDTO {
+  specialty: string; // What kind of work do you do?
+  gender: GenderType; // MALE, FEMALE, OTHER
+  dateOfBirth: string; // ISO Date format (e.g., "1990-05-15")
+}
+
+export interface OnboardStep3BusinessDTO {
+  businessName: string;
+  businessType: BusinessType; // COMPANY, NONPROFIT, GOVERNMENT, EDUCATION, PARTNER, OTHER
+  industry: string;
+  tags?: Array<string>; // Optional array of tags
+}
+
+export interface OnboardStatusResponse {
+  step: number; // Current step (1-4)
+  status: OnboardStatus; // NOT_STARTED, IN_PROGRESS, COMPLETED
+  progress: {
+    completedSteps: number;
+    totalSteps: number;
+    percentage: number;
+  };
+  canProceed: boolean; // Whether user can proceed to next step
+  currentStepData?: any; // Data for current step if applicable
+}
+
+
+
+
+export interface ForgotPasswordDTO {
+  email: string;
+}
+export interface VerifyOtpDTO {
+  email: string;
+  otp: number;
+  otpType: OtpType
+}
+
+
+export interface ResendOtpDTO {
   email: string;
   otpType: OtpType
 }
+
 export interface ResetPasswordDTO {
   email: string;
   newPassword: string;
@@ -60,18 +120,6 @@ export interface MatchEncryptedPasswordDTO {
   hash: string;
 }
 
-export interface AuthResponseDTO {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  userType: string;
-
-  isActive: boolean;
-  isLocked: boolean;
-  accessToken: string;
-  accessTokenExpiry: Date;
-}
 
 export interface MapRegisteredUserDTO {
   id: ObjectId | string;
@@ -100,12 +148,6 @@ export interface MapRegisteredUserDTO {
   lockedUntil?: Date | null;
 
   roles: Array<ObjectId | any>;
-}
-
-export interface NotificationPreferencesDTO {
-  email: boolean;
-  push: boolean;
-  sms: boolean;
 }
 
 export interface MapActivatedUserDTO {

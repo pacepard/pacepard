@@ -1,0 +1,384 @@
+import { IBusinessDoc, VerificationType } from "./business.interface";
+import { CreateBusinessDTO, UpdateBusinessDTO } from "./business.dto";
+import businessRepository from "./business.repository";
+import { IResult } from "../../utils/interfaces.util";
+import { IUserDoc } from "../user/user.interface";
+import { generateRandomChars } from "../../utils/helpers.util";
+
+class BusinessService {
+  constructor() {}
+
+  /**
+   * @method createBusiness
+   * @description Creates a new business profile in the system.
+   * @param {CreateBusinessDTO} data - The business profile payload.
+   * @returns {Promise<IResult>} A structured result object.
+   */
+  public async createBusiness(
+    data: CreateBusinessDTO
+  ): Promise<IResult<{ business: IBusinessDoc; user: IUserDoc }>> {
+    
+    let result: IResult<{ business: IBusinessDoc; user: IUserDoc }> = {
+      error: false,
+      message: "",
+      code: 200,
+      data: {},
+    };
+
+    const {
+      user, 
+      businessName,
+      businessType,
+      description,
+      size,
+      industry,
+      tags,
+      website,
+      socials,
+      verification,
+      registration,
+      isPublic,
+      code,
+    } = data;
+
+    if (!user) {
+      result.error = true;
+      result.code = 400;
+      result.message = "User information is required to create a business profile";
+      return result;
+    }
+
+    if (!businessName || !businessType || !industry) {
+      result.error = true;
+      result.code = 400;
+      result.message = "Business name, type, and industry are required";
+      return result;
+    }
+
+    const existingBusinessResult = await businessRepository.findOne({ user: user._id || user.id });
+    if (existingBusinessResult.error === false && existingBusinessResult.data) {
+      result.error = true;
+      result.code = 400;
+      result.message = "Business profile already exists for this user";
+      return result;
+    }
+
+    const businessCode = code || `BUS-${generateRandomChars(8).toUpperCase()}`;
+
+    const businessData = {
+      code: businessCode,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      slug: `${businessName}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      
+      // Business details from DTO
+      businessName,
+      businessType,
+      description: description || '',
+      size: size || '',
+      industry,
+      tags: tags || [],
+      website: website || '',
+      socials: socials || [],
+
+      // Verification & Registration
+      verification: verification || {
+        status: VerificationType.UNVERIFIED,
+        verifiedBy: null,
+        verifiedAt: new Date(),
+        reason: '',
+      },
+      registration: registration || {
+        RegisteredBusinessName: businessName,
+        registrationNumber: '',
+        registrationDate: new Date(),
+        registrationCountry: '',
+      },
+      isPublic: isPublic || false,
+
+      // Relationships
+      user: user._id || user.id,
+      createdBy: user._id || user.id,
+      
+      // Initialize relationship arrays
+      workspaces: [],
+      transactions: [],
+      templates: [],
+      discovery: [],
+      customDomain: [],
+      hackathons: [],
+      entries: [],
+      submissions: [],
+      projects: [],
+      teams: [],
+      tasks: [],
+    };
+
+    const createResult = await businessRepository.createBusiness(businessData);
+    if (createResult.error || !createResult.data) {
+      result.error = true;
+      result.code = 500;
+      result.message = createResult.message || "Failed to create business profile";
+      return result;
+    }
+
+    result.message = "Business profile created successfully";
+    result.code = 201;
+    result.data = { business: createResult.data as IBusinessDoc, user };
+    return result;
+  }
+
+  /**
+   * @name updateProfile
+   * @description Updates a business profile with new details
+   */
+  public async updateProfile(
+    userId: string,
+    data: UpdateBusinessDTO
+  ): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    // Find the business by user ID
+    const findResult = await businessRepository.findOne({ user: userId });
+    if (findResult.error || !findResult.data) {
+      result.error = true;
+      result.code = 404;
+      result.message = "Business profile not found";
+      return result;
+    }
+
+    const business = findResult.data as IBusinessDoc;
+    const businessId = String(business._id || business.id);
+
+    // Update the business
+    const updateResult = await businessRepository.updateBusiness(businessId, data);
+    if (updateResult.error) {
+      result.error = true;
+      result.code = updateResult.code;
+      result.message = updateResult.message;
+      return result;
+    }
+
+    result.message = "Business profile updated successfully";
+    result.data = updateResult.data;
+    return result;
+  }
+
+  /**
+   * @name getBusinessProfile
+   * @description Retrieves a full business profile, including populated relations
+   */
+  public async getBusinessProfile(userId: string): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    const businessResult = await businessRepository.findOne(
+      { user: userId },
+      {
+        populate: [
+          { path: 'workspaces' },
+          { path: 'hackathons' },
+          { path: 'teams' },
+          { path: 'projects' },
+          { path: 'subscription' },
+        ],
+        cache: true,
+      }
+    );
+
+    if (businessResult.error || !businessResult.data) {
+      result.error = true;
+      result.code = 404;
+      result.message = "Business profile not found";
+      return result;
+    }
+
+    result.data = businessResult.data;
+    return result;
+  }
+
+  /**
+   * @name updateTags
+   * @description Updates a business's tags
+   */
+  public async updateTags(
+    userId: string,
+    tags: string[]
+  ): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    if (!tags || tags.length === 0) {
+      result.error = true;
+      result.code = 400;
+      result.message = "Invalid tags: must provide at least one tag";
+      return result;
+    }
+
+    // Find the business by user ID
+    const findResult = await businessRepository.findOne({ user: userId });
+    if (findResult.error || !findResult.data) {
+      result.error = true;
+      result.code = 404;
+      result.message = "Business profile not found";
+      return result;
+    }
+
+    const business = findResult.data as IBusinessDoc;
+    const businessId = String(business._id || business.id);
+
+    // Update tags
+    const updateResult = await businessRepository.updateBusiness(businessId, { tags });
+    if (updateResult.error) {
+      result.error = true;
+      result.code = updateResult.code;
+      result.message = updateResult.message;
+      return result;
+    }
+
+    result.message = "Tags updated successfully";
+    result.data = (updateResult.data as IBusinessDoc).tags;
+    return result;
+  }
+
+  /**
+   * @name addTag
+   * @description Adds a new tag to a business profile
+   */
+  public async addTag(userId: string, tag: string): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    if (!tag) {
+      result.error = true;
+      result.code = 400;
+      result.message = "Invalid tag";
+      return result;
+    }
+
+    // Find the business by user ID
+    const findResult = await businessRepository.findOne({ user: userId });
+    if (findResult.error || !findResult.data) {
+      result.error = true;
+      result.code = 404;
+      result.message = "Business profile not found";
+      return result;
+    }
+
+    const business = findResult.data as IBusinessDoc;
+    const currentTags = business.tags || [];
+    
+    // Check if tag already exists
+    if (currentTags.includes(tag)) {
+      result.error = true;
+      result.code = 400;
+      result.message = "Tag already exists";
+      return result;
+    }
+
+    // Add tag to array
+    const updatedTags = [...currentTags, tag];
+    const businessId = String(business._id || business.id);
+
+    const updateResult = await businessRepository.updateBusiness(businessId, { tags: updatedTags });
+    if (updateResult.error) {
+      result.error = true;
+      result.code = updateResult.code;
+      result.message = updateResult.message;
+      return result;
+    }
+
+    result.message = "Tag added successfully";
+    result.data = (updateResult.data as IBusinessDoc).tags;
+    return result;
+  }
+
+  /**
+   * @name removeTag
+   * @description Removes a tag from a business profile
+   */
+  public async removeTag(userId: string, tag: string): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    // Find the business by user ID
+    const findResult = await businessRepository.findOne({ user: userId });
+    if (findResult.error || !findResult.data) {
+      result.error = true;
+      result.code = 404;
+      result.message = "Business profile not found";
+      return result;
+    }
+
+    const business = findResult.data as IBusinessDoc;
+    const currentTags = business.tags || [];
+    
+    // Remove tag from array
+    const updatedTags = currentTags.filter(t => t !== tag);
+    const businessId = String(business._id || business.id);
+
+    const updateResult = await businessRepository.updateBusiness(businessId, { tags: updatedTags });
+    if (updateResult.error) {
+      result.error = true;
+      result.code = updateResult.code;
+      result.message = updateResult.message;
+      return result;
+    }
+
+    result.message = "Tag removed successfully";
+    result.data = (updateResult.data as IBusinessDoc).tags;
+    return result;
+  }
+
+  /**
+   * @name updateVerification
+   * @description Updates business verification status (admin only)
+   */
+  public async updateVerification(
+    userId: string,
+    verification: {
+      status: VerificationType;
+      verifiedBy?: string;
+      reason?: string;
+    }
+  ): Promise<IResult> {
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    // Find the business by user ID
+    const findResult = await businessRepository.findOne({ user: userId });
+    if (findResult.error || !findResult.data) {
+      result.error = true;
+      result.code = 404;
+      result.message = "Business profile not found";
+      return result;
+    }
+
+    const business = findResult.data as IBusinessDoc;
+    const businessId = String(business._id || business.id);
+
+    const verificationData = {
+      ...business.verification,
+      status: verification.status,
+      verifiedBy: verification.verifiedBy || business.verification?.verifiedBy,
+      verifiedAt: verification.status === VerificationType.VERIFIED ? new Date() : business.verification?.verifiedAt,
+      reason: verification.reason || business.verification?.reason || '',
+    };
+
+    // Update verification and isPublic status
+    const updateResult = await businessRepository.updateBusiness(businessId, {
+      verification: verificationData,
+      isPublic: verification.status === VerificationType.VERIFIED,
+    });
+
+    if (updateResult.error) {
+      result.error = true;
+      result.code = updateResult.code;
+      result.message = updateResult.message;
+      return result;
+    }
+
+    result.message = "Verification status updated successfully";
+    result.data = (updateResult.data as IBusinessDoc).verification;
+    return result;
+  }
+}
+
+export default new BusinessService();
+

@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { ILogin, IResult, IUserDoc } from "../../utils/interfaces.util";
+import { IResult } from "../../utils/interfaces.util";
 import {
   Random,
   arrayIncludes,
@@ -7,18 +7,19 @@ import {
   strIncludesEs6,
 } from "@btffamily/pacitude";
 import SystemService from "../../services/system.service";
-import { OtpType, UserType } from "../../utils/eums.util";
+
 import {
   LoginDTO,
   MatchEncryptedPasswordDTO,
+  OnboardStep1DTO,
   RegisterUserDTO,
-  verifyOtpDTO,
+  VerifyOtpDTO,
 } from "./auth.dto";
 import User from "../../modules/user/user.model";
 import Role from "../../modules/role/role.model";
-import { format } from "node:path";
 import userRepository from "../user/user.repository";
 import ErrorResponse from "../../utils/error.util";
+import { IUserDoc, LoginMethod, OnboardStatus, OtpType, UserType } from "../user/user.interface";
 
 class AuthService {
   public result: IResult;
@@ -35,24 +36,15 @@ class AuthService {
    * @param {RegisterUserDTO} data - The user registration data transfer object containing the form input.
    * @returns {Promise<IResult>} A result object indicating success or failure with an appropriate message.
    */
-  public async validateRegister(data: RegisterUserDTO): Promise<IResult> {
-    const allowedUsers = [
-      UserType.ADMIN,
-      UserType.ORGANISATION,
-      UserType.TALENT,
-    ];
 
+  public async validateRegister(data: RegisterUserDTO): Promise<IResult> {
+   
     let result: IResult = { error: false, message: "", code: 200, data: {} };
+    const allowedUsers = [ UserType.TALENT, UserType.BUSINESS,  ];
 
     if (!data.email) {
       result.error = true;
       result.message = "Email is required";
-    } else if (!data.firstName) {
-      result.error = true;
-      result.message = "First name is required";
-    } else if (!data.lastName) {
-      result.error = true;
-      result.message = "Last name is required";
     } else if (!data.password) {
       result.error = true;
       result.message = "Password is required";
@@ -75,8 +67,8 @@ class AuthService {
    * @returns
    */
   public async validateLogin(data: LoginDTO): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: null };
-
+    
+    let result: IResult = { error: false, message: "", code: 200, data: {} };
     const { email, password } = data;
 
     if (!email) {
@@ -86,6 +78,7 @@ class AuthService {
       result.error = true;
       result.message = "password is required";
     } else {
+
       const mailCheck = await this.checkEmail(email);
 
       if (!mailCheck) {
@@ -106,8 +99,9 @@ class AuthService {
    * @returns
    */
   public validatePhoneNumber(data: { phone: string }): boolean {
-    const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+   
     let result: boolean = false;
+    const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
     const { phone } = data;
 
@@ -127,7 +121,7 @@ class AuthService {
   /**
    * @name checkEmail
    * @description validates against invalid email
-   * @param email - The email to check
+   * @param email - The email to check with .africa bypassed
    *
    * @returns {boolean} true/false to determine the state of the email
    */
@@ -161,29 +155,6 @@ class AuthService {
     return matched;
   }
 
-  /**
-   * @name validateLoginCredentials
-   * @param data
-   */
-  public async validateLoginCredentials(data: ILogin): Promise<IResult> {
-    if (!data) {
-      this.result.error = true;
-      this.result.message = "login credentials are required";
-    } else {
-      if (!data.email) {
-        this.result.error = true;
-        this.result.message = "email is required";
-      } else if (!data.password) {
-        this.result.error = true;
-        this.result.message = "password is required";
-      } else {
-        this.result.error = false;
-        this.result.message = "";
-      }
-    }
-
-    return this.result;
-  }
 
   /**
    * @name validatUserType
@@ -191,11 +162,13 @@ class AuthService {
    * @returns
    */
   public async validatUserType(type: string): Promise<boolean> {
+    
     let flag = false;
+    
     const list = [
       UserType.USER,
       UserType.ADMIN,
-      UserType.ORGANISATION,
+      UserType.BUSINESS,
       UserType.TALENT,
     ];
 
@@ -276,7 +249,7 @@ class AuthService {
   }
 
   /**
-   * @name updatUserType
+   * @name updateUserType
    * @param user
    * @param userType
    */
@@ -285,13 +258,13 @@ class AuthService {
     userType: UserType
   ): Promise<void> {
     user.isAdmin = false;
-    user.isOrganisation = false;
+    user.isBusiness = false;
     user.isTalent = false;
 
     if (userType === UserType.ADMIN) {
       user.isAdmin = true;
-    } else if (userType === UserType.ORGANISATION) {
-      user.isOrganisation = true;
+    } else if (userType === UserType.BUSINESS) {
+      user.isBusiness = true;
     } else if (userType === UserType.TALENT) {
       user.isTalent = true;}
 
@@ -306,8 +279,12 @@ class AuthService {
    * @param user
    */
   public async updateLastLogin(user: IUserDoc): Promise<void> {
+    
     const today = dateToday(new Date());
-    user.lastLogin = today.ISO;
+    
+    user.login.last = today.ISO;
+    user.login.method = LoginMethod.EMAIL;
+
     await user.save();
   }
 
@@ -336,25 +313,38 @@ class AuthService {
   }
 
   /**
-   * Check if user account is locked
-   * @param user - User document
-   * @returns boolean
+   * @name suspendAccount
+   * @param user
    */
-  async checkLockedStatus(user: IUserDoc): Promise<boolean> {
+  public async suspendAccount(user: IUserDoc): Promise<void> {
+    user.isActive = false;
+    user.isActivated = false;
+    user.isLocked = true;
+    user.isSuspended = true;
+    await user.save();
+  }
+
+  /**
+   * @name resetLoginLimit
+   * @param user
+   */
+  public async resetLoginLimit(user: IUserDoc): Promise<void> {
+    user.loginLimit = 0;
+    await user.save();
+  }
+
+  
+  /**
+   * @name checkLockedStatus
+   * @param user
+   * @returns
+   */
+  public async checkLockedStatus(user: IUserDoc): Promise<boolean> {
     if (!user.isLocked || !user.lockedUntil) {
       return false;
     }
-
-    // If lock duration has passed, unlock the account
-    if (new Date() > user.lockedUntil) {
-      user.isLocked = false;
-      user.lockedUntil = null;
-      user.loginLimit = 0;
-      await user.save();
-      return false;
-    }
-
-    return true;
+    
+    return false;
   }
 
   /**
@@ -382,6 +372,7 @@ class AuthService {
    * @returns
    */
   public async generateOTPCode(user: IUserDoc, type: OtpType): Promise<string> {
+    
     const gencode = Random.randomNum(6);
     user.Otp = gencode.toString();
     user.OtpExpiry = Date.now() + 15 * 60 * 1000;
@@ -398,6 +389,7 @@ class AuthService {
    * @returns
    */
   public async verifyOTPCode(code: string): Promise<IUserDoc | null> {
+    
     const today = Date.now(); // get timestamp from today's date
     const _foundUser = await User.findOne({
       Otp: code.toString(),
@@ -413,7 +405,8 @@ class AuthService {
    * @param code
    * @returns
    */
-  public async verifyOTP(data: verifyOtpDTO): Promise<IResult> {
+  public async verifyOTP(data: VerifyOtpDTO): Promise<IResult> {
+    
     let result: IResult = { error: false, message: "", code: 200, data: {} };
 
     const { email, otp: code, otpType } = data;
@@ -466,9 +459,8 @@ class AuthService {
     user: IUserDoc,
     password: string
   ): Promise<boolean> {
+    
     let result: boolean = false;
-
-    console.log("Encrypting password for:", user.email);
 
     const encrypted = await SystemService.encryptData({
       payload: password,
@@ -476,11 +468,9 @@ class AuthService {
       separator: "-",
     });
 
-    console.log("Encrypted Password:", encrypted);
 
     if (encrypted) {
       user.password = encrypted;
-      //await user.save();
 
       result = true;
     }
@@ -495,16 +485,11 @@ class AuthService {
   public async decryptUserPassword(user: IUserDoc): Promise<string | null> {
     let result: string | null = null;
 
-    console.log("Decrypting password for:", user.email);
-    console.log("Stored Encrypted Password:", user.password);
-
     const decrypted = await SystemService.decryptData({
       password: user.email,
       payload: user.password,
       separator: "-",
     });
-
-    console.log("Decrypted Password:", decrypted.data.toString());
 
     result = decrypted.data.toString();
 
@@ -520,6 +505,7 @@ class AuthService {
     data: MatchEncryptedPasswordDTO
   ): Promise<boolean> {
     let result: boolean = false;
+    
     const { hash, user } = data;
 
     const hashDecrypt = await SystemService.encryptData({
@@ -544,6 +530,7 @@ class AuthService {
     req: Request;
     isAdmin: boolean;
   }): Promise<IResult> {
+    
     let result: IResult = { error: false, message: "", code: 200, data: {} };
     const { req, isAdmin } = data;
 
@@ -589,6 +576,10 @@ class AuthService {
 
     new ErrorResponse(`Role ${role} does not exist.`, 400, []);
   }
+
+
+
+
 }
 
 export default new AuthService();

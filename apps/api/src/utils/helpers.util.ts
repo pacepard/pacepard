@@ -58,7 +58,7 @@ export const checkUniqueName = async (Model: any, name: string) => {
     else return false;
   };
   
-  export const slugifyString = (arg: string) => {
+  export const genSlug = (arg: string) => {
     const val = slugify(arg, { lower: true, trim: true });
     return val;
   };

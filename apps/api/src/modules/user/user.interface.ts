@@ -5,6 +5,7 @@ import { IRoleDoc } from '../role/role.interface'
 import { IPermissionDoc } from '../permission/permission.interface'
 import { INotificationDoc } from '../notification/notification.interface';
 
+
 type ObjectId = Types.ObjectId;
 
 export interface IUserDoc extends Document {
@@ -27,24 +28,19 @@ export interface IUserDoc extends Document {
         s3Key: string;
     };
 
-    image: {
-        fileName: string;
-        s3Key: string;
-    };
-
     location: ILocation;
     timeZone: string;
 
     login: {
         last: string;
-        method: string;
+        method: LoginMethod;
     };
     onboard: {
         step: number;
-        status: string;
+        status: OnboardStatus;
     };
 
-    inviteStatus: string;
+    inviteStatus: InviteStatus;
 
     apiKey: IAPIKey;
     keys: Array<IAPIKeyDoc | any>;
@@ -74,9 +70,10 @@ export interface IUserDoc extends Document {
     devices: Array<IDevice>;
 
     // relationships
-    roles: Array<IRoleDoc | any>;
+    role: IRoleDoc | any;
     permissions: Array<IPermissionDoc | any>;
     notifications: Array<INotificationDoc | any>;
+    createdBy: ObjectId | any;
 
     matchPassword: (password: string) => boolean;
     getAuthToken: () => string;
@@ -99,7 +96,7 @@ export enum PasswordType {
 export enum UserType {
     SUPERADMIN = 'super-admin',
     ADMIN = 'admin',
-    ORGANISATION = 'organisation',
+    BUSINESS = 'business',
     TALENT = 'talent',
     MENTOR = 'mentor',
     EVALUATOR = 'evaluator',
@@ -132,3 +129,24 @@ export interface ILocation {
 export interface IDevice {
 
 }
+    
+export enum OnboardStatus {
+    NOT_STARTED = 'not-started',
+    IN_PROGRESS = 'in-progress',
+    COMPLETED = 'completed',
+}
+
+export enum InviteStatus {
+    PENDING = 'pending',
+    ACCEPTED = 'accepted',
+    REJECTED = 'rejected',
+    EXPIRED = 'expired',
+    REVOKED = 'revoked',
+}
+
+export enum LoginMethod {
+    EMAIL = 'email',
+    PHONE = 'phone',
+    SOCIAL = 'social',
+}
+

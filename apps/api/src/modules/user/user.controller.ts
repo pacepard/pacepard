@@ -2,88 +2,17 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler } from "@btffamily/pacitude";
 import ErrorResponse from '../../utils/error.util'
 import authMapper from "../../mappers/auth.mapper";
-import User from '../user/user.model';
-import { inviteUserDTO } from '../user/user.dto'
-import AuthService from "../../modules/auth/auth.service";
-import { generatePassword } from "../../utils/helpers.utl"
-import { PasswordType, UserType } from "../../utils/eums.util";
-import emailService from '../../services/email.service';
 import userService from '../../modules/user/user.service';
+import userRepository from './user.repository';
+import { IUserDoc } from './user.interface';
+import {
+  OnboardStep1DTO,
+  OnboardStep2DTO,
+  OnboardStep3TalentDTO,
+  OnboardStep3BusinessDTO,
+} from "../auth/auth.dto";
+import redisWrapper from "../../middlewares/redis.mdw";
 
-
-
-
-/**
- * @name inviteUser
- * @description invite user to join the platform
- * @route POST /user/invite
- * @access private (admin only)
- * @returns {Object} staff profile
- */
-export const InviteUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-      
-    const { firstName, lastName, email, userType }: inviteUserDTO = req.body;
-    const inviterId = (req as any).user?.id;
-    if (!inviterId) return next(new ErrorResponse("Unauthorized", 401, []));
-
-      // Validate input
-    const validate = await AuthService.validateRegister(req.body);
-    if (validate.error) {
-      return next(new ErrorResponse(validate.message, validate.code!, []));
-    }
-
-    // Check email validity
-    const mailCheck = await AuthService.checkEmail(email);
-    if (!mailCheck) {
-      return next(new ErrorResponse("A valid email is required", 400, []));
-    }
-
-    // Check if user already exists
-    const userExist = await User.findOne({ email: email.toLowerCase() });
-    if (userExist) {
-      return next(new ErrorResponse("Email already exists", 400, []));
-    }
-
-    // Generate temporary password
-    const temporaryPassword = generatePassword(20);
-
-    // Create user with temporary password
-    const user = await userService.createUser({
-      firstName,
-      lastName,
-      email,
-      password: temporaryPassword,
-      passwordType: PasswordType.SYSTEMGENERATED,
-      userType: userType as UserType,
-      createdBy: inviterId
-    });
-
-    if (!user) {
-      return next(new ErrorResponse("Failed to create user", 404, []));
-    }
-
-        // Send invitation email with temporary password
-        const sendInvite = await emailService.sendUserWelcomeEmail(user)    
-        if (sendInvite.error) {
-          return next(new ErrorResponse(sendInvite.message, sendInvite.code!, []));
-        }
-        
-        res.status(201).json({
-          error: false,
-          errors: [],
-          data: {
-            id: user._id,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            userType: user.userType
-          },
-          message: "Invitation sent successfully",
-          status: 201,
-        })
-  }
-)
 
 
 /**
@@ -94,82 +23,148 @@ export const InviteUser = asyncHandler(
  */
 export const getUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+
     const userId = (req as any).user?.id;
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
 
-    // Find the user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return next(new ErrorResponse("User  not found", 404, []));
-    }
+    const cacheKey = `user:profile:${userId}`;
+    const cacheTTL = 300; // 5 minutes for user profile data
 
-    // Map the user information to include only the specified fields
-    const userInfo = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      phoneCode: user.phoneCode,
-      activated: user.isActivated,
+      // Check cache first
+      const cached = await redisWrapper.fetchData<any>(cacheKey);
+      if (cached) {
+        return res.status(200).json({
+          error: false,
+          errors: [],
+          data: cached,
+          message: "User information retrieved successfully (cached).",
+          status: 200,
+        });
+      }
 
-    };
+      // Find the user by ID using repository
+      const userResult = await userRepository.findById(String(userId), false);
+      if (userResult.error || !userResult.data) {
+        return next(new ErrorResponse("User not found", 404, []));
+      }
 
-    res.status(200).json({
-      error: false,
-      errors: [],
-      data: userInfo,
-      message: "User information retrieved successfully.",
-      status: 200,
-    });
+      const user = userResult.data as IUserDoc;
+
+      // Map the user information to include only the specified fields
+      const userInfo = {
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phoneNumber: user.location?.phoneNumber || '',
+        phoneCode: user.location?.phoneCode || '',
+        activated: user.isActivated || false,
+      };
+
+      // Cache the result
+      await redisWrapper.keepData(
+        { key: cacheKey, value: userInfo },
+        cacheTTL
+      );
+
+      res.status(200).json({
+        error: false,
+        errors: [],
+        data: userInfo,
+        message: "User information retrieved successfully.",
+        status: 200,
+      });
+    
   }
 );
 
 /**
- * @name editUser
- * @description Edits user information excluding email, password, and permission settings
- * @route PUT /user
- * @access  Private
+ * @name getUsers
+ * @description Retrieves a paginated list of users with filtering and sorting
+ * @route GET /users
+ * @access  Private (Admin only - should add admin check)
  */
-export const editUser = asyncHandler(
+export const getUsers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id; // Assuming user ID is available in the request
-    if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
+    
     const {
-      username,
-      firstName,
-      lastName,
-      phoneNumber,
-      phoneCode,
-      countryPhone,
-    } = req.body; // Example fields to edit
+      page = 1,
+      limit = 25,
+      sort = "-createdAt",
+      select,
+      populate,
+      ...filters
+    } = req.query;
 
-    // Find the user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return next(new ErrorResponse("User  not found", 404, []));
-    }
+    // Build cache key from query parameters
+    const cacheKey = `users:list:${JSON.stringify({ page, limit, sort, select, filters })}`;
+    const cacheTTL = 180; // 3 minutes for user lists (shorter than individual profiles)
 
-    // Update user information
-    user.firstName = firstName || user.firstName;
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.phoneNumber = phoneNumber || user.phoneNumber;
-    user.phoneCode = phoneCode || user.phoneCode;
-    user.countryPhone = countryPhone || user.countryPhone;
+      // Check cache first
+      const cached = await redisWrapper.fetchData<any>(cacheKey);
+      if (cached) {
+        return res.status(200).json({
+          error: false,
+          errors: [],
+          data: cached.data,
+          pagination: cached.pagination,
+          count: cached.count,
+          total: cached.total,
+          message: "Users retrieved successfully (cached).",
+          status: 200,
+        });
+      }
 
-    await user.save();
+      // Build query options
+      const options: any = {
+        page: parseInt(String(page), 10),
+        limit: parseInt(String(limit), 10),
+        sort: String(sort),
+      };
 
-    const mapped = await authMapper.mapRegisteredUser(user);
+      if (select) {
+        options.select = String(select);
+      }
 
-    res.status(201).json({
-      error: false,
-      errors: [],
-      data: mapped,
-      message: "User information updated successfully.",
-      status: 201,
-    });
+      if (populate) {
+        options.populate = String(populate);
+      }
+
+      // Get users from repository
+      const result = await userRepository.getUsers(filters as any, options);
+
+      if (result.error) {
+        return next(new ErrorResponse(result.message, result.code || 500, []));
+      }
+
+      // Prepare response data
+      const responseData = {
+        data: result.data,
+        pagination: result.pagination,
+        count: result.count,
+        total: result.total,
+      };
+
+      // Cache the result
+      await redisWrapper.keepData(
+        { key: cacheKey, value: responseData },
+        cacheTTL
+      );
+
+      res.status(200).json({
+        error: false,
+        errors: [],
+        data: result.data,
+        pagination: result.pagination,
+        count: result.count,
+        total: result.total,
+        message: result.message,
+        status: 200,
+      });
+    
   }
 );
+
+
 
 /**
  * @name deactivateAccount
@@ -182,15 +177,30 @@ export const deactivateAccount = asyncHandler(
     const userId = (req as any).user?.id;
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
 
-    // Find the user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return next(new ErrorResponse("User  not found", 404, []));
+    // Find the user by ID using repository
+    const userResult = await userRepository.findById(String(userId), false);
+    if (userResult.error || !userResult.data) {
+      return next(new ErrorResponse("User not found", 404, []));
     }
 
-    // Deactivate the user account
-    user.isDeactivated = true;
-    await user.save();
+    // Deactivate the user account using repository
+    const updateResult = await userRepository.updateUser(String(userId), {
+      isDeactivated: true,
+    } as Partial<IUserDoc>);
+
+    if (updateResult.error) {
+      return next(new ErrorResponse(updateResult.message, updateResult.code || 500, []));
+    }
+
+    // Invalidate cache for this user
+    try {
+      await redisWrapper.deleteData(`user:profile:${userId}`);
+      // Also invalidate any list caches that might include this user
+      // Note: In production, you might want to use pattern matching or maintain a cache key registry
+    } catch (cacheError) {
+      // Silently fail cache invalidation - don't break the request
+      console.error("Cache invalidation failed:", cacheError);
+    }
 
     res.status(200).json({
       error: false,
@@ -200,6 +210,191 @@ export const deactivateAccount = asyncHandler(
     });
   }
 );
+
+
+/**
+ * @name onboardStep1
+ * @description Step 1: Set user type (TALENT or BUSINESS)
+ * @route POST /user/onboard/step-1
+ * @access Private (Authenticated users only)
+ */
+export const onboardStep1 = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardStep1DTO = req.body;
+
+    const result = await userService.step1SetUserType(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name onboardStep2
+ * @description Step 2: Set basic user information
+ * @route POST /user/onboard/step-2
+ * @access Private (Authenticated users only)
+ */
+export const onboardStep2 = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardStep2DTO = req.body;
+
+    const result = await userService.step2SetBasicInfo(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name onboardStep3Talent
+ * @description Step 3: Set talent-specific information
+ * @route POST /user/onboard/step-3-talent
+ * @access Private (Authenticated users with TALENT type only)
+ */
+export const onboardStep3Talent = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardStep3TalentDTO = req.body;
+
+    const result = await userService.step3SetTalentInfo(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name onboardStep3Business
+ * @description Step 3: Set business-specific information
+ * @route POST /user/onboard/step-3-business
+ * @access Private (Authenticated users with BUSINESS type only)
+ */
+export const onboardStep3Business = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardStep3BusinessDTO = req.body;
+
+    const result = await userService.step3SetBusinessInfo(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name onboardComplete
+ * @description Step 4: Complete onboarding process
+ * @route POST /user/onboard/complete
+ * @access Private (Authenticated users only)
+ */
+export const onboardComplete = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const result = await userService.step4CompleteOnboarding(userId);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name getOnboardingStatus
+ * @description Get current onboarding status and progress
+ * @route GET /user/onboard/status
+ * @access Private (Authenticated users only)
+ */
+export const getOnboardingStatus = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const result = await userService.getOnboardingStatus(userId);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+
 
     // create user
     // get all user account 

@@ -1,24 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "../../middlewares/async.mdw";
 import ErrorResponse from "../../utils/error.util";
-import User from "../../modules/user/user.model";
 import {
   ChangePasswordDTO,
   LoginDTO,
   RegisterUserDTO,
-  resendOtpDTO,
+  ResendOtpDTO,
   ResetPasswordDTO,
-  verifyOtpDTO,
-} from "../auth/auth.dto.ts";
-import authService from "../auth/auth.service";
-import { OtpType, PasswordType, UserType } from "../../utils/eums.util";
-import emailService from "../../services/email.service.ts";
-import tokenService from "../../services/token.service.ts";
-import { IUserDoc } from "../../modules/user/user.interface.ts";
-import userService from "../../modules/user/user.service.ts";
-import onboardingService from "../../services/onboarding.service.ts";
-import authMapper from "../../mappers/auth.mapper.ts";
-import userRepository from "../user/user.repository.ts";
+  VerifyOtpDTO,
+} from "./auth.dto";
+import authService from "./auth.service";
+import { OtpType, PasswordType, UserType } from "../user/user.interface";
+import emailService from "../../services/email.service";
+import tokenService from "../../services/token.service";
+import { IUserDoc } from "../user/user.interface";
+import userService from "../user/user.service";
+import onboardingService from "../../services/onboarding.service";
+import authMapper from "../../mappers/auth.mapper";
+import userRepository from "../user/user.repository";
+import User from "../user/user.model";
 
 
 /**
@@ -31,7 +31,7 @@ import userRepository from "../user/user.repository.ts";
 export const registerUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
 
-    const { firstName, lastName, email, password, userType }: RegisterUserDTO =
+    const { email, password, userType }: RegisterUserDTO =
       req.body;
 
     const validate = await authService.validateRegister(req.body);
@@ -44,8 +44,10 @@ export const registerUser = asyncHandler(
       return next(new ErrorResponse("A valid email is required", 400, []));
     }
 
-    const userExist = await User.findOne({ email: email.toLowerCase() });
-    if (userExist) {
+    const userExistResult = await userRepository.findOne({ email: email.toLowerCase() });
+    if (userExistResult.error === false && userExistResult.data) {
+      const userExist = userExistResult.data as IUserDoc;
+      
       if (userExist.userType === UserType.SUPERADMIN) {
         return next(
           new ErrorResponse("Forbidden!, use another email", 400, [])
@@ -69,8 +71,6 @@ export const registerUser = asyncHandler(
     }
 
     const user = await userService.createUser({
-      firstName,
-      lastName,
       email,
       password,
       passwordType: PasswordType.USERGENERATED,
@@ -118,7 +118,7 @@ export const registerUser = asyncHandler(
 export const activateUserAccount = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     
-    const { email, otp, otpType }: verifyOtpDTO = req.body;
+    const { email, otp, otpType }: VerifyOtpDTO = req.body;
 
     if (!email || !otp || !otpType) {
       return next(
@@ -127,10 +127,11 @@ export const activateUserAccount = asyncHandler(
     }
 
     // use OTP to find the user
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
+    const userResult = await userRepository.findOne({ email: email.toLowerCase() });
+    if (userResult.error || !userResult.data) {
       return next(new ErrorResponse("User not found", 404, []));
     }
+    const user = userResult.data as IUserDoc;
 
     // Check if account is already active
     if (user.isActive) {
@@ -148,35 +149,30 @@ export const activateUserAccount = asyncHandler(
       );
     }
 
+    // Get Mongoose document for operations that need .save()
+    const userDoc = await User.findById(user._id);
+    if (!userDoc) {
+      return next(new ErrorResponse("User not found", 404, []));
+    }
+
     // Activate the user account and Update login information
-    await authService.activateAccount(user);
-    await authService.updateLastLogin(user);
-    //await authService.updateLoginInfo(user, req);
+    await authService.activateAccount(userDoc);
+    await authService.updateLastLogin(userDoc);
+    //await authService.updateLoginInfo(userDoc, req);
 
     // assign token to the user
-    const token = await tokenService.attachToken(user);
+    const token = await tokenService.attachToken(userDoc);
     if (token.error) {
       return next(new ErrorResponse(token.message, token.code!, []));
     }
 
-    // Start onboarding process for new users
-    let onboardingResult = null;
-    if (user.userType === UserType.TALENT) {
-        onboardingResult = await onboardingService.startOnboarding(user);
-    }
-
-    const mappedUser = await authMapper.mapActivatedUser(user);
+  
+    const mappedUser = await authMapper.mapActivatedUser(userDoc);
 
     // Include comprehensive onboarding data in the response if available
     const responseData = {
       ...mappedUser,
       token: token.data.token,
-      ...(onboardingResult && !onboardingResult.error && {
-        onboarding: {
-          ...onboardingResult.data,
-          progress: onboardingResult.data.progress || { completedSteps: 0, totalSteps: 3, percentage: 0 }
-        }
-      })
     };
 
     res.status(200).json({
@@ -206,14 +202,16 @@ export const loginUser = asyncHandler(
       return next(new ErrorResponse(validate.message, validate.code!, []));
     }
 
-    const userExist = await User.findOne({ email: email.toLowerCase() }).select(
-      "+password"
+    const userExistResult = await userRepository.findOne(
+      { email: email.toLowerCase() },
+      { select: "+password" } as any
     );
-    if (!userExist) {
+    if (userExistResult.error || !userExistResult.data) {
       return next(
         new ErrorResponse("Account not found. Please sign up first.", 400, [])
       );
     }
+    const userExist = userExistResult.data as IUserDoc;
 
     // Check if account is locked
     if (await authService.checkLockedStatus(userExist)) {
@@ -247,39 +245,39 @@ export const loginUser = asyncHandler(
       );
     }
 
+    // Get Mongoose document for operations that need .save()
+    const userDoc = await User.findById(userExist._id);
+    if (!userDoc) {
+      return next(new ErrorResponse("User not found", 404, []));
+    }
+
     // Update login information
-    await authService.activateAccount(userExist);
-    await authService.updateLastLogin(userExist);
-    //await authService.updateLoginInfo(userExist, req);
+    await authService.activateAccount(userDoc);
+    await authService.updateLastLogin(userDoc);
+    //await authService.updateLoginInfo(userDoc, req);
 
-    await userExist.save();
+    const token = await tokenService.attachToken(userDoc);
 
-    const token = await tokenService.attachToken(userExist);
     if (token.error) {
       return next(new ErrorResponse(token.message, token.code!, []));
     }
 
     // Get detailed onboarding progress for talent users
     let onboardingResult = null;
-    if (userExist.userType === UserType.TALENT) {
-      const progressResult = await onboardingService.getOnboardingStatus(userExist);
+    if (userDoc.userType === UserType.TALENT) {
+      const progressResult = await onboardingService.getOnboardingStatus(userDoc);
       if (!progressResult.error) {
         onboardingResult = progressResult.data;
       }
     }
 
-    const mappedUser = await authMapper.mapActivatedUser(userExist);
+    const mappedUser = await authMapper.mapActivatedUser(userDoc);
 
     // Include comprehensive onboarding data in the response if available
     const responseData = {
       ...mappedUser,
       token: token.data.token,
-      ...(onboardingResult && {
-        onboarding: {
-          ...onboardingResult,
-          progress: onboardingResult.progress
-        }
-      })
+      
     };
 
     res.status(200).json({
@@ -302,22 +300,20 @@ export const loginUser = asyncHandler(
 export const logoutUser = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     
-    const userId = (req as any).user.id as IUserDoc;
+    const userId = (req as any).user.id;
 
-    const user = await User.findById(userId);
-    if (!user) {
+    const userDoc = await User.findById(userId);
+    if (!userDoc) {
       return next(new ErrorResponse("User not found", 404, []));
     }
 
-    const result = await tokenService.detachToken(user);
+    const result = await tokenService.detachToken(userDoc);
     if (result.error) {
       return next(new ErrorResponse(result.message, result.code, []));
     }
 
-    await authService.updateLastLogin(user);
-    //await authService.updateLoginInfo(user, req);
-
-    await user.save();
+    await authService.updateLastLogin(userDoc);
+    //await authService.updateLoginInfo(userDoc, req);
 
     return res.status(200).json({
       error: false,
@@ -374,12 +370,13 @@ export const forgotPassword = asyncHandler(
       return next(new ErrorResponse("Invalid email format.", 400, []));
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
+    const userResult = await userRepository.findOne({ email: email.toLowerCase() });
+    if (userResult.error || !userResult.data) {
       return next(
         new ErrorResponse("User with this email does not exist", 404, [])
       );
     }
+    const user = userResult.data as IUserDoc;
 
     // Check if account is locked or deactivated}
     if (await authService.checkLockedStatus(user)) {
@@ -446,15 +443,16 @@ export const resetPassword = asyncHandler(
       );
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
+    const userDoc = await User.findOne({ email: email.toLowerCase() });
+    if (!userDoc) {
       return next(new ErrorResponse("User not found", 404, []));
     }
 
-    await authService.encryptUserPassword(user, newPassword);
+    await authService.encryptUserPassword(userDoc, newPassword);
+    await userDoc.save();
 
     const sendEmail = await emailService.sendPasswordResetNotificationEmail(
-      user
+      userDoc
     );
     if (sendEmail.error) {
       return next(new ErrorResponse(sendEmail.message, sendEmail.code, []));
@@ -481,7 +479,7 @@ export const resetPassword = asyncHandler(
 export const changePassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     
-    const userId = (req as any).user.id as IUserDoc;
+    const userId = (req as any).user.id;
 
     const { currentPassword, newPassword }: ChangePasswordDTO = req.body;
     if (!currentPassword || !newPassword) {
@@ -490,14 +488,15 @@ export const changePassword = asyncHandler(
       );
     }
 
-    const user = await User.findById(userId).select("+password");
-    if (!user) {
+    // Get Mongoose document with password field
+    const userDoc = await User.findById(userId).select("+password");
+    if (!userDoc) {
       return next(new ErrorResponse("User not found", 404, []));
     }
 
-    const isMatch = await await authService.matchEncryptedPassword({
+    const isMatch = await authService.matchEncryptedPassword({
       hash: currentPassword,
-      user: user,
+      user: userDoc,
     });
     if (!isMatch) {
       return next(new ErrorResponse("Current password is incorrect", 400, []));
@@ -514,16 +513,15 @@ export const changePassword = asyncHandler(
       );
     }
 
-    await authService.encryptUserPassword(user, newPassword);
+    await authService.encryptUserPassword(userDoc, newPassword);
+    await userDoc.save();
 
     const sendEmail = await emailService.sendPasswordChangeNotificationEmail(
-      user
+      userDoc
     );
     if (sendEmail.error) {
       return next(new ErrorResponse(sendEmail.message, sendEmail.code, []));
     }
-
-    await user.save();
 
     res.status(200).json({
       error: false,
@@ -545,7 +543,7 @@ export const changePassword = asyncHandler(
 export const verifyOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     
-    const { email, otp, otpType }: verifyOtpDTO = req.body;
+    const { email, otp, otpType }: VerifyOtpDTO = req.body;
 
     if (!email || !otp || !otpType) {
       return next(
@@ -553,14 +551,15 @@ export const verifyOTP = asyncHandler(
       );
     }
 
-    // use OTP to find the user
-    const user = await userRepository.findUser(otp);
-    if (user.error) {
-      return next(new ErrorResponse(user.message, user.code, []));
+    // use email to find the user
+    const userResult = await userRepository.findOne({ email: email.toLowerCase() });
+    if (userResult.error || !userResult.data) {
+      return next(new ErrorResponse("User not found", 404, []));
     }
+    const user = userResult.data as IUserDoc;
 
     const otpVerification = await authService.verifyOTP({
-      email,
+      email: user.email,
       otp,
       otpType,
     });
@@ -588,7 +587,7 @@ export const verifyOTP = asyncHandler(
  */
 export const resendOTP = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { email, otpType }: resendOtpDTO = req.body;
+    const { email, otpType }: ResendOtpDTO = req.body;
 
     if (!email) {
       return next(new ErrorResponse("Email is required", 400, []));
@@ -597,10 +596,11 @@ export const resendOTP = asyncHandler(
     if (!otpType)
       return next(new ErrorResponse("otptype is required", 400, []));
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
+    const userResult = await userRepository.findOne({ email: email.toLowerCase() });
+    if (userResult.error || !userResult.data) {
       return next(new ErrorResponse("User doesn't exist", 400, []));
     }
+    const user = userResult.data as IUserDoc;
 
     const OTP = await authService.generateOTPCode(user, otpType);
 
