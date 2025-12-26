@@ -3,7 +3,7 @@ import {
   MentorStatus,
   MentorVisibilty,
   UploadStatus,
-} from "../../utils/eums.util";
+} from "../../utils/enums.util";
 import { IFile } from "../../utils/interfaces.util";
 
 export interface IMentorImage {

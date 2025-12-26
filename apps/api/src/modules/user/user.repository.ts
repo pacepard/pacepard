@@ -1,149 +1,65 @@
-import { FilterQuery, Model } from "mongoose";
-import User from "../../modules/user/user.model";
-import { IResult, IUserDoc } from "../../utils/interfaces.util";
+import { Model, FilterQuery } from "mongoose";
+import User from "./user.model";
+import { IUserDoc } from "./user.interface";
+import RepositoryService from "../../services/repository.service";
+import { IResult, IPagination } from "../../utils/interfaces.util";
 import tokenService from "../../services/token.service";
-import mongoose from "mongoose";
 
-
-class UserRepository {
-  private model: Model<IUserDoc>;
-
+/**
+ * User Repository
+ * Extends the generic repository with user-specific methods
+ * Caching is handled at the service/controller layer, not here
+ */
+class UserRepository extends RepositoryService<IUserDoc> {
   constructor() {
-    this.model = User;
+    super(User, "User");
   }
 
-
-  
   /**
-   * @name findByIdOrSlug
+   * @name findUser
    * @description Find a user by either MongoDB ObjectId or slug (e.g. username).
    * @param input - The user ID (ObjectId or string) or username slug
    * @param populate - Whether to populate related fields (e.g. events)
    * @returns Promise<IResult>
    */
-  public async findUser(input: string | number, populate = false): Promise<IResult> {
-    const result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    // normalize input to string to satisfy Mongoose ObjectId APIs
-    const inputStr = String(input);
-
-    const isObjectId =
-      mongoose.Types.ObjectId.isValid(inputStr) &&
-      new mongoose.Types.ObjectId(inputStr).toString() === inputStr;
-
-    let query = isObjectId
-      ? this.model.findById(inputStr)
-      : this.model.findOne({ slug: inputStr });
-
-    if (populate) {
-      query = query.populate("");
-    }
-
-    const user = await query.lean();
-
-    if (!user) {
-      return {
-        error: true,
-        message: "User not found",
-        code: 404,
-        data: {},
-      };
-    }
-
-    result.message = "User found";
-    result.data = user;
-    return result;
-  }
-
-  /**
-   * @name findById
-   * @param id
-   * @param populate 
-   * @returns user
-   * @description Find a user by ID and populate related data
-   */
-  public async findById(id: string, populate: boolean = false): Promise<IUserDoc | null> {
-    
-    const dataPop = [
-      { path: 'sermons'}
-    ]
-
-    const pop = populate ? dataPop : [];
-
-    // define filter query
-    const query: FilterQuery<IUserDoc> = { _id: id };
-
-    const user = await this.model.findById(query).populate(pop).lean();
-    return user
-  }
-
-  /**
-   * @name findByEmail
-   * @param email
-   * @returns {Promise<IResult>}
-   */
-  public async findByEmail(email: string): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    const user = await this.model.findOne({ email }).lean();
-    if (!user) {
-      result.error = true;
-      result.code = 404;
-      result.message = "User not found";
-    } else {
-      result.data = user;
-    }
-
-    return result;
+  public async findUser(
+    input: string | number,
+    populate = false
+  ): Promise<IResult> {
+    return this.findByIdOrSlug(input, populate);
   }
 
   /**
    * @name getUsers
+   * @param filter - Optional filter query
+   * @param options - Query options (select, sort, page, limit, populate)
    * @returns {Promise<IResult>}
+   * @description Get all users with query middleware features (pagination, sorting, field selection)
    */
-  public async getUsers(): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    const users = await this.model.find({}).lean();
-    result.data = users;
-
-    return result;
+  public async getUsers(
+    filter?: FilterQuery<IUserDoc>,
+    options?: {
+      select?: string;
+      sort?: string;
+      page?: number;
+      limit?: number;
+      populate?: string | any;
+    }
+  ): Promise<IResult> {
+    if (options) {
+      return this.findAll(filter || {}, options);
+    }
+    return this.findAll(filter);
   }
 
   /**
    * @name createUser
    * @param userData
    * @returns {Promise<IResult>}
+   * @description Create a new user
    */
   public async createUser(userData: Partial<IUserDoc>): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 201, data: {} };
-
-    const newUser = await this.model.create(userData);
-    result.data = newUser;
-    result.message = "User created successfully";
-
-    return result;
-  }
-
-  /**
-   * @name deleteUser
-   * @param id
-   * @returns {Promise<IResult>}
-   */
-  public async deleteUser(id: string): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    const deletedUser = await this.model.findByIdAndDelete(id);
-    if (!deletedUser) {
-      result.error = true;
-      result.code = 404;
-      result.message = "User not found";
-    } else {
-      result.message = "User deleted successfully";
-      result.data = deletedUser;
-    }
-
-    return result;
+    return this.create(userData);
   }
 
   /**
@@ -151,30 +67,33 @@ class UserRepository {
    * @param id
    * @param updateData
    * @returns {Promise<IResult>}
+   * @description Update a user
    */
-  public async updateUser(id: string, updateData: Partial<IUserDoc>): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: {} };
+  public async updateUser(
+    id: string,
+    updateData: Partial<IUserDoc>
+  ): Promise<IResult> {
+    return this.update(id, updateData);
+  }
 
-    const updatedUser = await this.model.findByIdAndUpdate(id, updateData, { new: true });
-    if (!updatedUser) {
-      result.error = true;
-      result.code = 404;
-      result.message = "User not found";
-    } else {
-      result.message = "User updated successfully";
-      result.data = updatedUser;
-    }
-
-    return result;
+  /**
+   * @name deleteUser
+   * @param id
+   * @returns {Promise<IResult>}
+   * @description Delete a user
+   */
+  public async deleteUser(id: string): Promise<IResult> {
+    return this.delete(id);
   }
 
   /**
    * @name getAuthToken
    * @param user
    * @returns {Promise<IResult>}
+   * @description Generate authentication token for a user
    */
   public async getAuthToken(user: IUserDoc): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: {} };
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
 
     const tokenResult = await tokenService.attachToken(user);
     if (tokenResult.error) {

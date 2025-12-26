@@ -25,7 +25,7 @@ export interface IBusinessDoc extends Document {
     email: string;
     
     businessName: string;
-    businessType: string;
+    businessType: BusinessType;
     description: string;
     size: string;
     industry: string; // category
@@ -93,4 +93,15 @@ export enum VerificationType {
     PENDING = "pending",
     VERIFIED = "verified",
     REJECTED = "rejected",
+}
+
+
+export enum BusinessType {
+    COMPANY = "company",
+    NONPROFIT = "non-profit",
+    GOVERNMENT = "government",
+    EDUCATION = "education",
+    PARTNER = "partner",
+    OTHER = "other"
+    
 }

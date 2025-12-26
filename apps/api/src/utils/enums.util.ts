@@ -12,6 +12,44 @@ export enum AppChannel {
   WATCH = "watch",
 }
 
+export enum DbModels {
+  ADMIN = "admin",
+  APIKEY = "apikey",
+  BUSINESS = "business",
+  CAMPAIGN = "campaign",
+  DISCOVERY = "discovery",
+  DOMAIN = "domain",
+  ENTRY = "entry",
+  HACKATHON = "hackathon",
+  INVITES = "invites",
+  LEADERBOARD = "leaderboard",
+  MENTOR = "mentor",
+  NOTIFICATION = "notification",
+  PERMISSION = "permission",
+  PORTFOLIO = "portfolio",
+  PROJECT = "project",
+  REFERRAL = "referral",
+  REGISTRATION = "registration",
+  RESOURCE = "resource",
+  ROLE = "role",
+  SQUAD = "squad",
+  SUBMISSION = "submission",
+  SUBSCRIPTION = "subscription",
+  TALENT = "talent",
+  TASK = "task",
+  TEAM = "team",
+  TEMPLATE = "template",
+  TRANSACTION = "transaction",
+  USER = "user",
+  VERIFICATION = "verification",
+  WORKSPACE = "workspace",
+}
+
+
+
+
+
+
 
 export enum FileType {
   AUDIO = "audio",
@@ -145,36 +183,6 @@ export enum OAuthProvider {
   GITHUB = "github",
 }
 
-export enum DbModels {
-  USER = "user",
-  ADMIN = "admin",
-  ROLE = "role",
-  PERMISSION = "permission",
-  CAMPAIGN = "hackathon_campaign",
-  TALENT = "talent",
-  ORGANIZATION = "organization",
-  COMPETITION = "competition",
-  TEAM = "team",
-  PROJECT = "project",
-  PORTFOLIO = "portfolio",
-  ACHIEVEMENT = "achievement",
-  MENTOR = "mentor",
-  RESOURCE = "resource",
-  EVALUATOR = "evaluator",
-  HACKATHON = "hackathon",
-  TASK = "task",
-  SUBMISSION = "submission",
-  SUBMISSION_COMMENT = "submissionComment",
-  BADGE = "badge",
-  MEDAL = "medal",
-  MEDAL_AWARD = "medalAward",
-  LEADERBOARD = "leaderboard",
-  JUDGE_SCORE = "judgeScore",
-  INVITES = "invites",
-  NOTIFICATIONS = "notifications",
-
-  BADGE_AWARD = "badgeAward",
-}
 
 export enum UploadStatus {
   PENDING = "pending",

@@ -1,4 +1,6 @@
 import { Document, Types } from 'mongoose';
+import { IUserDoc } '../../user/user.interface'
+import { DbModels } '../../user/enums.util'
 
 type ObjectId = Types.ObjectId;
 
@@ -39,4 +41,3 @@ export interface IActivityLog {
     targetId: ObjectId | any;
     creaedAt: Date;
 }
-0.77;

@@ -21,9 +21,10 @@ export interface ITalentDoc extends Document {
     slug: string;
     email: string;
 
-    specialties: Array<string>;
+
+    specialties: Array<string>; // what kind of work do you do?
     intrests: Array<string>;
-    skils: Array<string>;
+    skils: Array<string>; // skills you have
     bio: string;
 
     gender: GenderType;
@@ -53,6 +54,9 @@ export interface ITalentDoc extends Document {
 
     // relationships
     user: IUserDoc | any;
+    roles: Array<ITalentType | any>;
+
+
     workspaces: Array<IWorkspaceDoc | any>;
     subscription: ISubscriptionDoc | any;
     transactions: Array<ITransactionDoc | any>;
@@ -93,4 +97,10 @@ export enum OccupationType {
     ENTREPRENEUR = 'entrepreneur',
     FREELANCER = 'freelancer',
     OTHER = 'other',
+}
+
+export enum ITalentType {
+    MENTOR = 'mentor',
+    JUDGE = 'judge',
+
 }
