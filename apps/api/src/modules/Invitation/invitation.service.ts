@@ -46,6 +46,13 @@ class InvitationService {
             return result;
         }
 
+        if (!resourceId) {
+            result.error = true;
+            result.message =
+                'Please provide a specific resource id the invitation belongs to';
+            return result;
+        }
+
         if (!Object.values(InvitationType).includes(inviteType)) {
             result.error = true;
             result.message = 'Invitation type must be part of enum!';
@@ -77,7 +84,8 @@ class InvitationService {
         const saveInvite = await invitationRepository.createInvite({
             inviteType,
             invitedBy,
-            invitee: { email: inviteeEmail, userId: inviteeUserId },
+            inviteeEmail,
+            inviteeUserId,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             inviteStatus: InvitationStatus.PENDING,
             inviteToken: encryptToken,
@@ -291,3 +299,5 @@ class InvitationService {
         return result;
     }
 }
+
+//$ pnpm swagger-cli bundle "C:\Users\Infinitystudio\pacepard\apps\docs\api-reference\openApi\root.yaml" --outfile "C:\Users\Infinitystudio\pacepard\apps\docs\api-reference\openApi\output.yaml" --type yaml --dereference
