@@ -201,7 +201,7 @@ export enum DbModels {
     JUDGE_SCORE = 'judgeScore',
     INVITES = 'invites',
     NOTIFICATIONS = 'notifications',
-
+    PLAN = 'plan',
     BADGE_AWARD = 'badgeAward',
 }
 
