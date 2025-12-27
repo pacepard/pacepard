@@ -27,3 +27,19 @@ export const genUserCode = (userType: UserType): string => {
 
     return `${baseName}-${year}-${code}`;
 };
+
+/**
+ * @name genWorkspaceCode
+ * @description Generates a unique, standardized identification code for a workspace.
+ * @returns {string} A formatted string in the format: ws-{year}-{random_6_digits}.
+ * @example
+ * // Returns "ws-2025-123456"
+ * const code = genWorkspaceCode();
+ */
+export const genWorkspaceCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `ws-${year}-${code}`;
+};

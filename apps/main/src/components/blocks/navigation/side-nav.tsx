@@ -84,6 +84,11 @@ const AppSidebar = (data: ISideBar) => {
                             icon: FolderIcon, // Replace with actual icon component or import
                         },
                         {
+                            name: 'Settings',
+                            url: '/projects/help1',
+                            icon: FolderIcon, // Replace with actual icon component or import
+                        },
+                        {
                             name: 'Upgrade Plan',
                             url: '/upgrade-plan',
                             icon: FolderIcon, // Replace with actual icon component or import
@@ -130,18 +135,27 @@ const AppSidebar = (data: ISideBar) => {
                 <NavProducts
                     products={[
                         {
-                            name: 'Project Forge',
+                            name: 'Templates',
                             url: '/projects/forge',
                             icon: FolderIcon, // Replace with actual icon component or import
                         },
                         {
-                            name: 'Project Beta',
+                            name: "What's new",
                             url: '/projects/beta',
                             icon: FolderIcon, // Replace with actual icon component or import
                         },
                         {
-                            name: 'Project Beta',
+                            name: 'Roadmap',
                             url: '/projects/beta',
+                            icon: FolderIcon, // Replace with actual icon component or import
+                        },{
+                            name: 'Feature requests',
+                            url: '/projects/help1',
+                            icon: FolderIcon, // Replace with actual icon component or import
+                        },
+                        {
+                            name: 'Trash',
+                            url: '/projects/help1',
                             icon: FolderIcon, // Replace with actual icon component or import
                         },
                     ]}
@@ -150,17 +164,22 @@ const AppSidebar = (data: ISideBar) => {
                 <NavHelp
                     projects={[
                         {
-                            name: 'Help 1',
+                            name: 'Get started',
                             url: '/projects/help1',
                             icon: FolderIcon, // Replace with actual icon component or import
                         },
                         {
-                            name: 'Help 2',
+                            name: 'How-to guides',
+                            url: '/projects/help1',
+                            icon: FolderIcon, // Replace with actual icon component or import
+                        },
+                        {
+                            name: 'Help center',
                             url: '/projects/help2',
                             icon: FolderIcon, // Replace with actual icon component or import
                         },
                         {
-                            name: 'Help 3',
+                            name: 'Contact support',
                             url: '/projects/help3',
                             icon: FolderIcon, // Replace with actual icon component or import
                         },
