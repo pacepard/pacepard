@@ -11,7 +11,7 @@ function HeroSection() {
                     {/* Background Image */}
                     <div className="absolute top-0 left-0 w-full h-full">
                         <Image
-                            src="/images/home/services/hackathon.jpeg" // <-- replace with your image src
+                            src="/images/home/services/hackathon.jpeg" // 
                             alt="Background"
                             layout="fill"
                             objectFit="cover"
@@ -36,8 +36,8 @@ function HeroSection() {
                                     />
                                 </div>
                                 <p className="text-white/70 max-w-md">
-                                    We are <span className="text-primary">high-performing</span> digital ecosystem
-                                    helping global talents learn and grow by doing.
+                                    We engineer <span className="text-primary">intelligent products.</span> AI, machine learning, and behavior-driven product design
+                                    - built end to end.
                                 </p>
                             </div>
                             <div className="flex flex-col lg:flex-row items-start lg:items-end gap-4">

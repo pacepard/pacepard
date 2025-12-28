@@ -7,7 +7,7 @@ const Herobanner = ({ bannerimage, heading, desc, headingClass = "large-heading"
     return (
         <section className="relative flex items-end text-white bg-black h-screen max-h-650px">
             <Image
-                className="absolute top-0 left-0 w-full h-full object-cover"
+                className=" opacity-40 absolute top-0 left-0 w-full h-full object-cover"
                 alt="Image"
                 src={bannerimage}
                 height={694}

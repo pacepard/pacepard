@@ -19,12 +19,12 @@ const MenuData = [
     path: "/projects",
     newTab: false,
   },
-  {
-    id: 4,
-    title: "Blog",
-    path: "/blog",
-    newTab: false,
-  },
+  // {
+  //   id: 4,
+  //   title: "Blog",
+  //   path: "/blog",
+  //   newTab: false,
+  // },
   {
     id: 5,
     title: "Services",
@@ -37,27 +37,27 @@ const MenuData = [
     path: "/contact",
     newTab: false,
   },
-  {
-    id: 7,
-    title: "Docs",
-    path: "/documentation",
-    newTab: false,
-  }
+  // {
+  //   id: 7,
+  //   title: "Docs",
+  //   path: "/documentation",
+  //   newTab: false,
+  // }
 ];
 
 
 const footerData = {
     name: "Pacepard",
-    tagline: "Build something together?",
+    tagline: "Let's build something together.",
     info: [
         {
             icon: "/images/footer/email-arrow.svg",
-            link: "info@wrappixel.com",
-            href: "https://www.wrappixel.com/"
+            link: "hello@pacepard.com",
+            // href: "https://www.wrappixel.com/"
         },
         {
             icon: "/images/footer/Location.svg",
-            link: "Zwolle Netherlands",
+            link: "Ogbomosho, Nigeria",
             href: "https://maps.app.goo.gl/hpDp81fqzGt5y4bC8"
         }
     ],
@@ -66,9 +66,9 @@ const footerData = {
         { name: "About", href: "/about" },
         { name: "Services", href: "/#services" },
         { name: "Work", href: "/projects" },
-        { name: "Terms", href: "/terms-and-conditions" },
-        { name: "Privacy Policy", href: "/privacy-policy" },
-        { name: "Error 404", href: "/not-found" }
+        // { name: "Terms", href: "/terms-and-conditions" },
+        // { name: "Privacy Policy", href: "/privacy-policy" },
+        // { name: "Error 404", href: "/not-found" }
     ],
     socialLinks: [
         { name: "Facebook", href: "https://www.facebook.com/" },

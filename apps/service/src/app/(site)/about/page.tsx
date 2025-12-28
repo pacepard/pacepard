@@ -13,9 +13,9 @@ export default function Page() {
     return (
         <main>
             <Herobanner
-                bannerimage="/images/about-us/banner/aboutus-banner.png"
+                bannerimage="/images/about-us/banner/PACEPARDT.jpg"
                 heading="About us"
-                desc="We craft <span>innovative digital</span> designs that amplify brand identity and drive meaningful results" />
+                desc="We engineer <span>complex ideas into intelligent</span> living systems that scale, adapt, and perform in the real world." />
             <AboutusDetail />
             <AboutusStats/>
             <AboutusFullimg/>
