@@ -23,6 +23,9 @@ export interface IBusinessDoc extends Document {
     lastName: string;
     slug: string;
     email: string;
+
+    //isBusinessOwner or isWorkpace owner
+    // timeZone = "Africa/Lagos"
     
     businessName: string;
     businessType: BusinessType;
