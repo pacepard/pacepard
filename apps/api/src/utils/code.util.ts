@@ -28,6 +28,8 @@ export const genUserCode = (userType: UserType): string => {
     return `${baseName}-${year}-${code}`;
 };
 
+console.log("user", genUserCode(UserType.TALENT))
+
 /**
  * @name genWorkspaceCode
  * @description Generates a unique, standardized identification code for a workspace.
@@ -43,3 +45,6 @@ export const genWorkspaceCode = (): string => {
 
     return `ws-${year}-${code}`;
 };
+
+
+console.log("pacepard", genWorkspaceCode())
