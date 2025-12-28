@@ -13,6 +13,7 @@ import Team from "./components/home/team";
 
 export const metadata: Metadata = {
     title: "Pacepard",
+    
 };
 
 export default function Home() {

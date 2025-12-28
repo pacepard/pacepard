@@ -20,58 +20,58 @@ const avatarList = [
 ];
 
 const statsFactData = {
-    number: '01',
+    // number: '01',
     name: "Stats & facts",
-    heading: "The trusted gateway to innovation, skill mastery and adoption.",
-    description: "Pacepard is a community-as-a-service platform linking African talent with tech companies through innovative hackathons.",
+    heading: " Our reinforced trust and results.",
+    description: "We deliver solutions that achieve measurable results, drive adoption, and create real impact for users and businesses alike.",
     scoreData: [
         {
-            number: 40,
+            number: 10,
             numberValue: 'K',
-            scoreDescp: "Talents who have launched their websites"
+            scoreDescp: "Market-ready websites, built to perform and convert"
         },
         {
-            number: 238,
-            scoreDescp: "Tech talent who are fostering ideas and building products."
+            number: 100,
+            scoreDescp: "AI models that transcribe audio with local language context."
         },
         {
             number: 3,
-            numberValue: 'M',
-            scoreDescp: "Providing support through messages and live consultations."
+            numberValue: 'k',
+            scoreDescp: "Fashioned products that users love and it convert problem to scalability."
         },
     ]
 };
 
 const servicesData = {
-    number: '03',
+    // number: '03',
     name: "Services",
     heading: "What we do",
-    description: "Discover our creativity—where innovative talent meets seamless hackathon experiences.",
+    description: "We don’t ship features, we engineer systems that perform under pressure, adapt to context, and grow with your business.",
     data: [
         {
             id: 1,
-            image: "/images/home/services/Hackathon3.jpeg",
-            heading: "Talent Growth Hack",
-            descp: "Smart strategies that fast-track talent development and innovation through hackathons and project challenges."
+            image: "/images/home/services/AI.jpg",
+            heading: "Machine learning(AL)",
+            descp: "Turning data into intelligence that predicts, learns, and adapts."
         },
         {
             id: 2,
-            image: "/images/home/services/Hackathon2.jpg",
-            heading: "Tech Forge",
-            descp: "we transform innovative ideas into fully functional digital products. Leveraging top-tier talent, collaborative hackathons, and agile development."
+            image: "/images/home/services/Web.jpg",
+            heading: "Web Development",
+            descp: "Building seamless, scalable web experiences that perform flawlessly."
         },
         {
             id: 3,
-            image: "/images/home/services/Hackathon1.jpeg",
-            heading: "Mentor the Builders",
-            descp: "Where mentors meet makers, a space for bold thinkers, doers, and innovators. Lead workshops, spark ideas, and guide emerging talent as they turn concepts into real-world solutions."
+            image: "/images/home/services/Product1.jpg",
+            heading: "Product Design",
+            descp: "Designing products users love—simple, intuitive, and behavior-driven."
         },
-        // {
-        //     id: 4,
-        //     image: "/images/home/services/services_4.png",
-        //     heading: "Motion & 3d modeling",
-        //     descp: "When selecting a web design agency, it's essential to consider its reputation, experience, and the specific needs of your project."
-        // },
+        {
+            id: 4,
+            image: "/images/home/services/mobil1.jpg",
+            heading: "Mobile Development",
+            descp: "We treat mobile as living infrastructure, not just an app. Our products are built to move with people—adapting to context, surviving real-world constraints, and quietly expanding access, connection, and possibility at scale."
+        },
     ]
 };
 
@@ -97,10 +97,10 @@ const testimonialData = {
 };
 
 const teamData = {
-    number: '06',
+    // number: '06',
     data: [
         {
-            image: "/images/home/team/TeamA.jpeg",
+            image: "/images/home/team/damola.jpeg",
             name: "Damola Oladipo",
             position: "CEO/Co-Founder",
             socialLinks: [
@@ -121,7 +121,7 @@ const teamData = {
         {
             image: "/images/home/team/TeamC.jpeg",
             name: "Okuselu Temitope",
-            position: "CTO",
+            position: "Deputy CEO",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
@@ -157,9 +157,9 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/Team1.jpeg",
+            image: "/images/home/team/steph.jpg",
             name: "Stephanie Onwuagbaizu",
-            position: "Backend Developer",
+            position: "Backend Engineer",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
@@ -178,7 +178,7 @@ const teamData = {
         {
             image: "/images/home/team/TeamD..jpeg",
             name: "Happiness Peter",
-            position: "Backend Developer",
+            position: "Backend Engineer",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
@@ -195,9 +195,9 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/Team5.jpeg",
-            name: "Damola Ifati",
-            position: "Frontend Developer",
+            image: "/images/home/team/daniel.jpg",
+            name: "Daniel Ayokunle",
+            position: "Frontend Engineer",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
@@ -216,7 +216,26 @@ const teamData = {
         {
             image: "/images/home/team/TeamB.jpeg",
             name: "Toyosi Odewenwa",
-            position: "UI/UX",
+            position: "Product Designer",
+            socialLinks: [
+                {
+                    icon: "/images/socialIcon/twitter.svg",
+                    // link: "https://twitter.com"
+                },
+                {
+                    icon: "/images/socialIcon/Be.svg",
+                    // link: "https://www.behance.net/"
+                },
+                {
+                    icon: "/images/socialIcon/linkedin.svg",
+                    // link: "https://linkedin.com"
+                }
+            ]
+        },
+        {
+            image: "/images/home/team/gbemiga.jpg",
+            name: "Shoga Oluwagbemiga",
+            position: "Product Designer",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
@@ -259,35 +278,45 @@ const pricingData = {
         },
     ],
     partnerLogo: [
-        { light: "/images/home/pricing/partner-1.svg", dark: "/images/home/pricing/partner-dark-1.svg" },
-        { light: "/images/home/pricing/partner-2.svg", dark: "/images/home/pricing/partner-dark-2.svg" },
-        { light: "/images/home/pricing/partner-3.svg", dark: "/images/home/pricing/partner-dark-3.svg" },
-        { light: "/images/home/pricing/partner-4.svg", dark: "/images/home/pricing/partner-dark-4.svg" },
-        { light: "/images/home/pricing/partner-5.svg", dark: "/images/home/pricing/partner-dark-5.svg" },
+        { light: "/images/home/pricing/ennovate1.svg", dark: "/images/home/pricing/ennovate4.svg" },
+        { light: "/images/home/pricing/ahiaoma2.svg", dark: "/images/home/pricing/ahiaoma5.svg" },
+        { light: "/images/home/pricing/masterminds3.svg", dark: "/images/home/pricing/masterminds6.svg" },
+        { light: "/images/home/pricing/yali9.svg", dark: "/images/home/pricing/yali10.svg" },
+        { light: "/images/home/pricing/folabi7.svg", dark: "/images/home/pricing/folabi8.svg" },
+        { light: "/images/home/pricing/global11.svg", dark: "/images/home/pricing/global12.svg" },
+        
       ],
 };
 
 const faqData = {
     data: [
         {
-            faq_que: "What services does your agency offer?",
-            faq_ans: 'Yes, we provide post-launch support to ensure smooth implementation and offer ongoing maintenance packages for clients needing regular updates or technical assistance.'
+            faq_que: "What services do you provide?",
+            faq_ans: 'We deliver end-to-end digital product development, including scalable web applications, mobile solutions, AI/ML-powered systems, and product design. Our work spans discovery, architecture, development, deployment, and optimization, ensuring products are technically sound, user-centric, and built for growth.'
         },
         {
-            faq_que: "How long does a typical project take?",
-            faq_ans: 'Yes, we provide post-launch support to ensure smooth implementation and offer ongoing maintenance packages for clients needing regular updates or technical assistance.'
+            faq_que: "Do you offer installment-based payment options?",
+            faq_ans: 'Yes. We provide milestone-based payment structures tied to clearly defined deliverables. This ensures transparency, predictable budgeting, and shared accountability throughout the project lifecycle.'
         },
         {
-            faq_que: "Do you offer custom designs, or do you use templates?",
-            faq_ans: 'Yes, we provide post-launch support to ensure smooth implementation and offer ongoing maintenance packages for clients needing regular updates or technical assistance.'
+            faq_que: "Is post-implementation support available?",
+            faq_ans: 'Absolutely. We offer structured post-deployment support, including system monitoring, performance optimization, bug resolution, and feature enhancements. Support can be scoped as short-term stabilization or long-term maintenance contracts.'
         },
         {
-            faq_que: "What’s the cost of a project?",
-            faq_ans: 'Yes, we provide post-launch support to ensure smooth implementation and offer ongoing maintenance packages for clients needing regular updates or technical assistance.'
+            faq_que: "How do you ensure product scalability and performance?",
+            faq_ans: 'We implement best practices in architecture design, conduct thorough performance testing, and use scalable cloud infrastructure to ensure products can handle growth and maintain high performance.'
         },
         {
-            faq_que: "Do you provide ongoing support after project completion?",
-            faq_ans: 'Yes, we provide post-launch support to ensure smooth implementation and offer ongoing maintenance packages for clients needing regular updates or technical assistance.'
+            faq_que: "Can you work with existing products or legacy systems?",
+            faq_ans: 'Yes. We audit existing systems, identify technical debt, and implement incremental improvements without disrupting ongoing operations. This includes refactoring, system upgrades, and AI feature integration.'
+        },
+        {
+            faq_que: "What is your typical project timeline?",
+            faq_ans: 'Timelines depend on scope and complexity. However, we follow an agile delivery model-breaking projects into sprints with clear milestones, enabling faster releases and continuous feedback'
+        },
+        {
+            faq_que: "How involved will we be during development?",
+            faq_ans: 'Clients are integrated into the development cycle through regular updates, demos, and technical reviews. This ensures alignment, transparency, and early validation of product direction.'
         }
     ]
 };
@@ -300,30 +329,30 @@ const contactData = {
     }
 }
 
-const aboutusStats = [
-    {
-        number: 45,
-        postfix:"+",
-        title: 'Presence in global markets',
-        descp: "Expanding reach across international regions with localized expertise and worldwide impact."
-    },
-    {
-        number: 15,
-        prefix: "$",
-        postfix: "M",
-        title: 'In strategic investments',
-        descp: "Driving growth with curated partnerships and high-performing, audience-driven initiatives."
-    },
-    {
-        number: 158,
-        postfix: "+",
-        title: 'Trusted brand collaborations',
-        descp: "Shaping industry conversations through innovation, creativity, and lasting influence."
-    },
-]
+// const aboutusStats = [
+//     {
+//         number: 45,
+//         postfix:"+",
+//         title: 'Presence in global markets',
+//         descp: "Expanding reach across international regions with localized expertise and worldwide impact."
+//     },
+//     {
+//         number: 15,
+//         prefix: "$",
+//         postfix: "M",
+//         title: 'In strategic investments',
+//         descp: "Driving growth with curated partnerships and high-performing, audience-driven initiatives."
+//     },
+//     {
+//         number: 158,
+//         postfix: "+",
+//         title: 'Trusted brand collaborations',
+//         descp: "Shaping industry conversations through innovation, creativity, and lasting influence."
+//     },
+// ]
 
 const servicesSliderData = [
-    "Branding", "Web development", "Agency","Content creation","SaaS","Motion & 3d modeling","Photography"
+    "Mobile Development", "Web development", "Machine Learning (AI)","Product Design"
 ]
 
 
@@ -338,7 +367,7 @@ export const GET = async () => {
         pricingData,
         faqData,
         contactData,
-        aboutusStats,
+        // aboutusStats,
         servicesSliderData
     });
 };
