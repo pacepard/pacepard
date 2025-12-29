@@ -3,8 +3,11 @@ import asyncHandler from '../../middlewares/async.mdw';
 import ErrorResponse from '../../utils/error.util';
 import workspaceService from './workspace.service';
 import workspaceRepository from './workspace.repository';
-import { UpdateWorkspaceDTO, CreateWorkspaceDTO } from './workspace.dto';
+import { UpdateWorkspaceDTO, CreateWorkspaceDTO, InviteMemberDTO } from './workspace.dto';
 import redisWrapper from '../../middlewares/redis.mdw';
+import invitationService from '../Invitation/invitation.service';
+import { InvitationType } from '../Invitation/invitation.interface';
+import { Types } from 'mongoose';
 
 /**
  * @name createWorkspace
@@ -433,6 +436,88 @@ export const removeMember = asyncHandler(
             return next(
                 new ErrorResponse(
                     error.message || 'Failed to remove member',
+                    500,
+                    [],
+                ),
+            );
+        }
+    },
+);
+
+/**
+ * @name inviteMember
+ * @description Invites a member to a workspace
+ * @route POST /workspace/:id/invite
+ * @access  Private
+ */
+export const inviteMember = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { id } = req.params;
+        const { email }: InviteMemberDTO = req.body;
+
+        if (!id)
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
+        
+        if (!email || email.trim().length === 0)
+            return next(new ErrorResponse('Email is required', 400, []));
+
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            return next(new ErrorResponse('Invalid email format', 400, []));
+        }
+
+        try {
+            // Verify workspace exists
+            const workspaceResult = await workspaceRepository.findById(id);
+            if (workspaceResult.error || !workspaceResult.data) {
+                return next(new ErrorResponse('Workspace not found', 404, []));
+            }
+
+            // Convert IDs to ObjectId
+            const workspaceObjectId = new Types.ObjectId(id);
+            const userObjectId = new Types.ObjectId(userId);
+
+            // Create invitation
+            const invitationResult = await invitationService.createNewInvitation({
+                invitedBy: userObjectId,
+                inviteeEmail: email.trim().toLowerCase(),
+                inviteType: InvitationType.WORKSPACE,
+                resourceId: workspaceObjectId,
+            });
+
+            if (invitationResult.error) {
+                return next(
+                    new ErrorResponse(
+                        invitationResult.message,
+                        invitationResult.code,
+                        [],
+                    ),
+                );
+            }
+
+            // Invalidate cache
+            try {
+                await redisWrapper.deleteData(`workspace:${id}`);
+            } catch (cacheError) {
+                console.error('Cache invalidation failed:', cacheError);
+            }
+
+            res.status(201).json({
+                error: false,
+                errors: [],
+                data: invitationResult.data,
+                message: 'Member invitation sent successfully.',
+                status: 201,
+            });
+        } catch (error: any) {
+            return next(
+                new ErrorResponse(
+                    error.message || 'Failed to invite member',
                     500,
                     [],
                 ),

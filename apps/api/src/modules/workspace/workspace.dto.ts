@@ -25,3 +25,6 @@ export interface WorkspaceDTO {
   updatedAt: Date;
 }
 
+export interface InviteMemberDTO {
+  email: string;
+}

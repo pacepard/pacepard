@@ -36,6 +36,7 @@ export enum InvitationType {
     MENTOR = 'mentorInvite',
     ADMIN = 'adminInvite',
     PROJECT = 'projectInvite',
+    WORKSPACE = 'workspaceInvite'
 }
 
 export enum InvitationStatus {

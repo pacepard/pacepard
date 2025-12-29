@@ -90,6 +90,7 @@ class InvitationService {
             invitedBy,
             inviteeEmail,
             inviteeUserId,
+            resourceId,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             inviteStatus: InvitationStatus.PENDING,
             inviteToken: encryptToken,
@@ -303,5 +304,7 @@ class InvitationService {
         return result;
     }
 }
+
+export default new InvitationService();
 
 //$ pnpm swagger-cli bundle "C:\Users\Infinitystudio\pacepard\apps\docs\api-reference\openApi\root.yaml" --outfile "C:\Users\Infinitystudio\pacepard\apps\docs\api-reference\openApi\output.yaml" --type yaml --dereference

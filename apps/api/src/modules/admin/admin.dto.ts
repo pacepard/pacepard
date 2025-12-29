@@ -47,3 +47,7 @@ export interface CreateAdminDTO {
 
   identification?: Array<string>;
 }
+
+export interface InviteAdminDTO {
+  email: string;
+}
