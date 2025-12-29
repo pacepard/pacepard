@@ -1,5 +1,9 @@
-import { IInvitationDoc, IResult } from '../../utils/interfaces.util';
-import { InvitationStatus, InvitationType } from '../../utils/eums.util';
+import {
+    IInvitationDoc,
+    InvitationStatus,
+    InvitationType,
+} from './invitation.interface';
+import { IResult } from '../../utils/interfaces.util';
 import { CreateInvitationDTO, inviteTokenDTO } from './invitation.dto';
 import invitationRepository from './invitation.repository';
 import Invites from './invitation.model';

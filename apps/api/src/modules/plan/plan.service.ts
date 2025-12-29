@@ -1,8 +1,9 @@
 import slugify from 'slugify';
 import { Random } from '@btffamily/pacitude';
 import { IResult } from '../../utils/interfaces.util';
-import { newPlanDTO, updatePlanDTO } from './plan.dto';
+import { allowedPlanUpdateDTO, newPlanDTO, updatePlanDTO } from './plan.dto';
 import {
+    IPlanFilterOptions,
     IPlanPaystackCode,
     IPlanPricing,
     PlanInterval,
@@ -10,7 +11,11 @@ import {
     PlanType,
 } from './plan.interface';
 import Plan from './plan.model';
-import { paystackCreatePlan } from '../paystack/paystack.service';
+import {
+    paystackCreatePlan,
+    paystackPlanUpdate,
+} from '../paystack/paystack.service';
+import planRepository from './plan.repository';
 
 class PlanService {
     constructor() {}
@@ -65,7 +70,14 @@ class PlanService {
         };
 
         // save plan to db
-        const newPlan = await Plan.create(planObj);
+        const { error, data: newPlan } =
+            await planRepository.addNewPlan(planObj);
+        if (error || !newPlan) {
+            result.error = true;
+            result.message = 'Failed to create plan';
+            result.code = 500;
+            return result;
+        }
 
         // save plan to paystack
         const paystackPlanCodes = await this.getPaystackPlanCodes(
@@ -82,14 +94,26 @@ class PlanService {
 
         // map paystack response to plan model updating the plan record with paystack plan code
         newPlan.paystackPlanCodes = paystackPlanCodes;
-        await newPlan.save();
 
-        // planObj.paystackPlanCodes = paystackPlanCodes;
-        result.data = newPlan; // would need to map to dto later, removing mongodbId and paystack codes
+        // update plan with paystack codes
+        const updatePaystackCodeResult = await planRepository.updatePlan(
+            newPlan._id,
+            {
+                paystackPlanCodes,
+            },
+        );
+
+        result.data = newPlan; // return plan without paystack codes for now
         result.message = 'Plan created successfully';
         return result;
     }
 
+    /**
+     * @name updatePlan
+     * @description updates an existing plan on the platform and on paystack
+     * @param {updatePlanDTO} dto
+     * @returns {Promise<IResult>} A result object indicating success or failure with an appropriate message.
+     */
     public async updatePlan(dto: updatePlanDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -97,18 +121,88 @@ class PlanService {
             code: 200,
             data: {},
         };
-        const { planCode, updates } = dto;
+        const { planId, updates } = dto;
 
-        // find plan by code
-        const plan = await Plan.findOne({ code: planCode });
-        if (!plan) {
+        // update pricing if exists
+        const { pricing } = updates;
+        if (pricing) {
+            const planPriceAmount = this.planPriceToAmount(pricing);
+
+            updates.pricing = planPriceAmount;
+        }
+
+        const { error: dbUpdateError, data: updatedPlan } =
+            await planRepository.updatePlan(planId, updates);
+
+        if (dbUpdateError || !updatedPlan) {
             result.error = true;
-            result.message = 'Plan not found';
-            result.code = 404;
+            result.message = 'Failed to update plan';
+            result.code = 500;
             return result;
         }
+
+        // Update plan on Paystack using updated plan from DB
+        const paystackPlanUpdate = await this.updatePaystackPlan(
+            updatedPlan.code,
+            updatedPlan.description,
+            updatedPlan.pricing,
+            updatedPlan.paystackPlanCodes,
+        );
+
+        // update plan with new paystack codes if any
+        const { error, data: updatedPlanWithPaystack } =
+            await planRepository.updatePlan(planId, {
+                paystackPlanCodes: paystackPlanUpdate,
+            });
+
+        if (error || !updatedPlanWithPaystack) {
+            result.error = true;
+            result.message = 'Failed to update plan with Paystack codes';
+            result.code = 500;
+            return result;
+        }
+
+        result.data = updatedPlan;
+        result.message = 'Plan updated successfully';
+        return result;
     }
 
+    /**
+     * @name getAllPlans
+     * @description retrieves all plans from the platform
+     * @param {IPlanFilterOptions} filterOptions
+     * @returns {Promise<IResult>} A result object indicating success or failure with an appropriate message.
+     */
+    public async getAllPlans(
+        filterOptions: IPlanFilterOptions,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { error, data: plans } =
+            await planRepository.getPlans(filterOptions);
+        if (error || !plans) {
+            result.error = true;
+            result.message = 'Failed to retrieve plans';
+            result.code = 500;
+            return result;
+        }
+
+        result.data = plans;
+        result.message = 'Plans retrieved successfully';
+        return result;
+    }
+
+    /**
+     * @name planPriceToAmount
+     * @description helper function to convert plan pricing to minor units (e.g., kobo, cents)
+     * @param pricing
+     * @returns
+     */
     private planPriceToAmount(pricing: IPlanPricing): IPlanPricing {
         // prepare amount
         const toMinorUnit = (amount: number) => Math.round(amount * 100);
@@ -127,62 +221,143 @@ class PlanService {
         return newPricing;
     }
 
+    /**
+     * @name validateDto
+     * @description helper function to validate newPlanDTO for all required fields
+     * @param dto
+     * @returns {Promise<IResult>} A result object indicating success or failure with an appropriate message.
+     */
     public async validateDto(dto: newPlanDTO): Promise<IResult> {
         let result: IResult = {
-            error: true,
+            error: false,
             message: '',
-            code: 400,
+            code: 200,
             data: {},
         };
         const allowedPanTypes = [PlanType.FOR_BUSINESS, PlanType.FOR_TALENT];
 
+        const errors: { field: string; message: string }[] = [];
+
         if (!dto.name) {
-            result.message = 'Plan name is required';
-            return result;
+            errors.push({ field: 'name', message: 'Plan name is required' });
         }
         if (!dto.label) {
-            result.message = 'Plan label is required';
-            return result;
+            errors.push({ field: 'label', message: 'Plan label is required' });
         }
         if (!dto.displayName) {
-            result.message = 'Plan display name is required';
-            return result;
+            errors.push({
+                field: 'displayName',
+                message: 'Plan display name is required',
+            });
         }
         if (!dto.planType) {
-            result.message = 'Plan type is required';
-            return result;
+            errors.push({
+                field: 'planType',
+                message: 'Plan type is required',
+            });
         }
         if (!allowedPanTypes.includes(dto.planType)) {
-            result.message = `Invalid plan type. Allowed types are: ${allowedPanTypes.join(', ')}`;
-            return result;
+            errors.push({
+                field: 'planType',
+                message: `Invalid plan type. Allowed types are: ${allowedPanTypes.join(', ')}`,
+            });
         }
         if (!dto.pricing) {
-            result.message = 'Plan pricing is required';
-            return result;
+            errors.push({
+                field: 'pricing',
+                message: 'Plan pricing is required',
+            });
         }
         if (!dto.trial) {
-            result.message = 'Plan trial information is required';
-            return result;
+            errors.push({
+                field: 'trial',
+                message: 'Plan trial information is required',
+            });
         }
         if (!dto.members) {
-            result.message = 'Plan members information is required';
-            return result;
+            errors.push({
+                field: 'members',
+                message: 'Plan members information is required',
+            });
         }
         if (!dto.domains) {
-            result.message = 'Plan domains information is required';
-            return result;
+            errors.push({
+                field: 'domains',
+                message: 'Plan domains information is required',
+            });
         }
         if (!dto.projects) {
-            result.message = 'Plan projects information is required';
+            errors.push({
+                field: 'projects',
+                message: 'Plan projects information is required',
+            });
+        }
+
+        if (errors.length > 0) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'DTO validation failed';
+            result.data = errors;
             return result;
         }
 
-        result.error = false;
         result.message = 'DTO is valid';
-        result.code = 200;
         return result;
     }
 
+    /**
+     * @name validateUpdateField
+     * @description helper function to validate updatePlanDTO fields against allowed fields
+     * @param updates
+     * @returns {Promise<IResult>} A result object indicating success or failure with an appropriate message.
+     */
+    public async validateUpdateField(
+        updates: Partial<newPlanDTO>,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const allowedPlanTypes = [PlanType.FOR_BUSINESS, PlanType.FOR_TALENT];
+
+        const allowedFields = Object.keys(allowedPlanUpdateDTO);
+
+        // check for invalid fields
+        const invalidFields = Object.keys(updates).filter(
+            (field) => !allowedFields.includes(field),
+        );
+
+        if (invalidFields.length > 0) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Update fields validation failed';
+            result.data = invalidFields;
+            return result;
+        }
+
+        // validate planType if exists
+        if (updates.planType && !allowedPlanTypes.includes(updates.planType)) {
+            result.error = true;
+            result.message = `Invalid plan type. Allowed types are: ${allowedPlanTypes.join(', ')}`;
+            result.code = 400;
+            return result;
+        }
+
+        result.message = 'Update fields are valid';
+        return result;
+    }
+
+    /**
+     * @name getPaystackPlanCodes
+     * @description helper function to create plans on paystack and return the plan codes
+     * @param planCode System generated plan code as plan name on paystack
+     * @param description
+     * @param planPricing
+     * @returns {Promise<IPlanPaystackCode>} paystack plan codes for all created plans
+     */
     private async getPaystackPlanCodes(
         planCode: string,
         description: string,
@@ -255,6 +430,111 @@ class PlanService {
             dollarYearly: dollarYearlyCode,
         };
     }
+
+    /**
+     * @name updatePaystackPlan
+     * @description helper function to update existing plans on paystack and return the updated plan codes
+     * @param planCode
+     * @param description
+     * @param planPricing
+     * @param paystackPlanCodes
+     * @returns
+     */
+    private async updatePaystackPlan(
+        planCode: string,
+        description: string,
+        planPricing: IPlanPricing,
+        paystackPlanCodes: IPlanPaystackCode,
+    ) {
+        const updatePaystack = async (
+            paystackPlanCode: string,
+            name: string,
+            amount: number,
+            interval: PlanInterval,
+            description: string,
+            currency: PlanPriceCurrency,
+        ) => {
+            const updateData = {
+                name,
+                amount,
+                interval,
+                description,
+                currency,
+            };
+
+            try {
+                const res = await paystackPlanUpdate(
+                    paystackPlanCode,
+                    updateData,
+                );
+                return res?.data?.plan_code;
+            } catch (error) {
+                console.log(
+                    `Failed to update Paystack ${currency} ${interval} plan`,
+                    // error,
+                );
+            }
+        };
+
+        const [
+            nairaMonthlyCode,
+            nairaYearlyCode,
+            dollarMonthlyCode,
+            dollarYearlyCode,
+        ] = await Promise.all([
+            updatePaystack(
+                paystackPlanCodes.nairaMonthly,
+                planCode,
+                planPricing.naira.monthly,
+                PlanInterval.MONTHLY,
+                description || '',
+                PlanPriceCurrency.NAIRA,
+            ),
+            updatePaystack(
+                paystackPlanCodes.nairaYearly,
+                planCode,
+                planPricing.naira.yearly,
+                PlanInterval.YEARLY,
+                description || '',
+                PlanPriceCurrency.NAIRA,
+            ),
+            updatePaystack(
+                paystackPlanCodes.dollarMonthly,
+                planCode,
+                planPricing.dollar.monthly,
+                PlanInterval.MONTHLY,
+                description || '',
+                PlanPriceCurrency.DOLLAR,
+            ),
+            updatePaystack(
+                paystackPlanCodes.dollarYearly,
+                planCode,
+                planPricing.dollar.yearly,
+                PlanInterval.YEARLY,
+                description || '',
+                PlanPriceCurrency.DOLLAR,
+            ),
+        ]);
+
+        return {
+            nairaMonthly: nairaMonthlyCode || paystackPlanCodes.nairaMonthly,
+            nairaYearly: nairaYearlyCode || paystackPlanCodes.nairaYearly,
+            dollarMonthly: dollarMonthlyCode || paystackPlanCodes.dollarMonthly,
+            dollarYearly: dollarYearlyCode || paystackPlanCodes.dollarYearly,
+        };
+    }
+
+    //validate plan for subscription
+
+    // get all active plans
+
+    // get plan
+
+    // disable plan
+
+    // enable plan
+
+    // remove paystack plan codes from plan
 }
 export default new PlanService();
 

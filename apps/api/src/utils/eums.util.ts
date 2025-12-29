@@ -432,22 +432,3 @@ export enum ExplicitStep {
     PROFILE_SETUP = 'PROFILE_SETUP',
     EXPERIENCE_INFO = 'EXPERIENCE_INFO',
 }
-export enum InvitationType {
-    TEAM = 'teamInvite',
-    MENTOR = 'mentorInvite',
-    ADMIN = 'adminInvite',
-    PROJECT = 'projectInvite',
-}
-
-export enum InvitationStatus {
-    PENDING = 'pending',
-    ACCEPTED = 'accepted',
-    DECLINED = 'declined',
-    EXPIRED = 'expired',
-    REVOKED = 'revoked',
-}
-
-export enum InviteSendType {
-    BULK = 'bulk',
-    SINGLE = 'single',
-}

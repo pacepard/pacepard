@@ -29,10 +29,6 @@ import {
     MentorStatus,
     MentorVisibilty,
     MentorInviteStatus,
-    InvitationType,
-    InvitationStatus,
-    InviteSendType,
-    InvitedTo,
 } from './eums.util.ts';
 import { FileInfo } from 'busboy';
 import { PassThrough } from 'stream';
@@ -1077,29 +1073,4 @@ export interface IEventDoc extends Document {
     _version: number;
     _id: ObjectId;
     id: ObjectId | string;
-}
-export interface IInvitationDoc extends Document {
-    inviteType: InvitationType; // as a mentor/team
-    invitedBy: ObjectId;
-
-    // invitee: { email: string; userId: ObjectId };
-    inviteeEmail: string;
-    inviteeUserId: ObjectId;
-    invitedAt: Date;
-    inviteToken: string | null;
-    inviteStatus: InvitationStatus;
-
-    resourceId: ObjectId;
-
-    expiresAt: Date;
-    acceptedAt: Date;
-    revokedAt: Date;
-
-    metadata: Record<string, unknown>;
-
-    createdAt: Date;
-    updatedAt: Date;
-    _version: number;
-    _id: ObjectId;
-    Id: ObjectId;
 }
