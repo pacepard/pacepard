@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Logo from "../logo";
+import { FaWhatsapp } from "react-icons/fa";
 
 const Header = () => {
     const { data: session } = useSession();
@@ -147,7 +148,14 @@ const Header = () => {
                                         )} */}
                                     </div>
                                     <div>
-                                        <Link href="tel:+234-817-084-8057" className="text-secondary/60 dark:text-white/60 hover:text-secondary dark:hover:text-white">+234-817-084-8057</Link>
+                                        <Link 
+                                        href="https://wa.me/2348170848057"
+                                        target="_blank"
+                                        className="flex items-center gap-2 text-secondary/60 dark:text-white/60 hover:text-secondary dark:hover:text-white"
+                                        >
+                                            <FaWhatsapp className="text-green-500 text-xl" />
+                                            <span>+234-817-084-8057</span>
+                                            </Link>
                                         <Link href="mailto:hello@pacepard.com"><h4>hello@pacepard.com</h4></Link>
                                     </div>
                                 </div>

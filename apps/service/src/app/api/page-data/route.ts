@@ -26,17 +26,17 @@ const statsFactData = {
     description: "We deliver solutions that achieve measurable results, drive adoption, and create real impact for users and businesses alike.",
     scoreData: [
         {
-            number: 10,
-            numberValue: 'K',
+            number: 8,
+            // numberValue: 'K',
             scoreDescp: "Market-ready websites, built to perform and convert"
         },
         {
-            number: 100,
+            number: 10,
             scoreDescp: "AI models that transcribe audio with local language context."
         },
         {
             number: 3,
-            numberValue: 'k',
+            // numberValue: 'k',
             scoreDescp: "Fashioned products that users love and it convert problem to scalability."
         },
     ]
@@ -51,7 +51,7 @@ const servicesData = {
         {
             id: 1,
             image: "/images/home/services/AI.jpg",
-            heading: "Machine learning(AL)",
+            heading: "AI AND ML",
             descp: "Turning data into intelligence that predicts, learns, and adapts."
         },
         {
@@ -100,7 +100,7 @@ const teamData = {
     // number: '06',
     data: [
         {
-            image: "/images/home/team/damola.jpeg",
+            image: "/images/home/team/damola.png",
             name: "Damola Oladipo",
             position: "CEO/Co-Founder",
             socialLinks: [
@@ -119,7 +119,7 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/TeamC.jpeg",
+            image: "/images/home/team/tope.png",
             name: "Okuselu Temitope",
             position: "Deputy CEO",
             socialLinks: [
@@ -138,9 +138,9 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/Team7.jpeg",
+            image: "/images/home/team/favour.png",
             name: "Brodrick Favour",
-            position: "COO",
+            position: "Head of Operations",
             socialLinks: [
                 {
                     icon: "/images/socialIcon/twitter.svg",
@@ -157,7 +157,7 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/steph.jpg",
+            image: "/images/home/team/steph.png",
             name: "Stephanie Onwuagbaizu",
             position: "Backend Engineer",
             socialLinks: [
@@ -176,7 +176,7 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/TeamD..jpeg",
+            image: "/images/home/team/harry.png",
             name: "Happiness Peter",
             position: "Backend Engineer",
             socialLinks: [
@@ -195,7 +195,7 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/daniel.jpg",
+            image: "/images/home/team/daniel.png",
             name: "Daniel Ayokunle",
             position: "Frontend Engineer",
             socialLinks: [
@@ -214,7 +214,7 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/TeamB.jpeg",
+            image: "/images/home/team/toyosi.png",
             name: "Toyosi Odewenwa",
             position: "Product Designer",
             socialLinks: [
@@ -233,7 +233,7 @@ const teamData = {
             ]
         },
         {
-            image: "/images/home/team/gbemiga.jpg",
+            image: "/images/home/team/gbemiga.png",
             name: "Shoga Oluwagbemiga",
             position: "Product Designer",
             socialLinks: [

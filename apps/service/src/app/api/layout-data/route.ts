@@ -25,18 +25,18 @@ const MenuData = [
   //   path: "/blog",
   //   newTab: false,
   // },
-  {
-    id: 5,
-    title: "Services",
-    path: "/#services",
-    newTab: false,
-  },
-  {
-    id: 6,
-    title: "Contact",
-    path: "/contact",
-    newTab: false,
-  },
+  // {
+  //   id: 5,
+  //   title: "Services",
+  //   path: "/#services",
+  //   newTab: false,
+  // },
+  // {
+  //   id: 6,
+  //   title: "Contact",
+  //   path: "/contact",
+  //   newTab: false,
+  // },
   // {
   //   id: 7,
   //   title: "Docs",
@@ -72,7 +72,7 @@ const footerData = {
     ],
     socialLinks: [
         { name: "Facebook", href: "https://www.facebook.com/" },
-        { name: "Instagram", href: "https://www.instagram.com/" },
+        // { name: "Instagram", href: "https://www.instagram.com/" },
         { name: "Twitter", href: "https://x.com/" }
     ],
     copyright: "© Pacepard copyright 2025"
