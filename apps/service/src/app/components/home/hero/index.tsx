@@ -36,8 +36,7 @@ function HeroSection() {
                                     />
                                 </div>
                                 <p className="text-white/70 max-w-md">
-                                    We engineer <span className="text-primary">intelligent products.</span> AI, machine learning, and behavior-driven product design
-                                    - built end to end.
+                                    We build <span className="text-primary">products with useful features </span> that help people get important things done everday.
                                 </p>
                             </div>
                             <div className="flex flex-col lg:flex-row items-start lg:items-end gap-4">
