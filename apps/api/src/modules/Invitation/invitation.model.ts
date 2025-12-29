@@ -1,12 +1,11 @@
 import Mongoose, { Model, Schema } from 'mongoose';
 
-import { IInvitationDoc } from '../../utils/interfaces.util';
-
 import {
+    IInvitationDoc,
     InvitationStatus,
     InvitationType,
-    DbModels,
-} from '../../utils/eums.util';
+} from './invitation.interface';
+import { DbModels } from '../../utils/eums.util';
 
 import mongoose from 'mongoose';
 

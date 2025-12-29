@@ -23,6 +23,21 @@ export interface newPlanDTO {
 }
 
 export interface updatePlanDTO {
-    planCode: string;
+    planId: string;
     updates: Partial<newPlanDTO>;
+}
+
+// export interface allowedPlanUpdateDTO extends newPlanDTO {}
+
+export enum allowedPlanUpdateDTO {
+    NAME = 'name',
+    LABEL = 'label',
+    PLAN_TYPE = 'planType',
+    DISPLAY_NAME = 'displayName',
+    DESCRIPTION = 'description',
+    TRIAL = 'trial',
+    PRICING = 'pricing',
+    MEMBERS = 'members',
+    DOMAINS = 'domains',
+    PROJECTS = 'projects',
 }

@@ -54,8 +54,8 @@ export interface IPlanPricing {
 }
 
 export enum PlanType {
-    FOR_BUSINESS = 'for-bussiness',
-    FOR_TALENT = 'for-talent',
+    FOR_BUSINESS = 'business',
+    FOR_TALENT = 'talent',
 }
 
 export enum PlanInterval {
@@ -72,4 +72,17 @@ export interface IPlanPaystackCode {
 export enum PlanPriceCurrency {
     NAIRA = 'NGN',
     DOLLAR = 'USD',
+}
+
+export enum PlanStatus {
+    ENABLED = 'enabled',
+    DISABLED = 'disabled',
+}
+export interface IPlanFilterOptions {
+    select?: string;
+    sort?: string;
+    page?: number;
+    limit?: number;
+    type?: string | PlanType;
+    isEnabled?: boolean;
 }

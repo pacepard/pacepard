@@ -55,6 +55,17 @@ export const paystackCreatePlan = async (dto: CreatePlanDTO) => {
     }
 };
 
+export const paystackPlanUpdate = async (
+    planCode: string,
+    updateData: CreatePlanDTO,
+) => {
+    try {
+        const response = await paystack.plan.update(planCode, updateData);
+
+        return response;
+    } catch (error) {}
+};
+
 // export const fetchPlan = async () => {};
 
 // Webhooks
