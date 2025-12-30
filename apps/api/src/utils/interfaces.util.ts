@@ -226,3 +226,5 @@ export interface IFIleUpload {
   name?: string;
   base64?: string;
 }
+
+export { IUserDoc };

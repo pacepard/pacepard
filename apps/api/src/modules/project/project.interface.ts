@@ -8,11 +8,6 @@ type ObjectId = Types.ObjectId;
  * Defines a member's specific footprint within a project.
  * This structure allows us to track when they joined and what their role is.
  */
-export interface IProjectMember {
-  user: ObjectId | string | IUserDoc;
-  role: "member" | "mentor" | "maintainer";
-  joinedAt: Date;
-}
 
 export interface IProjectDoc extends Document {
   // Identity
@@ -28,7 +23,7 @@ export interface IProjectDoc extends Document {
 
   // Classification
   category: string;
-  tags: string[];
+  tags: Array<string>;
   type: ProjectType;
 
   // Media
@@ -46,21 +41,20 @@ export interface IProjectDoc extends Document {
 
   // Relationships/participation
   // FIXED: Changed from IUserDoc[] to IProjectMember[] to match Schema sub-docs
-  members: IProjectMember[]; 
-  
-  // These remain as direct ObjectIds for Maintainers/Mentors (Collaborators)
-  maintainers: Array<ObjectId | string | IUserDoc>;
-  mentors: Array<ObjectId | string | IUserDoc>;
+  members: Array<IProjectMember>; 
+  mentors: Array<IUserDoc>;
+
+  businessId: ObjectId;
 
   // Work
-  tasks: Array<ITaskDoc | ObjectId | string>;
+  tasks: Array<ITaskDoc>;
 
   // System
   createdAt: Date;
   updatedAt: Date;
   _version: number;
   _id: ObjectId;
-  id: string;
+  id: ObjectId;
 }
 
 export enum ProjectType {
@@ -82,7 +76,11 @@ export enum ProjectCreatorType {
 }
 
 
-
+export interface IProjectMember {
+  user: IUserDoc;
+  role: "member" | "mentor" | "maintainer";
+  joinedAt: Date;
+}
 
 
 // import { Document, Types } from "mongoose";

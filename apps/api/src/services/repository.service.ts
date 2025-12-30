@@ -1,4 +1,4 @@
-import { FilterQuery, Model, Document, Types, PopulateOptions } from "mongoose";
+import { FilterQuery, Model, Document, Types, PopulateOptions, UpdateQuery } from "mongoose";
 import { IResult } from "../utils/interfaces.util";
 import mongoose from "mongoose";
 
@@ -303,7 +303,7 @@ class RepositoryService<T extends Document> {
    * @returns {Promise<IResult>}
    * @description Update a document by ID
    */
-  public async update(id: string, updateData: Partial<T>): Promise<IResult> {
+  public async update(id: string, updateData: UpdateQuery<T> | Partial<T>): Promise<IResult> {
     const result: IResult = { error: false, message: "", code: 200, data: {} };
 
     try {
