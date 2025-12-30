@@ -60,5 +60,8 @@ const ProjectSchema = new Schema<IProjectDoc>(
   }
 );
 
+
+ProjectSchema.index({ workspaceId: 1, status: 1 });
+
 const Project: Model<IProjectDoc> = mongoose.model<IProjectDoc>(DbModels.PROJECT, ProjectSchema);
 export default Project;
