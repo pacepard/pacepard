@@ -19,15 +19,13 @@ import systemService from '../../services/system.service';
 
 class InvitationService {
     /**
-     * @name createNewInvitation
+     * @name newInvitation
      * @description Creates a new invitation.
      * @param {CreateInvitationDTO} dto - Data required to create an invitation.
      * @returns {Promise<{ invitationId: ObjectId; token: string }>}
      *          The ID of the created invitation and the raw token.
      */
-    public async createNewInvitation(
-        dto: CreateInvitationDTO,
-    ): Promise<IResult> {
+    public async newInvitation(dto: CreateInvitationDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -65,7 +63,7 @@ class InvitationService {
 
         // check to see invite exist
         const existingInvite = await Invites.findOne({
-            'invitee.email': inviteeEmail.toLowerCase(),
+            inviteeEmail: inviteeEmail.toLowerCase(),
             resourceId, // particular resource
             inviteStatus: InvitationStatus.PENDING,
         });
@@ -107,9 +105,40 @@ class InvitationService {
         return result;
     }
 
+    /**
+     * @name generateInviteToken
+     * @description An helper function used by Invitation service privately to generate token
+     * @returns a raw invite token
+     */
     private async generateInviteToken(): Promise<string> {
         const gencode = Random.randomCode(29, true);
         return gencode.toString();
+    }
+
+    /**
+     *
+     */
+    private async validateDTO(dto: inviteTokenDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+        const { email, token } = dto;
+        if (!token) {
+            result.error = true;
+            result.message = 'Please provide token to validate!';
+            return result;
+        }
+        if (!email) {
+            result.error = true;
+            result.message = 'Please provide invitee Email!';
+            return result;
+        }
+
+        result.message = 'Validation successfully';
+        return result;
     }
 
     /**
@@ -128,17 +157,13 @@ class InvitationService {
             data: {},
         };
 
+        const dtoValidationResult = await this.validateDTO(dto);
+
+        if (dtoValidationResult.error) {
+            return dtoValidationResult;
+        }
+
         const { email, token } = dto;
-        if (!token) {
-            result.error = true;
-            result.message = 'Please provide token to validate!';
-            return result;
-        }
-        if (!email) {
-            result.error = true;
-            result.message = 'Please provide invitee Email!';
-            return result;
-        }
 
         const encryptToken = systemService.encryptData({
             password: token,
@@ -185,7 +210,7 @@ class InvitationService {
      * @returns {Promise<IResult>}
      *          Success status; idempotent if already accepted or revoked. successfully revoked invitation
      */
-    public async revokeInvitation(dto: inviteTokenDTO): Promise<IResult> {
+    public async revokeInvite(dto: inviteTokenDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -193,17 +218,12 @@ class InvitationService {
             data: {},
         };
 
+        const dtoValidationResult = await this.validateDTO(dto);
+
+        if (dtoValidationResult.error) {
+            return dtoValidationResult;
+        }
         const { email, token } = dto;
-        if (!token) {
-            result.error = true;
-            result.message = 'Please provide token to validate!';
-            return result;
-        }
-        if (!email) {
-            result.error = true;
-            result.message = 'Please provide invitee Email!';
-            return result;
-        }
 
         const encryptToken = systemService.encryptData({
             password: token,
@@ -218,7 +238,8 @@ class InvitationService {
 
         if (!invite) {
             result.error = true;
-            result.message = 'No invite found by the provided token and email';
+            result.message =
+                'No Pending invite found by the provided token and email';
             return result;
         }
 
@@ -237,7 +258,7 @@ class InvitationService {
      * @returns {Promise<IResult>} the new token
      *
      */
-    public async resendInvitation(dto: inviteTokenDTO): Promise<IResult> {
+    public async resendInvite(dto: inviteTokenDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -245,17 +266,12 @@ class InvitationService {
             data: {},
         };
 
+        const dtoValidationResult = await this.validateDTO(dto);
+
+        if (dtoValidationResult.error) {
+            return dtoValidationResult;
+        }
         const { email, token } = dto;
-        if (!token) {
-            result.error = true;
-            result.message = 'Please provide token to validate!';
-            return result;
-        }
-        if (!email) {
-            result.error = true;
-            result.message = 'Please provide invitee Email!';
-            return result;
-        }
 
         const encryptToken = systemService.encryptData({
             password: token,

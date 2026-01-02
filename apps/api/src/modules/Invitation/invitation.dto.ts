@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongoose';
-import { InvitationType } from '../../utils/eums.util';
+import { InvitationType } from './invitation.interface';
 
 export interface CreateInvitationDTO {
     invitedBy: ObjectId;

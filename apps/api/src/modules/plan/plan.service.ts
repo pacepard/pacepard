@@ -1,7 +1,12 @@
 import slugify from 'slugify';
 import { Random } from '@btffamily/pacitude';
 import { IResult } from '../../utils/interfaces.util';
-import { allowedPlanUpdateDTO, newPlanDTO, updatePlanDTO } from './plan.dto';
+import {
+    allowedPlanUpdateDTO,
+    newPlanDTO,
+    planAvailabilityDTO,
+    updatePlanDTO,
+} from './plan.dto';
 import {
     IPlanFilterOptions,
     IPlanPaystackCode,
@@ -10,7 +15,6 @@ import {
     PlanPriceCurrency,
     PlanType,
 } from './plan.interface';
-import Plan from './plan.model';
 import {
     paystackCreatePlan,
     paystackPlanUpdate,
@@ -234,7 +238,7 @@ class PlanService {
             code: 200,
             data: {},
         };
-        const allowedPanTypes = [PlanType.FOR_BUSINESS, PlanType.FOR_TALENT];
+        const allowedPlanTypes = [PlanType.FOR_BUSINESS, PlanType.FOR_TALENT];
 
         const errors: { field: string; message: string }[] = [];
 
@@ -256,10 +260,10 @@ class PlanService {
                 message: 'Plan type is required',
             });
         }
-        if (!allowedPanTypes.includes(dto.planType)) {
+        if (!allowedPlanTypes.includes(dto.planType)) {
             errors.push({
                 field: 'planType',
-                message: `Invalid plan type. Allowed types are: ${allowedPanTypes.join(', ')}`,
+                message: `Invalid plan type. Allowed types are: ${allowedPlanTypes.join(', ')}`,
             });
         }
         if (!dto.pricing) {
@@ -525,6 +529,53 @@ class PlanService {
     }
 
     //validate plan for subscription
+    /**
+     * @name getPlanAvailability
+     * @description Decides plan availibity for Subscription
+     * @param planId
+     * @returns {planAvailabilityDTO }
+     */
+    public async getPlanAvailability(
+        planId: string,
+    ): Promise<planAvailabilityDTO> {
+        let result: planAvailabilityDTO = {
+            isAvailable: true,
+            data: null,
+        };
+        const { error, data: plan } = await planRepository.getPlanById(
+            String(planId),
+        );
+
+        if (error || !plan) {
+            result.isAvailable = false;
+            return result;
+        }
+
+        if (plan.isEnabled !== true) {
+            result.isAvailable = false;
+            return result;
+        }
+
+        const codes = plan.paystackPlanCodes;
+
+        if (
+            !codes ||
+            !codes.nairaMonthly ||
+            !codes.nairaYearly ||
+            !codes.dollarMonthly ||
+            !codes.dollarYearly
+        ) {
+            // all paystack plan codes must be aavailable for plan to be avialable
+            result.isAvailable = false;
+            return result;
+        }
+
+        result.data = {
+            trial: plan.trial,
+            paystackCodes: plan.paystackPlanCodes,
+        };
+        return result;
+    }
 
     // get all active plans
 

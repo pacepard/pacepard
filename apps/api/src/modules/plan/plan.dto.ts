@@ -1,4 +1,9 @@
-import { IPlanPricing, IPlanTrial, PlanType } from './plan.interface';
+import {
+    IPlanPaystackCode,
+    IPlanPricing,
+    IPlanTrial,
+    PlanType,
+} from './plan.interface';
 
 export interface newPlanDTO {
     name: string;
@@ -40,4 +45,12 @@ export enum allowedPlanUpdateDTO {
     MEMBERS = 'members',
     DOMAINS = 'domains',
     PROJECTS = 'projects',
+}
+
+export interface planAvailabilityDTO {
+    isAvailable: boolean;
+    data: {
+        trial: IPlanTrial;
+        paystackCodes: IPlanPaystackCode;
+    } | null;
 }

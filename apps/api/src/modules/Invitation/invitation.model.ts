@@ -84,7 +84,7 @@ const InvitationSchema = new Schema<IInvitationDoc>(
 
 InvitationSchema.index(
     {
-        'invitee.email': 1,
+        inviteeEmail: 1,
         inviteType: 1,
         inviteStatus: 1,
     },

@@ -181,7 +181,7 @@ export enum DbModels {
     PERMISSION = 'permission',
     CAMPAIGN = 'hackathon_campaign',
     TALENT = 'talent',
-    ORGANIZATION = 'organization',
+    BUSINESS = 'business',
     COMPETITION = 'competition',
     TEAM = 'team',
     PROJECT = 'project',
@@ -203,6 +203,9 @@ export enum DbModels {
     NOTIFICATIONS = 'notifications',
     PLAN = 'plan',
     BADGE_AWARD = 'badgeAward',
+    SUBSCRIPTION = 'subscription',
+    SUBSCRIPTION_INTENT = 'subscriptionIntent',
+    TRANSACTION = 'transaction',
 }
 
 export enum UploadStatus {

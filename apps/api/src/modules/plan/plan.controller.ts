@@ -13,7 +13,7 @@ import ErrorResponse from '../../utils/error.util';
 export const getPlans = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         // get user from request
-        const user = req.user;
+        const user = (req as any).user;
         if (!user) {
             return next(
                 new ErrorResponse(
@@ -72,7 +72,7 @@ export const getPlans = asyncHandler(
 export const addNewPlan = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         // get user from request
-        const user = req.user;
+        const user = (req as any).user;
         if (!user) {
             return next(
                 new ErrorResponse(
@@ -123,7 +123,7 @@ export const addNewPlan = asyncHandler(
 export const updatePlan = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         // get user from request
-        const user = req.user;
+        const user = (req as any).user;
         if (!user) {
             return next(
                 new ErrorResponse(

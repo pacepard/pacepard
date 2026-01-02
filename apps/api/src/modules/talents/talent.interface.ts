@@ -21,7 +21,6 @@ export interface ITalentDoc extends Document {
     slug: string;
     email: string;
 
-
     specialties: Array<string>; // what kind of work do you do?
     intrests: Array<string>;
     skils: Array<string>; // skills you have
@@ -30,8 +29,8 @@ export interface ITalentDoc extends Document {
     gender: GenderType;
     dateOfBirth: string; // ISO Date
 
-    occupation: OccupationType
-    
+    occupation: OccupationType;
+
     employment: {
         company: string;
         position: string;
@@ -40,7 +39,7 @@ export interface ITalentDoc extends Document {
 
     education: {
         institution: string;
-        type: string
+        type: string;
         degree: string;
         fieldOfStudy: string;
         startDate: Date;
@@ -56,11 +55,11 @@ export interface ITalentDoc extends Document {
     user: IUserDoc | any;
     roles: Array<ITalentType | any>;
 
-
     workspaces: Array<IWorkspaceDoc | any>;
     subscription: ISubscriptionDoc | any;
+    trial: { hasUsedTrial: boolean; planCode: string; usedAt: Date };
     transactions: Array<ITransactionDoc | any>;
-    templates: Array<ITemplateDoc | any>
+    templates: Array<ITemplateDoc | any>;
 
     hackathons: Array<IHackathonDoc | any>;
     entries: Array<IEntryDoc | any>;
@@ -102,5 +101,4 @@ export enum OccupationType {
 export enum ITalentType {
     MENTOR = 'mentor',
     JUDGE = 'judge',
-
 }
