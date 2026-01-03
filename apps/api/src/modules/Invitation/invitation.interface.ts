@@ -41,7 +41,7 @@ export enum InvitationType {
 export enum InvitationStatus {
     PENDING = 'pending',
     ACCEPTED = 'accepted',
-    VALIDATED = "va"
+    VALIDATED = 'validated',
     DECLINED = 'declined',
     EXPIRED = 'expired',
     REVOKED = 'revoked',

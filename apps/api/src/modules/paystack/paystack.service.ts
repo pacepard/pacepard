@@ -8,13 +8,20 @@ import {
 import dotenv from 'dotenv';
 dotenv.config();
 
-const paystackTestKey =
+const secretKey =
     process.env.PAYSTACK_SECRET_KEY ||
     'sk_test_278d03426302859dff63192ce4929043909c4a4a';
 
-const paystack = new Paystack(paystackTestKey);
-console.log(paystack);
+if (!secretKey) {
+    throw new Error('Paystack secreet key now set');
+}
 
+const paystack = new Paystack(secretKey);
+
+/**
+ * Initialize a Paystack transaction.
+ * Does NOT confirm payment.
+ */
 export const initializePayment = async (dto: initializePaymentDTO) => {
     try {
         const response = await paystack.transaction.initialize({
@@ -26,9 +33,19 @@ export const initializePayment = async (dto: initializePaymentDTO) => {
         return response;
     } catch (err) {
         console.log(err);
+        /**
+         * if (!response?.status) {
+        throw new Error('Failed to initialize Paystack transaction');
+    }
+
+    return response.data;
+         */
     }
 };
 
+/**
+ * Verify a Paystack transaction by reference.
+ */
 export const verifyTransaction = async (reference: string) => {
     try {
         const response = await paystack.transaction.verify(reference);
@@ -40,6 +57,9 @@ export const verifyTransaction = async (reference: string) => {
 
 // Plan
 
+/**
+ * Create a Paystack subscription plan.
+ */
 export const paystackCreatePlan = async (dto: CreatePlanDTO) => {
     try {
         const response = await paystack.plan.create({
@@ -55,6 +75,9 @@ export const paystackCreatePlan = async (dto: CreatePlanDTO) => {
     }
 };
 
+/**
+ * Update a Paystack subscription plan.
+ */
 export const paystackPlanUpdate = async (
     planCode: string,
     updateData: CreatePlanDTO,
@@ -69,18 +92,46 @@ export const paystackPlanUpdate = async (
 // export const fetchPlan = async () => {};
 
 // Webhooks
-export const verifyWebhookSignature = async (
-    dto: verifWebhookDTO,
-): Promise<boolean> => {
+
+/**
+ * Verify Paystack webhook signature.
+ *
+ * IMPORTANT:
+ * `payload` MUST be the raw request body (Buffer or string).
+ */
+export const verifyWebhookSignature = (dto: verifWebhookDTO): boolean => {
     const { paystackSecret, signature, payload } = dto;
-    try {
-        const hash = crypto
-            .createHmac('sha512', paystackSecret)
-            .update(JSON.stringify(payload))
-            .digest('hex');
-        return hash === signature;
-    } catch (err) {
-        console.log(err);
-        return false;
-    }
+
+    const hash = crypto
+        .createHmac('sha512', paystackSecret)
+        .update(payload)
+        .digest('hex');
+    return hash === signature;
 };
+
+/**
+ * import express from 'express';
+
+const app = express();
+
+raw body ONLY for Paystack route
+
+// Normal JSON for everything else
+app.use(express.json());
+
+// RAW body for Paystack webhook
+app.post(
+  '/webhooks/paystack',
+  express.raw({ type: 'application/json' }),
+  (req, res) => {
+    const signature = req.headers['x-paystack-signature'] as string;
+    const rawBody = req.body; // Buffer
+
+    // verify HMAC here
+    // crypto.createHmac(...).update(rawBody)
+
+    res.sendStatus(200);
+  },
+);
+
+ */

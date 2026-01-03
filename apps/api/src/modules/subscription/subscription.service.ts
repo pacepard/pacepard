@@ -3,6 +3,7 @@ import { IBusinessDoc } from '../business/business.interface';
 import { IPlanPaystackCode } from '../plan/plan.interface';
 import planService from '../plan/plan.service';
 import { ITalentDoc } from '../talents/talent.interface';
+import transactionService from '../transaction/transaction.service';
 import userRepository from '../user/user.repository';
 import {
     ISubscriptionIntentDoc,
@@ -106,6 +107,9 @@ class SubscriptionService {
 
             case SubscriptionIntentState.VALIDATING:
                 return this.handleValidatingState(intent, userProfile);
+            
+            case SubscriptionIntentState.AWAITING_PAYMENT
+                return this.handleAwaitingPayment(intent)
             default:
                 break;
         }
@@ -186,7 +190,13 @@ class SubscriptionService {
         const transactionResult = await this.handleTransaction({
             trial: true,
             planCode,
+            email: userProfile.email,
+            currency,
         });
+
+        // change state to awaiting payment, added payment reference to the intent
+
+        return transactionResult;
     }
 
     /**
@@ -312,9 +322,15 @@ class SubscriptionService {
         const planCode = this.getPlanCode(currency, interval, paystackCodes);
 
         const transactionResult = await this.handleTransaction({
-            trial: true,
+            trial: false,
             planCode,
+            email: userProfile.email,
+            currency,
         });
+
+        // change state to awaiting payment, add payment reference
+
+        return transactionResult;
     }
 
     /**
@@ -492,13 +508,54 @@ class SubscriptionService {
     /**
      * @name handleTransaction
      * @description Pass information to transaction to receive to receive payment url and payment reference
-     * @param ,full object with details if the transaction is to charge immediately or for card collection if you pass in amount for card tokenization and plancodes to charge immediately
+     * @param -full object with details if the transaction is to charge immediately or for card collection if you pass in amount for card tokenization and plancodes to charge immediately
      * @returns {Promise<IResult>} with data containing a url and payment reference
      */
     private async handleTransaction(dto: {
         trial: boolean;
         planCode: string;
-    }) {}
+        email: string;
+        currency: Currency;
+    }): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        if (dto.trial === true) {
+            // If trial is true, this is to show that subscription for the plan is on trial so we charge just for card tokenization and to save authorization
+            const nairaAmount = 50;
+            const cardAmount = Math.round(nairaAmount * 100); // kobo
+            const paymentResult = transactionService.initializeTransaction({
+                email: dto.email,
+                amount: cardAmount,
+                currency: dto.currency,
+            });
+
+            if (paymentResult.error) {
+                result.error = true;
+                result.code = 500;
+                result.message = 'Something went wrong';
+                return result;
+            }
+            return paymentResult; // already contains auth url and reference code
+        }
+
+        const paymentResult = transactionService.initializeTransaction({
+            email: dto.email,
+            planCode: dto.planCode,
+        });
+
+        if (paymentResult.error) {
+            result.error = true;
+            result.code = 500;
+            result.message = 'Something went wrong';
+            return result;
+        }
+        return paymentResult; // already contains auth url and reference code
+    }
 
     // /**
     //  * @name validatePlanForSub
