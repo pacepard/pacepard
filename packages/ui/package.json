@@ -11,8 +11,6 @@
     "@floating-ui/dom": "^1.7.1",
     "@floating-ui/react-dom": "^2.1.2",
     "@floating-ui/utils": "^0.2.2",
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/manrope": "^5.2.8",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/number": "^1.1.0",
     "@radix-ui/primitive": "^1.1.0",

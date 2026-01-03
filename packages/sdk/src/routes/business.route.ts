@@ -5,7 +5,7 @@ const businessRoutes: Array<IRoute> = [
         name: 'business',
         title: 'Business',
         url: '/b',
-        iconName: 'layout-right',
+        iconName: 'buildings',
         action: 'open-secondary',
         isAuth: true,
         params: [],
@@ -14,7 +14,7 @@ const businessRoutes: Array<IRoute> = [
             {
                 name: 'home',
                 title: 'Home',
-                iconName: 'chart',
+                iconName: 'home',
                 url: '/home',
                 action: 'navigate',
                 isAuth: true,
@@ -24,7 +24,7 @@ const businessRoutes: Array<IRoute> = [
             {
                 name: 'my-inbox',
                 title: 'My Inbox',
-                iconName: 'chart',
+                iconName: 'inbox',
                 url: '/messages',
                 action: 'navigate',
                 isAuth: true,
@@ -33,7 +33,7 @@ const businessRoutes: Array<IRoute> = [
             },            {
                 name: 'search',
                 title: 'Search',
-                iconName: 'chart',
+                iconName: 'search',
                 url: '/search',
                 action: 'navigate',
                 isAuth: true,
@@ -43,7 +43,7 @@ const businessRoutes: Array<IRoute> = [
             {
                 name: 'domains',
                 title: 'Domains',
-                iconName: 'chart',
+                iconName: 'domains',
                 url: '/domains',
                 action: 'navigate',
                 isAuth: true,
@@ -53,7 +53,7 @@ const businessRoutes: Array<IRoute> = [
             {
                 name: 'members',
                 title: 'Members',
-                iconName: 'chart',
+                iconName: 'members',
                 url: '/members',
                 action: 'navigate',
                 isAuth: true,
@@ -63,7 +63,7 @@ const businessRoutes: Array<IRoute> = [
             {
                 name: 'settings',
                 title: 'Settings',
-                iconName: 'folder',
+                iconName: 'settings',
                 url: '/settings',
                 action: 'navigate',
                 isAuth: true,
@@ -73,7 +73,7 @@ const businessRoutes: Array<IRoute> = [
             {
                 name: 'upgrade-plan',
                 title: 'Upgrade Plan',
-                iconName: 'trophy',
+                iconName: 'upgrade-plan',
                 url: '/upgrade-plan',
                 action: 'navigate',
                 isAuth: true,

@@ -14,9 +14,19 @@ export const URL_USERS = '/users'
 export const URL_CHANGE_PASSWORD = `${URL_USERS}/update-password`
 
 export const URL_TALENT = '/talents'
-export const URL_ORGANISATION = '/organisation'
+export const URL_BUSINESSES = '/businesses'
+export const URL_BUSINESS = '/business'
+export const URL_TEAMS = '/teams'
+export const URL_TEAM = '/team'
+export const URL_MEMBERS = '/members'
+export const URL_MEMBER = '/member'
+export const URL_INVITES = '/invites'
+export const URL_INVITE = '/invite'
 
 
+
+export const URL_WORKSPACES = '/workspaces'
+export const URL_WORKSPACE = '/workspace'
 
 
 

@@ -16,10 +16,16 @@ import {
 import { strengthColors } from "@/utils/helpers";
 import { OAuthButtons } from "./oauth-buttons";
 import { LockSimpleIcon } from "@phosphor-icons/react/dist/ssr";
+import { pacepardAPI } from "@/config/pacepard";
+import { toast } from "@pacepard/ui";
+import { useNavigate } from "react-router";
 
 
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordScore, setPasswordScore] = useState(0);
   const [feedback, setFeedback] = useState<string[]>([]);
@@ -49,8 +55,19 @@ const RegisterForm = () => {
   }, [passwordValue]);
 
   const onSubmit = async (data: RegisterFormValues) => {
-    // await Register.mutateAsync(data);
-    console.log("Submitting", data);
+    
+      const response = await pacepardAPI.auth.registerUser({
+        email: data.email,
+        password: data.password,
+      });
+      
+      if (response.error) {
+        toast.error(response.message || response.data.message);
+      } else {
+
+        toast.success("Registration successful! Please check your email to verify your account.");
+        navigate("/activate-account");
+      }
   };
 
   return (

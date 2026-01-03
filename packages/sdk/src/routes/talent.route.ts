@@ -5,7 +5,7 @@ const talentRoutes: Array<IRoute> = [
         name: 'talent',
         title: 'Talent',
         url: '/t',
-        iconName: 'layout-right',
+        iconName: 'user',
         action: 'open-secondary',
         isAuth: true,
         params: [],
@@ -14,7 +14,7 @@ const talentRoutes: Array<IRoute> = [
             {
                 name: 'home',
                 title: 'Home',
-                iconName: 'chart',
+                iconName: 'home',
                 url: '/home',
                 action: 'navigate',
                 isAuth: true,
@@ -24,7 +24,7 @@ const talentRoutes: Array<IRoute> = [
             {
                 name: 'my-inbox',
                 title: 'My Inbox',
-                iconName: 'chart',
+                iconName: 'inbox',
                 url: '/messages',
                 action: 'navigate',
                 isAuth: true,
@@ -34,7 +34,7 @@ const talentRoutes: Array<IRoute> = [
             {
                 name: 'workshops',
                 title: 'Workshops',
-                iconName: 'chart',
+                iconName: 'workshops',
                 url: '/workshops',
                 action: 'navigate',
                 isAuth: true,
@@ -44,7 +44,7 @@ const talentRoutes: Array<IRoute> = [
             {
                 name: 'challenges',
                 title: 'Challenges',
-                iconName: 'chart',
+                iconName: 'challenges',
                 url: '/challenges',
                 action: 'navigate',
                 isAuth: true,
@@ -54,7 +54,7 @@ const talentRoutes: Array<IRoute> = [
             {
                 name: 'mentors',
                 title: 'Mentors',
-                iconName: 'chart',
+                iconName: 'mentors',
                 url: '/mentors',
                 action: 'navigate',
                 isAuth: true,
@@ -64,7 +64,7 @@ const talentRoutes: Array<IRoute> = [
             {
                 name: 'settings',
                 title: 'Settings',
-                iconName: 'folder',
+                iconName: 'settings',
                 url: '/settings',
                 action: 'navigate',
                 isAuth: true,
@@ -74,7 +74,7 @@ const talentRoutes: Array<IRoute> = [
             {
                 name: 'upgrade-plan',
                 title: 'Upgrade Plan',
-                iconName: 'trophy',
+                iconName: 'upgrade-plan',
                 url: '/upgrade-plan',
                 action: 'navigate',
                 isAuth: true,

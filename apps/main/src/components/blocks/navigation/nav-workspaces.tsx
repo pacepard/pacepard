@@ -43,11 +43,7 @@ type WorkspaceSection = {
     items: WorkspaceItem[];
 };
 
-export function NavWorkspaces({
-    sections,
-}: {
-    sections: WorkspaceSection[];
-}) {
+export function NavWorkspaces({ sections }: { sections: WorkspaceSection[] }) {
     const { isMobile } = useSidebar();
 
     return (
@@ -84,7 +80,9 @@ export function NavWorkspaces({
                                     <DropdownMenuTrigger asChild>
                                         <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/workspace-button:opacity-100 group-hover/workspace-button:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
                                             <DotsThreeIcon />
-                                            <span className="sr-only">More</span>
+                                            <span className="sr-only">
+                                                More
+                                            </span>
                                         </SidebarMenuAction>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent
@@ -133,8 +131,16 @@ export function NavWorkspaces({
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent
                                                     className="w-48"
-                                                    side={isMobile ? 'bottom' : 'right'}
-                                                    align={isMobile ? 'end' : 'start'}
+                                                    side={
+                                                        isMobile
+                                                            ? 'bottom'
+                                                            : 'right'
+                                                    }
+                                                    align={
+                                                        isMobile
+                                                            ? 'end'
+                                                            : 'start'
+                                                    }
                                                 >
                                                     <DropdownMenuItem>
                                                         <Folder className="text-muted-foreground" />

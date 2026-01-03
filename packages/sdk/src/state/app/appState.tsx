@@ -1,15 +1,12 @@
 import { useMemo, useReducer } from 'react';
-import { collection } from '../helpers/seed';
+import { collection, coreResoruce, hackResource, projectResource } from '../helpers/seed';
 import appReducer from './appReducer';
 import { SET_LOADING, UNSET_LOADING } from '../helpers/types';
 import { ISetLoading, IUnsetLoading } from '@/utils/interfaces';
 import { IClearResource, ICollection } from '../helpers/interface';
 import AppContext from './appContext';
 
-
-
 const AppState = (props: any) => {
-
     const initialState = {
         users: collection, // all users
         user: {}, // a single user
@@ -23,16 +20,30 @@ const AppState = (props: any) => {
         admins: collection,
         admin: {},
 
-        // hackathon 
+        workspaces: collection,
+        workspace: {},
+        
+        members: collection,
+        member: {},
+        
+        invites: collection,
+        invite: {},
+
+        forms: collection,
+        form: {},
+        
+        responses: collection,
+        response: {},
+
+        // hackathon
         hackathons: collection, // list of hackathons
         hackathon: {}, // currently selected hackathon
-        
-        entries: collection, // list of created project hackathonsideas 
+
+        entries: collection, // list of created project hackathonsideas
         entry: {}, // currently selected project hackathon idea
-        
+
         submissions: collection, // all final project submissions
         submission: {}, // single final submission
-
 
         // oss products (superhumans)
         projects: collection, // all projects
@@ -44,8 +55,11 @@ const AppState = (props: any) => {
         tasks: collection,
         task: {},
 
+        core: coreResoruce,
+        hackCore: hackResource,
+        projectCore: projectResource,
 
-        //payments 
+        //payments
         plans: collection,
         plan: {},
 
@@ -56,6 +70,7 @@ const AppState = (props: any) => {
         search: collection, // search results
         filters: collection, // filters results
         loading: false,
+        loader: false,
     };
 
     const [state, dispatch] = useReducer(appReducer, initialState);
@@ -153,6 +168,24 @@ const AppState = (props: any) => {
 
     const contextValues = useMemo(
         () => ({
+            users: state.users,
+            user: state.user,
+            talents: state.talents,
+            talent: state.talent,
+            businesses: state.businesses,
+            business: state.business,
+            admins: state.admins,
+            admin: state.admin,
+            workspaces: state.workspaces,
+            workspace: state.workspace,
+            members: state.members,
+            member: state.member,
+            invites: state.invites,
+            invite: state.invite,
+            forms: state.forms,
+            form: state.form,
+            responses: state.responses,
+            response: state.response,
             hackthons: state.hackathons,
             hackthon: state.hackathon,
             entries: state.entries,
@@ -165,7 +198,9 @@ const AppState = (props: any) => {
             team: state.team,
             tasks: state.tasks,
             task: state.task,
-            
+            core: state.core,
+            hackCore: state.hackCore,
+            projectCore: state.projectCore,
             plans: state.plans,
             plan: state.plan,
             transactions: state.transactions,
@@ -173,6 +208,7 @@ const AppState = (props: any) => {
             search: state.search,
             filters: state.filters,
             loading: state.loading,
+            loader: state.loader,
             setLoading: setLoading,
             unsetLoading: unsetLoading,
             clearResource: clearResource,
@@ -180,6 +216,24 @@ const AppState = (props: any) => {
             setResource: setResource,
         }),
         [
+            state.users,
+            state.user,
+            state.talents,
+            state.talent,
+            state.businesses,
+            state.business,
+            state.admins,
+            state.admin,
+            state.workspaces,
+            state.workspace,
+            state.members,
+            state.member,
+            state.invites,
+            state.invite,
+            state.forms,
+            state.form,
+            state.responses,
+            state.response,
             state.hackathons,
             state.hackathon,
             state.entries,
@@ -192,7 +246,9 @@ const AppState = (props: any) => {
             state.team,
             state.tasks,
             state.task,
-
+            state.core,
+            state.hackCore,
+            state.projectCore,
             state.plans,
             state.plan,
             state.transactions,
@@ -200,12 +256,13 @@ const AppState = (props: any) => {
             state.search,
             state.filters,
             state.loading,
+            state.loader,
             setLoading,
             unsetLoading,
             clearResource,
             setCollection,
             setResource,
-        ]
+        ],
     );
 
     return (

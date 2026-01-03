@@ -1,8 +1,9 @@
-import { IPagination } from "@/utils/interfaces";
+import { IAPIReport, IPagination } from '@/utils/interfaces';
 
 export interface IAPIResponse {
     error: boolean;
     errors: Array<any>;
+    report?: IAPIReport;
     count?: number;
     total?: number;
     pagination?: IPagination;
@@ -10,4 +11,4 @@ export interface IAPIResponse {
     message: string;
     token?: string;
     status: number;
-  }
+}

@@ -2,7 +2,10 @@ import { CSSProperties, MouseEvent, ReactNode } from 'react';
 import {
     ListUIType,
     LoadingType,
+    PagesearchType,
     PositionType,
+    QueryOrderType,
+    RefineType,
     ResourceType,
     RouteActionType,
     RouteParamType,
@@ -10,6 +13,14 @@ import {
     SizeType,
     StatusType,
 } from './types';
+import Project from '@/dtos/project.dto';
+import Task from '@/dtos/task.dto';
+import Team from '@/dtos/team.dto';
+import Squad from '@/dtos/squad.dto';
+import Submission from '@/dtos/submission.dto';
+import Entry from '@/dtos/entry.dto';
+import Hackathon from '@/dtos/hackathon.dto';
+import Form, { IBlock, IQuestion, IResponse } from '@/dtos/form.dto';
 
 export interface IApiError {
     response?: {
@@ -109,13 +120,6 @@ export interface IListUI {
     rows?: Array<IListUIRow>;
 }
 
-export interface IAPIReport {
-    format: string;
-    csv?: string;
-    xml?: any;
-    pdf?: any;
-}
-
 export interface IListUIRow {
     option: 'status' | 'data';
     resource: ResourceType;
@@ -201,6 +205,83 @@ export interface IPagination {
     next: { page: number; limit: number };
     prev: { page: number; limit: number };
 }
+
+
+export interface IDivider {
+    show?: boolean,
+    bg?: string,
+    padding?: {
+        enable?: boolean,
+        top?: string,
+        bottom?: string
+    }
+}
+
+export interface IPlaceholder {
+    className: string,
+    height: string,
+    bgColor: string,
+    width: string,
+    minWidth: string,
+    minHeight: string,
+    animate: boolean,
+    radius: string | number,
+    marginTop: string
+    marginBottom: string,
+    top: string
+    left: string
+    right: string,
+    flex: boolean
+}
+
+export interface IPageSearch {
+    key: string,
+    hasResult: boolean,
+    refine?: RefineType,
+    payload?: any,
+    type: PagesearchType,
+    filters?: any,
+    resource?: ResourceType,
+    resourceId?: string
+}
+
+
+export interface IAppMetrics {
+    loading: boolean,
+    message: string,
+    type: ResourceType,
+    resource?: ResourceType,
+    question?: {
+        total: number,
+        enabled: number,
+        disabled: number,
+        resource: {
+            total: number,
+            enabled: number,
+            disabled: number,
+        }
+    }
+}
+
+export interface IListQuery {
+    limit?: number,
+    paginate?: string,
+    page?: number,
+    select?: string,
+    order?: QueryOrderType,
+    type?: string,
+    admin?: boolean,
+    mapped?: boolean,
+    from?: string,
+    to?: string,
+    resource?: ResourceType,
+    resourceId?: string,
+    key?: string,
+    payload?: any,
+    report?: boolean
+}
+
+
 
 export interface IRoutil {
     computeAppRoute(route: IRoute): string,

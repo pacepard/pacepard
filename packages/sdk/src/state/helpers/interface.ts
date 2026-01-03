@@ -1,17 +1,19 @@
-import { Admin } from "@/dtos/admin.dto"
-import { Business } from "@/dtos/business.dto"
-import { Entry } from "@/dtos/entry.dto"
-import { Hackathon } from "@/dtos/hackathon.dto"
+import Admin from "@/dtos/admin.dto"
+import Business from "@/dtos/business.dto"
+import Entry from "@/dtos/entry.dto"
+import Form, { IBlock, IQuestion, IResponse } from "@/dtos/form.dto"
+import Hackathon from "@/dtos/hackathon.dto"
 import Plan from "@/dtos/plan.dto"
-import { Project } from "@/dtos/project.dto"
-import { Squad } from "@/dtos/squad.dto"
-import { Submission } from "@/dtos/submission.dto"
+import Project from "@/dtos/project.dto"
+import Squad from "@/dtos/squad.dto"
+import Submission from "@/dtos/submission.dto"
 import Subscription from "@/dtos/subscription"
 import Talent from "@/dtos/talent.dto"
-import { Task } from "@/dtos/task.dto"
-import { Team } from "@/dtos/team.dto"
+import Task from "@/dtos/task.dto"
+import Team from "@/dtos/team.dto"
 import Transaction from "@/dtos/transaction.dto"
 import User from "@/dtos/user.dto"
+import Workspace from "@/dtos/workspace.dto"
 import { IAPIReport, IPagination, ISetLoading, ISidebarProps, IToastState, IUnsetLoading } from "@/utils/interfaces"
 import { RefineType } from "@/utils/types"
 
@@ -32,6 +34,27 @@ export interface ICollection {
     payload?: any
 
 }  
+
+export interface ICoreResource {
+    forms: Array<Form>;
+    blocks: Array<IBlock>;
+    questions: Array<IQuestion>;
+    responses: Array<IResponse>;
+}
+
+export interface IHackDomain {
+    hackathons: Array<Hackathon>;
+    entries: Array<Entry>;
+    submissions: Array<Submission>;
+    squad: Array<Squad>;
+}
+
+export interface IProjectDomain {
+    projects: Array<Project>;
+    Teams: Array<Team>;
+    tasks: Array<Task>;
+
+}
     
 export interface IUserContext {
     users: ICollection,
@@ -94,8 +117,15 @@ export interface IAppContext {
     search: ICollection,
     items: Array<any>
 
+    workspaces: ICollection,
+    workspace: Workspace,
+
+    core: ICoreResource,
+    hackCore: IHackDomain,
+    projectCore: IProjectDomain,
     message: string,
     loading: boolean,
+    loader: boolean,
     clearResource(data: IClearResource): void,
     setCollection(type: string, data: ICollection): void,
     setResource(type: string, data: any): void

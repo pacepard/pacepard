@@ -21,7 +21,7 @@ import {
     IUnsetLoading,
 } from '@/utils/interfaces';
 import storage from '@/storage/local-storage';
-import sidebarRoutes from '@/routes/sidebar.route';
+import sidebarRoutes from '../../routes/sidebar.route';
 import { ICollection } from '../helpers/interface';
 
 const UserState = (props: any) => {
@@ -29,7 +29,12 @@ const UserState = (props: any) => {
         users: collection,
         user: {},
         talent: {},
-        mainCareer: {},
+        businesses: collection,
+        business: {},
+        admins: collection,
+        admin: {},
+        workspaces: collection,
+        workspace: {},
         subscription: {},
         plan: {},
         growth: {},

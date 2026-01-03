@@ -130,7 +130,7 @@ const ActivateUserForm = (data: IForm) => {
                         {Array.from({ length: 6 }).map((_, index) => (
                             <Input
                                 key={index}
-                                ref={(el) => (otpRefs.current[index] = el)}
+                                ref={(el) => { otpRefs.current[index] = el; }}
                                 inputMode="numeric"
                                 maxLength={1}
                                 value={otpValue[index] || ''}

@@ -78,7 +78,7 @@ pacepard/
 │   └── main/         # Main app entry point
 ├── packages/          # Shared packages
 │   ├── ui/           # UI component library (@pacepard/ui)
-│   ├── editor/       # Editor package (@pacepard/editor)
+│   ├── core/         # Core package (@pacepard/core)
 │   └── sdk/          # SDK package (@pacepard/sdk)
 ├── configs/          # Shared configurations
 │   ├── eslint/       # ESLint configuration (@pacepard/configs/eslint)
@@ -104,7 +104,7 @@ All packages use the `@pacepard/*` namespace:
 
 - **Packages:**
   - `@pacepard/ui` - Shared UI component library (shadcn/ui based)
-  - `@pacepard/editor` - Editor functionality
+  - `@pacepard/core` - Core functionality
   - `@pacepard/sdk` - SDK utilities and shared logic
 
 - **Configs:**

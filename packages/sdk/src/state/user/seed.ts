@@ -1,6 +1,6 @@
 import { IPagination, ISidebarProps, IToast } from "@/utils/interfaces";
 import { ICollection } from "../helpers/interface";
-import sidebarRoutes from "@/routes/sidebar.route";
+import sidebarRoutes from "../../routes/sidebar.route";
 
 const pagination: IPagination = {
     next: { page: 1, limit: 25 },

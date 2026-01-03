@@ -3,6 +3,7 @@ import useContextType from '@/state/useContextType';
 import storage from '@/storage/local-storage';
 import { useCallback, useEffect, useState } from 'react';
 import useGoTo from '../shared/useGoTo';
+import { pacepardAPIClient } from '@/api/clients/pacepard';
 
 import {
     ActivateDTO,
@@ -15,7 +16,8 @@ import {
     VerifyOtpDTO,
 } from '@/dtos/auth.dto';
 import { BusinessType, UserType } from '@/utils/enums';
-import { getGlobalInstance } from '../../index';
+
+
 
 const useAuth = () => {
     const { userContext } = useContextType();
@@ -47,12 +49,11 @@ const useAuth = () => {
                 location.pathname.includes('/invite') ||
                 location.pathname.includes('/register') ||
                 location.pathname.includes('/verify-otp') || 
-                location.pathname.includes('/activate-account') || 
-
+                location.pathname.includes('/activate-account')
             ) {
                 goTo(location.pathname);
             } else {
-                getGlobalInstance().auth.logout();
+                pacepardAPIClient().auth.logout();
                 goTo('/login');
             }
         } else {
@@ -77,10 +78,24 @@ const useAuth = () => {
     }, [isLoggedIn]);
 
 
+    /**
+     * @name redirect
+     * @description Redirects the user to the appropriate page based on their role.
+     * @param {Array<string>} roles - The roles of the user.
+     * @param {string} roles.userType - The user type of the user.
+     * @param {string} roles.businessType - The business type of the user.
+     * @param {string} roles.talentType - The talent type of the user.
+     * @param {string} roles.superAdmin - The super admin type of the user.
+     * @param {string} roles.admin - The admin type of the user.
+     * @param {string} roles.user - The user type of the user.
+     * @param {string} roles.business - The business type of the user.
+     * @param {string} roles.talent - The talent type of the user.
+     * @returns {Promise<void>}
+     */
     const redirect = useCallback( (roles: Array<string>) => {
 
         if (!storage.checkToken() || !storage.checkUserID()) {
-            getGlobalInstance().auth.logout();
+            pacepardAPIClient().auth.logout();
             goTo('/login');
         } else {
             const userType = cookieService.getUserType();
@@ -91,7 +106,7 @@ const useAuth = () => {
             if (token) {
                 if (userType && !roles.includes(userType)) {
                     goTo('/login');
-                    getGlobalInstance().auth.logout();
+                    pacepardAPIClient().auth.logout();
                 } else {
                     setIsLoggedIn(true);
                     currentSidebar(false); // set sidebar
@@ -105,14 +120,24 @@ const useAuth = () => {
                     }
                 }
             } else {
-                getGlobalInstance().auth.logout();
+                pacepardAPIClient().auth.logout();
                 goTo('/login');
             }
         }
     }, [navigate])
 
+
+    /**
+     * @name login
+     * @description Logs in a user.
+     * @param {LoginDTO} data - The data for logging in a user.
+     * @param {string} data.email - The email of the user.
+     * @param {string} data.password - The password of the user.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const login = async (data: LoginDTO) => {
-        const response = await getGlobalInstance().auth.loginUser(data);
+        
+        const response = await pacepardAPIClient().auth.loginUser(data);
 
         if (!response.error) {
             if (response.status === 200) {
@@ -222,8 +247,13 @@ const useAuth = () => {
         return response;
     };
 
+    /**
+     * @name logout
+     * @description Logs out a user.
+     * @returns {Promise<void>}
+     */
     const logout = async () => {
-        await getGlobalInstance().auth.logout();
+        await pacepardAPIClient().auth.logout();
         storage.clearAuth();
         cookieService.removeData({ key: 'userType' });
         cookieService.removeData({ key: 'token' });
@@ -240,11 +270,18 @@ const useAuth = () => {
 
     };
 
+    /**
+     * @name logoutUser
+     * @description Logs out a user.
+     * @param {LogoutDTO} data - The data for logging out a user.
+     * @param {string} data.userId - The ID of the user.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const logoutUser = useCallback(
         async (data: LogoutDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await getGlobalInstance().auth.logoutUser({
+            const response = await pacepardAPIClient().auth.logoutUser({
                 userId: data.userId || storage.getUserID(),
             });
             if (!response.error) {
@@ -269,11 +306,19 @@ const useAuth = () => {
         [setLoading],
     );
 
+    /**
+     * @name register
+     * @description Registers a new user.
+     * @param {RegisterUserDTO} data - The data for registering a new user.
+     * @param {string} data.email - The email of the user.
+     * @param {string} data.password - The password of the user.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const register = useCallback(
         async (data: RegisterUserDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await getGlobalInstance().auth.registerUser(data);
+            const response = await pacepardAPIClient().auth.registerUser(data);
 
             if (!response.error) {
                 setIsLoggedIn(false);
@@ -288,11 +333,20 @@ const useAuth = () => {
         [setLoading],
     );
 
+    /**
+     * @name verifyOtp
+     * @description Verifies an OTP sent to the user's email.
+     * @param {VerifyOtpDTO} data - The data for verifying an OTP.
+     * @param {string} data.email - The email of the user.
+     * @param {number} data.otp - The OTP sent to the user's email.
+     * @param {OtpType} data.otpType - The type of OTP.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const verifyOtp = useCallback(
         async (data: VerifyOtpDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await getGlobalInstance().auth.verifyOTP({
+            const response = await pacepardAPIClient().auth.verifyOTP({
                 email: data.email,
                 otp: data.otp,
                 otpType: data.otpType,
@@ -306,11 +360,20 @@ const useAuth = () => {
         [setLoading],
     );
 
+    /**
+     * @name activateAccount
+     * @description Activates an account.
+     * @param {ActivateDTO} data - The data for activating an account.
+     * @param {string} data.email - The email of the user.
+     * @param {number} data.otp - The OTP sent to the user's email.
+     * @param {OtpType} data.otpType - The type of OTP.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const activateAccount = useCallback(
         async (data: ActivateDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await getGlobalInstance().auth.activateUser({
+            const response = await pacepardAPIClient().auth.activateUser({
                 otp: data.otp,
                 otpType: data.otpType,
                 email: data.email,
@@ -329,10 +392,18 @@ const useAuth = () => {
         [setLoading],
     );
 
+    /**
+     * @name resendOtp
+     * @description Resends an OTP to the user's email.
+     * @param {ResendOtpDTO} data - The data for resending an OTP.
+     * @param {string} data.email - The email of the user.
+     * @param {OtpType} data.otpType - The type of OTP.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const resendOtp = useCallback(
         async (data: ResendOtpDTO) => {
             const { email, otpType } = data;
-            const response = await getGlobalInstance().auth.resendOTP({
+            const response = await pacepardAPIClient().auth.resendOTP({
                 email,
                 otpType,
             });
@@ -346,11 +417,18 @@ const useAuth = () => {
         [setLoading],
     );
 
+    /**
+     * @name forgotPassword
+     * @description Forgets a password.
+     * @param {ForgotPasswordDTO} data - The data for forgetting a password.
+     * @param {string} data.email - The email of the user.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const forgotPassword = useCallback(
         async (data: ForgotPasswordDTO) => {
             setLoading({ option: 'default' });
 
-            const response = await getGlobalInstance().auth.forgotPassword({
+            const response = await pacepardAPIClient().auth.forgotPassword({
                 email: data.email,
             });
 
@@ -363,13 +441,21 @@ const useAuth = () => {
         [setLoading],
     );
 
+    /**
+     * @name resetPassword
+     * @description Resets a password.
+     * @param {ResetPasswordDTO} data - The data for resetting a password.
+     * @param {string} data.newPassword - The new password of the user.
+     * @param {string} data.email - The email of the user.
+     * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
+     */
     const resetPassword = useCallback(
         async (data: ResetPasswordDTO) => {
             const { newPassword, email } = data;
 
             setLoading({ option: 'default' });
 
-            const response = await getGlobalInstance().auth.resetPassword({
+            const response = await pacepardAPIClient().auth.resetPassword({
                 newPassword,
                 email,
             });

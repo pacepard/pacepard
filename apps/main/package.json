@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@pacepard/editor": "workspace:*",
+    "@pacepard/core": "workspace:*",
     "@pacepard/sdk": "workspace:*",
     "@pacepard/ui": "workspace:*",
     "@phosphor-icons/react": "^2.1.10",

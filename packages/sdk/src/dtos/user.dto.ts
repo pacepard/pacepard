@@ -1,9 +1,8 @@
 //import { IAPIKey, IUserCountry, IUserPermission } from "../utils/interfaces.util";
 
 interface User {
+    code: string; // user public ID
 
-    avatar: string,
-    logo: string,
     firstName: string;
     lastName: string;
     middleName: string,
@@ -11,11 +10,18 @@ interface User {
     phoneCode: string;
     countryPhone: string,
     altPhone: string,
+    
     email: string;
     passwordType: string;
     userType: string;
     businessName: string,
     businessType: string,
+
+    avatar: string,
+    coverImage: string,
+    timezone: string,
+    location: ILocation
+    
     login: {
         last: string,
         method: string
@@ -30,6 +36,7 @@ interface User {
     inviteStatus: string;
     // apiKey: IAPIKey
     // keys: Array<IAPIKey>
+    devices: Array<any>
 
     isSuper: boolean;
     isAdmin: boolean;
@@ -40,6 +47,7 @@ interface User {
     isActive: boolean;
     loginLimit: number;
     isLocked: boolean;
+    twoFactorEnabled: boolean;
 
     // relationships
     //country: IUserCountry;
@@ -47,7 +55,7 @@ interface User {
     //permissions: Array<IUserPermission>;
     verification: any;
     notifications: Array<any>
-    devices: Array<any>
+    creadedBy: any;
 
     // time stamps
     createdAt: string;
@@ -55,6 +63,21 @@ interface User {
     _version: number;
     _id: any;
     id: any;
+
+}
+
+
+interface ILocation {
+    phoneCode: string;
+    phoneNumber: string;
+    address: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+}
+
+interface IDevice {
 
 }
 

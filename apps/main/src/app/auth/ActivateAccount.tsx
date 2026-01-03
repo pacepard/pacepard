@@ -1,9 +1,9 @@
 import { AuthLayout } from '@/components/layouts/auth-layout';
-import ActivateUserForm from '@/components/blocks/auth/activate-account';
-import { useNavigate } from 'react-router';
+import OtpForm from '@/components/blocks/auth/otp-form';
+import { OtpType, storage } from '@pacepard/sdk';
 
-const ActivateAccount = () => {
-    const navigate = useNavigate();
+const ActivateUSerAccount = () => {
+    const email = storage.getUserEmail() as string;
 
     return (
         <>
@@ -13,10 +13,15 @@ const ActivateAccount = () => {
                 maxWidth="sm"
                 showTermsAndPrivacy={false}
             >
-                <ActivateUserForm />
+                <OtpForm
+                    email={email}
+                    otpType={OtpType.ACTIVATEACCOUNT}
+                    successMessage="Account activated successfully!"
+                    redirectTo="/login"
+                />
             </AuthLayout>
         </>
     );
 };
 
-export default ActivateAccount;
+export default ActivateUSerAccount;

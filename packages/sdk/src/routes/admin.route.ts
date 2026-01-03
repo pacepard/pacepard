@@ -5,7 +5,7 @@ const adminRoutes: Array<IRoute> = [
         name: 'admin',
         title: 'Dashboard',
         url: '/admin',
-        iconName: 'layout-right',
+        iconName: 'chart',
         action: 'navigate',
         isAuth: true,
         params: [],
@@ -24,7 +24,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'all-users',
                 title: 'All Users',
-                iconName: 'user',
+                iconName: 'users',
                 url: '/all-users',
                 action: 'navigate',
                 isAuth: true,
@@ -44,7 +44,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'businesses',
                 title: 'Businesses',
-                iconName: 'user',
+                iconName: 'buildings',
                 url: '/businesses',
                 action: 'navigate',
                 isAuth: true,
@@ -61,7 +61,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'admins',
                 title: 'Admins',
-                iconName: 'user',
+                iconName: 'shield',
                 url: '/admins',
                 action: 'navigate',
                 isAuth: true,
@@ -105,7 +105,7 @@ const adminRoutes: Array<IRoute> = [
         name: 'admin-settings',
         title: 'System Settings',
         url: '/admin/settings',
-        iconName: 'settings',
+        iconName: 'gear',
         action: 'navigate',
         isAuth: true,
         params: [],
@@ -123,6 +123,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'admin-settings-security',
                 title: 'Security',
+                iconName: 'shield',
                 url: '/security',
                 action: 'navigate',
                 isAuth: true,
@@ -132,6 +133,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'admin-settings-invitations',
                 title: 'Invitations',
+                iconName: 'envelope',
                 url: '/invitations',
                 action: 'navigate',
                 isAuth: true,
@@ -144,7 +146,7 @@ const adminRoutes: Array<IRoute> = [
         name: 'resources',
         title: 'Resources',
         url: '/resources',
-        iconName: 'settings',
+        iconName: 'folder',
         action: 'navigate',
         isAuth: true,
         params: [],
@@ -173,7 +175,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'transactions',
                 title: 'Transactions',
-                iconName: 'star',
+                iconName: 'chart',
                 url: '/transactions',
                 action: 'navigate',
                 isAuth: true,
@@ -203,7 +205,7 @@ const adminRoutes: Array<IRoute> = [
     {
         name: 'account',
         title: 'Account',
-        iconName: 'layout-left',
+        iconName: 'user',
         url: '/account',
         action: 'open-secondary',
         isAuth: true,
@@ -223,7 +225,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'preferences',
                 title: 'Preferences',
-                iconName: 'user',
+                iconName: 'gear',
                 url: '/preferences',
                 action: 'navigate',
                 isAuth: true,
@@ -240,7 +242,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'billing',
                 title: 'Billing',
-                iconName: 'user',
+                iconName: 'credit-card',
                 url: '/billing',
                 action: 'navigate',
                 isAuth: true,
@@ -253,7 +255,7 @@ const adminRoutes: Array<IRoute> = [
     {
         name: 'support',
         title: 'Support',
-        iconName: 'layout-left',
+        iconName: 'lifebuoy',
         url: '/support',
         action: 'open-secondary',
         isAuth: true,
@@ -263,7 +265,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'feedback',
                 title: 'Feedback',
-                iconName: 'user',
+                iconName: 'lightbulb',
                 url: '/feedback',
                 action: 'navigate',
                 isAuth: true,
@@ -273,7 +275,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'updates',
                 title: 'Updates',
-                iconName: 'user',
+                iconName: 'bell',
                 url: '/updates',
                 action: 'navigate',
                 isAuth: true,
@@ -290,7 +292,7 @@ const adminRoutes: Array<IRoute> = [
             {
                 name: 'help',
                 title: 'Help',
-                iconName: 'user',
+                iconName: 'help',
                 url: '/help',
                 action: 'navigate',
                 isAuth: true,

@@ -20,7 +20,7 @@ const AuthHeader = (props: IPageHeader) => {
     useEffect(() => {}, []);
     return (
         <>
-            <div className="p-6 text-start w-full">
+            <div className="px-6 py-2 text-start w-full">
                 <h1 className="text-xl font-semibold">{title}</h1>
 
                 {description && (

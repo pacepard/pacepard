@@ -1,3 +1,5 @@
-export interface Admin {
+interface Admin {
     
 }
+
+export default Admin
