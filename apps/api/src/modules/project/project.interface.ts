@@ -73,3 +73,11 @@ export interface IProjectMember {
   role: ProjectMemberRole;
   joinedAt: Date;
 }
+
+export enum DifficultyEnum {
+    RANDOM = 'random',
+    EASY = 'easy',
+    NORMAL = 'normal',
+    HARD = 'hard',
+    DIFFICULT = 'difficult'
+}

@@ -72,12 +72,15 @@ export interface CreateProjectDTO {
 }
 
 export interface UpdateProjectDTO {
-  title: string;
-  tagline: string;
-  description: string;
-  category: string;
-  tags: string[];
-  image: string;
-  isOpen: boolean;
-  isClosed: boolean;
+  title?: string;
+  tagline?: string;
+  description?: string;
+  category?: string;
+  tags?: string[];
+  image?: string;
+  isOpen?: boolean;
+  isClosed?: boolean;
+  status?: ProjectStatus;
+  items?: Array<IBlockDoc>;
+  documentation?: string;
 }

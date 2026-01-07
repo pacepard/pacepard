@@ -6,6 +6,8 @@ const WorkspaceSchema = new Schema<IWorkspaceDoc>(
   {
     code: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
+    description: { type: String, default: "" },
+    index: { type: Number, default: 0 },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: DbModels.USER,

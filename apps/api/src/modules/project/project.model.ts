@@ -36,7 +36,7 @@ const ProjectSchema = new Schema<IProjectDoc>(
     creatorType: { type: String, required: true, enum: [DbModels.ADMIN, DbModels.BUSINESS] },
 
     // Initialized fields (No optionality)
-    items: { type: [Schema.Types.Mixed], default: [] },
+    items: { type: [Schema.Types.Mixed] as any, default: [] },
     tags: { type: [String], default: [] },
     tasks: [{ type: Schema.Types.ObjectId, ref: DbModels.TASK }],
     image: { type: String, default: "" },

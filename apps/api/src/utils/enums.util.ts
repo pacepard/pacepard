@@ -235,6 +235,7 @@ export enum ProjectMemberRole {
   MAINTAINER = "maintainer",
   LEAD = "lead",
   JUDGE = "judge",
+  FACILITATOR = "facilitator", // Can manage teams and rotate members
 }
 
 export enum TaskStatus {
@@ -251,3 +252,4 @@ export enum TaskPriority {
   HIGH = "high",
   URGENT = "urgent",
 }
+

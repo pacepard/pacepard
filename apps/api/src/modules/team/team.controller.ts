@@ -1,35 +1,38 @@
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../../middlewares/async.mdw';
 import ErrorResponse from '../../utils/error.util';
-import projectService from './project.service';
-import projectRepository from './project.repository';
-import { CreateProjectDTO, UpdateProjectDTO } from './project.dto';
+import teamService from './team.service';
+import { ProjectMemberRole } from '../../utils/enums.util';
 import redisWrapper from '../../middlewares/redis.mdw';
 
 /**
- * @name createProject
- * @description Creates a new project
- * @route POST /workspaces/:workspaceId/projects
+ * @name createTeam
+ * @description Creates a new team within a project
+ * @route POST /projects/:projectId/teams
  * @access Private
  */
-export const createProject = asyncHandler(
+export const createTeam = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
-        const { workspaceId } = req.params;
-        if (!workspaceId)
-            return next(new ErrorResponse('Workspace ID is required', 400, []));
-
-        const data: CreateProjectDTO = {
-            ...req.body,
-            workspaceId,
-            user: (req as any).user,
-            createdBy: userId,
-        };
+        const { projectId } = req.params;
+        const { name, description } = req.body;
+        
+        if (!projectId)
+            return next(new ErrorResponse('Project ID is required', 400, []));
+        if (!name)
+            return next(new ErrorResponse('Team name is required', 400, []));
 
         try {
-            const result = await projectService.createProject(data);
+            const userRole = (req as any).user?.projectMemberRole || ProjectMemberRole.LEAD;
+            
+            const result = await teamService.createTeam(
+                projectId,
+                { name, description },
+                userId,
+                userRole
+            );
 
             if (result.error) {
                 return next(
@@ -41,13 +44,13 @@ export const createProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project created successfully.',
+                message: result.message || 'Team created successfully.',
                 status: 201,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to create project',
+                    error.message || 'Failed to create team',
                     500,
                     [],
                 ),
@@ -57,18 +60,77 @@ export const createProject = asyncHandler(
 );
 
 /**
- * @name getProject
- * @description Retrieves project information by ID or slug
- * @route GET /projects/:id
+ * @name getProjectTeams
+ * @description Gets all teams for a project
+ * @route GET /projects/:projectId/teams
  * @access Private
  */
-export const getProject = asyncHandler(
+export const getProjectTeams = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { projectId } = req.params;
+        if (!projectId)
+            return next(new ErrorResponse('Project ID is required', 400, []));
+
+        const cacheKey = `project:${projectId}:teams`;
+        const cacheTTL = 180;
+
+        try {
+            const cached = await redisWrapper.fetchData<any>(cacheKey);
+            if (cached) {
+                return res.status(200).json({
+                    error: false,
+                    errors: [],
+                    data: cached,
+                    message: 'Teams retrieved successfully (cached).',
+                    status: 200,
+                });
+            }
+
+            const result = await teamService.getProjectTeams(projectId);
+
+            if (result.error) {
+                return next(
+                    new ErrorResponse(result.message, result.code || 500, []),
+                );
+            }
+
+            await redisWrapper.keepData(
+                { key: cacheKey, value: result.data },
+                cacheTTL,
+            );
+
+            res.status(200).json({
+                error: false,
+                errors: [],
+                data: result.data,
+                message: result.message || 'Teams retrieved successfully.',
+                status: 200,
+            });
+        } catch (error: any) {
+            return next(
+                new ErrorResponse(
+                    error.message || 'Failed to retrieve teams',
+                    500,
+                    [],
+                ),
+            );
+        }
+    },
+);
+
+/**
+ * @name getTeam
+ * @description Gets a team by ID
+ * @route GET /teams/:id
+ * @access Private
+ */
+export const getTeam = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Team ID is required', 400, []));
 
-        const cacheKey = `project:${id}`;
+        const cacheKey = `team:${id}`;
         const cacheTTL = 300;
 
         try {
@@ -78,17 +140,17 @@ export const getProject = asyncHandler(
                     error: false,
                     errors: [],
                     data: cached,
-                    message: 'Project retrieved successfully (cached).',
+                    message: 'Team retrieved successfully (cached).',
                     status: 200,
                 });
             }
 
-            const result = await projectService.getProject(id);
+            const result = await teamService.getTeam(id);
 
-            if (result.error || !result.data) {
+            if (result.error) {
                 return next(
                     new ErrorResponse(
-                        result.message || 'Project not found',
+                        result.message || 'Team not found',
                         result.code || 404,
                         [],
                     ),
@@ -104,13 +166,13 @@ export const getProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project retrieved successfully.',
+                message: result.message || 'Team retrieved successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to retrieve project',
+                    error.message || 'Failed to retrieve team',
                     500,
                     [],
                 ),
@@ -120,88 +182,35 @@ export const getProject = asyncHandler(
 );
 
 /**
- * @name getWorkspaceProjects
- * @description Retrieves all projects for a specific workspace
- * @route GET /workspaces/:workspaceId/projects
+ * @name addTeamMember
+ * @description Adds a member to a team
+ * @route POST /teams/:teamId/members
  * @access Private
  */
-export const getWorkspaceProjects = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const { workspaceId } = req.params;
-        if (!workspaceId)
-            return next(new ErrorResponse('Workspace ID is required', 400, []));
-
-        const cacheKey = `workspace:${workspaceId}:projects`;
-        const cacheTTL = 180;
-
-        try {
-            const cached = await redisWrapper.fetchData<any>(cacheKey);
-            if (cached) {
-                return res.status(200).json({
-                    error: false,
-                    errors: [],
-                    data: cached,
-                    message: 'Projects retrieved successfully (cached).',
-                    status: 200,
-                });
-            }
-
-            const result = await projectService.getProjectsByWorkspace(workspaceId);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            await redisWrapper.keepData(
-                { key: cacheKey, value: result.data },
-                cacheTTL,
-            );
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Projects retrieved successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to retrieve projects',
-                    500,
-                    [],
-                ),
-            );
-        }
-    },
-);
-
-/**
- * @name updateProject
- * @description Updates project information
- * @route PUT /projects/:id
- * @access Private
- */
-export const updateProject = asyncHandler(
+export const addTeamMember = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+        const { teamId } = req.params;
+        const { memberUserId, role } = req.body;
 
-        const data: UpdateProjectDTO = req.body;
+        if (!teamId)
+            return next(new ErrorResponse('Team ID is required', 400, []));
+        if (!memberUserId)
+            return next(new ErrorResponse('Member user ID is required', 400, []));
+        if (!role)
+            return next(new ErrorResponse('Role is required', 400, []));
 
         try {
-            const projectResult = await projectRepository.findById(id);
-            if (projectResult.error || !projectResult.data) {
-                return next(new ErrorResponse('Project not found', 404, []));
-            }
-
-            const result = await projectService.updateProject(id, data);
+            const actorRole = (req as any).user?.projectMemberRole || ProjectMemberRole.MEMBER;
+            
+            const result = await teamService.addMember(
+                teamId,
+                memberUserId,
+                role,
+                actorRole
+            );
 
             if (result.error) {
                 return next(
@@ -210,7 +219,7 @@ export const updateProject = asyncHandler(
             }
 
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`team:${teamId}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -219,13 +228,13 @@ export const updateProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project updated successfully.',
+                message: result.message || 'Member added to team successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to update project',
+                    error.message || 'Failed to add team member',
                     500,
                     [],
                 ),
@@ -235,27 +244,27 @@ export const updateProject = asyncHandler(
 );
 
 /**
- * @name deleteProject
- * @description Deletes a project
- * @route DELETE /projects/:id
+ * @name removeTeamMember
+ * @description Removes a member from a team
+ * @route DELETE /teams/:teamId/members/:userId
  * @access Private
  */
-export const deleteProject = asyncHandler(
+export const removeTeamMember = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+        const { teamId, userId: memberUserId } = req.params;
+
+        if (!teamId)
+            return next(new ErrorResponse('Team ID is required', 400, []));
+        if (!memberUserId)
+            return next(new ErrorResponse('Member user ID is required', 400, []));
 
         try {
-            const projectResult = await projectRepository.findById(id);
-            if (projectResult.error || !projectResult.data) {
-                return next(new ErrorResponse('Project not found', 404, []));
-            }
-
-            const result = await projectService.deleteProject(id);
+            const actorRole = (req as any).user?.projectMemberRole || ProjectMemberRole.MEMBER;
+            
+            const result = await teamService.removeMember(teamId, memberUserId, actorRole);
 
             if (result.error) {
                 return next(
@@ -264,7 +273,7 @@ export const deleteProject = asyncHandler(
             }
 
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`team:${teamId}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -273,13 +282,13 @@ export const deleteProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project deleted successfully.',
+                message: result.message || 'Member removed from team successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to delete project',
+                    error.message || 'Failed to remove team member',
                     500,
                     [],
                 ),
@@ -289,26 +298,102 @@ export const deleteProject = asyncHandler(
 );
 
 /**
- * @name addMember
- * @description Adds a member to a project
- * @route POST /projects/:id/members
+ * @name updateTeamMemberRole
+ * @description Updates a team member's role
+ * @route PUT /teams/:teamId/members/:userId/role
  * @access Private
  */
-export const addMember = asyncHandler(
+export const updateTeamMemberRole = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
-        const { id } = req.params;
-        const { userId: memberUserId, role } = req.body;
+        const { teamId, userId: memberUserId } = req.params;
+        const { role } = req.body;
 
-        if (!id)
+        if (!teamId)
+            return next(new ErrorResponse('Team ID is required', 400, []));
+        if (!memberUserId)
+            return next(new ErrorResponse('Member user ID is required', 400, []));
+        if (!role)
+            return next(new ErrorResponse('Role is required', 400, []));
+
+        try {
+            const actorRole = (req as any).user?.projectMemberRole || ProjectMemberRole.MEMBER;
+            
+            const result = await teamService.updateMemberRole(
+                teamId,
+                memberUserId,
+                role,
+                actorRole
+            );
+
+            if (result.error) {
+                return next(
+                    new ErrorResponse(result.message, result.code || 500, []),
+                );
+            }
+
+            try {
+                await redisWrapper.deleteData(`team:${teamId}`);
+            } catch (cacheError) {
+                console.error('Cache invalidation failed:', cacheError);
+            }
+
+            res.status(200).json({
+                error: false,
+                errors: [],
+                data: result.data,
+                message: result.message || 'Team member role updated successfully.',
+                status: 200,
+            });
+        } catch (error: any) {
+            return next(
+                new ErrorResponse(
+                    error.message || 'Failed to update team member role',
+                    500,
+                    [],
+                ),
+            );
+        }
+    },
+);
+
+/**
+ * @name rotateMember
+ * @description Rotates a talent between teams in the same project
+ * @route POST /projects/:projectId/teams/rotate
+ * @access Private
+ * 
+ * This allows authorized users (project owners and maintainers) to reorganize 
+ * team membership during an ongoing project. Members can be moved between
+ * teams based on project prerogative.
+ */
+export const rotateMember = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { projectId } = req.params;
+        const { memberUserId, targetTeamId } = req.body;
+
+        if (!projectId)
             return next(new ErrorResponse('Project ID is required', 400, []));
         if (!memberUserId)
-            return next(new ErrorResponse('User ID is required', 400, []));
+            return next(new ErrorResponse('Member user ID is required', 400, []));
+        if (!targetTeamId)
+            return next(new ErrorResponse('Target team ID is required', 400, []));
 
         try {
-            const result = await projectService.addMember(id, memberUserId, role);
+            const actorRole = (req as any).user?.projectMemberRole || ProjectMemberRole.MEMBER;
+            
+            const result = await teamService.rotateMember(
+                projectId,
+                memberUserId,
+                targetTeamId,
+                userId,
+                actorRole
+            );
 
             if (result.error) {
                 return next(
@@ -316,8 +401,10 @@ export const addMember = asyncHandler(
                 );
             }
 
+            // Invalidate cache for the project's teams
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`project:${projectId}:teams`);
+                await redisWrapper.deleteData(`team:${targetTeamId}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -326,13 +413,13 @@ export const addMember = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Member added successfully.',
+                message: result.message || 'Member rotated successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to add member',
+                    error.message || 'Failed to rotate member',
                     500,
                     [],
                 ),
@@ -342,74 +429,25 @@ export const addMember = asyncHandler(
 );
 
 /**
- * @name removeMember
- * @description Removes a member from a project
- * @route DELETE /projects/:id/members/:userId
+ * @name deleteTeam
+ * @description Deletes a team
+ * @route DELETE /teams/:id
  * @access Private
  */
-export const removeMember = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id, userId: memberUserId } = req.params;
-
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-        if (!memberUserId)
-            return next(new ErrorResponse('User ID is required', 400, []));
-
-        try {
-            const result = await projectService.removeMember(id, memberUserId);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Member removed successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to remove member',
-                    500,
-                    [],
-                ),
-            );
-        }
-    },
-);
-
-/**
- * @name publishProject
- * @description Publishes a project
- * @route POST /projects/:id/publish
- * @access Private
- */
-export const publishProject = asyncHandler(
+export const deleteTeam = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
+
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Team ID is required', 400, []));
 
         try {
-            const result = await projectService.publishProject(id);
+            const actorRole = (req as any).user?.projectMemberRole || ProjectMemberRole.MEMBER;
+            
+            const result = await teamService.deleteTeam(id, actorRole);
 
             if (result.error) {
                 return next(
@@ -418,7 +456,7 @@ export const publishProject = asyncHandler(
             }
 
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`team:${id}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -427,62 +465,13 @@ export const publishProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project published successfully.',
+                message: result.message || 'Team deleted successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to publish project',
-                    500,
-                    [],
-                ),
-            );
-        }
-    },
-);
-
-/**
- * @name closeProject
- * @description Closes a project
- * @route POST /projects/:id/close
- * @access Private
- */
-export const closeProject = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        try {
-            const result = await projectService.closeProject(id);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project closed successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to close project',
+                    error.message || 'Failed to delete team',
                     500,
                     [],
                 ),

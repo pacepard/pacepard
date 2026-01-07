@@ -1,4 +1,4 @@
-import mongoose, { FilterQuery, UpdateQuery } from "mongoose";
+import mongoose, { UpdateQuery } from "mongoose";
 import Project from "./project.model";
 import { IProjectDoc } from "./project.interface";
 import RepositoryService from "../../services/repository.service";
@@ -15,7 +15,7 @@ class ProjectRepository extends RepositoryService<IProjectDoc> {
    */
   public async findProject(
     input: string | number,
-    populate = false
+    populate: boolean | Array<{ path: string }> = false
   ): Promise<IResult> {
     return this.findByIdOrSlug(input, populate);
   }

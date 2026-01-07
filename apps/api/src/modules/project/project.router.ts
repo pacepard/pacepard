@@ -1,104 +1,34 @@
-//import { Router } from "express";
-import { ProjectController } from "./project.controller";
-import { protect } from "../../middlewares/";
+import { Router } from "express";
+import Protect from "../../middlewares/checkAuth.mdw";
+import {
+  createProject,
+  getProject,
+  getWorkspaceProjects,
+  updateProject,
+  deleteProject,
+  addMember,
+  removeMember,
+  publishProject,
+  closeProject,
+} from "./project.controller";
 
-const router = Router();
+const projectRoutes = Router({ mergeParams: true });
 
-/* -------------------------------------------------------------------------- */
-/*                               PUBLIC ROUTES                                 */
-/* -------------------------------------------------------------------------- */
+// Project routes
+projectRoutes.get("/:id", Protect, getProject);
+projectRoutes.put("/:id", Protect, updateProject);
+projectRoutes.delete("/:id", Protect, deleteProject);
 
-/**
- * List all published projects
- * Accessible to all authenticated talents
- */
-router.get(
-  "/",
-  protect,
-  ProjectController.listProjects
-);
+// Workspace projects routes
+projectRoutes.post("/workspaces/:workspaceId/projects", Protect, createProject);
+projectRoutes.get("/workspaces/:workspaceId/projects", Protect, getWorkspaceProjects);
 
-/**
- * View project workspace
- * Guards handled in service (membership / creator check)
- */
-router.get(
-  "/:projectId/workspace",
-  protect,
-  ProjectController.getProjectWorkspace
-);
+// Project lifecycle routes
+projectRoutes.post("/:id/publish", Protect, publishProject);
+projectRoutes.post("/:id/close", Protect, closeProject);
 
-/* -------------------------------------------------------------------------- */
-/*                           PROJECT LIFECYCLE                                  */
-/* -------------------------------------------------------------------------- */
+// Project members routes
+projectRoutes.post("/:id/members", Protect, addMember);
+projectRoutes.delete("/:id/members/:userId", Protect, removeMember);
 
-/**
- * Create project
- * Only Pacepard Admin or Business
- */
-router.post(
-  "/",
-  protect,
-  ProjectController.createProject
-);
-
-/**
- * Update project
- * Only project owner
- */
-router.patch(
-  "/:projectId",
-  protect,
-  ProjectController.updateProject
-);
-
-/**
- * Publish project
- */
-router.post(
-  "/:projectId/publish",
-  protect,
-  ProjectController.publishProject
-);
-
-/**
- * Close project
- */
-router.post(
-  "/:projectId/close",
-  protect,
-  ProjectController.closeProject
-);
-
-/* -------------------------------------------------------------------------- */
-/*                               INVITATIONS                                   */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Invite talent(s) to project
- */
-router.post(
-  "/invite",
-  protect,
-  ProjectController.inviteTalent
-);
-
-/**
- * Accept project invitation
- */
-router.post(
-  "/invitations/:invitationId/accept",
-  protect,
-  ProjectController.acceptInvitation
-);
-
-/**
- * Remove talent from project
- */
-router.delete(
-  "/:projectId/talents/:talentId",
-  protect,
-  ProjectController.removeTalent
-);
-
-export default router;
+export default projectRoutes;
