@@ -38,20 +38,19 @@ const TaskSchema = new Schema<ITaskDoc>({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   _version: { type: Number, default: 0 }
-}, { 
-  timestamps: true,
-  versionKey: "_version",
-  toJSON: {
-    virtuals: true,
-    getters: true,
-    transform(_doc, ret) {
-      ret.id = ret._id;
-      delete ret._id;
-      delete ret.__v;
-      return ret;
-    }
-  }
-});
+}, {
+    timestamps: true,
+    versionKey: "_version",
+    toJSON: {
+      virtuals: true,
+      getters: true,
+      transform(_doc, ret) {
+        ret.id = ret._id;
+        delete (ret as any).__v;
+        return ret;
+      },
+    },
+  });
 
 // Indexes
 TaskSchema.index({ code: 1 });

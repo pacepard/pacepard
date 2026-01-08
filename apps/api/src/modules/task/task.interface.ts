@@ -1,6 +1,7 @@
 import { Document, Types } from "mongoose";
 import { IUserDoc } from "../user/user.interface";
 import { TaskStatus, TaskPriority } from "../../utils/enums.util";
+export { TaskStatus, TaskPriority };
 
 type ObjectId = Types.ObjectId;
 

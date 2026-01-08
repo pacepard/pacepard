@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { dateToday, IDateToday } from "@btffamily/pacitude";
 import { ITaskDoc, TaskStatus, TaskPriority } from "./task.interface";
-import { CreateTaskDTO } from "./task.dto";
+import { CreateTaskDTO, UpdateTaskDTO } from "./task.dto";
 import taskRepository from "./task.repository";
 import projectRepository from "../project/project.repository";
 import workspaceRepository from "../workspace/workspace.repository";
@@ -220,7 +220,7 @@ class TaskService {
    */
   public async updateTask(
     taskId: string,
-    updateData: Partial<ITaskDoc>
+    updateData: Partial<ITaskDoc> | UpdateTaskDTO
   ): Promise<IResult> {
     let result: IResult = { error: false, message: "", code: 200, data: {} };
 
@@ -249,7 +249,12 @@ class TaskService {
       dataToUpdate.priority = updateData.priority;
     }
     if (updateData.assignedTo !== undefined) {
-      dataToUpdate.assignedTo = updateData.assignedTo.map(id => new Types.ObjectId(id));
+      dataToUpdate.assignedTo = updateData.assignedTo.map((id: any) => {
+        if (typeof id === "string") return new Types.ObjectId(id);
+        if (id instanceof Types.ObjectId) return id;
+        const possibleId = (id && (id._id || id.id)) || id;
+        return new Types.ObjectId(possibleId as any);
+      });
     }
     if (updateData.tags !== undefined) {
       dataToUpdate.tags = updateData.tags;

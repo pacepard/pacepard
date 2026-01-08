@@ -15,7 +15,7 @@ class TaskRepository extends RepositoryService<ITaskDoc> {
    */
   public async findTask(
     taskId: string,
-    populate = false
+    populate: boolean | Array<{ path: string }> = false
   ): Promise<IResult> {
     return this.findById(taskId, populate);
   }
