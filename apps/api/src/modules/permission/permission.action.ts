@@ -46,7 +46,6 @@ export enum PermissionAction {
   VIEW_EVALUATIONS = 'view_evaluations',
   PROVIDE_FEEDBACK = 'provide_feedback',
   PROVIDE_MENTORSHIP = 'provide_mentorship',
-  PROVIDE_FEEDBACK = 'provide_feedback',
   
   // Admin Actions
   MANAGE_ALL_WORKSPACES = 'manage_all_workspaces',
@@ -99,7 +98,6 @@ export interface ResourceContext {
   ownerId?: string;
   workspaceId?: string;
   projectId?: string;
-  teamId?: string;
   teamId?: string;
   projectMemberRole?: string;
 }
