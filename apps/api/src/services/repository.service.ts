@@ -3,8 +3,7 @@ import { IResult } from "../utils/interfaces.util";
 import mongoose from "mongoose";
 
 /**
- * Generic Repository Service
- * Provides common CRUD operations that can be reused across all models
+ * Query options interface
  */
 interface QueryOptions {
   select?: string;
@@ -13,13 +12,17 @@ interface QueryOptions {
   limit?: number;
   populate?: string | PopulateOptions | (string | PopulateOptions)[];
   // Query middleware features
-  gt?: any; // greater than
-  gte?: any; // greater than or equal
-  lt?: any; // less than
-  lte?: any; // less than or equal
-  in?: any; // in array
+  gt?: any;
+  gte?: any;
+  lt?: any;
+  lte?: any;
+  in?: any;
 }
 
+/**
+ * Generic Repository Service
+ * Provides common CRUD operations that can be reused across all models
+ */
 class RepositoryService<T extends Document> {
   protected model: Model<T>;
   protected modelName: string;
@@ -30,8 +33,9 @@ class RepositoryService<T extends Document> {
   }
 
   /**
-   * Process filter query similar to query middleware
-   * Converts gt, gte, lt, lte, in to MongoDB operators
+   * @name processFilter
+   * @description Process filter query similar to query middleware
+   * @description Converts gt, gte, lt, lte, in to MongoDB operators
    */
   private processFilter(filter: FilterQuery<T> & QueryOptions): FilterQuery<T> {
     const processedFilter = { ...filter };
@@ -99,7 +103,59 @@ class RepositoryService<T extends Document> {
     return result;
   }
 
+  /**
+   * @name findByIdOrSlug
+   * @description Find a document by either MongoDB ObjectId or slug (e.g. username).
+   * @param input - The document ID (ObjectId or string) or slug
+   * @param populate - Whether to populate related fields
+   * @returns Promise<IResult>
+   */
+  public async findByIdOrSlug(
+    input: string | number,
+    populate: boolean | Array<{ path: string }> = false
+  ): Promise<IResult> {
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
 
+    try {
+      // normalize input to string to satisfy Mongoose ObjectId APIs
+      const inputStr = String(input);
+
+      const isObjectId =
+        mongoose.Types.ObjectId.isValid(inputStr) &&
+        new mongoose.Types.ObjectId(inputStr).toString() === inputStr;
+
+      let query = isObjectId
+        ? this.model.findById(inputStr)
+        : this.model.findOne({ slug: inputStr } as FilterQuery<T>);
+
+      if (populate) {
+        const dataPop = Array.isArray(populate) ? populate : [];
+        if (dataPop.length > 0) {
+          query = query.populate(dataPop);
+        } else {
+          query = query.populate("");
+        }
+      }
+
+      const document = await query.lean();
+
+      if (!document) {
+        result.error = true;
+        result.code = 404;
+        result.message = `${this.modelName} not found`;
+      } else {
+        result.message = `${this.modelName} found`;
+        result.data = document;
+        result.filters = isObjectId ? { _id: inputStr } : { slug: inputStr };
+      }
+    } catch (error: any) {
+      result.error = true;
+      result.code = 500;
+      result.message = error.message;
+    }
+
+    return result;
+  }
 
   /**
    * @name findAll
@@ -401,63 +457,9 @@ class RepositoryService<T extends Document> {
   }
 
   /**
-   * @name findByIdOrSlug
-   * @description Find a document by either MongoDB ObjectId or slug (e.g. username).
-   * @param input - The document ID (ObjectId or string) or slug
-   * @param populate - Whether to populate related fields
-   * @returns Promise<IResult>
-   */
-  public async findByIdOrSlug(
-    input: string | number,
-    populate: boolean | Array<{ path: string }> = false
-  ): Promise<IResult> {
-    const result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    try {
-      // normalize input to string to satisfy Mongoose ObjectId APIs
-      const inputStr = String(input);
-
-      const isObjectId =
-        mongoose.Types.ObjectId.isValid(inputStr) &&
-        new mongoose.Types.ObjectId(inputStr).toString() === inputStr;
-
-      let query = isObjectId
-        ? this.model.findById(inputStr)
-        : this.model.findOne({ slug: inputStr } as FilterQuery<T>);
-
-      if (populate) {
-        const dataPop = Array.isArray(populate) ? populate : [];
-        if (dataPop.length > 0) {
-          query = query.populate(dataPop);
-        } else {
-          query = query.populate("");
-        }
-      }
-
-      const document = await query.lean();
-
-      if (!document) {
-        result.error = true;
-        result.code = 404;
-        result.message = `${this.modelName} not found`;
-      } else {
-        result.message = `${this.modelName} found`;
-        result.data = document;
-        result.filters = isObjectId ? { _id: inputStr } : { slug: inputStr };
-      }
-    } catch (error: any) {
-      result.error = true;
-      result.code = 500;
-      result.message = error.message;
-    }
-
-    return result;
-  }
-
-  /**
    * @name query
    * @description Advanced query method with pagination, filtering, sorting, and selecting
-   * Similar to the query middleware but integrated into the repository
+   * Similar to query middleware but integrated into the repository
    * @param filter - Filter query object
    * @param options - Query options (select, sort, page, limit, populate)
    * @returns Promise<IResult> with pagination info
@@ -482,8 +484,11 @@ class RepositoryService<T extends Document> {
         populate,
       } = options;
 
+      // Process filter
+      const processedFilter = this.processFilter(filter);
+
       // Build query
-      let query: any = this.model.find(filter);
+      let query: any = this.model.find(processedFilter);
 
       // Select fields
       if (select) {
@@ -502,7 +507,7 @@ class RepositoryService<T extends Document> {
       const endIndex = pageNum * limitNum;
 
       // Count total documents
-      const total = await this.model.countDocuments(filter);
+      const total = await this.model.countDocuments(processedFilter);
 
       // Apply pagination
       query = query.skip(startIndex).limit(limitNum);
@@ -538,7 +543,7 @@ class RepositoryService<T extends Document> {
       result.count = documents.length;
       result.total = total;
       result.sort = sortBy;
-      result.filters = filter;
+      result.filters = processedFilter;
       result.message = `${this.modelName}s retrieved successfully`;
     } catch (error: any) {
       result.error = true;
@@ -549,7 +554,139 @@ class RepositoryService<T extends Document> {
     return result;
   }
 
+  /**
+   * @name pushToArray
+   * @description Type-safe helper for pushing to array fields
+   * @param id - Document ID
+   * @param field - Array field name (e.g., 'members', 'tasks')
+   * @param value - Value to push
+   * @returns Promise<IResult>
+   */
+  public async pushToArray(
+    id: string,
+    field: string,
+    value: any
+  ): Promise<IResult> {
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
 
+    try {
+      const updateQuery: any = {};
+      updateQuery[`$push`] = {};
+      updateQuery[`$push`][field] = value;
+
+      const updatedDocument = await this.model.findByIdAndUpdate(
+        id,
+        updateQuery,
+        { new: true }
+      );
+
+      if (!updatedDocument) {
+        result.error = true;
+        result.code = 404;
+        result.message = `${this.modelName} not found`;
+      } else {
+        result.message = `${this.modelName} updated successfully`;
+        result.data = updatedDocument;
+      }
+    } catch (error: any) {
+      result.error = true;
+      result.code = 500;
+      result.message = error.message;
+    }
+
+    return result;
+  }
+
+  /**
+   * @name pullFromArray
+   * @description Type-safe helper for pulling from array fields
+   * @param id - Document ID
+   * @param field - Array field name (e.g., 'members', 'tasks')
+   * @param value - Value to pull
+   * @returns Promise<IResult>
+   */
+  public async pullFromArray(
+    id: string,
+    field: string,
+    value: any
+  ): Promise<IResult> {
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    try {
+      const updateQuery: any = {};
+      updateQuery[`$pull`] = {};
+      updateQuery[`$pull`][field] = value;
+
+      const updatedDocument = await this.model.findByIdAndUpdate(
+        id,
+        updateQuery,
+        { new: true }
+      );
+
+      if (!updatedDocument) {
+        result.error = true;
+        result.code = 404;
+        result.message = `${this.modelName} not found`;
+      } else {
+        result.message = `${this.modelName} updated successfully`;
+        result.data = updatedDocument;
+      }
+    } catch (error: any) {
+      result.error = true;
+      result.code = 500;
+      result.message = error.message;
+    }
+
+    return result;
+  }
+
+  /**
+   * @name updateArrayElement
+   * @description Type-safe helper for updating an element in an array
+   * @param id - Document ID
+   * @param field - Array field name
+   * @param condition - Filter to match array element
+   * @param value - New value for the matched element
+   * @returns Promise<IResult>
+   */
+  public async updateArrayElement(
+    id: string,
+    field: string,
+    condition: Record<string, any>,
+    value: any
+  ): Promise<IResult> {
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
+
+    try {
+      const updateQuery: any = {};
+      updateQuery[`$set`] = {};
+      updateQuery[`$set`][`${field}.$`] = value;
+
+      const updatedDocument = await this.model.findByIdAndUpdate(
+        id,
+        updateQuery,
+        { 
+          new: true,
+          arrayFilters: [condition]
+        }
+      );
+
+      if (!updatedDocument) {
+        result.error = true;
+        result.code = 404;
+        result.message = `${this.modelName} not found`;
+      } else {
+        result.message = `${this.modelName} updated successfully`;
+        result.data = updatedDocument;
+      }
+    } catch (error: any) {
+      result.error = true;
+      result.code = 500;
+      result.message = error.message;
+    }
+
+    return result;
+  }
 }
 
 export default RepositoryService;

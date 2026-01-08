@@ -2,6 +2,7 @@ import Team from "./team.model";
 import { ITeamDoc } from "./team.interface";
 import RepositoryService from "../../services/repository.service";
 import { IResult } from "../../utils/interfaces.util";
+import mongoose from "mongoose";
 
 class TeamRepository extends RepositoryService<ITeamDoc> {
   constructor() {
@@ -71,55 +72,47 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
 
   /**
    * @name addMember
-   * @description Add a member to a team
+   * @description Add a member to a team using type-safe array operation
    */
   public async addMember(
     teamId: string,
     userId: string,
     role: any
   ): Promise<IResult> {
-    return this.update(teamId, {
-      $push: { 
-        members: { 
-          user: new mongoose.Types.ObjectId(userId),
-          role: role,
-          joinedAt: new Date()
-        } 
-      } as any
-    } as any);
+    return this.pushToArray(teamId, 'members', {
+      user: new mongoose.Types.ObjectId(userId),
+      role: role,
+      joinedAt: new Date()
+    });
   }
 
   /**
    * @name removeMember
-   * @description Remove a member from a team
+   * @description Remove a member from a team using type-safe array operation
    */
   public async removeMember(
     teamId: string,
     userId: string
   ): Promise<IResult> {
-    return this.update(teamId, {
-      $pull: { 
-        members: { 
-          user: new mongoose.Types.ObjectId(userId) 
-        } 
-      } as any
-    } as any);
+    return this.pullFromArray(teamId, 'members', {
+      user: new mongoose.Types.ObjectId(userId)
+    });
   }
 
   /**
    * @name updateMemberRole
-   * @description Update a team member's role
+   * @description Update a team member's role using type-safe array operation
    */
   public async updateMemberRole(
     teamId: string,
     userId: string,
     newRole: any
   ): Promise<IResult> {
-    return this.update(teamId, {
-      $set: { "members.$.role": newRole } as any
-    } as any, {
-      arrayFilters: [{ "members.user": new mongoose.Types.ObjectId(userId) }]
-    } as any
+    return this.updateArrayElement(
+      teamId,
+      'members',
+      { user: new mongoose.Types.ObjectId(userId) },
+      newRole
     );
   }
 
@@ -148,7 +141,7 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
 
       const teamList = teams.data as any[];
       
-      // Remove user from each team
+      // Remove user from each team using type-safe operations
       for (const team of teamList) {
         await this.removeMember(team._id.toString(), userId);
       }
