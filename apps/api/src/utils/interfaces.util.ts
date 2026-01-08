@@ -1,4 +1,4 @@
-import { Model, Document, Types } from "mongoose";
+import { Model, Document } from "mongoose";
 import {
   APIKeyEnvironment,
   APIKeyStatus,
@@ -8,29 +8,13 @@ import {
   OAuthProvider,
   FileType,
   FileFormat,
-  FileMimeType,
-  UploadStatus,
-  TaskStatusType,
-  EvaluationStatusType,
-  ProjectStageType,
-  SubmissionStatus,
-  MedalType,
-  ActivityType,
-  ResourceStatus,
-  ResourceVisibility,
-  ResourceType,
-  TeamRoles,
-  TeamVisibilty,
-  MentorStatus,
-  MentorVisibilty,
-  InvitationType,
-  InvitationStatus,
-  InvitedTo,
+  FileMimeType
 } from "./enums.util";
 import { FileInfo } from "busboy";
 import { PassThrough } from "stream";
 import { IMentorImage } from "../modules/mentor/mentor.dto";
 import { IUserDoc, OtpType } from "../modules/user/user.interface";
+import { Types } from "mongoose";
 
 export type Nullable<T> = T | null;
 

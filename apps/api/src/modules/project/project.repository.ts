@@ -15,7 +15,8 @@ class ProjectRepository extends RepositoryService<IProjectDoc> {
    */
   public async findProject(
     input: string | number,
-    populate = false
+    populate: boolean | string | Array<{ path: string }> | undefined = undefined
+
   ): Promise<IResult> {
     return this.findByIdOrSlug(input, populate);
   }

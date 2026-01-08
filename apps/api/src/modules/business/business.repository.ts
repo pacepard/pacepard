@@ -23,7 +23,7 @@ class BusinessRepository extends RepositoryService<IBusinessDoc> {
    */
   public async findBusiness(
     input: string | number,
-    populate = false
+    populate: boolean | Array<{ path: string }> = false
   ): Promise<IResult> {
     return this.findByIdOrSlug(input, populate);
   }
