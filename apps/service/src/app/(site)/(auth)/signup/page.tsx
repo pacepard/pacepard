@@ -3,7 +3,7 @@ import SignUp from "@/app/components/auth/sign-up";
 
 export const metadata: Metadata = {
   title:
-    "Sign Up | Studiova",
+    "Sign Up | Pacepard",
 };
 
 const SignupPage = () => {

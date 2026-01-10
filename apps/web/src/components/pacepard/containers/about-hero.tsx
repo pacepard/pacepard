@@ -3,7 +3,7 @@ import { DashedLine } from "@/components/dashed-line";
 const stats = [
   {
     value: "$150M",
-    label: "Raised",
+    label: "Technology",
   },
   {
     value: "20K",

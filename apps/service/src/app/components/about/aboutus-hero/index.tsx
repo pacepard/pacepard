@@ -33,7 +33,7 @@ function AboutusHero() {
                         </p>
                     </div>
                     <div className="flex flex-col lg:flex-row items-start lg:items-end gap-4">
-                        <h1 className="large-heading">Studiova</h1>
+                        <h1 className="large-heading">Pacepard</h1>
                         <div>
                             <NavigationLink navigationTitle="" navigationLink="/about-us" transform={false} />
                         </div>

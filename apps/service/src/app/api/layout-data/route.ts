@@ -19,45 +19,45 @@ const MenuData = [
     path: "/projects",
     newTab: false,
   },
-  {
-    id: 4,
-    title: "Blog",
-    path: "/blog",
-    newTab: false,
-  },
-  {
-    id: 5,
-    title: "Services",
-    path: "/#services",
-    newTab: false,
-  },
-  {
-    id: 6,
-    title: "Contact",
-    path: "/contact",
-    newTab: false,
-  },
-  {
-    id: 7,
-    title: "Docs",
-    path: "/documentation",
-    newTab: false,
-  }
+  // {
+  //   id: 4,
+  //   title: "Blog",
+  //   path: "/blog",
+  //   newTab: false,
+  // },
+  // {
+  //   id: 5,
+  //   title: "Services",
+  //   path: "/#services",
+  //   newTab: false,
+  // },
+  // {
+  //   id: 6,
+  //   title: "Contact",
+  //   path: "/contact",
+  //   newTab: false,
+  // },
+  // {
+  //   id: 7,
+  //   title: "Docs",
+  //   path: "/documentation",
+  //   newTab: false,
+  // }
 ];
 
 
 const footerData = {
-    name: "Studiova",
-    tagline: "Build something together?",
+    name: "Pacepard",
+    tagline: "Let's build something together.",
     info: [
         {
             icon: "/images/footer/email-arrow.svg",
-            link: "info@wrappixel.com",
-            href: "https://www.wrappixel.com/"
+            link: "hello@pacepard.com",
+            // href: "https://www.wrappixel.com/"
         },
         {
             icon: "/images/footer/Location.svg",
-            link: "Zwolle Netherlands",
+            link: "Ogbomosho, Nigeria",
             href: "https://maps.app.goo.gl/hpDp81fqzGt5y4bC8"
         }
     ],
@@ -66,16 +66,16 @@ const footerData = {
         { name: "About", href: "/about" },
         { name: "Services", href: "/#services" },
         { name: "Work", href: "/projects" },
-        { name: "Terms", href: "/terms-and-conditions" },
-        { name: "Privacy Policy", href: "/privacy-policy" },
-        { name: "Error 404", href: "/not-found" }
+        // { name: "Terms", href: "/terms-and-conditions" },
+        // { name: "Privacy Policy", href: "/privacy-policy" },
+        // { name: "Error 404", href: "/not-found" }
     ],
     socialLinks: [
         { name: "Facebook", href: "https://www.facebook.com/" },
-        { name: "Instagram", href: "https://www.instagram.com/" },
+        // { name: "Instagram", href: "https://www.instagram.com/" },
         { name: "Twitter", href: "https://x.com/" }
     ],
-    copyright: "© Studiova copyright 2025"
+    copyright: "© Pacepard copyright 2025"
 };
 
 export const GET = async () => {
