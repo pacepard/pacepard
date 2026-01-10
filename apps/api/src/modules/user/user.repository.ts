@@ -1,4 +1,4 @@
-import { Model, FilterQuery } from "mongoose";
+import { FilterQuery } from "mongoose";
 import User from "./user.model";
 import { IUserDoc } from "./user.interface";
 import RepositoryService from "../../services/repository.service";
@@ -24,7 +24,7 @@ class UserRepository extends RepositoryService<IUserDoc> {
    */
   public async findUser(
     input: string | number,
-    populate = false
+    populate: boolean | Array<{ path: string }> = false
   ): Promise<IResult> {
     return this.findByIdOrSlug(input, populate);
   }

@@ -1,35 +1,30 @@
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../../middlewares/async.mdw';
 import ErrorResponse from '../../utils/error.util';
-import projectService from './project.service';
-import projectRepository from './project.repository';
-import { CreateProjectDTO, UpdateProjectDTO } from './project.dto';
+import workspaceService from './workspace.service';
+import workspaceRepository from './workspace.repository';
+import { UpdateWorkspaceDTO, CreateWorkspaceDTO } from './workspace.dto';
 import redisWrapper from '../../middlewares/redis.mdw';
 
 /**
- * @name createProject
- * @description Creates a new project
- * @route POST /workspaces/:workspaceId/projects
- * @access Private
+ * @name createWorkspace
+ * @description Creates a new workspace
+ * @route POST /workspace
+ * @access  Private
  */
-export const createProject = asyncHandler(
+export const createWorkspace = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
+
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
-        const { workspaceId } = req.params;
-        if (!workspaceId)
-            return next(new ErrorResponse('Workspace ID is required', 400, []));
-
-        const data: CreateProjectDTO = {
+        const data: CreateWorkspaceDTO = {
             ...req.body,
-            workspaceId,
-            user: (req as any).user,
             createdBy: userId,
         };
 
         try {
-            const result = await projectService.createProject(data);
+            const result = await workspaceService.createWorkspace(data);
 
             if (result.error) {
                 return next(
@@ -41,13 +36,13 @@ export const createProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project created successfully.',
+                message: result.message || 'Workspace created successfully.',
                 status: 201,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to create project',
+                    error.message || 'Failed to create workspace',
                     500,
                     [],
                 ),
@@ -57,44 +52,47 @@ export const createProject = asyncHandler(
 );
 
 /**
- * @name getProject
- * @description Retrieves project information by ID or slug
- * @route GET /projects/:id
- * @access Private
+ * @name getWorkspace
+ * @description Retrieves workspace information by ID
+ * @route GET /workspace/:id
+ * @access  Private
  */
-export const getProject = asyncHandler(
+export const getWorkspace = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
 
-        const cacheKey = `project:${id}`;
-        const cacheTTL = 300;
+        const cacheKey = `workspace:${id}`;
+        const cacheTTL = 300; // 5 minutes
 
         try {
+            // Check cache first
             const cached = await redisWrapper.fetchData<any>(cacheKey);
             if (cached) {
                 return res.status(200).json({
                     error: false,
                     errors: [],
                     data: cached,
-                    message: 'Project retrieved successfully (cached).',
+                    message: 'Workspace retrieved successfully (cached).',
                     status: 200,
                 });
             }
 
-            const result = await projectService.getProject(id);
+            // Get workspace from service
+            const result = await workspaceService.getWorkspace(id);
 
             if (result.error || !result.data) {
                 return next(
                     new ErrorResponse(
-                        result.message || 'Project not found',
+                        result.message || 'Workspace not found',
                         result.code || 404,
                         [],
                     ),
                 );
             }
 
+            // Cache the result
             await redisWrapper.keepData(
                 { key: cacheKey, value: result.data },
                 cacheTTL,
@@ -104,13 +102,13 @@ export const getProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project retrieved successfully.',
+                message: result.message || 'Workspace retrieved successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to retrieve project',
+                    error.message || 'Failed to retrieve workspace',
                     500,
                     [],
                 ),
@@ -120,33 +118,62 @@ export const getProject = asyncHandler(
 );
 
 /**
- * @name getWorkspaceProjects
- * @description Retrieves all projects for a specific workspace
- * @route GET /workspaces/:workspaceId/projects
- * @access Private
+ * @name getWorkspaces
+ * @description Retrieves a paginated list of workspaces with filtering and sorting
+ * @route GET /workspaces
+ * @access  Private
  */
-export const getWorkspaceProjects = asyncHandler(
+export const getWorkspaces = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const { workspaceId } = req.params;
-        if (!workspaceId)
-            return next(new ErrorResponse('Workspace ID is required', 400, []));
+        const {
+            page = 1,
+            limit = 25,
+            sort = '-createdAt',
+            select,
+            populate,
+            ...filters
+        } = req.query;
 
-        const cacheKey = `workspace:${workspaceId}:projects`;
-        const cacheTTL = 180;
+        // Build cache key from query parameters
+        const cacheKey = `workspaces:list:${JSON.stringify({ page, limit, sort, select, filters })}`;
+        const cacheTTL = 180; // 3 minutes
 
         try {
+            // Check cache first
             const cached = await redisWrapper.fetchData<any>(cacheKey);
             if (cached) {
                 return res.status(200).json({
                     error: false,
                     errors: [],
-                    data: cached,
-                    message: 'Projects retrieved successfully (cached).',
+                    data: cached.data,
+                    pagination: cached.pagination,
+                    count: cached.count,
+                    total: cached.total,
+                    message: 'Workspaces retrieved successfully (cached).',
                     status: 200,
                 });
             }
 
-            const result = await projectService.getProjectsByWorkspace(workspaceId);
+            // Build query options
+            const options: any = {
+                page: parseInt(String(page), 10),
+                limit: parseInt(String(limit), 10),
+                sort: String(sort),
+            };
+
+            if (select) {
+                options.select = String(select);
+            }
+
+            if (populate) {
+                options.populate = String(populate);
+            }
+
+            // Get workspaces from service
+            const result = await workspaceService.getWorkspaces(
+                filters as any,
+                options,
+            );
 
             if (result.error) {
                 return next(
@@ -154,8 +181,17 @@ export const getWorkspaceProjects = asyncHandler(
                 );
             }
 
+            // Prepare response data
+            const responseData = {
+                data: result.data,
+                pagination: result.pagination,
+                count: result.count,
+                total: result.total,
+            };
+
+            // Cache the result
             await redisWrapper.keepData(
-                { key: cacheKey, value: result.data },
+                { key: cacheKey, value: responseData },
                 cacheTTL,
             );
 
@@ -163,13 +199,16 @@ export const getWorkspaceProjects = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Projects retrieved successfully.',
+                pagination: result.pagination,
+                count: result.count,
+                total: result.total,
+                message: result.message || 'Workspaces retrieved successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to retrieve projects',
+                    error.message || 'Failed to retrieve workspaces',
                     500,
                     [],
                 ),
@@ -179,29 +218,30 @@ export const getWorkspaceProjects = asyncHandler(
 );
 
 /**
- * @name updateProject
- * @description Updates project information
- * @route PUT /projects/:id
- * @access Private
+ * @name updateWorkspace
+ * @description Updates workspace information
+ * @route PUT /workspace/:id
+ * @access  Private
  */
-export const updateProject = asyncHandler(
+export const updateWorkspace = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
 
-        const data: UpdateProjectDTO = req.body;
+        const data: UpdateWorkspaceDTO = req.body;
 
         try {
-            const projectResult = await projectRepository.findById(id);
-            if (projectResult.error || !projectResult.data) {
-                return next(new ErrorResponse('Project not found', 404, []));
+            // Verify user has permission (optional: check if user is creator or member)
+            const workspaceResult = await workspaceRepository.findById(id);
+            if (workspaceResult.error || !workspaceResult.data) {
+                return next(new ErrorResponse('Workspace not found', 404, []));
             }
 
-            const result = await projectService.updateProject(id, data);
+            const result = await workspaceService.updateWorkspace(id, data);
 
             if (result.error) {
                 return next(
@@ -209,8 +249,9 @@ export const updateProject = asyncHandler(
                 );
             }
 
+            // Invalidate cache
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`workspace:${id}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -219,13 +260,13 @@ export const updateProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project updated successfully.',
+                message: result.message || 'Workspace updated successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to update project',
+                    error.message || 'Failed to update workspace',
                     500,
                     [],
                 ),
@@ -235,27 +276,28 @@ export const updateProject = asyncHandler(
 );
 
 /**
- * @name deleteProject
- * @description Deletes a project
- * @route DELETE /projects/:id
- * @access Private
+ * @name deleteWorkspace
+ * @description Deletes a workspace
+ * @route DELETE /workspace/:id
+ * @access  Private
  */
-export const deleteProject = asyncHandler(
+export const deleteWorkspace = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
 
         try {
-            const projectResult = await projectRepository.findById(id);
-            if (projectResult.error || !projectResult.data) {
-                return next(new ErrorResponse('Project not found', 404, []));
+            // Verify user has permission (optional: check if user is creator)
+            const workspaceResult = await workspaceRepository.findById(id);
+            if (workspaceResult.error || !workspaceResult.data) {
+                return next(new ErrorResponse('Workspace not found', 404, []));
             }
 
-            const result = await projectService.deleteProject(id);
+            const result = await workspaceService.deleteWorkspace(id);
 
             if (result.error) {
                 return next(
@@ -263,8 +305,9 @@ export const deleteProject = asyncHandler(
                 );
             }
 
+            // Invalidate cache
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`workspace:${id}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -273,13 +316,13 @@ export const deleteProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project deleted successfully.',
+                message: result.message || 'Workspace deleted successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to delete project',
+                    error.message || 'Failed to delete workspace',
                     500,
                     [],
                 ),
@@ -290,9 +333,9 @@ export const deleteProject = asyncHandler(
 
 /**
  * @name addMember
- * @description Adds a member to a project
- * @route POST /projects/:id/members
- * @access Private
+ * @description Adds a member to a workspace
+ * @route POST /workspace/:id/members
+ * @access  Private
  */
 export const addMember = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -300,15 +343,15 @@ export const addMember = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
-        const { userId: memberUserId, role } = req.body;
+        const { userId: memberUserId } = req.body;
 
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
         try {
-            const result = await projectService.addMember(id, memberUserId, role);
+            const result = await workspaceService.addMember(id, memberUserId);
 
             if (result.error) {
                 return next(
@@ -316,8 +359,9 @@ export const addMember = asyncHandler(
                 );
             }
 
+            // Invalidate cache
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`workspace:${id}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -343,9 +387,9 @@ export const addMember = asyncHandler(
 
 /**
  * @name removeMember
- * @description Removes a member from a project
- * @route DELETE /projects/:id/members/:userId
- * @access Private
+ * @description Removes a member from a workspace
+ * @route DELETE /workspace/:id/members/:userId
+ * @access  Private
  */
 export const removeMember = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -355,12 +399,15 @@ export const removeMember = asyncHandler(
         const { id, userId: memberUserId } = req.params;
 
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
         try {
-            const result = await projectService.removeMember(id, memberUserId);
+            const result = await workspaceService.removeMember(
+                id,
+                memberUserId,
+            );
 
             if (result.error) {
                 return next(
@@ -368,8 +415,9 @@ export const removeMember = asyncHandler(
                 );
             }
 
+            // Invalidate cache
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`workspace:${id}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -385,104 +433,6 @@ export const removeMember = asyncHandler(
             return next(
                 new ErrorResponse(
                     error.message || 'Failed to remove member',
-                    500,
-                    [],
-                ),
-            );
-        }
-    },
-);
-
-/**
- * @name publishProject
- * @description Publishes a project
- * @route POST /projects/:id/publish
- * @access Private
- */
-export const publishProject = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        try {
-            const result = await projectService.publishProject(id);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project published successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to publish project',
-                    500,
-                    [],
-                ),
-            );
-        }
-    },
-);
-
-/**
- * @name closeProject
- * @description Closes a project
- * @route POST /projects/:id/close
- * @access Private
- */
-export const closeProject = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        try {
-            const result = await projectService.closeProject(id);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project closed successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to close project',
                     500,
                     [],
                 ),

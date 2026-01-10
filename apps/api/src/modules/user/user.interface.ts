@@ -1,9 +1,10 @@
 import { Types, Document } from 'mongoose';
 import { Nullable } from '../../utils/interfaces.util';
 import { IAPIKey, IAPIKeyDoc } from '../apikey/apikey.interface';
-import { IRoleDoc } from '../role/role.interface';
-import { IPermissionDoc } from '../permission/permission.interface';
+import { IRoleDoc } from '../role/role.interface'
+import { IPermissionDoc } from '../permission/permission.interface'
 import { INotificationDoc } from '../notification/notification.interface';
+
 
 type ObjectId = Types.ObjectId;
 
@@ -13,7 +14,6 @@ export interface IUserDoc extends Document {
     lastName: string;
     slug: string;
     email: string;
-    isEmailVerified: boolean;
     password: string; // encrypt this data
     passwordType: PasswordType;
     userType: UserType;
@@ -57,6 +57,7 @@ export interface IUserDoc extends Document {
     isBusiness: boolean;
     isTalent: boolean;
     isUser: boolean;
+    isPremium?: boolean;
 
     isActivated: boolean;
     isDeactivated: boolean;
@@ -126,8 +127,10 @@ export interface ILocation {
     postalCode: string;
 }
 
-export interface IDevice {}
+export interface IDevice {
 
+}
+    
 export enum OnboardStatus {
     NOT_STARTED = 'not-started',
     IN_PROGRESS = 'in-progress',
@@ -147,3 +150,4 @@ export enum LoginMethod {
     PHONE = 'phone',
     SOCIAL = 'social',
 }
+

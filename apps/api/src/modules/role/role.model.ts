@@ -1,5 +1,5 @@
 import mongoose, { Schema, Types, Model, ObjectId } from "mongoose";
-import { IRoleDoc } from "../../utils/interfaces.util";
+import { IRoleDoc } from "../../modules/role/role.interface";
 import slugify from "slugify";
 import { DbModels } from "../../utils/enums.util";
 import { UserType } from "../user/user.interface";
@@ -29,15 +29,18 @@ const RoleSchema = new mongoose.Schema<IRoleDoc>(
       },
     ],
   },
-  {
+ {
     timestamps: true,
     versionKey: "_version",
-    toJSON: {
-      transform(doc: any, ret) {
-        ret.id = ret._id && ret._id.toString ? ret._id.toString() : String(ret._id);
-        delete (ret as any).__v;
-      },
-    },
+    toJSON: { 
+      virtuals: true,
+      transform(_doc, ret: any) {
+        ret.id = ret._id.toString();
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      }
+    }
   }
 );
 

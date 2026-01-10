@@ -27,3 +27,81 @@ export const genUserCode = (userType: UserType): string => {
 
     return `${baseName}-${year}-${code}`;
 };
+<<<<<<< HEAD
+=======
+
+console.log("user", genUserCode(UserType.TALENT))
+
+/**
+ * @name genWorkspaceCode
+ * @description Generates a unique, standardized identification code for a workspace.
+ * @returns {string} A formatted string in the format: ws-{year}-{random_6_digits}.
+ * @example
+ * // Returns "ws-2025-123456"
+ * const code = genWorkspaceCode();
+ */
+export const genWorkspaceCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `ws-${year}-${code}`;
+};
+
+
+console.log("pacepard", genWorkspaceCode())
+
+/**
+ * @name genProjectCode
+ * @description Generates a unique, standardized identification code for a project.
+ * @returns {string} A formatted string in format: prj-{year}-{random_6_digits}.
+ * @example
+ * // Returns "prj-2025-123456"
+ * const code = genProjectCode();
+ */
+export const genProjectCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `prj-${year}-${code}`;
+};
+
+console.log("project", genProjectCode())
+
+/**
+ * @name genTaskCode
+ * @description Generates a unique, standardized identification code for a task.
+ * @returns {string} A formatted string in format: tsk-{year}-{random_6_digits}.
+ * @example
+ * // Returns "tsk-2025-123456"
+ * const code = genTaskCode();
+ */
+export const genTaskCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `tsk-${year}-${code}`;
+};
+
+console.log("task", genTaskCode())
+
+/**
+ * @name genTeamCode
+ * @description Generates a unique, standardized identification code for a team.
+ * @returns {string} A formatted string in format: tm-{year}-{random_6_digits}.
+ * @example
+ * // Returns "tm-2025-123456"
+ * const code = genTeamCode();
+ */
+export const genTeamCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `tm-${year}-${code}`;
+};
+
+console.log("team", genTeamCode())
+>>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3

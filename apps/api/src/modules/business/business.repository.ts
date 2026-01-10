@@ -1,4 +1,4 @@
-import { FilterQuery } from "mongoose";
+import { FilterQuery, UpdateQuery } from "mongoose";
 import Business from "./business.model";
 import { IBusinessDoc } from "./business.interface";
 import RepositoryService from "../../services/repository.service";
@@ -23,7 +23,7 @@ class BusinessRepository extends RepositoryService<IBusinessDoc> {
    */
   public async findBusiness(
     input: string | number,
-    populate = false
+    populate: boolean | Array<{ path: string }> = false
   ): Promise<IResult> {
     return this.findByIdOrSlug(input, populate);
   }
@@ -72,9 +72,9 @@ class BusinessRepository extends RepositoryService<IBusinessDoc> {
    */
   public async updateBusiness(
     id: string,
-    updateData: Partial<IBusinessDoc>
+    updateData: UpdateQuery<IBusinessDoc> | Partial<IBusinessDoc>
   ): Promise<IResult> {
-    return this.update(id, updateData);
+    return this.update(id, updateData as any);
   }
 
   /**

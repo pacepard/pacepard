@@ -1,35 +1,43 @@
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from '../../middlewares/async.mdw';
 import ErrorResponse from '../../utils/error.util';
-import projectService from './project.service';
-import projectRepository from './project.repository';
-import { CreateProjectDTO, UpdateProjectDTO } from './project.dto';
+import taskService from './task.service';
+import taskRepository from './task.repository';
+import { CreateTaskDTO, UpdateTaskDTO } from './task.dto';
 import redisWrapper from '../../middlewares/redis.mdw';
 
 /**
- * @name createProject
- * @description Creates a new project
- * @route POST /workspaces/:workspaceId/projects
+ * @name createTask
+ * @description Creates a new task
+ * @route POST /projects/:projectId/teams/:teamId/tasks
  * @access Private
  */
-export const createProject = asyncHandler(
+export const createTask = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
-        const { workspaceId } = req.params;
+        const { projectId, teamId } = req.params;
+        const { workspaceId } = req.body;
+
+        if (!projectId)
+            return next(new ErrorResponse('Project ID is required', 400, []));
+        if (!teamId)
+            return next(new ErrorResponse('Team ID is required', 400, []));
         if (!workspaceId)
             return next(new ErrorResponse('Workspace ID is required', 400, []));
 
-        const data: CreateProjectDTO = {
+        const data: CreateTaskDTO = {
             ...req.body,
             workspaceId,
+            projectId,
+            teamId,
             user: (req as any).user,
             createdBy: userId,
         };
 
         try {
-            const result = await projectService.createProject(data);
+            const result = await taskService.createTask(data);
 
             if (result.error) {
                 return next(
@@ -41,13 +49,13 @@ export const createProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project created successfully.',
+                message: result.message || 'Task created successfully.',
                 status: 201,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to create project',
+                    error.message || 'Failed to create task',
                     500,
                     [],
                 ),
@@ -57,18 +65,18 @@ export const createProject = asyncHandler(
 );
 
 /**
- * @name getProject
- * @description Retrieves project information by ID or slug
- * @route GET /projects/:id
+ * @name getTask
+ * @description Retrieves task information by ID
+ * @route GET /tasks/:id
  * @access Private
  */
-export const getProject = asyncHandler(
+export const getTask = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Task ID is required', 400, []));
 
-        const cacheKey = `project:${id}`;
+        const cacheKey = `task:${id}`;
         const cacheTTL = 300;
 
         try {
@@ -78,17 +86,17 @@ export const getProject = asyncHandler(
                     error: false,
                     errors: [],
                     data: cached,
-                    message: 'Project retrieved successfully (cached).',
+                    message: 'Task retrieved successfully (cached).',
                     status: 200,
                 });
             }
 
-            const result = await projectService.getProject(id);
+            const result = await taskService.getTask(id);
 
             if (result.error || !result.data) {
                 return next(
                     new ErrorResponse(
-                        result.message || 'Project not found',
+                        result.message || 'Task not found',
                         result.code || 404,
                         [],
                     ),
@@ -104,13 +112,13 @@ export const getProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project retrieved successfully.',
+                message: result.message || 'Task retrieved successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to retrieve project',
+                    error.message || 'Failed to retrieve task',
                     500,
                     [],
                 ),
@@ -120,18 +128,18 @@ export const getProject = asyncHandler(
 );
 
 /**
- * @name getWorkspaceProjects
- * @description Retrieves all projects for a specific workspace
- * @route GET /workspaces/:workspaceId/projects
+ * @name getProjectTasks
+ * @description Retrieves all tasks for a specific project
+ * @route GET /projects/:projectId/tasks
  * @access Private
  */
-export const getWorkspaceProjects = asyncHandler(
+export const getProjectTasks = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const { workspaceId } = req.params;
-        if (!workspaceId)
-            return next(new ErrorResponse('Workspace ID is required', 400, []));
+        const { projectId } = req.params;
+        if (!projectId)
+            return next(new ErrorResponse('Project ID is required', 400, []));
 
-        const cacheKey = `workspace:${workspaceId}:projects`;
+        const cacheKey = `project:${projectId}:tasks`;
         const cacheTTL = 180;
 
         try {
@@ -141,12 +149,12 @@ export const getWorkspaceProjects = asyncHandler(
                     error: false,
                     errors: [],
                     data: cached,
-                    message: 'Projects retrieved successfully (cached).',
+                    message: 'Tasks retrieved successfully (cached).',
                     status: 200,
                 });
             }
 
-            const result = await projectService.getProjectsByWorkspace(workspaceId);
+            const result = await taskService.getTasksByProject(projectId);
 
             if (result.error) {
                 return next(
@@ -163,13 +171,13 @@ export const getWorkspaceProjects = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Projects retrieved successfully.',
+                message: result.message || 'Tasks retrieved successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to retrieve projects',
+                    error.message || 'Failed to retrieve tasks',
                     500,
                     [],
                 ),
@@ -179,29 +187,33 @@ export const getWorkspaceProjects = asyncHandler(
 );
 
 /**
- * @name updateProject
- * @description Updates project information
- * @route PUT /projects/:id
+ * @name getTeamTasks
+ * @description Retrieves all tasks for a specific team
+ * @route GET /teams/:teamId/tasks
  * @access Private
  */
-export const updateProject = asyncHandler(
+export const getTeamTasks = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+        const { teamId } = req.params;
+        if (!teamId)
+            return next(new ErrorResponse('Team ID is required', 400, []));
 
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const data: UpdateProjectDTO = req.body;
+        const cacheKey = `team:${teamId}:tasks`;
+        const cacheTTL = 180;
 
         try {
-            const projectResult = await projectRepository.findById(id);
-            if (projectResult.error || !projectResult.data) {
-                return next(new ErrorResponse('Project not found', 404, []));
+            const cached = await redisWrapper.fetchData<any>(cacheKey);
+            if (cached) {
+                return res.status(200).json({
+                    error: false,
+                    errors: [],
+                    data: cached,
+                    message: 'Tasks retrieved successfully (cached).',
+                    status: 200,
+                });
             }
 
-            const result = await projectService.updateProject(id, data);
+            const result = await taskService.getTasksByTeam(teamId);
 
             if (result.error) {
                 return next(
@@ -209,23 +221,22 @@ export const updateProject = asyncHandler(
                 );
             }
 
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
+            await redisWrapper.keepData(
+                { key: cacheKey, value: result.data },
+                cacheTTL,
+            );
 
             res.status(200).json({
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project updated successfully.',
+                message: result.message || 'Tasks retrieved successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to update project',
+                    error.message || 'Failed to retrieve tasks',
                     500,
                     [],
                 ),
@@ -235,80 +246,19 @@ export const updateProject = asyncHandler(
 );
 
 /**
- * @name deleteProject
- * @description Deletes a project
- * @route DELETE /projects/:id
+ * @name getAssigneeTasks
+ * @description Retrieves all tasks assigned to a user
+ * @route GET /users/:userId/tasks
  * @access Private
  */
-export const deleteProject = asyncHandler(
+export const getAssigneeTasks = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        try {
-            const projectResult = await projectRepository.findById(id);
-            if (projectResult.error || !projectResult.data) {
-                return next(new ErrorResponse('Project not found', 404, []));
-            }
-
-            const result = await projectService.deleteProject(id);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project deleted successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to delete project',
-                    500,
-                    [],
-                ),
-            );
-        }
-    },
-);
-
-/**
- * @name addMember
- * @description Adds a member to a project
- * @route POST /projects/:id/members
- * @access Private
- */
-export const addMember = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        const { userId: memberUserId, role } = req.body;
-
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-        if (!memberUserId)
+        const userId = req.params.userId || (req as any).user?.id;
+        if (!userId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
         try {
-            const result = await projectService.addMember(id, memberUserId, role);
+            const result = await taskService.getTasksByAssignee(userId);
 
             if (result.error) {
                 return next(
@@ -316,23 +266,17 @@ export const addMember = asyncHandler(
                 );
             }
 
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
             res.status(200).json({
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Member added successfully.',
+                message: result.message || 'Tasks retrieved successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to add member',
+                    error.message || 'Failed to retrieve tasks',
                     500,
                     [],
                 ),
@@ -342,74 +286,29 @@ export const addMember = asyncHandler(
 );
 
 /**
- * @name removeMember
- * @description Removes a member from a project
- * @route DELETE /projects/:id/members/:userId
+ * @name updateTask
+ * @description Updates task information
+ * @route PUT /tasks/:id
  * @access Private
  */
-export const removeMember = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id, userId: memberUserId } = req.params;
-
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-        if (!memberUserId)
-            return next(new ErrorResponse('User ID is required', 400, []));
-
-        try {
-            const result = await projectService.removeMember(id, memberUserId);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Member removed successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to remove member',
-                    500,
-                    [],
-                ),
-            );
-        }
-    },
-);
-
-/**
- * @name publishProject
- * @description Publishes a project
- * @route POST /projects/:id/publish
- * @access Private
- */
-export const publishProject = asyncHandler(
+export const updateTask = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Task ID is required', 400, []));
+
+        const data: UpdateTaskDTO = req.body;
 
         try {
-            const result = await projectService.publishProject(id);
+            const taskResult = await taskRepository.findTask(id);
+            if (taskResult.error || !taskResult.data) {
+                return next(new ErrorResponse('Task not found', 404, []));
+            }
+
+            const result = await taskService.updateTask(id, data);
 
             if (result.error) {
                 return next(
@@ -418,7 +317,7 @@ export const publishProject = asyncHandler(
             }
 
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`task:${id}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -427,13 +326,13 @@ export const publishProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project published successfully.',
+                message: result.message || 'Task updated successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to publish project',
+                    error.message || 'Failed to update task',
                     500,
                     [],
                 ),
@@ -443,22 +342,27 @@ export const publishProject = asyncHandler(
 );
 
 /**
- * @name closeProject
- * @description Closes a project
- * @route POST /projects/:id/close
+ * @name deleteTask
+ * @description Deletes a task
+ * @route DELETE /tasks/:id
  * @access Private
  */
-export const closeProject = asyncHandler(
+export const deleteTask = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+            return next(new ErrorResponse('Task ID is required', 400, []));
 
         try {
-            const result = await projectService.closeProject(id);
+            const taskResult = await taskRepository.findTask(id);
+            if (taskResult.error || !taskResult.data) {
+                return next(new ErrorResponse('Task not found', 404, []));
+            }
+
+            const result = await taskService.deleteTask(id);
 
             if (result.error) {
                 return next(
@@ -467,7 +371,7 @@ export const closeProject = asyncHandler(
             }
 
             try {
-                await redisWrapper.deleteData(`project:${id}`);
+                await redisWrapper.deleteData(`task:${id}`);
             } catch (cacheError) {
                 console.error('Cache invalidation failed:', cacheError);
             }
@@ -476,13 +380,66 @@ export const closeProject = asyncHandler(
                 error: false,
                 errors: [],
                 data: result.data,
-                message: result.message || 'Project closed successfully.',
+                message: result.message || 'Task deleted successfully.',
                 status: 200,
             });
         } catch (error: any) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to close project',
+                    error.message || 'Failed to delete task',
+                    500,
+                    [],
+                ),
+            );
+        }
+    },
+);
+
+/**
+ * @name assignTask
+ * @description Assigns a task to users
+ * @route POST /tasks/:id/assign
+ * @access Private
+ */
+export const assignTask = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { id } = req.params;
+        const { userIds } = req.body;
+
+        if (!id)
+            return next(new ErrorResponse('Task ID is required', 400, []));
+        if (!userIds || !Array.isArray(userIds))
+            return next(new ErrorResponse('User IDs array is required', 400, []));
+
+        try {
+            const result = await taskService.assignTask(id, userIds);
+
+            if (result.error) {
+                return next(
+                    new ErrorResponse(result.message, result.code || 500, []),
+                );
+            }
+
+            try {
+                await redisWrapper.deleteData(`task:${id}`);
+            } catch (cacheError) {
+                console.error('Cache invalidation failed:', cacheError);
+            }
+
+            res.status(200).json({
+                error: false,
+                errors: [],
+                data: result.data,
+                message: result.message || 'Task assigned successfully.',
+                status: 200,
+            });
+        } catch (error: any) {
+            return next(
+                new ErrorResponse(
+                    error.message || 'Failed to assign task',
                     500,
                     [],
                 ),

@@ -224,3 +224,35 @@ export enum ContentStatus {
   DELETED = "deleted",
   ARCHIVED = "archived",
 }
+<<<<<<< HEAD
+=======
+
+/**
+ * Defines the specific roles a user can hold within a project, 
+ * squad, or team context.
+ */
+export enum ProjectMemberRole {
+  MEMBER = "member",
+  MENTOR = "mentor",
+  MAINTAINER = "maintainer",
+  LEAD = "lead",
+  JUDGE = "judge",
+  FACILITATOR = "facilitator", // Can manage teams and rotate members
+}
+
+export enum TaskStatus {
+  TODO = "todo",
+  IN_PROGRESS = "in-progress",
+  IN_REVIEW = "in-review",
+  DONE = "done",
+  BLOCKED = "blocked",
+}
+
+export enum TaskPriority {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  URGENT = "urgent",
+}
+
+>>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3

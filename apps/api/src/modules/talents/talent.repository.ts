@@ -23,7 +23,11 @@ class TalentRepository extends RepositoryService<ITalentDoc> {
    */
   public async findTalent(
     input: string | number,
+<<<<<<< HEAD
     populate = false
+=======
+    populate: boolean | Array<{ path: string }> = false
+>>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
   ): Promise<IResult> {
     return this.findByIdOrSlug(input, populate);
   }

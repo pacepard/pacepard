@@ -3,14 +3,12 @@ import authRoutes from "../../modules/auth/auth.router";
 import userRoutes from "../../modules/user/user.router";
 import businessRoutes from "../../modules/business/business.router";
 import talentRoutes from "../../modules/talents/talent.router";
+import workspaceRoutes from "../../modules/workspace/workspace.router";
 
 const router = express.Router();
 
 // Add new routes
-router.use("/auth", authRoutes);
-router.use("/user", userRoutes);
-router.use("/business", businessRoutes);
-router.use("/talent", talentRoutes);
+//router.use("/user", userRoutes);
 
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
