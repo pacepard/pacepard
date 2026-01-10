@@ -1,13 +1,12 @@
 {
-    "extends": [
-      "//"
-    ],
-    "tasks": {
-      "build": {
-        "outputs": [
-          "dist/**"
-        ]
-      }
+  "extends": ["//"],
+  "tasks": {
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "build": {
+      "outputs": ["dist/**"]
     }
   }
-  
+}

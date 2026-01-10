@@ -24,13 +24,6 @@ export default defineConfig(({ mode }) => {
       preserveSymlinks: true,
       dedupe: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/query-core', '@tanstack/query-devtools'],
     },
-    css: {
-      preprocessorOptions: {
-        css: {
-          additionalData: undefined,
-        },
-      },
-    },
     define: {
       'import.meta.env.VITE_APP_API_URL': JSON.stringify(env.VITE_APP_API_URL || ''),
     },
@@ -43,11 +36,6 @@ export default defineConfig(({ mode }) => {
         '@pacepard/core',
         'react',
         'react-dom',
-        'react-router',
-        'react-router-dom',
-        '@tanstack/react-query',
-        '@tanstack/query-core',
-        '@tanstack/query-devtools',
       ],
       exclude: [
         '@pacepard/sdk',

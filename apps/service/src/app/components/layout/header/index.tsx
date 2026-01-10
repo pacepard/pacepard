@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Logo from "../logo";
+import { FaWhatsapp } from "react-icons/fa";
 
 const Header = () => {
     const { data: session } = useSession();
@@ -128,7 +129,7 @@ const Header = () => {
                                             )}
                                         </ul>
 
-                                        {user?.user || session?.user ? (
+                                        {/* {user?.user || session?.user ? (
                                             <div className="flex flex-col gap-2">
                                                 <button onClick={() => handleSignOut()} className="flex justify-center items-center cursor-pointer gap-2 text-secondary hover:text-white dark:border dark:border-primary dark:hover:text-white bg-primary dark:hover:bg-transparent dark:hover:border dark:hover:border-white hover:bg-secondary text-xl font-bold rounded-full py-2.5 px-4.5 transition-all duration-300 ease-in-out">
                                                     Sign Out
@@ -144,11 +145,18 @@ const Header = () => {
                                                     Sign Up
                                                 </Link>
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                     <div>
-                                        <Link href="tel:+1-212-456-7890" className="text-secondary/60 dark:text-white/60 hover:text-secondary dark:hover:text-white">+1-212-456-7890</Link>
-                                        <Link href="mailto:info@wrappixel.com"><h4>info@wrappixel.com</h4></Link>
+                                        <Link 
+                                        href="https://wa.me/2348170848057"
+                                        target="_blank"
+                                        className="flex items-center gap-2 text-secondary/60 dark:text-white/60 hover:text-secondary dark:hover:text-white"
+                                        >
+                                            <FaWhatsapp className="text-green-500 text-xl" />
+                                            <span>+234-817-084-8057</span>
+                                            </Link>
+                                        <Link href="mailto:hello@pacepard.com"><h4>hello@pacepard.com</h4></Link>
                                     </div>
                                 </div>
                             }

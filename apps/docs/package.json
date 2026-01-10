@@ -1,9 +1,0 @@
-{
-  "name": "@pacepard/api-docs",
-  "private": true,
-  "version": "0.10.00",
-  "scripts": {
-    "dev": "mintlify dev -p 3010",
-    "build": "mintlify build"
-  }
-}
