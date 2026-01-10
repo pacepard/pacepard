@@ -3,6 +3,13 @@ import { IUserDoc } from "../user/user.interface";
 import { TaskStatus, TaskPriority } from "../../utils/enums.util";
 export { TaskStatus, TaskPriority };
 
+export enum TaskDifficulty {
+  EASY = 'easy',
+  NORMAL = 'normal',
+  HARD = 'hard',
+  EXPERT = 'expert'
+}
+
 type ObjectId = Types.ObjectId;
 
 export interface ITaskDoc extends Document {
@@ -19,6 +26,7 @@ export interface ITaskDoc extends Document {
   // Status & Work
   status: TaskStatus;
   priority: TaskPriority;
+  points: number;
   
   // Assignment
   assignedTo: Array<IUserDoc | ObjectId>; 

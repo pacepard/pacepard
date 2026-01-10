@@ -6,6 +6,8 @@ import projectRepository from "../project/project.repository";
 import { IResult } from "../../utils/interfaces.util";
 import { genTeamCode } from "../../utils/code.util";
 import { ProjectMemberRole } from "../../utils/enums.util";
+import Role from "../role/role.model";
+import { Types } from "mongoose";
 
 export class TeamService {
   
@@ -19,46 +21,95 @@ export class TeamService {
     userId: string,
     userRole: ProjectMemberRole
   ): Promise<IResult> {
-    const result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    // Authorization check: Only project owners and maintainers can create teams
-    const projectResult = await projectRepository.findById(projectId);
-    if (projectResult.error || !projectResult.data) {
-      throw new NotFoundError("Project not found");
-    }
-
-    const project = projectResult.data as any;
-    
-    // Check if user is project owner or maintainer
     if (!this.canManageProject(userRole)) {
       throw new ForbiddenError("Only project owners and maintainers can create teams");
     }
 
-    // Create team
+    const projectResult = await projectRepository.findById(projectId);
+    if (projectResult.error || !projectResult.data) {
+      throw new NotFoundError("Project not found");
+    }
+    const project = projectResult.data as any;
+
     const newTeamData = {
       code: genTeamCode(),
       name: teamData.name.trim(),
       description: teamData.description || "",
       workspaceId: project.workspaceId,
       businessId: project.businessId,
-      projectId: new (require('mongoose')).Types.ObjectId(projectId),
-      members: [],
+      projectId: new Types.ObjectId(projectId),
+      createdBy: new Types.ObjectId(userId),
+      
+      // We auto-initialize with the creator as the Team LEAD
+      members: [{ 
+        user: new Types.ObjectId(userId), 
+        role: ProjectMemberRole.LEAD, 
+        joinedAt: new Date() 
+      } as any],
       tasks: [],
-      createdBy: new (require('mongoose')).Types.ObjectId(userId),
     };
 
+    // 3. Persistence
     const createResult = await teamRepository.createTeam(newTeamData);
     
+    // Add the missing 'data: {}' to satisfy the IResult interface on errors
     if (createResult.error) {
-      result.error = true;
-      result.code = createResult.code;
-      result.message = createResult.message;
-      return result;
+      return { 
+        error: true, 
+        code: createResult.code, 
+        message: createResult.message, 
+        data: {} 
+      };
     }
 
-    result.data = createResult.data;
-    result.message = "Team created successfully";
-    return result;
+    return {
+      error: false,
+      message: "Team created and Lead assigned successfully",
+      code: 201,
+      data: createResult.data
+    };
+  }
+
+  /**
+   * @name addMember
+   * @description Adds a member to a team ONLY if they are already in the project.
+   */
+  public async addMember(
+    teamId: string,
+    userId: string,
+    role: ProjectMemberRole,
+    actorRole: ProjectMemberRole
+  ): Promise<IResult> {
+    // 1. Authorization: CASL/Role check
+    if (!this.canManageTeamMembers(actorRole, role)) {
+      throw new ForbiddenError("Insufficient permissions to add team members");
+    }
+
+    // 2. Fetch Team and Parent Project
+    const teamCheck = await teamRepository.findTeam(teamId);
+    if (teamCheck.error || !teamCheck.data) throw new NotFoundError("Team not found");
+    const team = teamCheck.data as ITeamDoc;
+
+    // 3. THE GATEKEEPER: Is this user actually in the Project?
+    const projectResult = await projectRepository.findById(team.projectId.toString());
+    const projectMembers = projectResult.data?.members || [];
+    const isProjectMember = projectMembers.some((m: { user: { toString: () => string; }; }) => m.user.toString() === userId);
+
+    if (!isProjectMember) {
+      return { 
+        error: true, 
+        code: 403, 
+        message: "User must be invited to the Project before being assigned to a Team" ,
+        data: {}
+      };
+    }
+
+    // 4. Duplicate Check
+    if (team.members.some(m => m.user.toString() === userId)) {
+      return { error: true, code: 400, message: "User is already in this team", data: {} };
+    }
+
+    return await teamRepository.addMember(teamId, userId, role);
   }
 
   /**
@@ -76,116 +127,29 @@ export class TeamService {
     projectId: string,
     userId: string,
     targetTeamId: string,
-    actorId: string,
     actorRole: ProjectMemberRole
   ): Promise<IResult> {
-    const result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    // 1. Authorization Check
-    // Only project owners and maintainers can rotate members
-    if (!this.canRotateMembers(actorRole)) {
-      throw new ForbiddenError("Only project owners and maintainers can rotate team members");
-    }
-
-    // 2. Validate target team exists and belongs to the project
-    const targetTeamCheck = await teamRepository.findTeam(targetTeamId);
-    if (targetTeamCheck.error || !targetTeamCheck.data) {
-      throw new NotFoundError("Target team not found");
-    }
-
-    const targetTeam = targetTeamCheck.data as ITeamDoc;
     
-    // Verify team belongs to the project
-    if (targetTeam.projectId.toString() !== projectId) {
+    if (!this.canRotateMembers(actorRole)) {
+      throw new ForbiddenError("Only project owners and maintainers can rotate members");
+    }
+
+    // 1. Lineage Verification
+    const targetTeam = await teamRepository.findTeam(targetTeamId);
+    if (!targetTeam.data || targetTeam.data.projectId.toString() !== projectId) {
       throw new BadRequestError("Target team does not belong to this project");
     }
 
-    // 3. Validate project exists
-    const projectCheck = await projectRepository.findById(projectId);
-    if (projectCheck.error || !projectCheck.data) {
-      throw new NotFoundError("Project not found");
+    // 2. Project Membership Check (Can't rotate someone who isn't in the project)
+    const project = await projectRepository.findById(projectId);
+    if (!project.data?.members.some((m: { user: { toString: () => string; }; }) => m.user.toString() === userId)) {
+      throw new BadRequestError("User is not a member of this project");
     }
 
-    // 4. Remove user from ALL teams they currently belong to within this project
-    // This ensures a talent is only in ONE team per project at a time (Standard Rotation)
-    const removeResult = await teamRepository.removeUserFromProjectTeams(projectId, userId);
+    // 3. Atomic Swap: Remove from all teams, then Add to target
+    await teamRepository.removeUserFromProjectTeams(projectId, userId);
     
-    if (removeResult.error) {
-      throw new Error("Failed to remove user from existing teams");
-    }
-
-    // 5. Add to the new team with the same role
-    const memberRole = ProjectMemberRole.MEMBER; // Default role for rotated members
-    
-    const addResult = await teamRepository.addMember(
-      targetTeamId,
-      userId,
-      memberRole
-    );
-
-    if (addResult.error) {
-      result.error = true;
-      result.code = addResult.code;
-      result.message = addResult.message;
-      return result;
-    }
-
-    result.data = {
-      team: addResult.data,
-      teamsAffected: (removeResult.data as any)?.teamsAffected || 0
-    };
-    result.message = "Member rotated successfully to target team";
-    return result;
-  }
-
-  /**
-   * @name addMember
-   * @description Adds a member to a team
-   */
-  public async addMember(
-    teamId: string,
-    userId: string,
-    role: ProjectMemberRole,
-    actorRole: ProjectMemberRole
-  ): Promise<IResult> {
-    const result: IResult = { error: false, message: "", code: 200, data: {} };
-
-    // Authorization: Only project owners, maintainers, and team leads can add members
-    if (!this.canManageTeamMembers(actorRole, role)) {
-      throw new ForbiddenError("Insufficient permissions to add team members");
-    }
-
-    const teamCheck = await teamRepository.findTeam(teamId);
-    if (teamCheck.error || !teamCheck.data) {
-      throw new NotFoundError("Team not found");
-    }
-
-    const team = teamCheck.data as ITeamDoc;
-    
-    // Check if user is already a member
-    const existingMember = team.members.find(
-      m => m.user.toString() === userId
-    );
-
-    if (existingMember) {
-      result.error = true;
-      result.code = 400;
-      result.message = "User is already a member of this team";
-      return result;
-    }
-
-    const addResult = await teamRepository.addMember(teamId, userId, role);
-
-    if (addResult.error) {
-      result.error = true;
-      result.code = addResult.code;
-      result.message = addResult.message;
-      return result;
-    }
-
-    result.data = addResult.data;
-    result.message = "Member added to team successfully";
-    return result;
+    return await teamRepository.addMember(targetTeamId, userId, ProjectMemberRole.MEMBER);
   }
 
   /**
@@ -217,6 +181,23 @@ export class TeamService {
     result.message = "Member removed from team successfully";
     return result;
   }
+
+  /**
+ * @method assignToTeam
+ * @description Assigns an EXISTING project member to a sub-team.
+ */
+public async assignToTeam(projectId: string, teamId: string, userId: string): Promise<IResult> {
+  // 1. Lineage Check: Is the user actually a member of the parent project?
+  const project = await projectRepository.findById(projectId);
+  const isProjectMember = project.data.members.some((m: { user: any; }) => String(m.user) === userId);
+
+  if (!isProjectMember) {
+    return { error: true, message: "User must be a Project Member before joining a Team", code: 403, data: {} };
+  }
+
+  // 2. Persistence: Add to the Team collection
+  return await teamRepository.addMember(teamId, userId, Role);
+}
 
   /**
    * @name updateMemberRole

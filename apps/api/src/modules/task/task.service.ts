@@ -19,10 +19,15 @@ class TaskService {
     this.result = { error: false, message: "", code: 200, data: {} };
   }
 
+/**
+   * @name createTask
+   * @description Creates a task with strict hierarchy validation and membership gating for assignees.
+   */
   public async createTask(
     data: CreateTaskDTO
   ): Promise<IResult<{ task: ITaskDoc; user: IUserDoc }>> {
     
+    // Initialize result with the required 'data' object to satisfy IResult interface
     let result: IResult<{ task: ITaskDoc; user: IUserDoc }> = {
       error: false,
       message: "",
@@ -34,40 +39,63 @@ class TaskService {
 
     // 1. Context Validation
     if (!user || !workspaceId || !projectId || !teamId) {
-      result.error = true; result.code = 400;
-      result.message = "User, Workspace, Project, and Team context are required";
-      return result;
+      return { 
+        error: true, 
+        code: 400, 
+        message: "User, Workspace, Project, and Team context are required", 
+        data: {} as any 
+      };
     }
 
     // 2. Hierarchy Validation
-    const workspaceCheck = await workspaceRepository.findById(workspaceId);
+    const [workspaceCheck, projectCheck, teamCheck] = await Promise.all([
+      workspaceRepository.findById(workspaceId),
+      projectRepository.findById(projectId),
+      teamRepository.findTeam(teamId)
+    ]);
+
     if (workspaceCheck.error || !workspaceCheck.data) {
-      result.error = true; result.code = 404;
-      result.message = "Workspace not found";
-      return result;
+      return { error: true, code: 404, message: "Workspace not found", data: {} as any };
     }
-
-    const projectCheck = await projectRepository.findById(projectId);
     if (projectCheck.error || !projectCheck.data) {
-      result.error = true; result.code = 404;
-      result.message = "Project not found";
-      return result;
+      return { error: true, code: 404, message: "Project not found", data: {} as any };
     }
-
-    const teamCheck = await teamRepository.findTeam(teamId);
     if (teamCheck.error || !teamCheck.data) {
-      result.error = true; result.code = 404;
-      result.message = "Team not found";
-      return result;
+      return { error: true, code: 404, message: "Team not found", data: {} as any };
     }
 
-    // 3. Strict Data Initialization
+    // 3. THE MEMBERSHIP GATE: Validate that initial assignees actually belong to this Team
+    if (data.assignedTo && data.assignedTo.length > 0) {
+      const team = teamCheck.data as any;
+      const teamMemberIds = team.members.map((m: any) => m.user.toString());
+      
+      const unauthorizedUsers = data.assignedTo.filter(id => !teamMemberIds.includes(id));
+      
+      if (unauthorizedUsers.length > 0) {
+        return { 
+          error: true, 
+          code: 403, 
+          message: "One or more assignees are not members of this team", 
+          data: {} as any 
+        };
+      }
+    }
+
+    // 4. Pacepard Logic: Calculate points based on priority
+    const pointsMap: Record<string, number> = { 
+      [TaskPriority.LOW]: 10, 
+      [TaskPriority.MEDIUM]: 20, 
+      [TaskPriority.HIGH]: 50 
+    };
+
+    // 5. Strict Data Initialization
     const taskData: Partial<ITaskDoc> = {
       code: genTaskCode(),
       title: title.trim(),
       description: description.trim() || "",
+      points: pointsMap[data.priority || TaskPriority.MEDIUM] || 20,
       
-      // Strict Hierarchy Links
+      // Strict Hierarchy Links (The "Direct Lineage" Pattern)
       workspaceId: new Types.ObjectId(workspaceId),
       projectId: new Types.ObjectId(projectId),
       teamId: new Types.ObjectId(teamId),
@@ -86,21 +114,26 @@ class TaskService {
       dueDate: data.dueDate,
     };
 
-    // 4. Persistence
+    // 6. Persistence
     const createResult = await taskRepository.createTask(taskData);
     
     if (createResult.error || !createResult.data) {
-      result.error = true; result.code = 500;
-      result.message = createResult.message || "Failed to persist task";
-      return result;
+      return { 
+        error: true, 
+        code: 500, 
+        message: createResult.message || "Failed to persist task", 
+        data: {} as any 
+      };
     }
 
-    result.message = "Task created successfully";
-    result.code = 201;
-    result.data = { task: createResult.data as ITaskDoc, user };
-    
-    return result;
+    return {
+      error: false,
+      message: "Task created successfully",
+      code: 201,
+      data: { task: createResult.data as ITaskDoc, user }
+    };
   }
+
 
   /**
    * @name getTask
@@ -309,36 +342,33 @@ class TaskService {
 
   /**
    * @name assignTask
-   * @description Assigns a task to users
+   * @description Assigns a task ONLY if the user is a member of the team.
    */
-  public async assignTask(
-    taskId: string,
-    userIds: string[]
-  ): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: {} };
+  public async assignTask(taskId: string, userIds: string[]): Promise<IResult> {
+    // 1. Fetch Task to get the team context
+    const taskResult = await taskRepository.findTask(taskId);
+    if (!taskResult.data) return { error: true, message: "Task not found", code: 404, data: {} };
+    const task = taskResult.data as ITaskDoc;
 
-    const findResult = await taskRepository.findTask(taskId);
-    if (findResult.error || !findResult.data) {
-      result.error = true;
-      result.code = 404;
-      result.message = "Task not found";
-      return result;
+    // 2. Fetch Team to check membership
+    const teamResult = await teamRepository.findTeam(task.teamId.toString());
+    const teamMembers = teamResult.data?.members.map((m: any) => m.user.toString()) || [];
+
+    // 3. VALIDATION: Check if every assigned user is actually in the team
+    const invalidUsers = userIds.filter(id => !teamMembers.includes(id));
+    if (invalidUsers.length > 0) {
+      return { 
+        error: true, 
+        message: "One or more users are not members of this team", 
+        code: 403, 
+        data: { invalidUsers } 
+      };
     }
 
-    const updateResult = await taskRepository.updateTask(taskId, {
+    // 4. Persistence
+    return await taskRepository.updateTask(taskId, {
       assignedTo: userIds.map(id => new Types.ObjectId(id))
     });
-
-    if (updateResult.error) {
-      result.error = true;
-      result.code = updateResult.code;
-      result.message = updateResult.message;
-      return result;
-    }
-
-    result.message = "Task assigned successfully";
-    result.data = updateResult.data;
-    return result;
   }
 }
 

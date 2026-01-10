@@ -69,7 +69,7 @@ export enum ProjectCreatorType {
 }
 
 export interface IProjectMember {
-  user: IUserDoc;
+  user: Types.ObjectId | IUserDoc; 
   role: ProjectMemberRole;
   joinedAt: Date;
 }

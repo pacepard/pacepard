@@ -9,13 +9,13 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
     super(Team, "Team");
   }
 
-  /**
+/**
    * @name findTeam
-   * @description Find a team by ID
+   * @description Find a team by ID with flexible population
    */
   public async findTeam(
     teamId: string,
-    populate = false
+    populate: boolean | any[] = false 
   ): Promise<IResult> {
     return this.findById(teamId, populate);
   }
@@ -70,20 +70,32 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
     return this.delete(teamId);
   }
 
-  /**
+/**
    * @name addMember
-   * @description Add a member to a team using type-safe array operation
+   * @description Using $addToSet instead of $push to prevent duplicates at the DB level
    */
   public async addMember(
     teamId: string,
     userId: string,
     role: any
   ): Promise<IResult> {
-    return this.pushToArray(teamId, 'members', {
-      user: new mongoose.Types.ObjectId(userId),
-      role: role,
-      joinedAt: new Date()
-    });
+    try {
+      const result = await this.model.updateOne(
+        { _id: new mongoose.Types.ObjectId(teamId) },
+        { 
+          $addToSet: { 
+            members: { 
+              user: new mongoose.Types.ObjectId(userId), 
+              role, 
+              joinedAt: new Date() 
+            } 
+          } 
+        }
+      );
+      return { error: false, message: "Member added", code: 200, data: result };
+    } catch (error: any) {
+      return { error: true, code: 500, message: error.message, data: {} };
+    }
   }
 
   /**
@@ -116,45 +128,36 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
     );
   }
 
-  /**
+/**
    * @name removeUserFromProjectTeams
-   * @description Remove a user from all teams in a project
-   * Used during team rotation
+   * @description Atomic removal of a user from all teams in a project.
+   * Efficiently uses updateMany to ensure the user is out before being rotated.
    */
   public async removeUserFromProjectTeams(
     projectId: string,
     userId: string
   ): Promise<IResult> {
-    let result: IResult = { error: false, message: "", code: 200, data: {} };
-    
     try {
-      const teams = await this.findAll({
-        projectId: new mongoose.Types.ObjectId(projectId),
-        "members.user": new mongoose.Types.ObjectId(userId)
-      });
+      // One operation to clear the user out of every team container in this project
+      const updateResult = await this.model.updateMany(
+        { 
+          projectId: new mongoose.Types.ObjectId(projectId),
+          "members.user": new mongoose.Types.ObjectId(userId) 
+        },
+        { 
+          $pull: { members: { user: new mongoose.Types.ObjectId(userId) } } 
+        }
+      );
 
-      if (teams.error || !teams.data) {
-        result.error = false; // Not finding teams is OK
-        result.message = "User removed from project teams (no teams found)";
-        return result;
-      }
-
-      const teamList = teams.data as any[];
-      
-      // Remove user from each team using type-safe operations
-      for (const team of teamList) {
-        await this.removeMember(team._id.toString(), userId);
-      }
-
-      result.message = "User removed from all project teams";
-      result.data = { teamsAffected: teamList.length };
+      return {
+        error: false,
+        message: "User successfully removed from project teams",
+        code: 200,
+        data: { teamsAffected: updateResult.modifiedCount }
+      };
     } catch (error: any) {
-      result.error = true;
-      result.code = 500;
-      result.message = error.message;
+      return { error: true, code: 500, message: error.message, data: {} };
     }
-
-    return result;
   }
 }
 
