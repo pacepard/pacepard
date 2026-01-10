@@ -57,7 +57,11 @@ export interface IUserDoc extends Document {
     isBusiness: boolean;
     isTalent: boolean;
     isUser: boolean;
+<<<<<<< HEAD
     isPremium?: boolean;
+=======
+    
+>>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 
     isActivated: boolean;
     isDeactivated: boolean;

@@ -181,7 +181,11 @@ export enum DbModels {
     PERMISSION = 'permission',
     CAMPAIGN = 'hackathon_campaign',
     TALENT = 'talent',
+<<<<<<< HEAD
     BUSINESS = 'business',
+=======
+    ORGANIZATION = 'organization',
+>>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
     COMPETITION = 'competition',
     TEAM = 'team',
     PROJECT = 'project',
@@ -203,9 +207,12 @@ export enum DbModels {
     NOTIFICATIONS = 'notifications',
     PLAN = 'plan',
     BADGE_AWARD = 'badgeAward',
+<<<<<<< HEAD
     SUBSCRIPTION = 'subscription',
     SUBSCRIPTION_INTENT = 'subscriptionIntent',
     TRANSACTION = 'transaction',
+=======
+>>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 }
 
 export enum UploadStatus {

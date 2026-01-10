@@ -1,24 +1,9 @@
-<<<<<<< HEAD
-import { Document, Types } from "mongoose";
-=======
 import { Document, Types } from 'mongoose';
 import { IUserDoc } from '../user/user.interface';
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
 
 type ObjectId = Types.ObjectId;
 
 export interface IDiscoveryDoc extends Document {
-<<<<<<< HEAD
-
-     // time stamps
-     createdAt: Date;
-     updatedAt: Date;
-     _version: number;
-     _id: ObjectId;
-     id: ObjectId;
-
-}
-=======
     name: string;
     description: string;
     isActive: boolean;
@@ -51,4 +36,3 @@ export interface IMetadata {
     metaDescription: string;
     metaImageUrl: string;
 }
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3

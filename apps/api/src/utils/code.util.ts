@@ -28,7 +28,10 @@ export const genUserCode = (userType: UserType): string => {
     return `${baseName}-${year}-${code}`;
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 
 console.log("user", genUserCode(UserType.TALENT))
 
@@ -49,6 +52,7 @@ export const genWorkspaceCode = (): string => {
 };
 
 
+<<<<<<< HEAD
 console.log("pacepard", genWorkspaceCode())
 
 /**
@@ -105,3 +109,6 @@ export const genTeamCode = (): string => {
 
 console.log("team", genTeamCode())
 >>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
+=======
+console.log("pacepard", genWorkspaceCode())
+>>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36

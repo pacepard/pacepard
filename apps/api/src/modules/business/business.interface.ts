@@ -15,8 +15,7 @@ import { ITemplateDoc } from '../template/interface.template';
 import { IDiscoveryDoc } from '../discovery/discovery.interface';
 import { IPlanDoc } from '../plan/plan.interface';
 
-
-type ObjectId = Types.ObjectId
+type ObjectId = Types.ObjectId;
 
 export interface IBusinessDoc extends Document {
     code: string; // business public ID
@@ -51,24 +50,24 @@ export interface IBusinessDoc extends Document {
 
     transactions: Array<ITransactionDoc | any>;
 
-    discovery: Array<IDiscoveryDoc | any>
-    customDomain: Array<IDomainDoc | any>
-    templates: Array<ITemplateDoc | any>
+    discovery: Array<IDiscoveryDoc | any>;
+    customDomain: Array<IDomainDoc | any>;
+    templates: Array<ITemplateDoc | any>;
 
     hackathons: Array<IHackathonDoc | any>;
-    entries: Array<IEntryDoc | any >
-    submissions: Array <ISubmissionDoc | any>
+    entries: Array<IEntryDoc | any>;
+    submissions: Array<ISubmissionDoc | any>;
 
     projects: Array<IProjectDoc | any>;
     teams: Array<ITeamDoc | any>;
-    tasks: Array<ITaskDoc | any>
-    
-     // time stamps
-     createdAt: Date;
-     updatedAt: Date;
-     _version: number;
-     _id: ObjectId;
-     id: ObjectId;
+    tasks: Array<ITaskDoc | any>;
+
+    // time stamps
+    createdAt: Date;
+    updatedAt: Date;
+    _version: number;
+    _id: ObjectId;
+    id: ObjectId;
 }
 
 export interface ISocials {
@@ -92,19 +91,17 @@ export interface Iverification {
 }
 
 export enum VerificationType {
-    UNVERIFIED = "unverified",
-    PENDING = "pending",
-    VERIFIED = "verified",
-    REJECTED = "rejected",
+    UNVERIFIED = 'unverified',
+    PENDING = 'pending',
+    VERIFIED = 'verified',
+    REJECTED = 'rejected',
 }
 
-
 export enum BusinessType {
-    COMPANY = "company",
-    NONPROFIT = "non-profit",
-    GOVERNMENT = "government",
-    EDUCATION = "education",
-    PARTNER = "partner",
-    OTHER = "other"
-    
+    COMPANY = 'company',
+    NONPROFIT = 'non-profit',
+    GOVERNMENT = 'government',
+    EDUCATION = 'education',
+    PARTNER = 'partner',
+    OTHER = 'other',
 }

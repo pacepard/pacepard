@@ -8,7 +8,15 @@ import workspaceRoutes from "../../modules/workspace/workspace.router";
 const router = express.Router();
 
 // Add new routes
+<<<<<<< HEAD
 //router.use("/user", userRoutes);
+=======
+router.use("/auth", authRoutes);
+router.use("/user", userRoutes);
+router.use("/business", businessRoutes);
+router.use("/talent", talentRoutes);
+router.use("/workspace", workspaceRoutes);
+>>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {

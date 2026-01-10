@@ -32,7 +32,11 @@ class WorkspaceService {
       message: "",
       code: 200,
       data: {} as { workspace: IWorkspaceDoc },
+<<<<<<< HEAD
     };
+=======
+    }; v
+>>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 
     const { name, createdBy, user } = data;
 
