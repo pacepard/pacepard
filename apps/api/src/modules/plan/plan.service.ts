@@ -429,11 +429,12 @@ class PlanService {
         ]);
 
         return {
-            nairaMonthly: nairaMonthlyCode,
-            nairaYearly: nairaYearlyCode,
-            dollarMonthly: dollarMonthlyCode,
-            dollarYearly: dollarYearlyCode,
+            nairaMonthly: nairaMonthlyCode || '',
+            nairaYearly: nairaYearlyCode || '',
+            dollarMonthly: dollarMonthlyCode || '',
+            dollarYearly: dollarYearlyCode || '',
         };
+
     }
 
     /**
