@@ -414,6 +414,27 @@ class RepositoryService<T extends Document> {
   }
 
   /**
+   * @name deleteMany
+   * @description Bulk delete documents matching a filter.
+   * Essential for cascading deletes (e.g., deleting all tasks when a project is deleted).
+   */
+  public async deleteMany(filter: FilterQuery<T>): Promise<IResult> {
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
+    try {
+      const processedFilter = this.processFilter(filter as any);
+      const deleteResult = await this.model.deleteMany(processedFilter);
+      
+      result.message = `${deleteResult.deletedCount} ${this.modelName}(s) deleted successfully`;
+      result.data = { deletedCount: deleteResult.deletedCount };
+    } catch (error: any) {
+      result.error = true;
+      result.code = 500;
+      result.message = error.message;
+    }
+    return result;
+  }
+
+  /**
    * @name count
    * @param filter - Optional filter query
    * @returns {Promise<number>}
