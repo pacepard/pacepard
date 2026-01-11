@@ -221,103 +221,56 @@ export const deleteProject = asyncHandler(
  * @route POST /projects/:id/members
  * @access Private
  */
+/**
+ * @name addMember
+ * @description Adds a member to a project and invalidates cache
+ * @route POST /projects/:id/members
+ */
 export const addMember = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
         const { id } = req.params;
         const { userId: memberUserId, role } = req.body;
 
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-        if (!memberUserId)
-            return next(new ErrorResponse('User ID is required', 400, []));
-
-        try {
-            const result = await projectService.addMember(id, memberUserId, role);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Member added successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to add member',
-                    500,
-                    [],
-                ),
-            );
+        if (!id || !memberUserId) {
+            return next(new ErrorResponse('Project ID and User ID are required', 400, []));
         }
-    },
+
+        const result = await projectService.addMember(id, memberUserId, role);
+        if (result.error) {
+            return next(new ErrorResponse(result.message, result.code || 500, []));
+        }
+
+        // Clear individual project cache so the new member appears
+        await redisWrapper.deleteData(`project:${id}`).catch(err => console.error(err));
+
+        res.status(200).json(result);
+    }
 );
 
 /**
  * @name removeMember
- * @description Removes a member from a project
+ * @description Removes a member and cleans up associated teams/tasks
  * @route DELETE /projects/:id/members/:userId
  * @access Private
  */
 export const removeMember = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
         const { id, userId: memberUserId } = req.params;
 
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-        if (!memberUserId)
-            return next(new ErrorResponse('User ID is required', 400, []));
-
-        try {
-            const result = await projectService.removeMember(id, memberUserId);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Member removed successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to remove member',
-                    500,
-                    [],
-                ),
-            );
+        if (!id || !memberUserId) {
+            return next(new ErrorResponse('IDs are required', 400, []));
         }
-    },
+
+        const result = await projectService.removeMember(id, memberUserId);
+        if (result.error) {
+            return next(new ErrorResponse(result.message, result.code || 500, []));
+        }
+
+        // Clear cache
+        await redisWrapper.deleteData(`project:${id}`).catch(err => console.error(err));
+
+        res.status(200).json(result);
+    }
 );
 
 /**
