@@ -97,6 +97,52 @@ class ProjectService {
   }
 
   /**
+   * @name publishProject
+   * @description Transitions a project from DRAFT to OPEN/PUBLISHED status.
+   */
+  public async publishProject(projectId: string): Promise<IResult> {
+    // 1. Fetch current project state
+    const project = await projectRepository.findById(projectId);
+    if (!project.data) {
+      return { error: true, message: "Project not found", code: 404, data: {} };
+    }
+
+    // 2. Business Rule: Cannot publish a project that is already closed or deleted
+    if (project.data.status === ProjectStatus.CLOSED) {
+      return { error: true, message: "Cannot publish a closed project", code: 400, data: {} };
+    }
+
+    // 3. Optional: Add a "Ready to Publish" check
+    // e.g., Ensuring there is at least a description or a title
+    if (!project.data.description || project.data.description.length < 10) {
+      return { 
+        error: true, 
+        message: "Project description is too short to publish", 
+        code: 400, 
+        data: {} 
+      };
+    }
+
+    // 4. Update the status
+    const update = {
+      status: ProjectStatus.PUBLISHED, 
+      publishedAt: new Date(),
+      isOpen: true
+    };
+
+    const result = await projectRepository.updateProject(projectId, update as any);
+    
+    if (result.error) return result;
+
+    return {
+      error: false,
+      message: "Project is now live and visible to members",
+      code: 200,
+      data: result.data
+    };
+  }
+
+  /**
    * @name updateProject
    * @description Strict whitelist update to prevent unauthorized field modification.
    */
