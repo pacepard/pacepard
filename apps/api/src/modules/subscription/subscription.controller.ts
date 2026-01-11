@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import asyncHandler from '../../middlewares/async.mdw';
 import ErrorResponse from '../../utils/error.util';
 import { IUserDoc } from '../user/user.interface';
@@ -20,7 +20,7 @@ import {
  * @access Private
  */
 
-export const newSubscription = asyncHandler(
+export const newSubscription: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         const user: IUserDoc = (req as any).user;

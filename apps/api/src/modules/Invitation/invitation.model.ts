@@ -1,4 +1,4 @@
-import Mongoose, { Model, Schema } from 'mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
 
 import {
     IInvitationDoc,
@@ -6,8 +6,6 @@ import {
     InvitationType,
 } from './invitation.interface';
 import { DbModels } from '../../utils/eums.util';
-
-import mongoose from 'mongoose';
 
 const InvitationSchema = new Schema<IInvitationDoc>(
     {
@@ -79,6 +77,16 @@ const InvitationSchema = new Schema<IInvitationDoc>(
     {
         timestamps: true,
         versionKey: '_version',
+        toJSON: {
+            virtuals: true,
+            getters: true,
+            transform(_doc, ret) {
+                return {
+                    ...ret,
+                    id: ret._id.toString(),
+                };
+            },
+        },
     },
 );
 

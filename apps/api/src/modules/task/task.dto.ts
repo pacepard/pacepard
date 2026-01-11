@@ -1,5 +1,7 @@
+
 import { IUserDoc } from '../user/user.interface';
-import { TaskStatus, TaskPriority } from '../../utils/enums.util';
+import { TaskPriorityType, TaskStatusType } from './task.interface';
+
 
 export interface TaskDTO {
   id: string;
@@ -10,8 +12,8 @@ export interface TaskDTO {
   businessId: string;
   projectId: string;
   teamId: string;
-  status: TaskStatus;
-  priority: TaskPriority;
+  status: TaskStatusType;
+  priority: TaskPriorityType;
   assignedTo: string[];
   createdBy: string;
   tags: string[];
@@ -28,8 +30,8 @@ export interface CreateTaskDTO {
   teamId: string;
   title: string;
   description: string;
-  status: TaskStatus;
-  priority: TaskPriority;
+  status: TaskStatusType;
+  priority: TaskPriorityType;
   assignedTo?: string[];
   tags?: string[];
   dueDate?: Date;
@@ -39,8 +41,8 @@ export interface CreateTaskDTO {
 export interface UpdateTaskDTO {
   title?: string;
   description?: string;
-  status?: TaskStatus;
-  priority?: TaskPriority;
+  status?: TaskStatusType ;
+  priority?: TaskPriorityType;
   assignedTo?: string[];
   tags?: string[];
   dueDate?: Date;

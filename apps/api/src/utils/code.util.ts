@@ -27,13 +27,6 @@ export const genUserCode = (userType: UserType): string => {
 
     return `${baseName}-${year}-${code}`;
 };
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
-
-console.log("user", genUserCode(UserType.TALENT))
 
 /**
  * @name genWorkspaceCode
@@ -51,10 +44,6 @@ export const genWorkspaceCode = (): string => {
     return `ws-${year}-${code}`;
 };
 
-
-<<<<<<< HEAD
-console.log("pacepard", genWorkspaceCode())
-
 /**
  * @name genProjectCode
  * @description Generates a unique, standardized identification code for a project.
@@ -71,7 +60,7 @@ export const genProjectCode = (): string => {
     return `prj-${year}-${code}`;
 };
 
-console.log("project", genProjectCode())
+console.log('project', genProjectCode());
 
 /**
  * @name genTaskCode
@@ -89,7 +78,7 @@ export const genTaskCode = (): string => {
     return `tsk-${year}-${code}`;
 };
 
-console.log("task", genTaskCode())
+console.log('task', genTaskCode());
 
 /**
  * @name genTeamCode
@@ -106,9 +95,3 @@ export const genTeamCode = (): string => {
 
     return `tm-${year}-${code}`;
 };
-
-console.log("team", genTeamCode())
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
-=======
-console.log("pacepard", genWorkspaceCode())
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36

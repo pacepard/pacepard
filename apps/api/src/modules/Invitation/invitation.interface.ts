@@ -1,4 +1,4 @@
-import { Model, Document, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 // Use Mongoose's Types.ObjectId for interface compatibility
 export type ObjectId = Types.ObjectId;
@@ -6,6 +6,7 @@ export type ObjectId = Types.ObjectId;
 export interface IInvitationDoc extends Document {
     inviteType: InvitationType; // as a mentor/team
     invitedBy: ObjectId;
+    resourceId: ObjectId;
 
     // invitee: { email: string; userId: ObjectId };
     inviteeEmail: string;
@@ -14,14 +15,13 @@ export interface IInvitationDoc extends Document {
     inviteToken: string | null;
     inviteStatus: InvitationStatus;
 
-    resourceId: ObjectId;
-
     expiresAt: Date;
     acceptedAt: Date;
     revokedAt: Date;
 
     metadata: Record<string, unknown>;
 
+    // time stamps
     createdAt: Date;
     updatedAt: Date;
     _version: number;

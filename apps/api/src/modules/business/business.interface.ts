@@ -13,7 +13,6 @@ import { ITaskDoc } from '../task/task.interface';
 import { IDomainDoc } from '../domain/domain.interface';
 import { ITemplateDoc } from '../template/interface.template';
 import { IDiscoveryDoc } from '../discovery/discovery.interface';
-import { IPlanDoc } from '../plan/plan.interface';
 
 type ObjectId = Types.ObjectId;
 
@@ -41,7 +40,6 @@ export interface IBusinessDoc extends Document {
     createdBy: ObjectId | any;
     settings: Array<string>;
 
-    
     // relationships
     user: IUserDoc | any;
     workspaces: Array<IWorkspaceDoc | any>;

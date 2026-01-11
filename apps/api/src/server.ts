@@ -1,57 +1,39 @@
-// apps/api/src/server.ts
-import app from "./configs/app.config";
-import connectDB from "./configs/db.config";
-import colors from "colors";
-import "dotenv/config";
+import app from './configs/app.config';
+import colors from 'colors';
+import connectDB from './configs/db.config';
+import redisHandler from './middlewares/redis.mdw';
+import { REDIS_CONFIG } from './configs/redis.config';
+import startWorkers from './tasks/workers/worker';
 
-const PORT = process.env.PORT || "5015";
+const PORT = process.env.APP_PORT as string;
 
-const startServer = async (): Promise<void> => {
-  await connectDB();
+const startServer = async (): Promise<void> => {};
 
-  const server = app.listen(PORT, () => {
-    console.log(
-      colors.bold.yellow(
-        `🚀 Pacepard API running in ${process.env.NODE_ENV} mode on port ${PORT}`
-      )
-    );
-  });
+// Connect to Database
+await connectDB();
 
-  process.on("unhandledRejection", (err: any) => {
-    console.log(colors.bold.red(`Error: ${err.message}`));
-    server.close(() => process.exit(1));
-  });
+//Connect to Redis
+await redisHandler.connect(REDIS_CONFIG);
 
-  process.on("SIGINT", () => {
-    console.log(colors.yellow("\n🛑 Server shutting down..."));
-    server.close(() => process.exit(0));
-  });
-};
+// Start Workers
+await startWorkers();
 
 startServer();
 
+const server = app.listen(PORT, () => {
+    console.log(
+        colors.bold.yellow(
+            `Pacepard server running in ${process.env.NODE_ENV} mode on port ${PORT}`,
+        ),
+    );
+});
 
-// import app from "./configs/app.config";
-// import colors from "colors";
+process.on('unhandledRejection', (err: any) => {
+    console.log(colors.bold.red(`Server Error: ${err.message}`));
+    server.close(() => process.exit(1));
+});
 
-// const PORT = process.env.PORT as string;
-
-// const connect = async (): Promise<void> => {};
-
-// connect();
-
-
-
-// const server = app.listen(PORT, () => {
-//   console.log(colors.bold.yellow(`Pacepard server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
-// });
-
-// process.on("unhandledRejection", (err: any, promise) => {
-//     console.log(colors.bold.red(`Error: ${err.message}`));
-//     server.close(() => process.exit(1));
-// });
-  
-// process.on("SIGINT", async () => {
-//     server.close(() => process.exit(0));
-// });
-  
+process.on('SIGINT', async () => {
+    console.log(colors.yellow('Server shutting down...'));
+    server.close(() => process.exit(0));
+});

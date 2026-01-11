@@ -17,8 +17,8 @@ export interface IEntryDoc extends Document {
     slug: string;
     description: string;
     image: string;
-    tags: Array<string>
-    category: string
+    tags: Array<string>;
+    category: string;
 
     entryType: EntryType;
     status: EntryStatusType;
@@ -31,10 +31,10 @@ export interface IEntryDoc extends Document {
     hackathon: Array<IHackathonDoc | any>; // an entry can belong to multiple hackathons except it has won an hack
     forms: Array<IFormDoc | any>; // forms used for this entry
     submissions: Array<ISubmissionDoc | any>; // forms used for this entry
-    
+
     members: Array<IUserDoc | any>; // team members putting the entry
     mentors: Array<IUserDoc | any>;
-    
+
     // time stamps
     createdAt: Date;
     updatedAt: Date;

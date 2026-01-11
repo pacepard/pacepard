@@ -66,16 +66,10 @@ const TransactionSchema = new Schema<ITransactionDoc>(
         // provider
         providerName: { type: String, required: true },
         providerRef: { type: String, required: true },
-        providerData: {
-            type: [Schema.Types.Mixed],
-            default: [],
-        },
+        providerData: { type: Schema.Types.Mixed },
 
         // metadata
-        metadata: {
-            type: [Schema.Types.Mixed],
-            default: [],
-        },
+        metadata: { type: Schema.Types.Mixed },
         channel: { type: String },
         reason: { type: String },
         message: { type: String },
@@ -108,8 +102,6 @@ const TransactionSchema = new Schema<ITransactionDoc>(
         },
     },
 );
-
-TransactionSchema.index({ providerName: 1, reference: 1 }, { unique: true });
 
 const Transaction: Model<ITransactionDoc> = mongoose.model<ITransactionDoc>(
     DbModels.TRANSACTION,

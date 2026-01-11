@@ -1,18 +1,16 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import asyncHandler from '../../middlewares/async.mdw';
 import ErrorResponse from '../../utils/error.util';
 import workspaceService from './workspace.service';
 import workspaceRepository from './workspace.repository';
-<<<<<<< HEAD
-import { UpdateWorkspaceDTO, CreateWorkspaceDTO } from './workspace.dto';
-import redisWrapper from '../../middlewares/redis.mdw';
-=======
 import { UpdateWorkspaceDTO, CreateWorkspaceDTO, InviteMemberDTO } from './workspace.dto';
 import redisWrapper from '../../middlewares/redis.mdw';
 import invitationService from '../Invitation/invitation.service';
 import { InvitationType } from '../Invitation/invitation.interface';
-import { Types } from 'mongoose';
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
+import emailService from '../../services/email.service';
+import { EMAIL_CONFIG } from '../../configs/email.config';
+import userRepository from '../user/user.repository';
+import authService from '../auth/auth.service';
 
 /**
  * @name createWorkspace
@@ -20,7 +18,7 @@ import { Types } from 'mongoose';
  * @route POST /workspace
  * @access  Private
  */
-export const createWorkspace = asyncHandler(
+export const createWorkspace: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
 
         const userId = (req as any).user?.id;
@@ -31,31 +29,21 @@ export const createWorkspace = asyncHandler(
             createdBy: userId,
         };
 
-        try {
-            const result = await workspaceService.createWorkspace(data);
+        const result = await workspaceService.createWorkspace(data);
 
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code, []),
-                );
-            }
-
-            res.status(201).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Workspace created successfully.',
-                status: 201,
-            });
-        } catch (error: any) {
+        if (result.error) {
             return next(
-                new ErrorResponse(
-                    error.message || 'Failed to create workspace',
-                    500,
-                    [],
-                ),
+                new ErrorResponse(result.message, result.code, []),
             );
         }
+
+        res.status(201).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 201,
+        });
     },
 );
 
@@ -65,7 +53,7 @@ export const createWorkspace = asyncHandler(
  * @route GET /workspace/:id
  * @access  Private
  */
-export const getWorkspace = asyncHandler(
+export const getWorkspace: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
         if (!id)
@@ -74,54 +62,44 @@ export const getWorkspace = asyncHandler(
         const cacheKey = `workspace:${id}`;
         const cacheTTL = 300; // 5 minutes
 
-        try {
-            // Check cache first
-            const cached = await redisWrapper.fetchData<any>(cacheKey);
-            if (cached) {
-                return res.status(200).json({
-                    error: false,
-                    errors: [],
-                    data: cached,
-                    message: 'Workspace retrieved successfully (cached).',
-                    status: 200,
-                });
-            }
-
-            // Get workspace from service
-            const result = await workspaceService.getWorkspace(id);
-
-            if (result.error || !result.data) {
-                return next(
-                    new ErrorResponse(
-                        result.message || 'Workspace not found',
-                        result.code || 404,
-                        [],
-                    ),
-                );
-            }
-
-            // Cache the result
-            await redisWrapper.keepData(
-                { key: cacheKey, value: result.data },
-                cacheTTL,
-            );
-
-            res.status(200).json({
+        // Check cache first
+        const cached = await redisWrapper.fetchData<any>(cacheKey);
+        if (cached) {
+            return res.status(200).json({
                 error: false,
                 errors: [],
-                data: result.data,
-                message: result.message || 'Workspace retrieved successfully.',
+                data: cached,
+                message: 'Workspace retrieved successfully (cached).',
                 status: 200,
             });
-        } catch (error: any) {
+        }
+
+        // Get workspace from service
+        const result = await workspaceService.getWorkspace(id);
+
+        if (result.error || !result.data) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to retrieve workspace',
-                    500,
+                    result.message || 'Workspace not found',
+                    result.code || 404,
                     [],
                 ),
             );
         }
+
+        // Cache the result
+        await redisWrapper.keepData(
+            { key: cacheKey, value: result.data },
+            cacheTTL,
+        );
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 200,
+        });
     },
 );
 
@@ -131,7 +109,7 @@ export const getWorkspace = asyncHandler(
  * @route GET /workspaces
  * @access  Private
  */
-export const getWorkspaces = asyncHandler(
+export const getWorkspaces: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const {
             page = 1,
@@ -146,82 +124,72 @@ export const getWorkspaces = asyncHandler(
         const cacheKey = `workspaces:list:${JSON.stringify({ page, limit, sort, select, filters })}`;
         const cacheTTL = 180; // 3 minutes
 
-        try {
-            // Check cache first
-            const cached = await redisWrapper.fetchData<any>(cacheKey);
-            if (cached) {
-                return res.status(200).json({
-                    error: false,
-                    errors: [],
-                    data: cached.data,
-                    pagination: cached.pagination,
-                    count: cached.count,
-                    total: cached.total,
-                    message: 'Workspaces retrieved successfully (cached).',
-                    status: 200,
-                });
-            }
-
-            // Build query options
-            const options: any = {
-                page: parseInt(String(page), 10),
-                limit: parseInt(String(limit), 10),
-                sort: String(sort),
-            };
-
-            if (select) {
-                options.select = String(select);
-            }
-
-            if (populate) {
-                options.populate = String(populate);
-            }
-
-            // Get workspaces from service
-            const result = await workspaceService.getWorkspaces(
-                filters as any,
-                options,
-            );
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            // Prepare response data
-            const responseData = {
-                data: result.data,
-                pagination: result.pagination,
-                count: result.count,
-                total: result.total,
-            };
-
-            // Cache the result
-            await redisWrapper.keepData(
-                { key: cacheKey, value: responseData },
-                cacheTTL,
-            );
-
-            res.status(200).json({
+        // Check cache first
+        const cached = await redisWrapper.fetchData<any>(cacheKey);
+        if (cached) {
+            return res.status(200).json({
                 error: false,
                 errors: [],
-                data: result.data,
-                pagination: result.pagination,
-                count: result.count,
-                total: result.total,
-                message: result.message || 'Workspaces retrieved successfully.',
+                data: cached.data,
+                pagination: cached.pagination,
+                count: cached.count,
+                total: cached.total,
+                message: 'Workspaces retrieved successfully (cached).',
                 status: 200,
             });
-        } catch (error: any) {
+        }
+
+        // Build query options
+        const options: any = {
+            page: parseInt(String(page), 10),
+            limit: parseInt(String(limit), 10),
+            sort: String(sort),
+        };
+
+        if (select) {
+            options.select = String(select);
+        }
+
+        if (populate) {
+            options.populate = String(populate);
+        }
+
+        // Get workspaces from service
+        const result = await workspaceService.getWorkspaces(
+            filters as any,
+            options,
+        );
+
+        if (result.error) {
             return next(
-                new ErrorResponse(
-                    error.message || 'Failed to retrieve workspaces',
-                    500,
-                    [],
-                ),
+                new ErrorResponse(result.message, result.code || 500, []),
             );
         }
+
+        // Prepare response data
+        const responseData = {
+            data: result.data,
+            pagination: result.pagination,
+            count: result.pagination?.count,
+            total: result.pagination?.total,
+        };
+
+        // Cache the result
+        await redisWrapper.keepData(
+            { key: cacheKey, value: responseData },
+            cacheTTL,
+        );
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            pagination: result.pagination,
+            count: result.pagination?.count,
+            total: result.pagination?.total,
+            message: result.message,
+            status: 200,
+        });
     },
 );
 
@@ -231,7 +199,7 @@ export const getWorkspaces = asyncHandler(
  * @route PUT /workspace/:id
  * @access  Private
  */
-export const updateWorkspace = asyncHandler(
+export const updateWorkspace: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
@@ -242,44 +210,34 @@ export const updateWorkspace = asyncHandler(
 
         const data: UpdateWorkspaceDTO = req.body;
 
-        try {
-            // Verify user has permission (optional: check if user is creator or member)
-            const workspaceResult = await workspaceRepository.findById(id);
-            if (workspaceResult.error || !workspaceResult.data) {
-                return next(new ErrorResponse('Workspace not found', 404, []));
-            }
+        // Verify user has permission (optional: check if user is creator or member)
+        const workspaceResult = await workspaceRepository.findById(id);
+        if (workspaceResult.error || !workspaceResult.data) {
+            return next(new ErrorResponse('Workspace not found', 404, []));
+        }
 
-            const result = await workspaceService.updateWorkspace(id, data);
+        const result = await workspaceService.updateWorkspace(id, data);
 
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            // Invalidate cache
-            try {
-                await redisWrapper.deleteData(`workspace:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Workspace updated successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
+        if (result.error) {
             return next(
-                new ErrorResponse(
-                    error.message || 'Failed to update workspace',
-                    500,
-                    [],
-                ),
+                new ErrorResponse(result.message, result.code || 500, []),
             );
         }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${id}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 200,
+        });
     },
 );
 
@@ -289,7 +247,7 @@ export const updateWorkspace = asyncHandler(
  * @route DELETE /workspace/:id
  * @access  Private
  */
-export const deleteWorkspace = asyncHandler(
+export const deleteWorkspace: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
@@ -298,44 +256,34 @@ export const deleteWorkspace = asyncHandler(
         if (!id)
             return next(new ErrorResponse('Workspace ID is required', 400, []));
 
-        try {
-            // Verify user has permission (optional: check if user is creator)
-            const workspaceResult = await workspaceRepository.findById(id);
-            if (workspaceResult.error || !workspaceResult.data) {
-                return next(new ErrorResponse('Workspace not found', 404, []));
-            }
+        // Verify user has permission (optional: check if user is creator)
+        const workspaceResult = await workspaceRepository.findById(id);
+        if (workspaceResult.error || !workspaceResult.data) {
+            return next(new ErrorResponse('Workspace not found', 404, []));
+        }
 
-            const result = await workspaceService.deleteWorkspace(id);
+        const result = await workspaceService.deleteWorkspace(id);
 
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            // Invalidate cache
-            try {
-                await redisWrapper.deleteData(`workspace:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Workspace deleted successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
+        if (result.error) {
             return next(
-                new ErrorResponse(
-                    error.message || 'Failed to delete workspace',
-                    500,
-                    [],
-                ),
+                new ErrorResponse(result.message, result.code || 500, []),
             );
         }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${id}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 200,
+        });
     },
 );
 
@@ -345,7 +293,7 @@ export const deleteWorkspace = asyncHandler(
  * @route POST /workspace/:id/members
  * @access  Private
  */
-export const addMember = asyncHandler(
+export const addMember: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
@@ -358,38 +306,28 @@ export const addMember = asyncHandler(
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
-        try {
-            const result = await workspaceService.addMember(id, memberUserId);
+        const result = await workspaceService.addMember(id, memberUserId);
 
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            // Invalidate cache
-            try {
-                await redisWrapper.deleteData(`workspace:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Member added successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
+        if (result.error) {
             return next(
-                new ErrorResponse(
-                    error.message || 'Failed to add member',
-                    500,
-                    [],
-                ),
+                new ErrorResponse(result.message, result.code || 500, []),
             );
         }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${id}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 200,
+        });
     },
 );
 
@@ -399,7 +337,7 @@ export const addMember = asyncHandler(
  * @route DELETE /workspace/:id/members/:userId
  * @access  Private
  */
-export const removeMember = asyncHandler(
+export const removeMember: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
@@ -411,125 +349,145 @@ export const removeMember = asyncHandler(
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
-        try {
-            const result = await workspaceService.removeMember(
-                id,
-                memberUserId,
-            );
+        const result = await workspaceService.removeMember(
+            id,
+            memberUserId,
+        );
 
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            // Invalidate cache
-            try {
-                await redisWrapper.deleteData(`workspace:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Member removed successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
+        if (result.error) {
             return next(
-                new ErrorResponse(
-                    error.message || 'Failed to remove member',
-                    500,
-                    [],
-                ),
+                new ErrorResponse(result.message, result.code || 500, []),
             );
         }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${id}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 200,
+        });
     },
 );
-<<<<<<< HEAD
-=======
-
 /**
  * @name inviteMember
  * @description Invites a member to a workspace
  * @route POST /workspace/:id/invite
  * @access  Private
  */
-export const inviteMember = asyncHandler(
+export const inviteMember: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
-        const { id } = req.params;
-        const { email }: InviteMemberDTO = req.body;
+        const { email, workspaceId }: InviteMemberDTO = req.body;
 
-        if (!id)
+        if (!workspaceId)
             return next(new ErrorResponse('Workspace ID is required', 400, []));
-        
+
         if (!email || email.trim().length === 0)
             return next(new ErrorResponse('Email is required', 400, []));
 
-        // Basic email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email.trim())) {
+        // Email validation
+        const mailCheck = await authService.checkEmail(email);
+        if (!mailCheck) {
             return next(new ErrorResponse('Invalid email format', 400, []));
         }
 
-        try {
-            // Verify workspace exists
-            const workspaceResult = await workspaceRepository.findById(id);
-            if (workspaceResult.error || !workspaceResult.data) {
-                return next(new ErrorResponse('Workspace not found', 404, []));
-            }
+        // Verify workspace exists
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            return next(new ErrorResponse('Workspace not found', 404, []));
+        }
 
-            // Convert IDs to ObjectId
-            const workspaceObjectId = new Types.ObjectId(id);
-            const userObjectId = new Types.ObjectId(userId);
+        // Create required invitation fields
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7); // e.g., invitations expire in 7 days
 
-            // Create invitation
-            const invitationResult = await invitationService.createNewInvitation({
-                invitedBy: userObjectId,
-                inviteeEmail: email.trim().toLowerCase(),
-                inviteType: InvitationType.WORKSPACE,
-                resourceId: workspaceObjectId,
-            });
+        const invitationResult = await invitationService.newInvitation({
+            invitedBy: userId,
+            inviteeEmail: email.trim().toLowerCase(),
+            inviteType: InvitationType.PROJECT,
+            resourceId: workspaceId,
+        });
 
-            if (invitationResult.error) {
-                return next(
-                    new ErrorResponse(
-                        invitationResult.message,
-                        invitationResult.code,
-                        [],
-                    ),
-                );
-            }
-
-            // Invalidate cache
-            try {
-                await redisWrapper.deleteData(`workspace:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(201).json({
-                error: false,
-                errors: [],
-                data: invitationResult.data,
-                message: 'Member invitation sent successfully.',
-                status: 201,
-            });
-        } catch (error: any) {
+        if (invitationResult.error) {
             return next(
                 new ErrorResponse(
-                    error.message || 'Failed to invite member',
+                    invitationResult.message,
+                    invitationResult.code,
+                    [],
+                ),
+            );
+        }
+
+        // Get the inviter's user details for email personalization
+        const inviterResult = await userRepository.findById(userId);
+        const inviter = inviterResult.data as any;
+
+        // Extract token from invitation result
+        const token = (invitationResult.data as any)?.token;
+        if (!token) {
+            return next(
+                new ErrorResponse(
+                    'Failed to generate invitation token',
                     500,
                     [],
                 ),
             );
         }
+
+        // Construct invitation URL with token
+        const invitationUrl = `${EMAIL_CONFIG.clientUrl}/workspace/invite/accept?token=${token}&email=${encodeURIComponent(email.trim().toLowerCase())}`;
+
+        // Create a minimal user object for the invitee (they might not be a user yet)
+        const inviteeUser = {
+            email: email.trim().toLowerCase(),
+            firstName: email.split('@')[0] || 'Member', // Use email prefix as fallback
+            lastName: '',
+        } as any;
+
+        // Send invitation email
+        const emailResult = await emailService.sendInvitationEmail(
+            inviteeUser,
+            inviter?.firstName || 'A team member',
+            invitationUrl,
+            'Workspace Member',
+        );
+
+        if (emailResult.error) {
+            // Log error but don't fail the request since invitation was created
+            console.error(
+                'Failed to queue invitation email:',
+                emailResult.message,
+            );
+        }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${workspaceId}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(201).json({
+            error: false,
+            errors: [],
+            data: {
+                ...invitationResult.data,
+                emailQueued: !emailResult.error,
+            },
+            message:
+                invitationResult.message ||
+                'Member invitation sent successfully.',
+            status: 201,
+        });
     },
 );
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36

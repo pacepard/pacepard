@@ -15,7 +15,6 @@ import {
     PlanPriceCurrency,
     PlanType,
 } from './plan.interface';
-import Plan from './plan.model';
 import {
     paystackCreatePlan,
     paystackPlanUpdate,
@@ -434,7 +433,6 @@ class PlanService {
             dollarMonthly: dollarMonthlyCode || '',
             dollarYearly: dollarYearlyCode || '',
         };
-
     }
 
     /**

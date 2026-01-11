@@ -25,9 +25,7 @@ export interface WorkspaceDTO {
   updatedAt: Date;
 }
 
-<<<<<<< HEAD
-=======
 export interface InviteMemberDTO {
+  workspaceId: string;
   email: string;
 }
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36

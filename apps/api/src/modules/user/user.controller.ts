@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 import asyncHandler from "../../middlewares/async.mdw";
 import ErrorResponse from '../../utils/error.util'
 import authMapper from "../auth/auth.mapper";
@@ -21,7 +21,7 @@ import redisWrapper from "../../middlewares/redis.mdw";
  * @route GET /user
  * @access  Private
  */
-export const getUser = asyncHandler(
+export const getUser: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
 
     const userId = (req as any).user?.id;
@@ -83,7 +83,7 @@ export const getUser = asyncHandler(
  * @route GET /users
  * @access  Private (Admin only - should add admin check)
  */
-export const getUsers = asyncHandler(
+export const getUsers: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     
     const {
@@ -140,8 +140,8 @@ export const getUsers = asyncHandler(
       const responseData = {
         data: result.data,
         pagination: result.pagination,
-        count: result.count,
-        total: result.total,
+        count: result.pagination?.count,
+        total: result.pagination?.total,
       };
 
       // Cache the result
@@ -155,8 +155,8 @@ export const getUsers = asyncHandler(
         errors: [],
         data: result.data,
         pagination: result.pagination,
-        count: result.count,
-        total: result.total,
+        count: result.pagination?.count,
+        total: result.pagination?.total,
         message: result.message,
         status: 200,
       });
@@ -172,7 +172,7 @@ export const getUsers = asyncHandler(
  * @route DELETE /user/deactivate
  * @access  Private
  */
-export const deactivateAccount = asyncHandler(
+export const deactivateAccount: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user?.id;
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
@@ -218,7 +218,7 @@ export const deactivateAccount = asyncHandler(
  * @route POST /user/onboard/step-1
  * @access Private (Authenticated users only)
  */
-export const onboardStep1 = asyncHandler(
+export const onboardStep1: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user?.id;
     if (!userId) {
@@ -249,7 +249,7 @@ export const onboardStep1 = asyncHandler(
  * @route POST /user/onboard/step-2
  * @access Private (Authenticated users only)
  */
-export const onboardStep2 = asyncHandler(
+export const onboardStep2: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user?.id;
     if (!userId) {
@@ -280,7 +280,7 @@ export const onboardStep2 = asyncHandler(
  * @route POST /user/onboard/step-3-talent
  * @access Private (Authenticated users with TALENT type only)
  */
-export const onboardStep3Talent = asyncHandler(
+export const onboardStep3Talent: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user?.id;
     if (!userId) {
@@ -311,7 +311,7 @@ export const onboardStep3Talent = asyncHandler(
  * @route POST /user/onboard/step-3-business
  * @access Private (Authenticated users with BUSINESS type only)
  */
-export const onboardStep3Business = asyncHandler(
+export const onboardStep3Business: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user?.id;
     if (!userId) {
@@ -342,7 +342,7 @@ export const onboardStep3Business = asyncHandler(
  * @route POST /user/onboard/complete
  * @access Private (Authenticated users only)
  */
-export const onboardComplete = asyncHandler(
+export const onboardComplete: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user?.id;
     if (!userId) {
@@ -371,7 +371,7 @@ export const onboardComplete = asyncHandler(
  * @route GET /user/onboard/status
  * @access Private (Authenticated users only)
  */
-export const getOnboardingStatus = asyncHandler(
+export const getOnboardingStatus: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = (req as any).user?.id;
     if (!userId) {

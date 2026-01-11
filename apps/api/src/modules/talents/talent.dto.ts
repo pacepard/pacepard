@@ -1,22 +1,22 @@
 import { IUserDoc } from '../user/user.interface';
-import { 
-    GenderType, 
-    OccupationType, 
-    ITalentType, 
-    ISocials 
-  } from './talent.interface';
-  
-  export interface CreateTalentDTO {
-      code: string;  //map the code from user 
-      firstName: string;
-      lastName: string;
-      email: string;
-      user: IUserDoc; // The ObjectId of the associated User accoun
-      createdBy: string; // ObjectId of the creator/admin
-  }
+import {
+    GenderType,
+    OccupationType,
+    ITalentType,
+    ISocials,
+} from './talent.interface';
 
-  //use omit form type
-  export interface UpdateTalentDTO {
+export interface CreateTalentDTO {
+    code: string; //map the code from user
+    firstName: string;
+    lastName: string;
+    email: string;
+    user: IUserDoc; // The ObjectId of the associated User accoun
+    createdBy: string; // ObjectId of the creator/admin
+}
+
+//use omit form type
+export interface UpdateTalentDTO {
     code: string;
     firstName: string;
     lastName: string;
@@ -28,7 +28,7 @@ import {
     gender?: GenderType;
     dateOfBirth?: string;
     occupation?: OccupationType;
-    
+
     // Arrays of data
     specialties?: string[];
     intrests?: string[];
@@ -56,4 +56,4 @@ import {
 
     // Tracking
     createdBy?: string; // ObjectId of the creator/admin
-  }
+}

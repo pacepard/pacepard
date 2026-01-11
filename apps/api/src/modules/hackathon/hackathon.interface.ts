@@ -82,4 +82,3 @@ export enum HackStatusType {
     CLOSED = 'closed',
     ARCHIVED = 'archived',
 }
-

@@ -6,14 +6,13 @@ import {
     verifWebhookDTO,
 } from './paystack.interface';
 import dotenv from 'dotenv';
+import { RequestHandler } from 'express';
 dotenv.config();
 
-const secretKey =
-    process.env.PAYSTACK_SECRET_KEY ||
-    'sk_test_278d03426302859dff63192ce4929043909c4a4a';
+const secretKey = process.env.PAYSTACK_SECRET_KEY;
 
 if (!secretKey) {
-    throw new Error('Paystack secreet key now set');
+    throw new Error('Paystack secret key not set');
 }
 
 const paystack = new Paystack(secretKey);
@@ -22,7 +21,7 @@ const paystack = new Paystack(secretKey);
  * Initialize a Paystack transaction.
  * Does NOT confirm payment.
  */
-export const initializePayment = async (dto: initializePaymentDTO) => {
+export const initializePayment = async (dto: initializePaymentDTO): Promise<any> => {
     try {
         const response = await paystack.transaction.initialize({
             email: dto.email,
@@ -46,7 +45,7 @@ export const initializePayment = async (dto: initializePaymentDTO) => {
 /**
  * Verify a Paystack transaction by reference.
  */
-export const verifyTransaction = async (reference: string) => {
+export const verifyTransaction = async (reference: string): Promise<any> => {
     try {
         const response = await paystack.transaction.verify(reference);
         return response;
@@ -60,7 +59,7 @@ export const verifyTransaction = async (reference: string) => {
 /**
  * Create a Paystack subscription plan.
  */
-export const paystackCreatePlan = async (dto: CreatePlanDTO) => {
+export const paystackCreatePlan = async (dto: CreatePlanDTO): Promise<any> => {
     try {
         const response = await paystack.plan.create({
             name: dto.name,
@@ -81,7 +80,7 @@ export const paystackCreatePlan = async (dto: CreatePlanDTO) => {
 export const paystackPlanUpdate = async (
     planCode: string,
     updateData: CreatePlanDTO,
-) => {
+): Promise<any> => {
     try {
         const response = await paystack.plan.update(planCode, updateData);
 

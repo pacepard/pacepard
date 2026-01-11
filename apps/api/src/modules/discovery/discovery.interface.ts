@@ -11,15 +11,15 @@ export interface IDiscoveryDoc extends Document {
     createdBy: IUserDoc;
 
     // settings: {
-     // language: string
-     // isClosed: string
-     // closeTime: string
-     // closeDate: string
-     // closeTimeZone: string
-     // closeMessageTitle: string
-     // closeMessageDescription: string
-     // redirectOnClose: string
-     //}
+    // language: string
+    // isClosed: string
+    // closeTime: string
+    // closeDate: string
+    // closeTimeZone: string
+    // closeMessageTitle: string
+    // closeMessageDescription: string
+    // redirectOnClose: string
+    //}
 
     // time stamps
     createdAt: Date;

@@ -11,14 +11,13 @@ export interface IAdminDoc extends Document {
     slug: string;
     email: string;
 
-    department: string;        // e.g., "Engineering", "Marketing", "Trust & Safety"
-    position: string;          // e.g., "Lead Moderator", "Support Agent"
-    
-    accessLevel: number;       // 1 (Junior) to 10 (Department Head)
+    department: string; // e.g., "Engineering", "Marketing", "Trust & Safety"
+    position: string; // e.g., "Lead Moderator", "Support Agent"
+
+    accessLevel: number; // 1 (Junior) to 10 (Department Head)
     accessLevelName: string;
     accessLevelDescription: string;
 
-  
     activityLog: Array<IActivityLog | any>;
 
     createdBy: ObjectId | any;

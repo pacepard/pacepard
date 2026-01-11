@@ -1,0 +1,27 @@
+[
+  {
+    "name": "superadmin",
+    "slug": "super-admin",
+    "description": "Has unrestricted access to the entire system for platform-wide configuration, management, and oversight."
+  },
+  {
+    "name": "staff",
+    "slug": "staff",
+    "description": "Troott internal team member with elevated access to manage users, content, and platform settings."
+  },
+  {
+    "name": "preacher",
+    "slug": "preacher",
+    "description": "Ministers or churches managing their own preacher accounts. Can publish and organize full-length sermons and sermon series."
+  },
+  {
+    "name": "creator",
+    "slug": "creator",
+    "description": "Independent content creators focusing on short-form sermonBites."
+  },
+  {
+    "name": "listener",
+    "slug": "listener",
+    "description": "General users who stream, save, and engage with stream content on troott."
+  }
+]

@@ -1,35 +1,30 @@
-import express, { Request, Response, NextFunction } from "express";
-import authRoutes from "../../modules/auth/auth.router";
-import userRoutes from "../../modules/user/user.router";
-import businessRoutes from "../../modules/business/business.router";
-import talentRoutes from "../../modules/talents/talent.router";
-import workspaceRoutes from "../../modules/workspace/workspace.router";
+import express, { Request, Response, NextFunction } from 'express';
+import authRoutes from '../../modules/auth/auth.router';
+import userRoutes from '../../modules/user/user.router';
+import businessRoutes from '../../modules/business/business.router';
+import talentRoutes from '../../modules/talents/talent.router';
+import workspaceRoutes from '../../modules/workspace/workspace.router';
 
 const router = express.Router();
 
+router.use('/auth', authRoutes);
+router.use('/user', userRoutes);
+router.use('/business', businessRoutes);
+router.use('/talent', talentRoutes);
+router.use('/workspace', workspaceRoutes);
 // Add new routes
-<<<<<<< HEAD
-//router.use("/user", userRoutes);
-=======
-router.use("/auth", authRoutes);
-router.use("/user", userRoutes);
-router.use("/business", businessRoutes);
-router.use("/talent", talentRoutes);
-router.use("/workspace", workspaceRoutes);
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 
-
-router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  res.status(200).json({
-    error: false,
-    errors: [],
-    data: {
-      name: "Pacepard API",
-      version: "1.00.00",
-    },
-    message: "Pacepard api v1.0.0 is healthy",
-    status: 200,
-  });
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
+    res.status(200).json({
+        error: false,
+        errors: [],
+        data: {
+            name: 'Pacepard API',
+            version: '1.00.00',
+        },
+        message: 'Pacepard api v1.0.0 is healthy',
+        status: 200,
+    });
 });
 
 export default router;

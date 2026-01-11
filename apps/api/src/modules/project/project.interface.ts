@@ -1,77 +1,67 @@
-import { Document, Types } from "mongoose";
-import { IUserDoc } from "../../utils/interfaces.util";
-import { ITaskDoc } from "../task/task.interface";
-import { IBlockDoc } from "../../utils/blocks.interface";
-import { ProjectMemberRole } from "../../utils/enums.util";
+import { Document, Types } from 'mongoose';
+import { ITaskDoc } from '../task/task.interface';
+import { IBlockDoc } from '../../utils/blocks.interface';
+import { IUserDoc } from '../user/user.interface';
+import { IWorkspaceDoc } from '../workspace/workspace.interface';
+import { IBusinessDoc } from '../business/business.interface';
 
 type ObjectId = Types.ObjectId;
 
-/**
- * Defines a member's specific footprint within a project.
- * This structure allows us to track when they joined and what their role is.
- */
-
 export interface IProjectDoc extends Document {
-  code: string;
-  title: string;
-  slug: string;
-  tagline: string;
-  description: string;
+    code: string;
+    title: string;
+    slug: string;
+    tagline: string;
+    description: string;
 
-  items: Array<IBlockDoc>;
-  documentation: string;
+    items: Array<IBlockDoc>;
+    documentation: string;
 
-  category: string;
-  tags: Array<string>;
-  type: ProjectType;
-  image?: string;
+    category: string;
+    tags: Array<string>;
+    type: ProjectType;
+    image: string;
 
-  status: ProjectStatus;
-  isOpen: boolean;
-  isClosed: boolean;
-  publishedAt: Date;
+    createdBy: ObjectId | IUserDoc;
+    status: ProjectStatus;
+    publishedAt: Date;
 
-  // Ownership - Defined by the hierarchy
-  workspaceId: ObjectId; 
-  businessId: ObjectId;  
-  
-  createdBy: ObjectId;
-  creatorType: ProjectCreatorType;
+    // State flags
+    isOpen: boolean;
+    isClosed: boolean;
+    isPublic: boolean;
+    isChallenge: boolean;
 
-  // Unified Participation
-  members: Array<IProjectMember>; 
+    // Relationships
+    workspace: IWorkspaceDoc | any; // workspace the project belongs to
+    business: IBusinessDoc | any; // business the project belongs to
+    members: Array<IProjectMember>; // members of the project
+    tasks: Array<ObjectId | ITaskDoc>; // tasks of the project
 
-  tasks: Array<ITaskDoc>;
-
-  createdAt: Date;
-  updatedAt: Date;
-  _version: number;
-  _id: ObjectId;
-  id: ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+    _version: number;
+    _id: ObjectId;
+    id: ObjectId;
 }
 
 export enum ProjectType {
-  PROJECT = "project",
-  CHALLENGE = "challenge",
+    PROJECT = 'project',
+    CHALLENGE = 'challenge',
 }
 
 export enum ProjectStatus {
-  DRAFT = "draft",
-  PUBLISHED = "published",
-  UNDER_REVIEW = "under-review",
-  PENDING = "pending",
-  CLOSED = "closed"
-}
-
-export enum ProjectCreatorType {
-  ADMIN = "admin",
-  BUSINESS = "business",
+    DRAFT = 'draft',
+    PUBLISHED = 'published',
+    UNDER_REVIEW = 'under-review',
+    PENDING = 'pending',
+    CLOSED = 'closed',
 }
 
 export interface IProjectMember {
-  user: Types.ObjectId | IUserDoc; 
-  role: ProjectMemberRole;
-  joinedAt: Date;
+    user: IUserDoc;
+    role: ProjectMemberRole;
+    joinedAt: Date;
 }
 
 export enum DifficultyEnum {
@@ -79,5 +69,12 @@ export enum DifficultyEnum {
     EASY = 'easy',
     NORMAL = 'normal',
     HARD = 'hard',
-    DIFFICULT = 'difficult'
+    DIFFICULT = 'difficult',
+}
+
+export enum ProjectMemberRole {
+    OWNER = 'OWNER',
+    MAINTAINER = 'MAINTAINER',
+    CONTRIBUTOR = 'CONTRIBUTOR',
+    SUBSCRIBER = 'SUBSCRIBER',
 }

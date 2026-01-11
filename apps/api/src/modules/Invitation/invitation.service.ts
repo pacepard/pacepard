@@ -1,13 +1,9 @@
-import {
-    IInvitationDoc,
-    InvitationStatus,
-    InvitationType,
-} from './invitation.interface';
+import { InvitationStatus, InvitationType } from './invitation.interface';
 import { IResult } from '../../utils/interfaces.util';
-import { CreateInvitationDTO, inviteTokenDTO } from './invitation.dto';
+import { CreateInvitationDTO, InviteTokenDTO } from './invitation.dto';
 import invitationRepository from './invitation.repository';
 import Invites from './invitation.model';
-import { Random } from '@btffamily/pacitude';
+import { dateToday, IDateToday, Random } from '@btffamily/pacitude';
 import systemService from '../../services/system.service';
 
 /**
@@ -18,6 +14,14 @@ import systemService from '../../services/system.service';
  */
 
 class InvitationService {
+
+    public result: IResult;
+    public today: IDateToday;
+
+    constructor() {
+        this.today = dateToday(new Date());
+        this.result = { error: false, message: '', code: 200, data: {} };
+    }
     /**
      * @name newInvitation
      * @description Creates a new invitation.
@@ -41,7 +45,7 @@ class InvitationService {
             resourceId,
         } = dto;
 
-        if (!invitedBy && !inviteeEmail) {
+        if (!invitedBy || !inviteeEmail) {
             result.error = true;
             result.message =
                 'InvitedBy and InviteeEmail must exist and cannot be empty';
@@ -83,11 +87,14 @@ class InvitationService {
             separator: '-',
         });
 
+        //const expireDate = t
+
         const saveInvite = await invitationRepository.createInvite({
             inviteType,
             invitedBy,
             inviteeEmail,
             inviteeUserId,
+            resourceId,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             inviteStatus: InvitationStatus.PENDING,
             inviteToken: encryptToken,
@@ -118,7 +125,7 @@ class InvitationService {
     /**
      *
      */
-    private async validateDTO(dto: inviteTokenDTO): Promise<IResult> {
+    private async validateDTO(dto: InviteTokenDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -149,7 +156,7 @@ class InvitationService {
      *          Whether the token corresponds to a valid, pending, and unexpired invitation.
      */
 
-    public async validateInvite(dto: inviteTokenDTO): Promise<IResult> {
+    public async validateInvite(dto: InviteTokenDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -165,7 +172,7 @@ class InvitationService {
 
         const { email, token } = dto;
 
-        const encryptToken = systemService.encryptData({
+        const encryptToken = await systemService.encryptData({
             password: token,
             payload: email,
             separator: '-',
@@ -210,7 +217,7 @@ class InvitationService {
      * @returns {Promise<IResult>}
      *          Success status; idempotent if already accepted or revoked. successfully revoked invitation
      */
-    public async revokeInvite(dto: inviteTokenDTO): Promise<IResult> {
+    public async revokeInvite(dto: InviteTokenDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -225,7 +232,7 @@ class InvitationService {
         }
         const { email, token } = dto;
 
-        const encryptToken = systemService.encryptData({
+        const encryptToken = await systemService.encryptData({
             password: token,
             payload: email,
             separator: '-',
@@ -258,7 +265,7 @@ class InvitationService {
      * @returns {Promise<IResult>} the new token
      *
      */
-    public async resendInvite(dto: inviteTokenDTO): Promise<IResult> {
+    public async resendInvite(dto: InviteTokenDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -273,7 +280,7 @@ class InvitationService {
         }
         const { email, token } = dto;
 
-        const encryptToken = systemService.encryptData({
+        const encryptToken = await systemService.encryptData({
             password: token,
             payload: email,
             separator: '-',
@@ -296,6 +303,7 @@ class InvitationService {
             result.error = true;
             result.message =
                 'Blocked state. Cannot resend accepted or revoked invitation';
+            return result;
         }
 
         const newToken = await this.generateInviteToken();
@@ -320,5 +328,6 @@ class InvitationService {
     }
 }
 
+export default new InvitationService();
 //$ pnpm swagger-cli bundle "C:\Users\Infinitystudio\pacepard\apps\docs\api-reference\openApi\root.yaml" --outfile
 //  "C:\Users\Infinitystudio\pacepard\apps\docs\api-reference\openApi\output.yaml" --type yaml --dereference

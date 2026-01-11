@@ -1,57 +1,63 @@
-import { TeamVisibilty } from "../../utils/enums.util"
+import { IUserDoc } from '../user/user.interface';
+import { TeamMemberRole } from './team.interface';
 
-export interface createTeamDto {
-  teamName: string;
-  description: string;
-  projectName: string;
-  teamSize: number;
-  visibility: TeamVisibilty;
-  competitions: string; // or Hackaton
-  createdAt: Date;
+/**
+ * @interface TeamMemberDTO
+ * @description Represents a member within the team response.
+ */
+export interface TeamMemberDTO {
+    user: string;
+    role: TeamMemberRole;
+    joinedAt: Date;
 }
 
+/**
+ * @interface TeamDTO
+ * @description The structure of a team as sent to the client (Frontend).
+ */
 export interface TeamDTO {
-  teamId: string;
-  teamName: string;
-  slug: string;
-  description?: string;
-  projectId: string; // already populated
-  projectName?: string;
-  teamLead: string; // already populated
-  teamMembers: {
-    userId: string;
-    role: string;
-    joinedAt: Date;
-  }[];
-  teamSize: number;
-  visibility: string;
-  isComplete: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+    id: string;
+    code: string;
+    name: string;
+    description: string;
+
+    // Hierarchy Links
+    workspaceId?: string;
+    businessId?: string;
+    projectId?: string;
+    workspace?: any;
+    business?: any;
+    project?: any;
+
+    // Ownership
+    createdBy: string;
+
+    // Participation
+    members: TeamMemberDTO[];
+    tasks: string[];
+
+    // System timestamps
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-export interface TeamMembersDTO {
-  teamId: string;
-  teamName: string;
-  description?: string;
-  teamLead: string; // already populated
-  teamMembers: {
-    userId: string;
-    role: string;
-    joinedAt: Date;
-  }[];
-  teamSize: number;
-  visibility: string;
-  isComplete: boolean;
+/**
+ * @interface CreateTeamDTO
+ * @description Data transfer object for creating a new team
+ */
+export interface CreateTeamDTO {
+    user: IUserDoc;
+    projectId: string;
+    name: string;
+    description?: string;
+    createdBy?: string;
 }
 
-export interface updatedDTO {
-  teamId: string;
-  teamName: string;
-  slug: string;
-  description?: string;
-  projectName?: string;
-  teamSize: number;
-  visibility: string;
-  updatedAt: Date;
+/**
+ * @interface UpdateTeamDTO
+ * @description Data transfer object for updating a team
+ */
+export interface UpdateTeamDTO {
+    name?: string;
+    description?: string;
 }

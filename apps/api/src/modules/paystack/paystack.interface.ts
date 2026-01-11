@@ -17,5 +17,5 @@ export interface CreatePlanDTO {
 export interface verifWebhookDTO {
     signature: string;
     paystackSecret: string;
-    payload: object;
+    payload: string | Buffer;
 }

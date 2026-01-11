@@ -1,30 +1,6 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { IPlanDoc, IPlanPricing, IPlanTrial, PlanType } from './plan.interface';
+import { IPlanDoc, PlanType } from './plan.interface';
 import { DbModels } from '../../utils/eums.util';
-
-const PlanTrialSchema = new Schema<IPlanTrial>(
-    {
-        days: { type: Number, required: true },
-        enabled: { type: Boolean, required: true },
-    },
-    { _id: false },
-);
-
-const PlanPricingSchema = new Schema<IPlanPricing>(
-    {
-        naira: { type: Number, required: true },
-        dollar: { type: Number, required: true },
-    },
-    { _id: false },
-);
-
-const LimitFrequencySchema = new Schema(
-    {
-        limit: { type: Number, required: true },
-        frequency: { type: String, required: true },
-    },
-    { _id: false },
-);
 
 const PlanSchema = new Schema<IPlanDoc>(
     {
@@ -40,12 +16,33 @@ const PlanSchema = new Schema<IPlanDoc>(
         isEnabled: { type: Boolean, default: true },
         description: { type: String },
 
-        trial: { type: PlanTrialSchema, required: true },
-        pricing: { type: PlanPricingSchema, required: true },
+        trial: {
+            days: { type: Number, required: true },
+            enabled: { type: Boolean, required: true },
+        },
+        pricing: {
+            naira: {
+                monthly: { type: Number, required: true },
+                yearly: { type: Number, required: true },
+            },
+            dollar: {
+                monthly: { type: Number, required: true },
+                yearly: { type: Number, required: true },
+            },
+        },
 
-        members: { type: LimitFrequencySchema, required: true },
-        domains: { type: LimitFrequencySchema, required: true },
-        projects: { type: LimitFrequencySchema, required: true },
+        members: {
+            limit: { type: Number, required: true },
+            frequency: { type: String, required: true },
+        },
+        domains: {
+            limit: { type: Number, required: true },
+            frequency: { type: String, required: true },
+        },
+        projects: {
+            limit: { type: Number, required: true },
+            frequency: { type: String, required: true },
+        },
 
         slug: { type: String, required: true, unique: true, index: true },
 

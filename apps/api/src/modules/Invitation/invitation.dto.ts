@@ -1,15 +1,17 @@
-import { ObjectId } from 'mongoose';
-import { InvitationType } from './invitation.interface';
+import { InvitationStatus, InvitationType } from './invitation.interface';
 
 export interface CreateInvitationDTO {
-    invitedBy: ObjectId;
+    invitedBy: string;
     inviteeEmail: string;
-    inviteeUserId?: ObjectId;
+    inviteeUserId?: string;
     inviteType: InvitationType;
-    resourceId: ObjectId;
+    resourceId: string;
+    expiresAt?: Date
+    inviteStatus?: InvitationStatus,
+    inviteToken?: string,
 }
 
-export interface inviteTokenDTO {
+export interface InviteTokenDTO {
     token: string;
     email: string;
 }

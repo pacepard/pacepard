@@ -10,6 +10,19 @@ class ProjectMapper {
    * @returns ProjectDTO
    */
   public async mapProject(project: IProjectDoc): Promise<ProjectDTO> {
+    // Get workspaceId and businessId from populated fields or model
+    const workspaceId = (project as any).workspaceId 
+      ? String((project as any).workspaceId) 
+      : (project.workspace && (project.workspace as any)._id 
+        ? String((project.workspace as any)._id) 
+        : undefined);
+    
+    const businessId = (project as any).businessId 
+      ? String((project as any).businessId) 
+      : (project.business && (project.business as any)._id 
+        ? String((project.business as any)._id) 
+        : undefined);
+
     const result: ProjectDTO = {
       id: project._id.toString(),
       code: project.code,
@@ -19,8 +32,10 @@ class ProjectMapper {
       description: project.description,
       
       // Hierarchy
-      workspaceId: project.workspaceId.toString(),
-      businessId: project.businessId.toString(),
+      workspaceId,
+      businessId,
+      workspace: project.workspace,
+      business: project.business,
       
       // Classification & Metadata
       category: project.category || "General",
@@ -33,23 +48,32 @@ class ProjectMapper {
       items: project.items || [],
       
       // Ownership
-      createdBy: project.createdBy.toString(),
-      creatorType: project.creatorType,
+      createdBy: typeof project.createdBy === 'object' 
+        ? String((project.createdBy as any)._id || project.createdBy) 
+        : String(project.createdBy),
       
       // State
       isOpen: project.isOpen,
       isClosed: project.isClosed,
+      isPublic: project.isPublic,
+      isChallenge: project.isChallenge,
       publishedAt: project.publishedAt,
       
       // Participation (Inline Members)
       members: project.members.map(m => ({
-      user: m.user.toString(),
-      role: m.role,
-      joinedAt: m.joinedAt
+        user: typeof m.user === 'object' 
+          ? String((m.user as any)._id || m.user) 
+          : String(m.user),
+        role: m.role,
+        joinedAt: m.joinedAt
       })),
       
       // References
-      tasks: project.tasks.map(t => t.toString()),
+      tasks: project.tasks.map(t => 
+        typeof t === 'object' 
+          ? String((t as any)._id || t) 
+          : String(t)
+      ),
       // System
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,

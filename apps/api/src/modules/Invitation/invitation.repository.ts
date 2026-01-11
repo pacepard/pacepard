@@ -1,9 +1,11 @@
 import Invites from './invitation.model';
-import { IInvitationDoc, IResult } from '../../utils/interfaces.util';
+import { IResult } from '../../utils/interfaces.util';
+import { IInvitationDoc } from './invitation.interface';
+import { CreateInvitationDTO } from './invitation.dto';
 
 class InvitationRepository {
     public async createInvite(
-        inviteData: Partial<IInvitationDoc>,
+        inviteData: CreateInvitationDTO,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -33,7 +35,7 @@ class InvitationRepository {
     public async findInviteByEmail(
         email: string,
     ): Promise<IInvitationDoc | null> {
-        const invite = await Invites.findOne({ invitee: { email: email } });
+        const invite = await Invites.findOne({ inviteeEmail: email });
         return invite;
     }
 }

@@ -21,10 +21,6 @@ export interface ITalentDoc extends Document {
     slug: string;
     email: string;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
     specialties: Array<string>; // what kind of work do you do?
     intrests: Array<string>;
     skils: Array<string>; // skills you have
@@ -33,13 +29,8 @@ export interface ITalentDoc extends Document {
     gender: GenderType;
     dateOfBirth: string; // ISO Date
 
-<<<<<<< HEAD
     occupation: OccupationType;
 
-=======
-    occupation: OccupationType
-    
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
     employment: {
         company: string;
         position: string;
@@ -48,11 +39,7 @@ export interface ITalentDoc extends Document {
 
     education: {
         institution: string;
-<<<<<<< HEAD
         type: string;
-=======
-        type: string
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
         degree: string;
         fieldOfStudy: string;
         startDate: Date;
@@ -68,19 +55,11 @@ export interface ITalentDoc extends Document {
     user: IUserDoc | any;
     roles: Array<ITalentType | any>;
 
-<<<<<<< HEAD
     workspaces: Array<IWorkspaceDoc | any>;
     subscription: ISubscriptionDoc | any;
     trial: { hasUsedTrial: boolean; planCode: string; usedAt: Date };
     transactions: Array<ITransactionDoc | any>;
     templates: Array<ITemplateDoc | any>;
-=======
-
-    workspaces: Array<IWorkspaceDoc | any>;
-    subscription: ISubscriptionDoc | any;
-    transactions: Array<ITransactionDoc | any>;
-    templates: Array<ITemplateDoc | any>
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
 
     hackathons: Array<IHackathonDoc | any>;
     entries: Array<IEntryDoc | any>;
@@ -122,9 +101,4 @@ export enum OccupationType {
 export enum ITalentType {
     MENTOR = 'mentor',
     JUDGE = 'judge',
-<<<<<<< HEAD
 }
-=======
-
-}
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3

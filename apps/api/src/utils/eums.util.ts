@@ -181,11 +181,7 @@ export enum DbModels {
     PERMISSION = 'permission',
     CAMPAIGN = 'hackathon_campaign',
     TALENT = 'talent',
-<<<<<<< HEAD
     BUSINESS = 'business',
-=======
-    ORGANIZATION = 'organization',
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
     COMPETITION = 'competition',
     TEAM = 'team',
     PROJECT = 'project',
@@ -207,12 +203,9 @@ export enum DbModels {
     NOTIFICATIONS = 'notifications',
     PLAN = 'plan',
     BADGE_AWARD = 'badgeAward',
-<<<<<<< HEAD
     SUBSCRIPTION = 'subscription',
     SUBSCRIPTION_INTENT = 'subscriptionIntent',
     TRANSACTION = 'transaction',
-=======
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 }
 
 export enum UploadStatus {
@@ -259,13 +252,6 @@ export enum ContentStatus {
 
 export enum HackathonStatus {
     DRAFT = 'draft',
-}
-
-export enum TaskStatusType {
-    OPEN = 'open',
-    ASSIGNED = 'assigned',
-    REVIEW = 'review',
-    DONE = 'completed',
 }
 
 export enum SubmissionStatus {
@@ -346,75 +332,6 @@ export enum TeamRoles {
 export enum TeamVisibilty {
     PUBLIC = 'public',
     PRIVATE = 'private',
-}
-
-export enum MentorVisibilty {
-    PUBLIC = 'public',
-    PRIVATE = 'private',
-}
-
-export enum MentorStatus {
-    ACTIVE = 'active',
-    INACTIVE = 'inactive',
-}
-
-export enum MentorInviteStatus {
-    PENDING = 'pending',
-    ACTIVE = 'active',
-}
-
-/**
- * Simplified Onboarding Steps for Hackathon-focused flow
- */
-export enum SimplifiedOnboardingStep {
-    TALENT_SETUP = 'talent_setup',
-    HACKATHON_DECISION = 'hackathon_decision',
-    HACKATHON_SETUP = 'hackathon_setup',
-    TERMS_ACCEPTANCE = 'terms_acceptance',
-    ONBOARDING_COMPLETE = 'onboarding_complete',
-}
-
-/**
- * Simplified Onboarding Phases
- */
-export enum SimplifiedOnboardingPhase {
-    TALENT_SETUP = 'talent_setup',
-    HACKATHON_SETUP = 'hackathon_setup',
-    TERMS_ACCEPTANCE = 'terms_acceptance',
-    COMPLETED = 'completed',
-}
-
-/**
- * Legacy enums - kept for backward compatibility
- * @deprecated Use SimplifiedOnboardingStep and SimplifiedOnboardingPhase instead
- */
-export enum TalentOnboardingStep {
-    NOT_STARTED = 'not_started',
-    PERSONAL_INFO = 'personal_info',
-    ROLE_AND_EXPERIENCE = 'role_and_experience',
-    PREFERENCES_AND_DISCOVERY = 'preferences_and_discovery',
-    PACEPARD_COMPLETED = 'pacepard_completed',
-}
-
-export enum MainOnboardingPhase {
-    NOT_STARTED = 'not_started',
-    GET_STARTED = 'get_started',
-    PACEPARD_SETUP = 'pacepard_setup',
-    HACKATHON_SETUP = 'hackathon_setup',
-    TERMS_REVIEW = 'terms_review',
-    COMPLETED = 'completed',
-}
-
-export enum OnboardingStep {
-    NOT_STARTED = 'NOT_STARTED',
-    GET_STARTED = 'GET_STARTED',
-    PACEPARD_SETUP = 'PACEPARD_SETUP',
-    HACKATHON_SETUP = 'HACKATHON_SETUP',
-    TERMS_REVIEW = 'TERMS_REVIEW',
-    ONBOARDING_COMPLETE = 'ONBOARDING_COMPLETE',
-    PERSONAL_INFO = 'PERSONAL_INFO',
-    PROFILE_SETUP = 'PROFILE_SETUP',
-    EXPERIENCE_INFO = 'EXPERIENCE_INFO',
 }
 
 export enum NotificationType {

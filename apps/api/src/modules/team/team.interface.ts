@@ -1,52 +1,41 @@
-import { Document, Types } from "mongoose";
-<<<<<<< HEAD
-=======
-import { IUserDoc } from "../user/user.interface";
-import { ProjectMemberRole } from "../../utils/enums.util";
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
+import { Document, Types } from 'mongoose';
+import { IUserDoc } from '../user/user.interface';
+import { IProjectDoc } from '../project/project.interface';
+import { IWorkspaceDoc } from '../workspace/workspace.interface';
+import { IBusinessDoc } from '../business/business.interface';
+import { ITaskDoc } from '../task/task.interface';
 
 type ObjectId = Types.ObjectId;
 
 export interface ITeamDoc extends Document {
-<<<<<<< HEAD
+    code: string;
+    name: string;
+    description: string;
 
-     // time stamps
-     createdAt: Date;
-     updatedAt: Date;
-     _version: number;
-     _id: ObjectId;
-     id: ObjectId;
+    createdBy: ObjectId | IUserDoc;
 
-=======
-  name: string;
-  description: string;
-  code: string;
+    // Relationships
+    workspace: IWorkspaceDoc | any; // workspace the team belongs to
+    business: IBusinessDoc | any; // business the team belongs to
+    project: IProjectDoc | any; // project the team belongs to
+    members: Array<ITeamMember>; // members of the team
+    tasks: Array<ITaskDoc | ObjectId>; // tasks of the team
 
-  // Strict Hierarchy Chain
-  workspaceId: ObjectId;
-  businessId: ObjectId;
-  projectId: ObjectId;
-
-  // Participation
-  // This is where Talents are "housed" within the project
-  members: Array<ITeamMember>; 
-  
-  // Work Reference
-  // Every team owns a specific set of tasks
-  tasks: Array<ObjectId>;
-
-  // System
-  createdBy: ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-  _version: number;
-  _id: ObjectId;
-  id: ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+    _version: number;
+    _id: ObjectId;
+    id: ObjectId;
 }
 
 export interface ITeamMember {
-  user: IUserDoc | ObjectId;
-  role: ProjectMemberRole;
-  joinedAt: Date;
->>>>>>> af983945d9f8cb5ed1b44582a235135877f343b3
+    user: IUserDoc | ObjectId;
+    role: TeamMemberRole;
+    joinedAt: Date;
+}
+
+export enum TeamMemberRole {
+    LEAD = 'LEAD',
+    MEMBER = 'MEMBER',
+    CONTRIBUTOR = 'CONTRIBUTOR',
 }

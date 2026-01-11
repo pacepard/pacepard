@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import asyncHandler from '../../middlewares/async.mdw';
 import Protect from '../../middlewares/checkAuth.mdw';
 import planService from './plan.service';
@@ -10,7 +10,7 @@ import ErrorResponse from '../../utils/error.util';
  * @route GET /plans
  * @access Private (Pacepard Admins only)
  */
-export const getPlans = asyncHandler(
+export const getPlans: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         // get user from request
         const user = (req as any).user;
@@ -69,7 +69,7 @@ export const getPlans = asyncHandler(
  * @route POST /plans
  * @access Private (Pacepard Admins only)
  */
-export const addNewPlan = asyncHandler(
+export const addNewPlan: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         // get user from request
         const user = (req as any).user;
@@ -120,7 +120,7 @@ export const addNewPlan = asyncHandler(
  * @route PATCH /plans/:planId
  * @access Private (Pacepard Admins only)
  */
-export const updatePlan = asyncHandler(
+export const updatePlan: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         // get user from request
         const user = (req as any).user;

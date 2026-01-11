@@ -8,8 +8,7 @@ import {
     UserType,
 } from '../user/user.interface';
 import { DbModels } from '../../utils/enums.util';
-import authService from "../auth/auth.service";
-
+import authService from '../auth/auth.service';
 
 const UserSchema = new Schema<IUserDoc>(
     {
@@ -142,8 +141,8 @@ const UserSchema = new Schema<IUserDoc>(
             virtuals: true,
             getters: true,
             transform(doc: any, ret) {
-              ret.id = ret._id  
-              if ('_v' in ret) delete (ret as any)._v
+                ret.id = ret._id;
+                if ('_v' in ret) delete (ret as any)._v;
             },
         },
     },
@@ -154,7 +153,6 @@ UserSchema.pre('save', async function (next) {
     // if (!this.isModified('password')) return next();
     // await authService.encryptUserPassword(this, this.password);
     // next();
-
 });
 
 // Instance Methods (Make sure these match your interface)

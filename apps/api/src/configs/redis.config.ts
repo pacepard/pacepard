@@ -47,7 +47,7 @@ switch (process.env.APP_ENV) {
       managed: false,
       tls: {
         rejectUnauthorized:
-          process.env.REDIS_TLS_REJECT_UNAUTHORIZED as string === "false",
+          process.env.REDIS_TLS_REJECT_UNAUTHORIZED === "true",
       },
     };
     break;

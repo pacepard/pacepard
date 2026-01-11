@@ -238,7 +238,6 @@ const AppSidebar = (data: ISideBar) => {
             </SidebarHeader>
 
             <SidebarContent>
-<<<<<<< HEAD
                 {filteredRoutes.map((route: IRoute) => (
                     <SidebarGroup key={route.name}>
                         {route.subroutes && route.subroutes.length > 0 ? (
@@ -316,42 +315,6 @@ const AppSidebar = (data: ISideBar) => {
                         )}
                     </SidebarGroup>
                 ))}
-=======
-                <NavGenerics
-                    projects={[
-                        {
-                            name: 'Home',
-                            url: '/home',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Search',
-                            url: '/search',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'My-Inbox',
-                            url: '/messages',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Domains',
-                            url: '/domains',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Settings',
-                            url: '/projects/help1',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Upgrade Plan',
-                            url: '/upgrade-plan',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                    ]}
-                />
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
 
                 {/* Workspace Routes - Available for all authenticated users - Not Collapsible */}
                 {workspaceRoutes.map((route: IRoute) => {
@@ -566,7 +529,6 @@ const AppSidebar = (data: ISideBar) => {
                     );
                 })}
 
-<<<<<<< HEAD
                 {/* Product Routes - Available for all authenticated users - Not Collapsible */}
                 {productRoutes.map((route: IRoute) => (
                     <SidebarGroup key={route.name}>
@@ -684,61 +646,6 @@ const AppSidebar = (data: ISideBar) => {
                         )}
                     </SidebarGroup>
                 ))}
-=======
-                <NavProducts
-                    products={[
-                        {
-                            name: 'Templates',
-                            url: '/projects/forge',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: "What's new",
-                            url: '/projects/beta',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Roadmap',
-                            url: '/projects/beta',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },{
-                            name: 'Feature requests',
-                            url: '/projects/help1',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Trash',
-                            url: '/projects/help1',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                    ]}
-                />
-
-                <NavHelp
-                    projects={[
-                        {
-                            name: 'Get started',
-                            url: '/projects/help1',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'How-to guides',
-                            url: '/projects/help1',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Help center',
-                            url: '/projects/help2',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                        {
-                            name: 'Contact support',
-                            url: '/projects/help3',
-                            icon: FolderIcon, // Replace with actual icon component or import
-                        },
-                    ]}
-                />
->>>>>>> e9b271575d2fb6a1f86e71cf31df11e103bbff36
             </SidebarContent>
 
             <SidebarFooter></SidebarFooter>
