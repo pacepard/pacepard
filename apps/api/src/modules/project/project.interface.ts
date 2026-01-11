@@ -2,7 +2,6 @@ import { Document, Types } from "mongoose";
 import { IUserDoc } from "../../utils/interfaces.util";
 import { ITaskDoc } from "../task/task.interface";
 import { IBlockDoc } from "../../utils/blocks.interface";
-import { ProjectMemberRole } from "../../utils/enums.util";
 
 type ObjectId = Types.ObjectId;
 
@@ -80,4 +79,17 @@ export enum DifficultyEnum {
     NORMAL = 'normal',
     HARD = 'hard',
     DIFFICULT = 'difficult'
+}
+
+/**
+ * Defines the specific roles a user can hold within a project, 
+ * squad, or team context.
+ */
+export enum ProjectMemberRole {
+  MEMBER = "member",
+  MENTOR = "mentor",
+  MAINTAINER = "maintainer",
+  LEAD = "lead",
+  JUDGE = "judge",
+  FACILITATOR = "facilitator", // Can manage teams and rotate members
 }
