@@ -1,7 +1,6 @@
 import { IUserDoc } from '../user/user.interface';
-import { ProjectType, ProjectStatus, ProjectCreatorType } from './project.interface';
+import { ProjectType, ProjectStatus, ProjectCreatorType, ProjectMemberRole } from './project.interface';
 import { IBlockDoc } from '../../utils/blocks.interface'; 
-import { ProjectMemberRole } from '../../utils/enums.util';
 
 /**
  * @interface ProjectMemberDTO

@@ -15,7 +15,8 @@ import redisWrapper from '../../middlewares/redis.mdw';
 export const createProject = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+        if (!userId) 
+        return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { workspaceId } = req.params;
         const data: CreateProjectDTO = {
