@@ -323,7 +323,7 @@ public async updateProject(projectId: string, updateData: Partial<IProjectDoc>):
 
         // C. Unassign from all Tasks in this project
         // We set assignedTo to null (or handle as per your Task schema)
-        await taskRepository.updateMany(
+        taskRepository.updateMany(
           { 
             projectId: new Types.ObjectId(projectId), 
             assignedTo: new Types.ObjectId(userId) 
