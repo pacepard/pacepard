@@ -41,69 +41,36 @@ export const createProject = asyncHandler(
 export const getProject = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
         const cacheKey = `project:${id}`;
-        const cacheTTL = 300;
+       
+        const cached = await redisWrapper.fetchData<any>(cacheKey);
 
-        try {
-            const cached = await redisWrapper.fetchData<any>(cacheKey);
-            if (cached) {
-                return res.status(200).json({
-                    error: false,
-                    errors: [],
-                    data: cached,
-                    message: 'Project retrieved successfully (cached).',
-                    status: 200,
-                });
-            }
-
-            const result = await projectService.getProject(id);
-
-            if (result.error || !result.data) {
-                return next(
-                    new ErrorResponse(
-                        result.message || 'Project not found',
-                        result.code || 404,
-                        [],
-                    ),
-                );
-            }
-
-            await redisWrapper.keepData(
-                { key: cacheKey, value: result.data },
-                cacheTTL,
-            );
-
-            res.status(200).json({
+        if (cached) {
+        return res.status(200).json({
                 error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project retrieved successfully.',
+                data: cached,
+                message: 'Project retrieved successfully (cached).',
                 status: 200,
             });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to retrieve project',
-                    500,
-                    [],
-                ),
-            );
         }
+        const result = await projectService.getProject(id);
+        if (result.error) 
+        return next(new ErrorResponse(result.message, result.code, []));
+        await redisWrapper.keepData({ key: cacheKey, value: result.data }, 300);
+        res.status(200).json(result);
     },
 );
 
-export const getAllProjects = asyncHandler(
+/**
+ * @name getProjects
+ * @description Retrieves all projects with filtering and pagination
+ * @route GET /projects
+ */
+export const getProjects = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        // Pass the entire req.query (e.g., ?page=1&limit=10&status=PUBLISHED)
         const result = await projectService.getAllProjects(req.query);
 
-        if (result.error) {
-            return next(new ErrorResponse(result.message, result.code, []));
-        }
-
+      if (result.error) return next(new ErrorResponse(result.message, result.code, []));
         res.status(200).json(result);
     }
 );
@@ -385,49 +352,14 @@ export const removeMember = asyncHandler(
 /**
  * @name publishProject
  * @description Publishes a project
- * @route POST /projects/:id/publish
+ * @route PATCH /projects/:id/publish
  * @access Private
  */
 export const publishProject = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
         const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        try {
-            const result = await projectService.publishProject(id);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project published successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to publish project',
-                    500,
-                    [],
-                ),
-            );
-        }
+        const result = await projectService.publishProject(id);
+        if (result.error) return next(new ErrorResponse(result.message, result.code, []));
     },
 );
 
