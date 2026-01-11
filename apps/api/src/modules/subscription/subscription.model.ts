@@ -59,10 +59,11 @@ const SubscriptionSchema = new Schema<ISubscriptionDoc>(
             index: true,
         },
 
-        transactions: [
-            { type: Schema.Types.ObjectId, ref: DbModels.TRANSACTION },
+        transactions: {
+            type: [Schema.Types.ObjectId],
+            ref: DbModels.TRANSACTION,
             index: true,
-        ],
+        },
 
         metadata: { type: Schema.Types.Mixed },
     },

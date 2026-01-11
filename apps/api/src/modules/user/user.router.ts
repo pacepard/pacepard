@@ -12,7 +12,7 @@ import {
     getOnboardingStatus,
 } from './user.controller';
 
-const userRoutes = Router({ mergeParams: true });
+const userRoutes: Router = Router({ mergeParams: true });
 
 // User profile routes
 userRoutes.get('/', Protect, getUser);

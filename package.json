@@ -7,6 +7,11 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "build:api": "turbo run build --filter=@pacepard/api",
+    "build:app": "turbo run build --filter=@pacepard/app",
+    "build:docs": "turbo run build --filter=@pacepard/api-docs",
+    "build:service": "turbo run build --filter=@pacepard/service",
+    "build:web": "turbo run build --filter=@pacepard/web",
     "dev": "turbo run dev",
     "dev:ui": "turbo run dev --ui=tui",
     "dev:fe": "turbo run dev --ui=tui --filter=@pacepard/app --filter=@pacepard/web",
@@ -21,8 +26,8 @@
     "lint": "turbo lint",
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
-    "build:docs": "turbo run build --filter=@pacepard/docs",
-    "preview:docs": "pnpm --filter @pacepard/docs dev"
+
+    "preview:docs": "pnpm --filter @pacepard/api-docs dev"
   },
   "dependencies": {
     "colors": "^1.4.0",

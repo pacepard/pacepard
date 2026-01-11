@@ -12,7 +12,7 @@ import {
   closeProject,
 } from "./project.controller";
 
-const projectRoutes = Router({ mergeParams: true });
+const projectRoutes: Router = Router({ mergeParams: true });
 
 // Project routes
 projectRoutes.get("/:id", Protect, getProject);

@@ -10,7 +10,7 @@ import {
     removeMember,
 } from './workspace.controller';
 
-const workspaceRoutes = Router({ mergeParams: true });
+const workspaceRoutes: Router = Router({ mergeParams: true });
 
 // Workspace routes
 workspaceRoutes.post('/', Protect, createWorkspace);

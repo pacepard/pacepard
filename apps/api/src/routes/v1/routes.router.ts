@@ -1,11 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, Router } from 'express';
 import authRoutes from '../../modules/auth/auth.router';
 import userRoutes from '../../modules/user/user.router';
 import businessRoutes from '../../modules/business/business.router';
 import talentRoutes from '../../modules/talents/talent.router';
 import workspaceRoutes from '../../modules/workspace/workspace.router';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.use('/auth', authRoutes);
 router.use('/user', userRoutes);

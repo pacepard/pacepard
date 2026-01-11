@@ -11,7 +11,7 @@ import {
     assignTask,
 } from './task.controller';
 
-const taskRoutes = Router({ mergeParams: true });
+const taskRoutes: Router = Router({ mergeParams: true });
 
 // Task CRUD routes
 taskRoutes.get('/:id', Protect, getTask);

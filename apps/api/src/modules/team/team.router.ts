@@ -11,7 +11,7 @@ import {
   deleteTeam,
 } from "./team.controller";
 
-const teamRoutes = Router({ mergeParams: true });
+const teamRoutes: Router = Router({ mergeParams: true });
 
 // Team CRUD routes
 teamRoutes.get("/:id", Protect, getTeam);

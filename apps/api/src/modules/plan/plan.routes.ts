@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Protect from '../../middlewares/checkAuth.mdw';
 import { addNewPlan, getPlans, updatePlan } from './plan.controller';
 
-const planRoutes = Router({
+const planRoutes: Router = Router({
     mergeParams: true,
 });
 

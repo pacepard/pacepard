@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Protect from '../../middlewares/checkAuth.mdw';
 import { newSubscription } from './subscription.controller';
 
-const subscriptionRoutes = Router({
+const subscriptionRoutes: Router = Router({
     mergeParams: true,
 });
 

@@ -9,7 +9,7 @@ import {
     removeTag,
 } from './business.controller';
 
-const businessRoutes = Router({ mergeParams: true });
+const businessRoutes: Router = Router({ mergeParams: true });
 
 // Business profile routes
 businessRoutes.get('/', Protect, getBusiness);

@@ -13,7 +13,7 @@ import {
 } from './auth.controller';
 import Protect from '../../middlewares/checkAuth.mdw';
 
-const authRoutes = Router({ mergeParams: true });
+const authRoutes: Router = Router({ mergeParams: true });
 
 authRoutes.post('/register', registerUser);
 authRoutes.post('/login', loginUser);

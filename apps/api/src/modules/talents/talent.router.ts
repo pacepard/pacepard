@@ -9,7 +9,7 @@ import {
     removeSkill,
 } from './talent.controller';
 
-const talentRoutes = Router({ mergeParams: true });
+const talentRoutes: Router = Router({ mergeParams: true });
 
 // Talent profile routes
 talentRoutes.get('/', Protect, getTalent);

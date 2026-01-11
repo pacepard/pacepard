@@ -18,9 +18,7 @@
             "pages": [
               "index",
               "quickstart",
-              "development",
-              "sdk-usage",
-              "sdk-architecture"
+              "development"
             ]
           },
           {
