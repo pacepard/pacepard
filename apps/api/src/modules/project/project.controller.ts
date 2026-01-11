@@ -81,56 +81,46 @@ export const getProjects = asyncHandler(
  * @route GET /workspaces/:workspaceId/projects
  * @access Private
  */
+/**
+ * @name getWorkspaceProjects
+ * @description Retrieves all projects belonging to a specific workspace with caching.
+ * @route GET /workspaces/:workspaceId/projects
+ */
 export const getWorkspaceProjects = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { workspaceId } = req.params;
-        if (!workspaceId)
+        
+        if (!workspaceId) {
             return next(new ErrorResponse('Workspace ID is required', 400, []));
+        }
 
         const cacheKey = `workspace:${workspaceId}:projects`;
         const cacheTTL = 180;
 
-        try {
-            const cached = await redisWrapper.fetchData<any>(cacheKey);
-            if (cached) {
-                return res.status(200).json({
-                    error: false,
-                    errors: [],
-                    data: cached,
-                    message: 'Projects retrieved successfully (cached).',
-                    status: 200,
-                });
-            }
-
-            const result = await projectService.getProjectsByWorkspace(workspaceId);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            await redisWrapper.keepData(
-                { key: cacheKey, value: result.data },
-                cacheTTL,
-            );
-
-            res.status(200).json({
+        // 1. Check Cache
+        const cached = await redisWrapper.fetchData<any>(cacheKey);
+        if (cached) {
+            return res.status(200).json({
                 error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Projects retrieved successfully.',
+                data: cached,
+                message: 'Projects retrieved successfully (cached).',
                 status: 200,
             });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to retrieve projects',
-                    500,
-                    [],
-                ),
-            );
         }
+
+        const result = await projectService.getProjectsByWorkspace(workspaceId);
+
+        if (result.error) {
+            return next(new ErrorResponse(result.message, result.code || 500, []));
+        }
+
+        // Update Cache for future requests
+        await redisWrapper.keepData(
+            { key: cacheKey, value: result.data },
+            cacheTTL,
+        );
+
+        res.status(200).json(result);
     },
 );
 
