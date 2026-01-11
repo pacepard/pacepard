@@ -91,5 +91,5 @@ export enum ProjectMemberRole {
   MAINTAINER = "maintainer",
   LEAD = "lead",
   JUDGE = "judge",
-  FACILITATOR = "facilitator", // Can manage teams and rotate members
+  FACILITATOR = "facilitator"
 }

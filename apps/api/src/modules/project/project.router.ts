@@ -14,18 +14,18 @@ import {
 
 const projectRoutes = Router({ mergeParams: true });
 
+// Workspace projects routes
+projectRoutes.post("/workspaces/:workspaceId/projects", Protect, createProject);
+projectRoutes.get("/workspaces/:workspaceId/projects", Protect, getWorkspaceProjects);
+
 // Project routes
 projectRoutes.get("/:id", Protect, getProject);
 projectRoutes.put("/:id", Protect, updateProject);
 projectRoutes.delete("/:id", Protect, deleteProject);
 
-// Workspace projects routes
-projectRoutes.post("/workspaces/:workspaceId/projects", Protect, createProject);
-projectRoutes.get("/workspaces/:workspaceId/projects", Protect, getWorkspaceProjects);
-
 // Project lifecycle routes
-projectRoutes.post("/:id/publish", Protect, publishProject);
-projectRoutes.post("/:id/close", Protect, closeProject);
+projectRoutes.patch("/:id/publish", Protect, publishProject);
+projectRoutes.patch("/:id/close", Protect, closeProject);
 
 // Project members routes
 projectRoutes.post("/:id/members", Protect, addMember);
