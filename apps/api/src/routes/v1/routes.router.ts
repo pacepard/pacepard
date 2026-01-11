@@ -4,6 +4,7 @@ import userRoutes from "../../modules/user/user.router";
 import businessRoutes from "../../modules/business/business.router";
 import talentRoutes from "../../modules/talents/talent.router";
 import workspaceRoutes from "../../modules/workspace/workspace.router";
+import projectRoutes from "../../modules/project/project.router";
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.use("/user", userRoutes);
 router.use("/business", businessRoutes);
 router.use("/talent", talentRoutes);
 router.use("/workspace", workspaceRoutes);
+router.use("/projects", projectRoutes); 
 
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
