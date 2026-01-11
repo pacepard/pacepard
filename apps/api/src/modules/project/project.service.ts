@@ -218,6 +218,64 @@ public async updateProject(projectId: string, updateData: Partial<IProjectDoc>):
     }
 }
 
+/**
+   * @name removeMember
+   * @description Removes a user from the project and performs a deep cleanup:
+   * 1. Removes user from Project members array.
+   * 2. Removes user from all Teams associated with this project.
+   * 3. Unassigns user from all Tasks associated with this project.
+   */
+  public async removeMember(projectId: string, userId: string): Promise<IResult> {
+    // 1. Verify Project existence and state
+    const projectResult = await projectRepository.findById(projectId);
+    if (!projectResult.data) {
+      return { error: true, message: "Project not found", code: 404, data: {} };
+    }
+
+    if (projectResult.data.status === ProjectStatus.CLOSED) {
+      return { error: true, message: "Cannot modify members of a closed project", code: 400, data: {} };
+    }
+
+    try {
+      // 2. The Deep Cleanup (Parallel execution for performance)
+      await Promise.all([
+        // A. Remove from Project document
+        projectRepository.pullFromArray(projectId, 'members', { 
+          user: new Types.ObjectId(userId) 
+        }),
+
+        // B. Remove from all Teams in this project
+        // Note: Using the specialized method we saw in your TeamRepository earlier
+        teamRepository.removeUserFromProjectTeams(projectId, userId),
+
+        // C. Unassign from all Tasks in this project
+        // We set assignedTo to null (or handle as per your Task schema)
+        await taskRepository.updateMany(
+          { 
+            projectId: new Types.ObjectId(projectId), 
+            assignedTo: new Types.ObjectId(userId) 
+          },
+          { $set: { assignedTo: null } }
+        )
+      ]);
+
+      return {
+        error: false,
+        message: "Member successfully removed from project and all associated teams/tasks",
+        code: 200,
+        data: { projectId, userId }
+      };
+
+    } catch (error: any) {
+      return {
+        error: true,
+        code: 500,
+        message: `Failed to fully remove member: ${error.message}`,
+        data: {}
+      };
+    }
+  }
+
 }
 
 export default new ProjectService();

@@ -417,6 +417,34 @@ public async findOne(
   }
 
   /**
+   * @name updateMany
+   * @description Bulk update documents matching a filter.
+   */
+  public async updateMany(
+    filter: FilterQuery<T>,
+    updateData: UpdateQuery<T>
+  ): Promise<IResult> {
+    const result: IResult = { error: false, message: "", code: 200, data: {} };
+    try {
+      // Process filter to handle gt, lt, in operators correctly
+      const processedFilter = this.processFilter(filter as any);
+      
+      const updateResult = await this.model.updateMany(processedFilter, updateData);
+      
+      result.message = `${updateResult.modifiedCount} ${this.modelName}(s) updated successfully`;
+      result.data = { 
+        matchedCount: updateResult.matchedCount, 
+        modifiedCount: updateResult.modifiedCount 
+      };
+    } catch (error: any) {
+      result.error = true;
+      result.code = 500;
+      result.message = error.message;
+    }
+    return result;
+  }
+
+  /**
    * @name count
    * @param filter - Optional filter query
    * @returns {Promise<number>}
