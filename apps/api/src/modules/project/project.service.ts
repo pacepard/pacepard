@@ -178,6 +178,33 @@ public async updateProject(projectId: string, updateData: Partial<IProjectDoc>):
     return await projectRepository.updateProject(projectId, finalUpdate);
   }
 
+/**
+   * @name getProject
+   * @description Retrieves a project by its ID or Slug.
+   * Includes population for members and other related data.
+   */
+  public async getProject(idOrSlug: string): Promise<IResult> {
+    // We use findByIdOrSlug from the repository base
+    // You can pass an array of paths to populate related data
+    const populatePaths = [
+      { path: 'members.user', select: 'firstName lastName email profileImage' },
+      { path: 'workspaceId', select: 'name' }
+    ];
+
+    const result = await projectRepository.findByIdOrSlug(idOrSlug, populatePaths);
+
+    if (result.error) {
+      return result;
+    }
+
+    return {
+      error: false,
+      message: "Project retrieved successfully",
+      code: 200,
+      data: result.data
+    };
+  }
+
   /**
    * @name getProjectsByWorkspace
    * @description Leverages the direct-reference index.
