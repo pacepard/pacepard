@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import ENV from "../utils/env.util";
 import ErrorResponse from "../utils/error.util";
 import logger from "../utils/logger.util";
-import { AppError } from "../utils/projectError.utils";
+import { AppError } from "../modules/project/projectError.utils";
 
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
