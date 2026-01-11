@@ -188,50 +188,31 @@ export const updateProject = asyncHandler(
  */
 export const deleteProject = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
         const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+        if (!id) return next(new ErrorResponse('Project ID is required', 400, []));
 
-        try {
-            const projectResult = await projectRepository.findById(id);
-            if (projectResult.error || !projectResult.data) {
-                return next(new ErrorResponse('Project not found', 404, []));
-            }
-
-            const result = await projectService.deleteProject(id);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project deleted successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to delete project',
-                    500,
-                    [],
-                ),
-            );
+        // 1. Fetch project first to get workspaceId for cache invalidation
+        const projectCheck = await projectRepository.findById(id);
+        if (projectCheck.error || !projectCheck.data) {
+            return next(new ErrorResponse('Project not found', 404, []));
         }
-    },
+
+        const workspaceId = projectCheck.data.workspaceId;
+
+        // 2. Perform Cascading Delete
+        const result = await projectService.deleteProject(id);
+        if (result.error) {
+            return next(new ErrorResponse(result.message, result.code || 500, []));
+        }
+
+        // 3. Clear Caches (Individual project and Workspace list)
+        await Promise.all([
+            redisWrapper.deleteData(`project:${id}`),
+            redisWrapper.deleteData(`workspace:${workspaceId}:projects`)
+        ]).catch(err => console.error('Cache invalidation failed:', err));
+
+        res.status(200).json(result);
+    }
 );
 
 /**
