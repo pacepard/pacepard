@@ -258,59 +258,41 @@ class RepositoryService<T extends Document> {
    * @returns {Promise<IResult>}
    * @description Find a single document matching the filter with query middleware features (field selection)
    */
-  public async findOne(
+
+public async findOne(
     filter: FilterQuery<T> & QueryOptions,
     options?: QueryOptions | boolean | Array<{ path: string }>
   ): Promise<IResult> {
     const result: IResult = { error: false, message: "", code: 200, data: {} };
 
-    // Handle backward compatibility: if options is boolean or array, treat as populate
-    populate: boolean | string | Array<{ path: string }> | undefined = undefined
-    let select: string | undefined;
+    let populate: any = undefined;
+    let select: string | undefined = undefined;
 
-    if (typeof options === "boolean") {
+    if (typeof options === "boolean" || Array.isArray(options)) {
       populate = options;
-    } else if (Array.isArray(options)) {
-      populate = options;
-    } else if (options) {
+    } else if (options && typeof options === "object") {
       populate = options.populate;
       select = options.select;
     }
 
-    // Process filter (remove options and process operators)
     const processedFilter = this.processFilter(filter);
 
     try {
+      // FIX: Use 'any' here to prevent the Mongoose generic type mismatch error
       let query: any = this.model.findOne(processedFilter);
 
-      // Select fields
       if (select) {
-        const fields = select.split(",").join(" ");
-        query = query.select(fields);
+        query = query.select(select.split(",").join(" "));
       }
 
-      // Populate
       if (populate) {
-        if (typeof populate === "boolean" && populate) {
-          query = query.populate("");
-        } else if (Array.isArray(populate)) {
-          if (populate.length > 0) {
-            populate.forEach((pop) => {
-              if (typeof pop === "object" && "path" in pop) {
-                query = query.populate(pop);
-              }
-            });
-          } else {
-            query = query.populate("");
-          }
-        } else if (typeof populate === "string") {
-          query = query.populate(populate);
-        } else {
-          query = query.populate(populate);
-        }
+        // Mongoose 6+ handles arrays and strings directly in .populate()
+        // If populate is true, we pass an empty string to trigger default population logic
+        query = query.populate(populate === true ? "" : populate);
       }
 
-      const document = await query.lean();
+      // Execute with lean() for performance and to get a plain JS object
+      const document = await query.lean().exec();
 
       if (!document) {
         result.error = true;
