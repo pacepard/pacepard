@@ -119,6 +119,19 @@ export const getProject = asyncHandler(
     },
 );
 
+export const getAllProjects = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        // Pass the entire req.query (e.g., ?page=1&limit=10&status=PUBLISHED)
+        const result = await projectService.getAllProjects(req.query);
+
+        if (result.error) {
+            return next(new ErrorResponse(result.message, result.code, []));
+        }
+
+        res.status(200).json(result);
+    }
+);
+
 /**
  * @name getWorkspaceProjects
  * @description Retrieves all projects for a specific workspace

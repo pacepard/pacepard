@@ -206,6 +206,42 @@ public async updateProject(projectId: string, updateData: Partial<IProjectDoc>):
   }
 
   /**
+   * @name getAllProjects
+   * @description Retrieves all projects with pagination, filtering, and sorting.
+   * @param query - The raw query object from req.query (contains page, limit, sort, etc.)
+   */
+  public async getAllProjects(query: any): Promise<IResult> {
+    // 1. Define fields we want to populate for the list view
+    const options = {
+      populate: [
+        { path: 'createdBy', select: 'firstName lastName' },
+        { path: 'workspaceId', select: 'name' }
+      ],
+      // Use the query options (page, limit, sort) passed from the controller
+      ...query 
+    };
+
+    // 2. Extract specific filters (e.g., status, businessId) 
+    // The base repository's processFilter will handle the rest
+    const filter = { ...query };
+
+    // 3. Execute the advanced query
+    const result = await projectRepository.query(filter, options);
+
+    if (result.error) return result;
+
+    return {
+      error: false,
+      message: result.message || "Projects retrieved successfully",
+      code: 200,
+      data: result.data,
+      pagination: result.pagination, // Include next/prev page info
+      total: result.total,
+      count: result.count
+    };
+  }
+
+  /**
    * @name getProjectsByWorkspace
    * @description Leverages the direct-reference index.
    */
