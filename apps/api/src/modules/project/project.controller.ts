@@ -217,12 +217,6 @@ export const deleteProject = asyncHandler(
 
 /**
  * @name addMember
- * @description Adds a member to a project
- * @route POST /projects/:id/members
- * @access Private
- */
-/**
- * @name addMember
  * @description Adds a member to a project and invalidates cache
  * @route POST /projects/:id/members
  */
