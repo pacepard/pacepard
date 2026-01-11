@@ -365,49 +365,18 @@ export const publishProject = asyncHandler(
 
 /**
  * @name closeProject
- * @description Closes a project
- * @route POST /projects/:id/close
+ * @description Seals a project and clears cache
+ * @route PATCH /projects/:id/close
  * @access Private
  */
 export const closeProject = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
         const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
+        const result = await projectService.closeProject(id);
 
-        try {
-            const result = await projectService.closeProject(id);
+        if (result.error) return next(new ErrorResponse(result.message, result.code, []));
 
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code || 500, []),
-                );
-            }
-
-            try {
-                await redisWrapper.deleteData(`project:${id}`);
-            } catch (cacheError) {
-                console.error('Cache invalidation failed:', cacheError);
-            }
-
-            res.status(200).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project closed successfully.',
-                status: 200,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to close project',
-                    500,
-                    [],
-                ),
-            );
-        }
+        await redisWrapper.deleteData(`project:${id}`);
+        res.status(200).json(result);
     },
 );
