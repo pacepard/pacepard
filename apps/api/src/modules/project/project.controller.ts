@@ -18,41 +18,17 @@ export const createProject = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { workspaceId } = req.params;
-        if (!workspaceId)
-            return next(new ErrorResponse('Workspace ID is required', 400, []));
-
         const data: CreateProjectDTO = {
             ...req.body,
             workspaceId,
             user: (req as any).user,
             createdBy: userId,
         };
+        const result = await projectService.createProject(data);
+        if (result.error) 
+        return next(new ErrorResponse(result.message, result.code, []));
 
-        try {
-            const result = await projectService.createProject(data);
-
-            if (result.error) {
-                return next(
-                    new ErrorResponse(result.message, result.code, []),
-                );
-            }
-
-            res.status(201).json({
-                error: false,
-                errors: [],
-                data: result.data,
-                message: result.message || 'Project created successfully.',
-                status: 201,
-            });
-        } catch (error: any) {
-            return next(
-                new ErrorResponse(
-                    error.message || 'Failed to create project',
-                    500,
-                    [],
-                ),
-            );
-        }
+        res.status(201).json(result);
     },
 );
 
