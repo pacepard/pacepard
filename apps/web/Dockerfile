@@ -1,0 +1,75 @@
+# Multi-stage build for Web (Next.js)
+# Supports both staging and production environments
+FROM node:20-alpine AS base
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+WORKDIR /app
+
+# Copy workspace configuration files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
+COPY .npmrc* ./
+
+# Copy package.json files for dependency resolution
+COPY packages ./packages
+COPY configs ./configs
+COPY apps/web ./apps/web
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Build packages first (they're dependencies)
+RUN pnpm build --filter './packages/*' --filter './configs/*' || true
+
+# Build Next.js app (from monorepo root to respect outputFileTracingRoot)
+# Note: Next.js builds are always production-optimized, regardless of NODE_ENV
+WORKDIR /app
+RUN pnpm build --filter @pacepard/web
+
+# Production/Staging stage
+FROM node:20-alpine AS production
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+WORKDIR /app
+
+# Copy workspace configuration
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Copy production dependencies (excluding dev dependencies)
+COPY --from=base --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=base --chown=nodejs:nodejs /app/packages ./packages
+COPY --from=base --chown=nodejs:nodejs /app/configs ./configs
+
+# Copy built Next.js app
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/package.json ./apps/web/
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/.next ./apps/web/.next
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/next.config.* ./apps/web/
+
+# Set working directory to Web
+WORKDIR /app/apps/web
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port (default 3000, can be overridden via PORT env var)
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+
+# Set NODE_ENV to production (Next.js requires this for production builds)
+# For staging, use environment variables at runtime to differentiate behavior
+# Example: docker run -e NODE_ENV=production -e NEXT_PUBLIC_ENV=staging ...
+ENV NODE_ENV=production
+
+# Start Next.js in production mode
+CMD ["pnpm", "start"]

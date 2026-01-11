@@ -1,0 +1,75 @@
+# Dependencies
+node_modules/
+**/node_modules/
+.pnp
+.pnp.*
+
+# Build outputs
+.next/
+**/.next/
+dist/
+**/dist/
+build/
+**/build/
+.turbo/
+**/.turbo/
+.vite/
+**/.vite/
+out/
+**/out/
+
+# Testing
+coverage/
+**/coverage/
+*.log
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+**/__tests__/
+**/*.test.*
+**/*.spec.*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+**/README.md
+docs/
+*.md
+**/*.md
+
+# Misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+next-env.d.ts
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Vercel
+.vercel/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+**/.cache/
