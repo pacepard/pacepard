@@ -1,6 +1,7 @@
 // apps/api/src/server.ts
 import app from "./configs/app.config";
 import connectDB from "./configs/db.config";
+import redisHandler from "./middlewares/redis.mdw";
 import colors from "colors";
 import "dotenv/config";
 
@@ -22,8 +23,9 @@ const startServer = async (): Promise<void> => {
     server.close(() => process.exit(1));
   });
 
-  process.on("SIGINT", () => {
+  process.on("SIGINT", async () => {
     console.log(colors.yellow("\n🛑 Server shutting down..."));
+     await redisHandler.disconnect();
     server.close(() => process.exit(0));
   });
 };
