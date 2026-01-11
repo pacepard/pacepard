@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { dateToday, IDateToday } from "@btffamily/pacitude";
 import { IProjectDoc, ProjectStatus, ProjectCreatorType } from "./project.interface";
 import { CreateProjectDTO } from "./project.dto";
@@ -8,6 +8,8 @@ import { IResult } from "../../utils/interfaces.util";
 import { IUserDoc } from "../user/user.interface";
 import { genSlug } from "../../utils/helpers.util";
 import { genProjectCode } from "../../utils/code.util";
+import teamRepository from "../team/team.repository";
+import taskRepository from "../task/task.repository";
 // import invitationService from "../invitation/invitation.service";
 
 class ProjectService {
@@ -196,58 +198,25 @@ public async updateProject(projectId: string, updateData: Partial<IProjectDoc>):
    * @description Performs a cascading delete of a project and its child entities (Teams/Tasks).
    */
   public async deleteProject(projectId: string): Promise<IResult> {
-    // 1. Verify existence
-    const projectResult = await projectRepository.findById(projectId);
-    
-    if (projectResult.error || !projectResult.data) {
-      return { 
-        error: true, 
-        code: 404, 
-        message: "Project not found", 
-        data: {} 
-      };
-    }
-
-    // 2. Business Logic: Should we allow deleting a CLOSED project? 
-    // In Pacepard, we might want to archive it instead, but for this implementation:
-    const project = projectResult.data;
+    // 1. Context check: Find the project first
+    const projectCheck = await projectRepository.findById(projectId);
+    if (!projectCheck.data) return { error: true, code: 404, message: "Project not found", data: {} };
 
     try {
-      // 3. CASCADING DELETE (The Waterfall)
-      // We use Promise.all to clean up the child collections in parallel
-      await Promise.all([
-        teamRepository.deleteMany({ projectId: new Types.ObjectId(projectId) }),
-        taskRepository.deleteMany({ projectId: new Types.ObjectId(projectId) })
-      ]);
+        // 2. The Waterfall: Use the newly exposed deleteMany from the base repo
+        // This ensures the hierarchy is cleared
+        await Promise.all([
+            teamRepository.deleteMany({ projectId: new mongoose.Types.ObjectId(projectId) }),
+            taskRepository.deleteMany({ projectId: new mongoose.Types.ObjectId(projectId) })
+        ]);
 
-      // 4. Delete the Project itself
-      const deleteResult = await projectRepository.deleteProject(projectId);
-
-      if (deleteResult.error) {
-        return { 
-          error: true, 
-          code: 500, 
-          message: "Failed to delete project record", 
-          data: {} 
-        };
-      }
-
-      return {
-        error: false,
-        message: "Project and all associated teams and tasks have been deleted",
-        code: 200,
-        data: { projectId }
-      };
-
-    } catch (err: any) {
-      return {
-        error: true,
-        code: 500,
-        message: `Internal error during cascading delete: ${err.message}`,
-        data: {}
-      };
+        // 3. Final step: Delete the project itself
+        return await projectRepository.delete(projectId);
+        
+    } catch (error: any) {
+        return { error: true, code: 500, message: "Cascading delete failed: " + error.message, data: {} };
     }
-  }
+}
 
 }
 
