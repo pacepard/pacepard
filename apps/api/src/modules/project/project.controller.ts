@@ -77,12 +77,6 @@ export const getProjects = asyncHandler(
 
 /**
  * @name getWorkspaceProjects
- * @description Retrieves all projects for a specific workspace
- * @route GET /workspaces/:workspaceId/projects
- * @access Private
- */
-/**
- * @name getWorkspaceProjects
  * @description Retrieves all projects belonging to a specific workspace with caching.
  * @route GET /workspaces/:workspaceId/projects
  */
