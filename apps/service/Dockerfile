@@ -4,25 +4,24 @@ FROM node:20-alpine AS base
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
 
-# Set working directory
 WORKDIR /app
 
 # Copy workspace configuration files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
 COPY .npmrc* ./
 
-# Copy package.json files for dependency resolution (copy entire directories)
+# Copy package.json files for dependency resolution
 COPY packages ./packages
 COPY configs ./configs
-COPY apps ./apps
+COPY apps/service ./apps/service
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Build packages first (they're dependencies)
-RUN pnpm build --filter './packages/*' --filter './configs/*'
+RUN pnpm build --filter './packages/*' --filter './configs/*' || true
 
-# Build Next.js app (from monorepo root)
+# Build Next.js app (from monorepo root to respect outputFileTracingRoot)
 WORKDIR /app
 RUN pnpm build --filter @pacepard/service
 
@@ -32,33 +31,38 @@ FROM node:20-alpine AS production
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
 
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
 WORKDIR /app
 
 # Copy workspace configuration
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy only production dependencies
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/packages ./packages
-COPY --from=base /app/configs ./configs
+# Copy production dependencies (excluding dev dependencies)
+COPY --from=base --chown=nodejs:nodejs /app/node_modules ./node_modules
+COPY --from=base --chown=nodejs:nodejs /app/packages ./packages
+COPY --from=base --chown=nodejs:nodejs /app/configs ./configs
 
 # Copy built Next.js app
-COPY --from=base /app/apps/service/package.json ./apps/service/
-COPY --from=base /app/apps/service/.next ./apps/service/.next
-COPY --from=base /app/apps/service/public ./apps/service/public
-COPY --from=base /app/apps/service/next.config.* ./apps/service/ 2>/dev/null || true
-COPY --from=base /app/apps/service/markdown ./apps/service/markdown 2>/dev/null || true
-COPY --from=base /app/apps/service/package-lock.json ./apps/service/ 2>/dev/null || true
+COPY --from=base --chown=nodejs:nodejs /app/apps/service/package.json ./apps/service/
+COPY --from=base --chown=nodejs:nodejs /app/apps/service/.next ./apps/service/.next
+COPY --from=base --chown=nodejs:nodejs /app/apps/service/public ./apps/service/public
+COPY --from=base --chown=nodejs:nodejs /app/apps/service/next.config.* ./apps/service/
 
 # Set working directory to Service
 WORKDIR /app/apps/service
 
+# Switch to non-root user
+USER nodejs
+
 # Expose port (default 3000, can be overridden via PORT env var)
 EXPOSE 3000
 
-# Health check (optional - uncomment if /api/health endpoint exists)
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-#   CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Start Next.js in production mode
 ENV NODE_ENV=production
