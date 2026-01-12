@@ -1,4 +1,4 @@
-import React, { Fragment, lazy, Suspense } from 'react';
+import { Fragment, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { routes, routil, type IRouteItem, type IInRoute } from '@pacepard/sdk';

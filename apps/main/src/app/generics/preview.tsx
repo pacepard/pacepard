@@ -1,6 +1,8 @@
 import { LinkPreview, ShareLink, ShareTabs } from "@/components/blocks/activity";
 import LoginForm from "@/components/blocks/auth/login-form";
 import Trigger from "@/components/blocks/navigation/trigger";
+import MainLoader from "./main-loader";
+import { EmptyState } from "@pacepard/ui";
 
 
 const Preview = () => {
@@ -16,12 +18,16 @@ const Preview = () => {
 
                 {/* <LoginForm/> */}
 
+                <MainLoader/>
+
                 <LinkPreview/>
+
+                <EmptyState/>
 
                 <div className="mt-10"></div>
 
                 <ShareLink/>
-                {/* <ShareTabs/> */}
+                <ShareTabs/>
 
 
             </div>
