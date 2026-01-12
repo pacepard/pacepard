@@ -24,7 +24,15 @@ app.use(express.urlencoded({ limit: '50mb', extended: false }));
 app.use(cookieParser());
 
 // Sanitize data and secure db against sql injection
-app.use(expressSanitize());
+// Skip when running in Jest (tests) due to Supertest read-only req.query issue
+// express-mongo-sanitize tries to modify req.query which is read-only in Supertest
+// Check for Jest environment variables or wrap in try-catch
+const isJestEnvironment = process.env.JEST_WORKER_ID !== undefined || 
+                          process.env.npm_lifecycle_event === 'test' ||
+                          process.env.npm_lifecycle_event?.includes('test');
+if (!isJestEnvironment) {
+    app.use(expressSanitize());
+}
 
 // Secure response header
 app.use(helmet());

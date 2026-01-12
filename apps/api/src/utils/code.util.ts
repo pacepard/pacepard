@@ -60,7 +60,7 @@ export const genProjectCode = (): string => {
     return `prj-${year}-${code}`;
 };
 
-console.log('project', genProjectCode());
+//console.log('project', genProjectCode());
 
 /**
  * @name genTaskCode
@@ -78,7 +78,7 @@ export const genTaskCode = (): string => {
     return `tsk-${year}-${code}`;
 };
 
-console.log('task', genTaskCode());
+//console.log('task', genTaskCode());
 
 /**
  * @name genTeamCode

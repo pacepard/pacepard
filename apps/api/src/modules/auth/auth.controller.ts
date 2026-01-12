@@ -257,7 +257,11 @@ export const loginUser: RequestHandler = asyncHandler(
             user: userExist,
         });
         if (!verifyPassword) {
-            await authService.increaseLoginLimit(userExist);
+            // Fetch user as Mongoose document to enable .save() method
+            const userDoc = await User.findById(userExist._id || userExist.id);
+            if (userDoc) {
+                await authService.increaseLoginLimit(userDoc);
+            }
             return next(
                 new ErrorResponse('Invalid email or password.', 400, []),
             );
@@ -334,6 +338,7 @@ export const logoutUser: RequestHandler = asyncHandler(
         return res.status(200).json({
             error: false,
             errors: [],
+            data: {},
             message: 'User logged out successfully.',
             status: 200,
         });
@@ -415,8 +420,14 @@ export const forgotPassword: RequestHandler = asyncHandler(
             );
         }
 
+        // Fetch user as Mongoose document to enable .save() method
+        const userDoc = await User.findById(user._id || user.id);
+        if (!userDoc) {
+            return next(new ErrorResponse('User not found', 404, []));
+        }
+
         const Otp = await authService.generateOTPCode(
-            user,
+            userDoc,
             OtpType.FORGOTPASSWORD,
         );
 

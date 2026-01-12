@@ -99,20 +99,13 @@ const BusinessSchema = new Schema<IBusinessDoc>(
     },
 );
 
-BusinessSchema.pre(
-    'save' as any,
-    function (
-        this: mongoose.Document & IBusinessDoc,
-        next: (err?: mongoose.CallbackError) => void,
-    ) {
-        if (this.verification?.status === VerificationType.VERIFIED) {
-            this.isPublic = true;
-        } else {
-            this.isPublic = false;
-        }
-        next();
-    },
-);
+BusinessSchema.pre('save', async function (this: mongoose.Document & IBusinessDoc) {
+    if (this.verification?.status === VerificationType.VERIFIED) {
+        this.isPublic = true;
+    } else {
+        this.isPublic = false;
+    }
+});
 
 BusinessSchema.index({ industry: 1 });
 BusinessSchema.index({ tags: 1 });

@@ -53,9 +53,11 @@ class AuthService {
         if (!data.email) {
             result.error = true;
             result.message = 'Email is required';
+            result.code = 400;
         } else if (!data.password) {
             result.error = true;
             result.message = 'Password is required';
+            result.code = 400;
         } else if (
             !data.userType ||
             !arrayIncludes(allowedUsers, data.userType)
@@ -64,6 +66,7 @@ class AuthService {
             result.message = `Invalid user type value. choose from ${allowedUsers.join(
                 ',',
             )}`;
+            result.code = 400;
         } else {
             result.error = false;
             result.message = '';
@@ -89,9 +92,11 @@ class AuthService {
         if (!email) {
             result.error = true;
             result.message = 'email is required';
+            result.code = 400;
         } else if (!password) {
             result.error = true;
             result.message = 'password is required';
+            result.code = 400;
         } else {
             const mailCheck = await this.checkEmail(email);
 
