@@ -139,6 +139,9 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
     devDependencies:
+      '@pacepard/configs/typescript':
+        specifier: workspace:*
+        version: link:../../configs/typescript
       '@types/cookie-parser':
         specifier: ^1.4.10
         version: 1.4.10(@types/express@5.0.6)
