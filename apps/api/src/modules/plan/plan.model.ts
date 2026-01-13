@@ -1,6 +1,6 @@
 import mongoose, { Model, Schema } from 'mongoose';
 import { IPlanDoc, PlanType } from './plan.interface';
-import { DbModels } from '../../utils/eums.util';
+import { DbModels } from '../../utils/enums.util';
 
 const PlanSchema = new Schema<IPlanDoc>(
     {

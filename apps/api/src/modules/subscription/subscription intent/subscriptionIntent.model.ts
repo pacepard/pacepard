@@ -3,7 +3,7 @@ import {
     ISubscriptionIntentDoc,
     SubscriptionIntentState,
 } from './subscriptionIntent.interface';
-import { DbModels } from '../../../utils/eums.util';
+import { DbModels } from '../../../utils/enums.util';
 
 const SubscriptionIntentSchema = new Schema<ISubscriptionIntentDoc>(
     {

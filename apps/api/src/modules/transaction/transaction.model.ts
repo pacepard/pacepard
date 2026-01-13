@@ -6,7 +6,7 @@ import {
     TransactionStatus,
     TransactionType,
 } from './transaction.interface';
-import { DbModels } from '../../utils/eums.util';
+import { DbModels } from '../../utils/enums.util';
 
 const DebitCardSchema = new Schema<IDebitCard>(
     {

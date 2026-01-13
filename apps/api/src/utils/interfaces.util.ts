@@ -7,7 +7,7 @@ import {
     FileType,
     FileFormat,
     FileMimeType,
-} from './eums.util.ts';
+} from './enums.util.ts';
 import { FileInfo } from 'busboy';
 import { PassThrough } from 'stream';
 import { IUserDoc } from '../modules/user/user.interface.ts';

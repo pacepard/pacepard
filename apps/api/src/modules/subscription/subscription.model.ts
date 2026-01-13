@@ -6,7 +6,7 @@ import {
     SubscriberUserType,
     SubscriptionStatus,
 } from './subscription.interface';
-import { DbModels } from '../../utils/eums.util';
+import { DbModels } from '../../utils/enums.util';
 
 const SubscriptionSchema = new Schema<ISubscriptionDoc>(
     {

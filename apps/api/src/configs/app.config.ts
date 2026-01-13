@@ -1,15 +1,21 @@
-import express, { type Express } from 'express';
+import express, {
+    Request,
+    Response,
+    NextFunction,
+    type Express,
+} from 'express';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import errorHandler from '../middlewares/error.mdw';
 import apiRoutes from '../routes/v1/routes.router';
-import expressSanitize from 'express-mongo-sanitize';
+import expressSanitize from '@exortek/express-mongo-sanitize';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import cors from 'cors';
 
-import { dirname, join } from "path";
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,9 +33,10 @@ app.use(cookieParser());
 // Skip when running in Jest (tests) due to Supertest read-only req.query issue
 // express-mongo-sanitize tries to modify req.query which is read-only in Supertest
 // Check for Jest environment variables or wrap in try-catch
-const isJestEnvironment = process.env.JEST_WORKER_ID !== undefined || 
-                          process.env.npm_lifecycle_event === 'test' ||
-                          process.env.npm_lifecycle_event?.includes('test');
+const isJestEnvironment =
+    process.env.JEST_WORKER_ID !== undefined ||
+    process.env.npm_lifecycle_event === 'test' ||
+    process.env.npm_lifecycle_event?.includes('test');
 if (!isJestEnvironment) {
     app.use(expressSanitize());
 }
@@ -79,8 +86,8 @@ app.use(
 );
 
 // Set view engine and views
-app.set('view engine', 'ejs');
-app.set("views", join(__dirname, "views"));
+app.set('view engine', 'pug');
+app.set('views', join(__dirname, '../views'));
 
 // Routes
 app.use('/api/v1', apiRoutes);
