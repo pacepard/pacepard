@@ -1,9 +1,4 @@
-import express, {
-    Request,
-    Response,
-    NextFunction,
-    type Express,
-} from 'express';
+import express, { type Express } from 'express';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import errorHandler from '../middlewares/error.mdw';
@@ -15,7 +10,6 @@ import cors from 'cors';
 
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -6,6 +6,8 @@ import { IResult } from '../../utils/interfaces.util';
 import { IUserDoc, UserType } from '../user/user.interface';
 import { genSlug } from '../../utils/helpers.util';
 import { genUserCode } from '../../utils/code.util';
+import roleService from '../role/role.service';
+import PermissionService from '../permission/permission.service';
 
 class BusinessService {
     public result: IResult;
@@ -101,6 +103,51 @@ class BusinessService {
             result.message =
                 createResult.message || 'Failed to create business profile';
             return result;
+        }
+
+        // Ensure user has BUSINESS role and permissions
+        try {
+            // Check if user already has roles
+            if (!user.roles || user.roles.length === 0) {
+                // Attach BUSINESS role
+                const roleAttachResult = await roleService.attachRole(
+                    user,
+                    UserType.BUSINESS,
+                );
+                if (!roleAttachResult.error) {
+                    user = roleAttachResult.data as IUserDoc;
+
+                    // Initialize permissions for BUSINESS role
+                    const permResult =
+                        await PermissionService.initiatePermissionData(user);
+                    if (!permResult.error) {
+                        user = permResult.data as IUserDoc;
+                    }
+
+                    // Clear permission cache
+                    await PermissionService.clearUserCache(String(user._id));
+                }
+            } else {
+                // Check if user already has BUSINESS role
+                const hasBusinessRole = user.roles.some(
+                    (r: any) =>
+                        (r?.name || r?.toString()) === UserType.BUSINESS,
+                );
+                if (!hasBusinessRole) {
+                    // Attach BUSINESS role
+                    const roleAttachResult = await roleService.attachRole(
+                        user,
+                        UserType.BUSINESS,
+                    );
+                    if (!roleAttachResult.error) {
+                        user = roleAttachResult.data as IUserDoc;
+                        await PermissionService.clearUserCache(String(user._id));
+                    }
+                }
+            }
+        } catch (error) {
+            // Log error but don't fail business creation
+            console.error('Failed to initialize roles/permissions for business:', error);
         }
 
         result.message = 'Business profile created successfully';

@@ -3,8 +3,8 @@ import { IHackathonDoc } from '../hackathon/hackathon.interface';
 import { IUserDoc } from '../user/user.interface';
 import { IProjectDoc } from '../project/project.interface';
 
-
 type ObjectId = Types.ObjectId;
+
 
 // Workspaces are the top level container for a business or organisation
 // They contain hackathons, mentors, judges, and members
@@ -19,8 +19,8 @@ export interface IWorkspaceDoc extends Document {
     createdBy: IUserDoc | any; // owner of workspace
 
     // relationships
-    members: Array<IUserDoc | any>; // members of a business OR organisation that owns the workspace
-    invites: Array<IUserDoc | any>; // members of a business OR organisation that owns the workspace who hasnt accepted invites
+    members: Array<IWorkspaceMember>; // members of a business OR organisation that owns the workspace
+    invites: Array<IWorkspaceInvite>; // members of a business OR organisation that owns the workspace who hasnt accepted invites
 
     hackathons: Array<IHackathonDoc | any>;
     projects: Array<IProjectDoc | any>; // challeges or projects that a business created
@@ -34,4 +34,24 @@ export interface IWorkspaceDoc extends Document {
     _version: number;
     _id: ObjectId;
     id: ObjectId;
+}
+
+export interface IWorkspaceMember {
+    user: ObjectId | IUserDoc;
+    role: WorkspaceMemberRole;
+    joinedAt: Date;
+    invitedBy?: ObjectId;
+}
+
+export interface IWorkspaceInvite {
+    user: ObjectId | IUserDoc;
+    role: WorkspaceMemberRole;
+    invitedBy: ObjectId;
+    invitedAt: Date;
+    expiresAt?: Date;
+}
+
+export enum WorkspaceMemberRole {
+    OWNER = 'OWNER',    // BUSINESS userType who created workspace
+    MANAGER = 'MANAGER' // Invited members who can manage workspace resources
 }

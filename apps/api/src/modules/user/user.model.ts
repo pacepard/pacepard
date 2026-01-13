@@ -105,7 +105,7 @@ const UserSchema = new Schema<IUserDoc>(
         devices: [{ type: Schema.Types.Mixed }],
 
         // Relationships
-        role: [
+        roles: [
             {
                 type: Schema.Types.ObjectId,
                 ref: DbModels.ROLE,

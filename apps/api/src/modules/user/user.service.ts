@@ -26,7 +26,8 @@ import {
 } from '../auth/auth.dto';
 
 import authService from '../../modules/auth/auth.service';
-import PermissionService from '../../services/permission.service';
+import PermissionService from '../permission/permission.service';
+import roleService from '../role/role.service';
 import businessService from '../business/business.service';
 import { genSlug } from '../../utils/helpers.util';
 import { genUserCode } from '../../utils/code.util';
@@ -114,6 +115,31 @@ class UserService {
         await authService.encryptUserPassword(user, password);
         await user.save();
 
+        // Initialize roles and permissions based on userType
+        // Only initialize if userType is provided and not USER (USER gets role during onboarding)
+        if (userType && userType !== UserType.USER) {
+            try {
+                // Attach role based on userType
+                const roleAttachResult = await roleService.attachRole(
+                    user,
+                    userType,
+                );
+                if (!roleAttachResult.error) {
+                    user = roleAttachResult.data as IUserDoc;
+
+                    // Initialize permissions for the role
+                    const permResult =
+                        await PermissionService.initiatePermissionData(user);
+                    if (!permResult.error) {
+                        user = permResult.data as IUserDoc;
+                    }
+                }
+            } catch (error) {
+                // Log error but don't fail user creation
+                console.error('Failed to initialize roles/permissions:', error);
+            }
+        }
+
         return user;
     }
 
@@ -138,19 +164,41 @@ class UserService {
         }
         let user = userResult.data as IUserDoc;
 
-        // Update the user's core type and roles
+        // Update the user's core type
         user.userType = userType;
-        if (role) user.role = role;
 
-        // Attach Roles & Permissions logic
-        await authService.attachRole(user, userType);
+        // Attach role based on userType
+        const roleAttachResult = await roleService.attachRole(user, userType);
+        if (roleAttachResult.error) {
+            throw new Error(roleAttachResult.message);
+        }
+        user = roleAttachResult.data as IUserDoc;
 
+        // Initialize permissions (unless custom permissions provided)
         if (!permissions || permissions.length === 0) {
             const permResult =
                 await PermissionService.initiatePermissionData(user);
-            if (permResult.error) throw new Error(permResult.message);
+            if (permResult.error) {
+                throw new Error(permResult.message);
+            }
+            user = permResult.data as IUserDoc;
+        } else {
+            // Update with custom permissions if provided
+            const permResult = await PermissionService.updatePermissions(
+                user,
+                {
+                    permissions,
+                    role: (user.roles?.[0] as any)?._id || user.roles?.[0],
+                },
+            );
+            if (permResult.error) {
+                throw new Error(permResult.message);
+            }
             user = permResult.data as IUserDoc;
         }
+
+        // Clear permission cache after role/permission changes
+        await PermissionService.clearUserCache(String(user._id));
 
         // TALENT CHECK & CREATE
         if (user.userType === UserType.TALENT) {
@@ -166,8 +214,23 @@ class UserService {
                     user: user,
                     createdBy: String(user._id || user.id),
                 });
-                if (talentResult.error) throw new Error(talentResult.message);
+                if (talentResult.error) {
+                    throw new Error(talentResult.message);
+                }
                 user = talentResult.data.user;
+
+                // Ensure talent user has proper role and permissions
+                if (!user.roles || user.roles.length === 0) {
+                    const talentRoleResult = await roleService.attachRole(
+                        user,
+                        UserType.TALENT,
+                    );
+                    if (!talentRoleResult.error) {
+                        user = talentRoleResult.data as IUserDoc;
+                        await PermissionService.initiatePermissionData(user);
+                        await PermissionService.clearUserCache(String(user._id));
+                    }
+                }
             }
         }
 
@@ -184,8 +247,23 @@ class UserService {
                     industry: '',
                     createdBy: String(user.id),
                 });
-                if (orgResult.error) throw new Error(orgResult.message);
+                if (orgResult.error) {
+                    throw new Error(orgResult.message);
+                }
                 user = orgResult.data.user;
+
+                // Ensure business user has proper role and permissions
+                if (!user.roles || user.roles.length === 0) {
+                    const businessRoleResult = await roleService.attachRole(
+                        user,
+                        UserType.BUSINESS,
+                    );
+                    if (!businessRoleResult.error) {
+                        user = businessRoleResult.data as IUserDoc;
+                        await PermissionService.initiatePermissionData(user);
+                        await PermissionService.clearUserCache(String(user._id));
+                    }
+                }
             }
         }
 
@@ -222,7 +300,7 @@ class UserService {
     ): Promise<void> {
         if (data && data.length > 0) {
             for (let i = 0; i < data.length; i++) {
-                let bulk: IBulkUser = data[i];
+                const bulk = data[i] as IBulkUser;
                 const existResult = await userRepository.findOne({
                     email: bulk.email,
                 });
@@ -250,6 +328,31 @@ class UserService {
                             bulk.password,
                         );
                         await user.save();
+
+                        // Initialize roles and permissions for bulk users
+                        if (bulk.userType && bulk.userType !== UserType.USER) {
+                            try {
+                                const roleAttachResult = await roleService.attachRole(
+                                    user,
+                                    bulk.userType,
+                                );
+                                if (!roleAttachResult.error) {
+                                    user = roleAttachResult.data as IUserDoc;
+                                    await PermissionService.initiatePermissionData(
+                                        user,
+                                    );
+                                    await PermissionService.clearUserCache(
+                                        String(user._id),
+                                    );
+                                }
+                            } catch (error) {
+                                // Log but don't fail bulk creation
+                                console.error(
+                                    `Failed to initialize roles/permissions for ${bulk.email}:`,
+                                    error,
+                                );
+                            }
+                        }
                     } catch (error) {
                         // Skip this user if creation failed
                         continue;
@@ -283,7 +386,7 @@ class UserService {
             result.code = 404;
             return result;
         }
-        const user = userResult.data as IUserDoc;
+        let user = userResult.data as IUserDoc;
 
         // Validate user type
         if (![UserType.TALENT, UserType.BUSINESS].includes(data.userType)) {
@@ -306,6 +409,29 @@ class UserService {
             user.isBusiness = true;
             user.isTalent = false;
         }
+
+        // Attach role based on user type
+        const roleAttachResult = await roleService.attachRole(
+            user,
+            data.userType,
+        );
+        if (roleAttachResult.error) {
+            result.error = true;
+            result.message = roleAttachResult.message;
+            result.code = roleAttachResult.code || 500;
+            return result;
+        }
+        user = roleAttachResult.data as IUserDoc;
+
+        // Initialize permissions for the user
+        const permResult = await PermissionService.initiatePermissionData(user);
+        if (permResult.error) {
+            result.error = true;
+            result.message = permResult.message;
+            result.code = permResult.code || 500;
+            return result;
+        }
+        user = permResult.data as IUserDoc;
 
         await user.save();
 
@@ -344,7 +470,7 @@ class UserService {
             result.code = 404;
             return result;
         }
-        const user = userResult.data as IUserDoc;
+        let user = userResult.data as IUserDoc;
 
         // Validate step progression
         if (user.onboard.step < 1) {
@@ -685,7 +811,7 @@ class UserService {
             result.code = 404;
             return result;
         }
-        const user = userResult.data as IUserDoc;
+        let user = userResult.data as IUserDoc;
 
         // Validate step progression
         if (user.onboard.step < 3) {
@@ -718,6 +844,33 @@ class UserService {
                 result.code = 400;
                 return result;
             }
+        }
+
+        // Ensure roles and permissions are set before completing onboarding
+        if (!user.roles || user.roles.length === 0) {
+            const roleAttachResult = await roleService.attachRole(
+                user,
+                user.userType,
+            );
+            if (roleAttachResult.error) {
+                result.error = true;
+                result.message = roleAttachResult.message;
+                result.code = roleAttachResult.code || 500;
+                return result;
+            }
+            user = roleAttachResult.data as IUserDoc;
+        }
+
+        if (!user.permissions || user.permissions.length === 0) {
+            const permResult =
+                await PermissionService.initiatePermissionData(user);
+            if (permResult.error) {
+                result.error = true;
+                result.message = permResult.message;
+                result.code = permResult.code || 500;
+                return result;
+            }
+            user = permResult.data as IUserDoc;
         }
 
         // Mark onboarding as completed
@@ -792,6 +945,592 @@ class UserService {
         };
 
         return result;
+    }
+
+    //   /**
+    //    * @name createSocialUser
+    //    * @description Creates a new user account specifically from a social login profile.
+    //    * @param data - Social user data.
+    //    * @returns {Promise<IUserDoc>} The newly created user document.
+    //    */
+    //   public async createSocialUser(data: createSocialUserDTO): Promise<IUserDoc> {
+
+    //     const { firstName, lastName, email, userType, googleId, githubId, appleId } = data;
+
+    //     // 1. Check if user already exists
+    //     const existingUser = await userRepository.findByEmail(email.toLowerCase());
+    //     if (existingUser) {
+    //       throw new Error(existingUser.message);
+    //     }
+
+    //     // 2. Create the user object with placeholder password and social ID
+    //     let user: IUserDoc = await User.create({
+    //       firstName,
+    //       lastName,
+    //       email: email.toLowerCase(),
+    //       password: generateRandomChars(24), // Placeholder.
+    //       passwordType: PasswordType.OAUTH,
+    //       userType,
+    //       googleId: googleId,
+    //       githubId: githubId,
+    //       appleId: appleId,
+    //       isActive: true,
+    //       isActivated: true,
+    //     });
+
+    //     await authService.updateUserType(user, userType);
+    //     await authService.attachRole(user, userType);
+    //    const permResult = await PermissionService.initiatePermissionData(user);
+    //       if (permResult.error) {
+    //         throw new Error(permResult.message);
+    //       }
+    //       user = permResult.data as IUserDoc;
+
+    //     // 4. Create profile based on userType (REUSE EXISTING LOGIC)
+
+    //     if (user.userType === UserType.LISTENER) {
+    //       const listenerProfile = await listenerService.createListener({
+    //         user: user,
+    //         type: UserType.LISTENER,
+    //       });
+
+    //         if (listenerProfile.error) {
+    //           throw new Error(listenerProfile.message);
+    //         }
+    //         user = listenerProfile.data.user as IUserDoc;
+    //       }
+
+    //       if (user.userType === UserType.MINISTER) {
+
+    //         const ministerProfile = await ministerService.createMinister({
+    //           user: user,
+    //           userType: UserType.MINISTER,
+    //           email: user.email,
+    //         });
+
+    //         if (ministerProfile.error) {
+    //           throw new Error(ministerProfile.message);
+    //         }
+    //         user = ministerProfile.data.user as IUserDoc;
+    //       }
+
+    //     // 5. Save the final user (Mongoose pre-save hook will handle password 'encryption' if needed,
+    //     // but for social it's a placeholder, so no real encryption runs)
+    //     await user.save();
+
+    //     // 6. Send welcome email (REUSED LOGIC FROM YOUR REGISTRATION SUCCESS BLOCK)
+    //     const welcomeEmail = await emailService.sendUserWelcomeEmail(user);
+    //     if (welcomeEmail.error) {
+    //     }
+
+    //     return user;
+    //   }
+
+    //   /**
+    //    * @name findOrCreateSocialUser
+    //    * @description Handles the core logic for social logins: find by ID, find by email, or create new user.
+    //    * @param profile - The Passport profile object from the OAuth provider.
+    //    * @param provider - 'google', 'github', or 'apple'.
+    //    * @returns {Promise<IUserDoc>} The authenticated or newly created user document.
+    //    */
+    //   public async findOrCreateSocialUser(
+    //     profile: IPassportProfileDTO,
+    //     provider: OAuthProvider,
+    //     req: Request
+    //   ): Promise<IUserDoc | null> {
+
+    //     const email = profile.emails?.[0]?.value.toLowerCase();
+    //     const socialId = profile.id;
+    //     let user: IUserDoc | null = null;
+
+    //     // 1. Check if user already exists via the social ID (Primary check)
+    //     const idField = `${provider}Id`; // e.g., 'googleId'
+    //     user = await userRepository.findUserBySocialId(provider, socialId)
+
+    //     if (!user) {
+
+    //       // 2. Check if user exists via email (Attempt to link account)
+    //       const userResult = await userRepository.findUser(email);
+
+    //       if (!userResult.data) {
+    //         throw new Error(userResult.message);
+    //       }
+
+    //       user = userResult.data;
+
+    //       if (user) {
+
+    //         user = await this.linkSocialAccount(user, idField, socialId);
+
+    //       } else {
+    //         // 3. User not found - CREATE A NEW SOCIAL USER
+    //         user = await this.createSocialUser({
+    //           firstName: profile.name?.givenName,
+    //           lastName: profile.name?.familyName,
+    //           email: email,
+    //           userType: UserType.LISTENER,
+    //           [idField]: socialId, // Add the specific social ID
+    //         });
+    //       }
+    //     }
+
+    //     if (user) {
+    //       // 4. Finalize login (REUSE EXISTING LOGIC)
+    //       await authService.activateAccount(user);
+    //       await authService.updateLastLogin(user);
+    //       //await authService.updateLoginInfo(user, req);
+
+    //       user.save()
+
+    //       return user;
+    //     }
+
+    //     return null;
+    //   }
+
+    // /**
+    //    * @name linkSocialAccount
+    //    * @description Links a local user account to a social ID.
+    //    */
+    //   private async linkSocialAccount(user: IUserDoc, idField: string, socialId: string): Promise<IUserDoc> {
+
+    //     const key = idField as SocialIdKey;
+    //     user[key] = socialId;
+    //     user.passwordType = PasswordType.OAUTH;
+    //     await user.save();
+    //     return user;
+    //   }
+
+    // ============================================
+    // ROLE & PERMISSION MANAGEMENT METHODS
+    // ============================================
+
+    /**
+     * @name getUserRoles
+     * @description Get all roles assigned to a user
+     * @param userId - User ID
+     * @returns Promise<IResult> with array of role documents
+     */
+    public async getUserRoles(userId: string | ObjectId): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            const rolesResult = await roleService.getUserRoles(String(userId));
+            if (rolesResult.error) {
+                result.error = true;
+                result.code = rolesResult.code || 404;
+                result.message = rolesResult.message;
+                return result;
+            }
+
+            result.data = rolesResult.data;
+            result.message = 'User roles retrieved successfully';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to get user roles';
+            return result;
+        }
+    }
+
+    /**
+     * @name getUserPermissions
+     * @description Get all resolved permissions for a user (from roles + explicit permissions)
+     * @param userId - User ID or user document
+     * @returns Promise<IResult> with Set of permission strings
+     */
+    public async getUserPermissions(
+        userId: string | ObjectId | IUserDoc,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            const userIdString =
+                typeof userId === 'string'
+                    ? userId
+                    : (userId as IUserDoc)._id
+                      ? String((userId as IUserDoc)._id)
+                      : String(userId);
+
+            const permissions = await PermissionService.resolveUserPermissions(
+                userIdString,
+            );
+
+            result.data = Array.from(permissions);
+            result.message = 'User permissions retrieved successfully';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to get user permissions';
+            return result;
+        }
+    }
+
+    /**
+     * @name attachRoleToUser
+     * @description Attach a role to a user
+     * @param userId - User ID
+     * @param roleName - Role name to attach
+     * @returns Promise<IResult>
+     */
+    public async attachRoleToUser(
+        userId: string | ObjectId,
+        roleName: string,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            const userResult = await userRepository.findById(String(userId));
+            if (userResult.error || !userResult.data) {
+                result.error = true;
+                result.code = 404;
+                result.message = 'User not found';
+                return result;
+            }
+
+            const user = userResult.data as IUserDoc;
+            const roleResult = await roleService.attachRole(user, roleName);
+
+            if (roleResult.error) {
+                result.error = true;
+                result.code = roleResult.code || 500;
+                result.message = roleResult.message;
+                return result;
+            }
+
+            // Clear permission cache
+            await PermissionService.clearUserCache(String(user._id));
+
+            result.data = roleResult.data;
+            result.message = roleResult.message || 'Role attached successfully';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to attach role';
+            return result;
+        }
+    }
+
+    /**
+     * @name detachRoleFromUser
+     * @description Detach a role from a user
+     * @param userId - User ID
+     * @param roleName - Role name to detach
+     * @returns Promise<IResult>
+     */
+    public async detachRoleFromUser(
+        userId: string | ObjectId,
+        roleName: string,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            const userResult = await userRepository.findById(String(userId));
+            if (userResult.error || !userResult.data) {
+                result.error = true;
+                result.code = 404;
+                result.message = 'User not found';
+                return result;
+            }
+
+            const user = userResult.data as IUserDoc;
+            const roleResult = await roleService.detachRole(user, roleName);
+
+            if (roleResult.error) {
+                result.error = true;
+                result.code = roleResult.code || 500;
+                result.message = roleResult.message;
+                return result;
+            }
+
+            // Clear permission cache
+            await PermissionService.clearUserCache(String(user._id));
+
+            result.data = roleResult.data;
+            result.message = roleResult.message || 'Role detached successfully';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to detach role';
+            return result;
+        }
+    }
+
+    /**
+     * @name checkUserPermission
+     * @description Check if a user has a specific permission
+     * @param userId - User ID or user document
+     * @param permission - Permission string (e.g., 'workspace:create') or object {entity, action}
+     * @param options - Optional permission check options (resource, resourceType, checkOwnership, resourceOwnerId)
+     * @returns Promise<IResult> with boolean indicating if user has permission
+     */
+    public async checkUserPermission(
+        userId: string | ObjectId | IUserDoc,
+        permission: string | { entity: string; action: string },
+        options?: {
+            resource?: any;
+            resourceType?: 'workspace' | 'project' | 'hackathon';
+            checkOwnership?: boolean;
+            resourceOwnerId?: string | null;
+        },
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            let user: IUserDoc | null = null;
+
+            if (typeof userId === 'string' || userId instanceof Types.ObjectId) {
+                const userResult = await userRepository.findById(String(userId));
+                if (userResult.error || !userResult.data) {
+                    result.error = true;
+                    result.code = 404;
+                    result.message = 'User not found';
+                    return result;
+                }
+                user = userResult.data as IUserDoc;
+            } else {
+                user = userId as IUserDoc;
+            }
+
+            const hasPermission = await PermissionService.hasPermission(
+                user,
+                permission,
+                options,
+            );
+
+            result.data = { hasPermission };
+            result.message = hasPermission
+                ? 'User has permission'
+                : 'User does not have permission';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to check permission';
+            return result;
+        }
+    }
+
+    /**
+     * @name updateUserPermissions
+     * @description Update explicit permissions for a user (in addition to role permissions)
+     * @param userId - User ID
+     * @param permissions - Array of permission strings to assign
+     * @param roleId - Optional role ID to validate permissions against
+     * @returns Promise<IResult>
+     */
+    public async updateUserPermissions(
+        userId: string | ObjectId,
+        permissions: string[],
+        roleId?: string | ObjectId,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            const userResult = await userRepository.findById(String(userId));
+            if (userResult.error || !userResult.data) {
+                result.error = true;
+                result.code = 404;
+                result.message = 'User not found';
+                return result;
+            }
+
+            const user = userResult.data as IUserDoc;
+
+            // Use PermissionService.updatePermissions which validates against role
+            const permResult = await PermissionService.updatePermissions(
+                user,
+                {
+                    permissions,
+                    role: roleId || (user.roles?.[0] as any)?._id || user.roles?.[0],
+                },
+            );
+
+            if (permResult.error) {
+                result.error = true;
+                result.code = permResult.code || 500;
+                result.message = permResult.message;
+                return result;
+            }
+
+            // Clear permission cache
+            await PermissionService.clearUserCache(String(user._id));
+
+            result.data = permResult.data;
+            result.message = 'User permissions updated successfully';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to update permissions';
+            return result;
+        }
+    }
+
+    /**
+     * @name initializeUserPermissions
+     * @description Initialize permissions for a user based on their role
+     * @param userId - User ID
+     * @returns Promise<IResult>
+     */
+    public async initializeUserPermissions(
+        userId: string | ObjectId,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            const userResult = await userRepository.findById(String(userId));
+            if (userResult.error || !userResult.data) {
+                result.error = true;
+                result.code = 404;
+                result.message = 'User not found';
+                return result;
+            }
+
+            const user = userResult.data as IUserDoc;
+
+            // Ensure user has a role
+            if (!user.roles || user.roles.length === 0) {
+                // Attach role based on userType
+                const roleAttachResult = await roleService.attachRole(
+                    user,
+                    user.userType,
+                );
+                if (roleAttachResult.error) {
+                    result.error = true;
+                    result.code = roleAttachResult.code || 500;
+                    result.message = roleAttachResult.message;
+                    return result;
+                }
+            }
+
+            // Initialize permissions
+            const permResult =
+                await PermissionService.initiatePermissionData(user);
+
+            if (permResult.error) {
+                result.error = true;
+                result.code = permResult.code || 500;
+                result.message = permResult.message;
+                return result;
+            }
+
+            // Clear permission cache
+            await PermissionService.clearUserCache(String(user._id));
+
+            result.data = permResult.data;
+            result.message = 'User permissions initialized successfully';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to initialize permissions';
+            return result;
+        }
+    }
+
+    /**
+     * @name clearUserPermissionCache
+     * @description Clear cached permissions for a user
+     * @param userId - User ID
+     * @returns Promise<IResult>
+     */
+    public async clearUserPermissionCache(
+        userId: string | ObjectId,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        try {
+            await PermissionService.clearUserCache(String(userId));
+            result.message = 'User permission cache cleared successfully';
+            return result;
+        } catch (error: any) {
+            result.error = true;
+            result.code = 500;
+            result.message = error.message || 'Failed to clear cache';
+            return result;
+        }
+    }
+
+    /**
+     * @name hasUserPermission
+     * @description Convenience method to check if user has permission (returns boolean)
+     * @param userId - User ID or user document
+     * @param permission - Permission string or object
+     * @param options - Optional permission check options
+     * @returns Promise<boolean>
+     */
+    public async hasUserPermission(
+        userId: string | ObjectId | IUserDoc,
+        permission: string | { entity: string; action: string },
+        options?: {
+            resource?: any;
+            resourceType?: 'workspace' | 'project' | 'hackathon';
+            checkOwnership?: boolean;
+            resourceOwnerId?: string | null;
+        },
+    ): Promise<boolean> {
+        try {
+            let user: IUserDoc | null = null;
+
+            if (typeof userId === 'string' || userId instanceof Types.ObjectId) {
+                const userResult = await userRepository.findById(String(userId));
+                if (userResult.error || !userResult.data) {
+                    return false;
+                }
+                user = userResult.data as IUserDoc;
+            } else {
+                user = userId as IUserDoc;
+            }
+
+            return await PermissionService.hasPermission(user, permission, options);
+        } catch (error) {
+            return false;
+        }
     }
 }
 

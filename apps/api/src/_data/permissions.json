@@ -20,68 +20,276 @@
     "description": "Permission to temporarily disable user accounts"
   },
   {
-    "action": "sermon:create",
-    "description": "Permission to upload and create new sermons"
+    "action": "workspace:create",
+    "description": "Permission to create new workspaces"
   },
   {
-    "action": "sermon:read",
-    "description": "Permission to view and access sermons"
+    "action": "workspace:read",
+    "description": "Permission to view workspace details and information"
   },
   {
-    "action": "sermon:update",
-    "description": "Permission to modify sermon details and content"
+    "action": "workspace:update",
+    "description": "Permission to modify workspace settings and information"
   },
   {
-    "action": "sermon:destroy",
-    "description": "Permission to permanently remove sermons"
+    "action": "workspace:delete",
+    "description": "Permission to permanently remove workspaces"
   },
   {
-    "action": "sermon:delete",
-    "description": "Permission to soft delete sermons"
+    "action": "workspace:manage-members",
+    "description": "Permission to add, remove, and manage workspace members"
   },
   {
-    "action": "sermonbite:create",
-    "description": "Permission to create new sermon bites"
+    "action": "business:create",
+    "description": "Permission to create new business profiles"
   },
   {
-    "action": "sermonbite:read",
-    "description": "Permission to view sermon bites"
+    "action": "business:read",
+    "description": "Permission to view business details and information"
   },
   {
-    "action": "sermonbite:update",
-    "description": "Permission to modify sermon bite content"
+    "action": "business:update",
+    "description": "Permission to modify business profile and settings"
   },
   {
-    "action": "sermonbite:destroy",
-    "description": "Permission to permanently remove sermon bites"
+    "action": "business:delete",
+    "description": "Permission to permanently remove business profiles"
   },
   {
-    "action": "sermonbite:delete",
-    "description": "Permission to soft delete sermon bites"
+    "action": "business:verify",
+    "description": "Permission to verify and approve business accounts"
   },
   {
-    "action": "playlist:create",
-    "description": "Permission to create new playlists"
+    "action": "project:create",
+    "description": "Permission to create new projects and challenges"
   },
   {
-    "action": "playlist:read",
-    "description": "Permission to view playlists"
+    "action": "project:read",
+    "description": "Permission to view project details and information"
   },
   {
-    "action": "playlist:update",
-    "description": "Permission to modify playlist content"
+    "action": "project:update",
+    "description": "Permission to modify project settings and content"
   },
   {
-    "action": "playlist:destroy",
-    "description": "Permission to permanently remove playlists"
+    "action": "project:delete",
+    "description": "Permission to permanently remove projects"
   },
   {
-    "action": "playlist:disable",
-    "description": "Permission to temporarily disable playlists"
+    "action": "project:publish",
+    "description": "Permission to publish projects and make them publicly available"
   },
   {
-    "action": "playlist:delete",
-    "description": "Permission to soft delete playlists"
+    "action": "project:close",
+    "description": "Permission to close and archive projects"
+  },
+  {
+    "action": "project:manage-members",
+    "description": "Permission to add, remove, and manage project members"
+  },
+  {
+    "action": "team:create",
+    "description": "Permission to create new teams within projects"
+  },
+  {
+    "action": "team:read",
+    "description": "Permission to view team details and information"
+  },
+  {
+    "action": "team:update",
+    "description": "Permission to modify team settings and information"
+  },
+  {
+    "action": "team:delete",
+    "description": "Permission to permanently remove teams"
+  },
+  {
+    "action": "team:manage-members",
+    "description": "Permission to add, remove, and manage team members"
+  },
+  {
+    "action": "task:create",
+    "description": "Permission to create new tasks and work assignments"
+  },
+  {
+    "action": "task:read",
+    "description": "Permission to view task details and information"
+  },
+  {
+    "action": "task:update",
+    "description": "Permission to modify task details and requirements"
+  },
+  {
+    "action": "task:delete",
+    "description": "Permission to permanently remove tasks"
+  },
+  {
+    "action": "task:assign",
+    "description": "Permission to assign tasks to team members"
+  },
+  {
+    "action": "task:update-status",
+    "description": "Permission to update task status and progress"
+  },
+  {
+    "action": "talent:create",
+    "description": "Permission to create new talent profiles"
+  },
+  {
+    "action": "talent:read",
+    "description": "Permission to view talent profiles and information"
+  },
+  {
+    "action": "talent:update",
+    "description": "Permission to modify talent profile information"
+  },
+  {
+    "action": "talent:delete",
+    "description": "Permission to permanently remove talent profiles"
+  },
+  {
+    "action": "hackathon:create",
+    "description": "Permission to create new hackathons and competitions"
+  },
+  {
+    "action": "hackathon:read",
+    "description": "Permission to view hackathon details and information"
+  },
+  {
+    "action": "hackathon:update",
+    "description": "Permission to modify hackathon settings and rules"
+  },
+  {
+    "action": "hackathon:delete",
+    "description": "Permission to permanently remove hackathons"
+  },
+  {
+    "action": "hackathon:manage",
+    "description": "Permission to manage hackathon lifecycle and operations"
+  },
+  {
+    "action": "entry:create",
+    "description": "Permission to create new hackathon entries"
+  },
+  {
+    "action": "entry:read",
+    "description": "Permission to view hackathon entry details"
+  },
+  {
+    "action": "entry:update",
+    "description": "Permission to modify hackathon entry information"
+  },
+  {
+    "action": "entry:delete",
+    "description": "Permission to permanently remove hackathon entries"
+  },
+  {
+    "action": "entry:submit",
+    "description": "Permission to submit entries for evaluation"
+  },
+  {
+    "action": "submission:create",
+    "description": "Permission to create new project submissions"
+  },
+  {
+    "action": "submission:read",
+    "description": "Permission to view submission details and content"
+  },
+  {
+    "action": "submission:update",
+    "description": "Permission to modify submission content and information"
+  },
+  {
+    "action": "submission:delete",
+    "description": "Permission to permanently remove submissions"
+  },
+  {
+    "action": "submission:evaluate",
+    "description": "Permission to evaluate and score submissions"
+  },
+  {
+    "action": "form:create",
+    "description": "Permission to create new forms and form templates"
+  },
+  {
+    "action": "form:read",
+    "description": "Permission to view form definitions and templates"
+  },
+  {
+    "action": "form:update",
+    "description": "Permission to modify form structure and fields"
+  },
+  {
+    "action": "form:delete",
+    "description": "Permission to permanently remove forms"
+  },
+  {
+    "action": "mentor:create",
+    "description": "Permission to create and register mentor profiles"
+  },
+  {
+    "action": "mentor:read",
+    "description": "Permission to view mentor profiles and information"
+  },
+  {
+    "action": "mentor:update",
+    "description": "Permission to modify mentor profile information"
+  },
+  {
+    "action": "mentor:delete",
+    "description": "Permission to permanently remove mentor profiles"
+  },
+  {
+    "action": "mentor:assign",
+    "description": "Permission to assign mentors to projects and talents"
+  },
+  {
+    "action": "invitation:create",
+    "description": "Permission to create and send invitations"
+  },
+  {
+    "action": "invitation:read",
+    "description": "Permission to view invitation details and status"
+  },
+  {
+    "action": "invitation:update",
+    "description": "Permission to modify invitation settings"
+  },
+  {
+    "action": "invitation:delete",
+    "description": "Permission to cancel and remove invitations"
+  },
+  {
+    "action": "invitation:send",
+    "description": "Permission to send invitations to users"
+  },
+  {
+    "action": "portfolio:read",
+    "description": "Permission to view talent portfolios and work samples"
+  },
+  {
+    "action": "portfolio:update",
+    "description": "Permission to modify portfolio content and showcase"
+  },
+  {
+    "action": "referral:read",
+    "description": "Permission to view referral program information"
+  },
+  {
+    "action": "referral:create",
+    "description": "Permission to create and manage referrals"
+  },
+  {
+    "action": "notification:read",
+    "description": "Permission to view notifications"
+  },
+  {
+    "action": "notification:update",
+    "description": "Permission to mark notifications as read or update status"
+  },
+  {
+    "action": "notification:delete",
+    "description": "Permission to delete notifications"
   },
   {
     "action": "subscription:create",
@@ -193,7 +401,7 @@
   },
   {
     "action": "analytics:read",
-    "description": "Permission to view analytics data"
+    "description": "Permission to view analytics data and insights"
   },
   {
     "action": "analytics:update",
@@ -212,20 +420,36 @@
     "description": "Permission to modify revenue data"
   },
   {
-    "action": "ads:create",
-    "description": "Permission to create new advertisements"
+    "action": "metrics:create",
+    "description": "Permission to create and track new metrics"
   },
   {
-    "action": "ads:read",
-    "description": "Permission to view advertisement details"
+    "action": "metrics:read",
+    "description": "Permission to view metrics and performance data"
   },
   {
-    "action": "ads:update",
-    "description": "Permission to modify advertisement content"
+    "action": "metrics:update",
+    "description": "Permission to modify metrics configuration and settings"
   },
   {
-    "action": "ads:delete",
-    "description": "Permission to remove advertisements"
+    "action": "metrics:delete",
+    "description": "Permission to remove metrics and tracking data"
+  },
+  {
+    "action": "report:generate",
+    "description": "Permission to generate reports in various formats (CSV, PDF, XML)"
+  },
+  {
+    "action": "report:read",
+    "description": "Permission to view generated reports and report history"
+  },
+  {
+    "action": "report:export",
+    "description": "Permission to export reports in different formats"
+  },
+  {
+    "action": "report:delete",
+    "description": "Permission to delete generated reports"
   },
   {
     "action": "system:read",

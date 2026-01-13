@@ -3,7 +3,13 @@ import asyncHandler from '../../middlewares/async.mdw';
 import ErrorResponse from '../../utils/error.util';
 import workspaceService from './workspace.service';
 import workspaceRepository from './workspace.repository';
-import { UpdateWorkspaceDTO, CreateWorkspaceDTO, InviteMemberDTO } from './workspace.dto';
+import {
+    UpdateWorkspaceDTO,
+    CreateWorkspaceDTO,
+    InviteMemberDTO,
+    AddMemberDTO,
+    RemoveMemberDTO,
+} from './workspace.dto';
 import redisWrapper from '../../middlewares/redis.mdw';
 import invitationService from '../Invitation/invitation.service';
 import { InvitationType } from '../Invitation/invitation.interface';
@@ -208,7 +214,11 @@ export const updateWorkspace: RequestHandler = asyncHandler(
         if (!id)
             return next(new ErrorResponse('Workspace ID is required', 400, []));
 
-        const data: UpdateWorkspaceDTO = req.body;
+        const data: UpdateWorkspaceDTO = {
+            ...req.body,
+            workspaceId: id,
+            user: userId,
+        };
 
         // Verify user has permission (optional: check if user is creator or member)
         const workspaceResult = await workspaceRepository.findById(id);
@@ -216,7 +226,7 @@ export const updateWorkspace: RequestHandler = asyncHandler(
             return next(new ErrorResponse('Workspace not found', 404, []));
         }
 
-        const result = await workspaceService.updateWorkspace(id, data);
+        const result = await workspaceService.updateWorkspace(data);
 
         if (result.error) {
             return next(
@@ -262,7 +272,7 @@ export const deleteWorkspace: RequestHandler = asyncHandler(
             return next(new ErrorResponse('Workspace not found', 404, []));
         }
 
-        const result = await workspaceService.deleteWorkspace(id);
+        const result = await workspaceService.deleteWorkspace(id, userId);
 
         if (result.error) {
             return next(
@@ -299,14 +309,22 @@ export const addMember: RequestHandler = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
-        const { userId: memberUserId } = req.body;
+        const { userId: memberUserId, role } = req.body;
 
         if (!id)
             return next(new ErrorResponse('Workspace ID is required', 400, []));
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
-        const result = await workspaceService.addMember(id, memberUserId);
+        const data: AddMemberDTO = {
+            workspaceId: id,
+            userId: memberUserId,
+            role,
+            invitedBy: userId,
+            requestingUser: userId,
+        };
+
+        const result = await workspaceService.addMember(data);
 
         if (result.error) {
             return next(
@@ -349,10 +367,13 @@ export const removeMember: RequestHandler = asyncHandler(
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
-        const result = await workspaceService.removeMember(
-            id,
-            memberUserId,
-        );
+        const data: RemoveMemberDTO = {
+            workspaceId: id,
+            userId: memberUserId,
+            requestingUser: userId,
+        };
+
+        const result = await workspaceService.removeMember(data);
 
         if (result.error) {
             return next(
@@ -414,7 +435,7 @@ export const inviteMember: RequestHandler = asyncHandler(
         const invitationResult = await invitationService.newInvitation({
             invitedBy: userId,
             inviteeEmail: email.trim().toLowerCase(),
-            inviteType: InvitationType.PROJECT,
+            inviteType: InvitationType.WORKSPACE,
             resourceId: workspaceId,
         });
 

@@ -4,6 +4,7 @@ import userRoutes from '../../modules/user/user.router';
 import businessRoutes from '../../modules/business/business.router';
 import talentRoutes from '../../modules/talents/talent.router';
 import workspaceRoutes from '../../modules/workspace/workspace.router';
+import roleRoutes from '../../modules/role/role.router';
 import previewRoutes from '../../views/preview/preview.router';
 import { ENVType } from '@/utils/enums.util';
 import ENV from '@/utils/env.util';
@@ -15,6 +16,7 @@ router.use('/user', userRoutes);
 router.use('/business', businessRoutes);
 router.use('/talent', talentRoutes);
 router.use('/workspace', workspaceRoutes);
+router.use('/roles', roleRoutes);
 router.use('/preview', previewRoutes); // This is used to preview the email templates
 // Add new routes
 

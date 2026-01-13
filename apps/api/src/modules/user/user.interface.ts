@@ -68,9 +68,12 @@ export interface IUserDoc extends Document {
     twoFactorEnabled: boolean;
 
     devices: Array<IDevice>;
+    googleId: string 
+    appleId: string 
+    githubId: string  
 
     // relationships
-    role: IRoleDoc | any;
+    roles: Array<IRoleDoc | any>;
     permissions: Array<IPermissionDoc | any>;
     notifications: Array<INotificationDoc | any>;
     createdBy: ObjectId | any;
@@ -98,8 +101,6 @@ export enum UserType {
     ADMIN = 'admin',
     BUSINESS = 'business',
     TALENT = 'talent',
-    MENTOR = 'mentor',
-    EVALUATOR = 'evaluator',
     USER = 'user',
 }
 

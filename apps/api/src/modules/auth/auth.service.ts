@@ -15,7 +15,6 @@ import {
     VerifyOtpDTO,
 } from './auth.dto';
 import User from '../../modules/user/user.model';
-import Role from '../../modules/role/role.model';
 import userRepository from '../user/user.repository';
 import ErrorResponse from '../../utils/error.util';
 import {
@@ -588,23 +587,6 @@ class AuthService {
         return result;
     }
 
-    /**
-     * @name attachRole
-     * @param user
-     * @param role
-     */
-    public async attachRole(user: IUserDoc, role: string): Promise<void> {
-        const userRole = await Role.findOne({ name: role });
-
-        if (userRole) {
-            user.role = userRole._id;
-            userRole.users = [...userRole.users, user._id];
-            await user.save();
-            await userRole.save();
-        } else {
-            throw new ErrorResponse(`Role ${role} does not exist.`, 400, []);
-        }
-    }
 }
 
 export default new AuthService();

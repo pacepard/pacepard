@@ -114,12 +114,18 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.3
         version: 9.0.3
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
       mailersend:
         specifier: ^2.6.0
         version: 2.6.0
       mongoose:
         specifier: ^9.0.1
         version: 9.0.1(socks@2.8.7)
+      node-device-detector:
+        specifier: ^2.2.5
+        version: 2.2.5
       nodemailer:
         specifier: ^7.0.11
         version: 7.0.11
@@ -178,6 +184,9 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.10
         version: 9.0.10
+      '@types/luxon':
+        specifier: ^3.7.1
+        version: 3.7.1
       '@types/mongoose':
         specifier: ^5.11.97
         version: 5.11.97(socks@2.8.7)
@@ -4423,6 +4432,9 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
+  '@types/luxon@3.7.1':
+    resolution: {integrity: sha512-H3iskjFIAn5SlJU7OuxUmTEpebK6TKB8rxZShDslBMZJ5u9S//KM1sbdAisiSrqwLQncVjnpi2OK2J51h+4lsg==}
+
   '@types/markdown-it@14.1.2':
     resolution: {integrity: sha512-promo4eFwuiW+TfGxhi+0x3czqTYJkG8qB17ZUJiVF10Xm7NLVRSLUsfRTU/6h1e24VvRnXCx+hG7li58lkzog==}
 
@@ -8644,6 +8656,10 @@ packages:
 
   no-case@2.3.2:
     resolution: {integrity: sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==}
+
+  node-device-detector@2.2.5:
+    resolution: {integrity: sha512-5HZI7nMDHGNnFMjWcmSnoJM5X57ZnmyTCIiW6AxYrJGCbpNjgiV8u8z3HAUSykf6PbXgI1/BqY3dlNova+1LNg==}
+    engines: {node: '>= 10.x', npm: '>= 6.x'}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -16495,6 +16511,8 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
+  '@types/luxon@3.7.1': {}
+
   '@types/markdown-it@14.1.2':
     dependencies:
       '@types/linkify-it': 5.0.0
@@ -21701,6 +21719,8 @@ snapshots:
   no-case@2.3.2:
     dependencies:
       lower-case: 1.1.4
+
+  node-device-detector@2.2.5: {}
 
   node-domexception@1.0.0: {}
 

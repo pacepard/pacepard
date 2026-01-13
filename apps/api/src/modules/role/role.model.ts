@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types, Model, ObjectId } from "mongoose";
 import { IRoleDoc } from "../../modules/role/role.interface";
-import slugify from "slugify";
+import { genSlug } from "../../utils/helpers.util";
 import { DbModels } from "../../utils/enums.util";
 import { UserType } from "../user/user.interface";
     import { format } from "node:path";
@@ -10,8 +10,6 @@ const RoleSchema = new mongoose.Schema<IRoleDoc>(
     name: {
       type: String,
       required: [true, "please add a role name"],
-      default: UserType.USER,
-      enum: Object.values(UserType),
       unique: true,
     },
     description: {
@@ -47,20 +45,18 @@ const RoleSchema = new mongoose.Schema<IRoleDoc>(
 
 RoleSchema.set("toJSON", { virtuals: true, getters: true });
 
-;(RoleSchema as any).pre("save", function (this: IRoleDoc, next: (err?: any) => void) {
-  this.slug = slugify(this.name, { lower: true, replacement: "-" });
-  next();
+(RoleSchema as any).pre("save", async function (this: IRoleDoc) {
+  this.slug = genSlug(this.name);
 });
 
-;(RoleSchema as any).pre("insertMany", function (next: (err?: any) => void, docs: any[]) {
+(RoleSchema as any).pre("insertMany", async function (docs: any[]) {
   if (Array.isArray(docs)) {
     docs.forEach((doc: any) => {
       if (doc && !doc.slug && doc.name) {
-        doc.slug = slugify(doc.name, { lower: true, replacement: "-" });
+        doc.slug = genSlug(doc.name);
       }
     });
   }
-  next();
 });
 
 RoleSchema.methods.getAll = async () => {

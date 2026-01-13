@@ -115,7 +115,7 @@ previewRoutes.get('/:category/:template', (req: Request, res: Response, next: Ne
         },
         'verify-otp': {
             name: 'Damola',
-            code: '123456',
+            code: '596145',
             expiry: '10 minutes',
         },
         'welcome': {

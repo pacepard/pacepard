@@ -1,28 +1,15 @@
 import { Document, Types } from 'mongoose';
-import { PermissionAction } from './permission.action';
 
 type ObjectId = Types.ObjectId;
 
 export interface IPermissionDoc extends Document {
-    //action: string;
-
-    action: PermissionAction;
+    action: string;
     description: string;
-    resource: string;
 
-    // Metadata
-    isActive: boolean;
-
-    // time stamps
+    // timestamps
     createdAt: Date;
-    
     updatedAt: Date;
     _version: number;
     _id: ObjectId;
     id: ObjectId;
-}
-
-export interface IRolePermission {
-    permission: string;
-    conditions?: Record<string, any>;
 }

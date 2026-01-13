@@ -1,11 +1,18 @@
 import { Types } from 'mongoose';
 import { dateToday, IDateToday } from '@btffamily/pacitude';
-import { IWorkspaceDoc } from './workspace.interface';
-import { CreateWorkspaceDTO, UpdateWorkspaceDTO } from './workspace.dto';
+import { IWorkspaceDoc, WorkspaceMemberRole } from './workspace.interface';
+import {
+    CreateWorkspaceDTO,
+    UpdateWorkspaceDTO,
+    AddMemberDTO,
+    RemoveMemberDTO,
+} from './workspace.dto';
 import workspaceRepository from './workspace.repository';
 import { IResult } from '../../utils/interfaces.util';
 import { IUserDoc } from '../user/user.interface';
 import { genWorkspaceCode } from '../../utils/code.util';
+import permissionService from '../permission/permission.service';
+import { getWorkspaceMemberRole } from '../role/role.util';
 
 type ObjectId = Types.ObjectId;
 
@@ -81,10 +88,16 @@ class WorkspaceService {
         const workspaceData = {
             code: workspaceCode,
             name: name.trim(),
-            createdBy: userId,
+            createdBy: new Types.ObjectId(userId),
             hackathons: [],
             projects: [],
-            members: [userId], // Add creator as a member
+            members: [
+                {
+                    user: new Types.ObjectId(userId),
+                    role: WorkspaceMemberRole.OWNER, // Creator is always OWNER
+                    joinedAt: new Date(),
+                },
+            ],
             invites: [],
             mentors: [],
             judges: [],
@@ -109,11 +122,9 @@ class WorkspaceService {
     /**
      * @name updateWorkspace
      * @description Updates a workspace with new details
+     * @param data - UpdateWorkspaceDTO containing workspaceId, user, and update data
      */
-    public async updateWorkspace(
-        workspaceId: string,
-        data: UpdateWorkspaceDTO,
-    ): Promise<IResult> {
+    public async updateWorkspace(data: UpdateWorkspaceDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -121,12 +132,34 @@ class WorkspaceService {
             data: {},
         };
 
+        const { workspaceId, user } = data;
+
         // Find the workspace
         const findResult = await workspaceRepository.findById(workspaceId);
         if (findResult.error || !findResult.data) {
             result.error = true;
             result.code = 404;
             result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = findResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            user,
+            { entity: 'workspace', action: 'update' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to update this workspace';
             return result;
         }
 
@@ -233,8 +266,13 @@ class WorkspaceService {
     /**
      * @name deleteWorkspace
      * @description Deletes a workspace
+     * @param workspaceId - The workspace ID
+     * @param user - Optional user for permission checking
      */
-    public async deleteWorkspace(workspaceId: string): Promise<IResult> {
+    public async deleteWorkspace(
+        workspaceId: string,
+        user?: IUserDoc | string,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -249,6 +287,28 @@ class WorkspaceService {
             result.code = 404;
             result.message = 'Workspace not found';
             return result;
+        }
+
+        const workspace = findResult.data as IWorkspaceDoc;
+
+        // Check permissions if user is provided
+        if (user) {
+            const hasPermission = await permissionService.hasPermission(
+                user,
+                { entity: 'workspace', action: 'delete' },
+                {
+                    resource: workspace,
+                    resourceType: 'workspace',
+                    checkOwnership: true,
+                },
+            );
+
+            if (!hasPermission) {
+                result.error = true;
+                result.code = 403;
+                result.message = 'You do not have permission to delete this workspace';
+                return result;
+            }
         }
 
         // Delete the workspace
@@ -268,18 +328,24 @@ class WorkspaceService {
 
     /**
      * @name addMember
-     * @description Adds a member to a workspace
+     * @description Adds a member to a workspace with a specific role
+     * @param data - AddMemberDTO containing workspaceId, userId, role, and requestingUser
      */
-    public async addMember(
-        workspaceId: string,
-        userId: string,
-    ): Promise<IResult> {
+    public async addMember(data: AddMemberDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
             code: 200,
             data: {},
         };
+
+        const {
+            workspaceId,
+            userId,
+            role = WorkspaceMemberRole.MANAGER,
+            invitedBy,
+            requestingUser,
+        } = data;
 
         const workspaceResult = await workspaceRepository.findById(workspaceId);
         if (workspaceResult.error || !workspaceResult.data) {
@@ -290,18 +356,48 @@ class WorkspaceService {
         }
 
         const workspace = workspaceResult.data as IWorkspaceDoc;
-        const members = (workspace.members || []).map((m: any) =>
-            typeof m === 'object' ? String(m._id || m.id) : String(m),
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-members' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
         );
 
-        if (members.includes(userId)) {
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage members in this workspace';
+            return result;
+        }
+
+        // Check if user is already a member
+        const existingMember = (workspace.members || []).find((m: any) => {
+            const memberUserId = typeof m.user === 'object' 
+                ? String(m.user._id || m.user.id) 
+                : String(m.user);
+            return memberUserId === userId;
+        });
+
+        if (existingMember) {
             result.error = true;
             result.code = 400;
             result.message = 'User is already a member of this workspace';
             return result;
         }
 
-        members.push(userId);
+        // Add new member with role
+        const members = [...(workspace.members || [])];
+        members.push({
+            user: new Types.ObjectId(userId),
+            role: role,
+            joinedAt: new Date(),
+            invitedBy: invitedBy ? new Types.ObjectId(invitedBy) : undefined,
+        });
 
         const updateResult = await workspaceRepository.updateWorkspace(
             workspaceId,
@@ -325,17 +421,17 @@ class WorkspaceService {
     /**
      * @name removeMember
      * @description Removes a member from a workspace
+     * @param data - RemoveMemberDTO containing workspaceId, userId, and requestingUser
      */
-    public async removeMember(
-        workspaceId: string,
-        userId: string,
-    ): Promise<IResult> {
+    public async removeMember(data: RemoveMemberDTO): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
             code: 200,
             data: {},
         };
+
+        const { workspaceId, userId, requestingUser } = data;
 
         const workspaceResult = await workspaceRepository.findById(workspaceId);
         if (workspaceResult.error || !workspaceResult.data) {
@@ -346,11 +442,40 @@ class WorkspaceService {
         }
 
         const workspace = workspaceResult.data as IWorkspaceDoc;
-        const members = (workspace.members || [])
-            .map((m: any) =>
-                typeof m === 'object' ? String(m._id || m.id) : String(m),
-            )
-            .filter((id: string) => id !== userId);
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-members' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage members in this workspace';
+            return result;
+        }
+
+        // Find and remove the member
+        const members = (workspace.members || []).filter((m: any) => {
+            const memberUserId = typeof m.user === 'object' 
+                ? String(m.user._id || m.user.id) 
+                : String(m.user);
+            return memberUserId !== userId;
+        });
+
+        // Check if member was found
+        if (members.length === (workspace.members || []).length) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Member not found in this workspace';
+            return result;
+        }
 
         const updateResult = await workspaceRepository.updateWorkspace(
             workspaceId,

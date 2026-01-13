@@ -4,6 +4,7 @@ import connectDB from './configs/db.config';
 import redisHandler from './middlewares/redis.mdw';
 import { REDIS_CONFIG } from './configs/redis.config';
 import startWorkers from './tasks/workers/worker';
+import seedData from './configs/seeds/seeder.seed';
 
 const PORT = process.env.APP_PORT as string;
 
@@ -11,6 +12,9 @@ const startServer = async (): Promise<void> => {};
 
 // Connect to Database
 await connectDB();
+
+// Seed Data
+await seedData();
 
 //Connect to Redis
 await redisHandler.connect(REDIS_CONFIG);

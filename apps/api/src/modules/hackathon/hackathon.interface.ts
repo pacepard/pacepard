@@ -52,9 +52,10 @@ export interface IHackathonDoc extends Document {
     entries: Array<IEntryDoc | any>; // entriies to an hacothon
     submissions: Array<ISubmissionDoc | any>; // submissions to an hacothon
 
-    members: Array<IUserDoc | any>; // assigned members of a workspace who can manage a hackathon
-    mentors: Array<IUserDoc | any>; // mentors of a hackathon
-    judges: Array<IUserDoc | any>; // judges of a hackathon
+    members: Array<IHackathonMember>; // assigned members of a workspace who can manage a hackathon
+    mentors: Array<IHackathonMentor>; // mentors of a hackathon
+    judges: Array<IHackathonJudge>; // judges of a hackathon
+    organizers: Array<IHackathonOrganizer>; // organizers of a hackathon
 
     // time stamps
     createdAt: Date;
@@ -81,4 +82,36 @@ export enum HackStatusType {
     PUBLISHED = 'published',
     CLOSED = 'closed',
     ARCHIVED = 'archived',
+}
+
+export interface IHackathonMember {
+    user: ObjectId | IUserDoc;
+    role: HackathonMemberRole;
+    joinedAt: Date;
+    assignedBy?: ObjectId;
+}
+
+export interface IHackathonMentor {
+    user: ObjectId | IUserDoc;
+    assignedAt: Date;
+    assignedBy: ObjectId;
+    status?: 'active' | 'inactive';
+}
+
+export interface IHackathonJudge {
+    user: ObjectId | IUserDoc;
+    assignedAt: Date;
+    assignedBy: ObjectId;
+    status?: 'active' | 'inactive';
+}
+
+export interface IHackathonOrganizer {
+    user: ObjectId | IUserDoc;
+    assignedAt: Date;
+    assignedBy: ObjectId;
+}
+
+export enum HackathonMemberRole {
+    OWNER = 'OWNER',      // Created the hackathon
+    ORGANIZER = 'ORGANIZER' // Can manage hackathon but not delete
 }

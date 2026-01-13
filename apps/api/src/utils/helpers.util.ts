@@ -1,5 +1,5 @@
 import slugify from 'slugify';
-import { S3Folder } from './enums.util';
+import { FileMimeType, FileType, S3Folder } from './enums.util';
 
 export const generatePassword = (length: number = 16) => {
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -69,6 +69,30 @@ export const createUniqueFileName = (arg: string, ext: string) => {
 
     return fileName;
 };
+
+
+export const determineFileType = (mimeType: FileMimeType): FileType=> {
+    if (mimeType.startsWith("audio/")) return FileType.AUDIO;
+    if (mimeType.startsWith("image/")) return FileType.IMAGE;
+    if (mimeType.startsWith("video/")) return FileType.VIDEO;
+    if (mimeType === "application/pdf") return FileType.DOCUMENT;
+    throw new Error(`Unsupported MIME type: ${mimeType}`);
+  }
+  
+  export const genFileName = (
+    name: string | undefined,
+    fileType: FileType,
+  ): string => {
+    const baseName = name?.trim() && name.length > 0 ? name : "troott-file";
+  
+    const now = new Date();
+    const day = now.toISOString().split("T")[0]; // YYYY-MM-DD
+    const time = now.toTimeString().split(" ")[0]?.replace(/:/g, "-") || ""; // HH-MM-SS
+  
+    return `${baseName}-${fileType.toLowerCase()}-${day}-${time}`;
+  };
+  
+  
 
 interface GetS3Folder {
     (mimeType: string): S3Folder;

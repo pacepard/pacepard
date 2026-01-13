@@ -37,7 +37,7 @@ class AuthMapper {
             isLocked: user.isLocked,
             lockedUntil: user.lockedUntil,
 
-            roles: user.role ? [user.role] : [],
+            roles: user.roles || [],
         };
 
         return result;
@@ -83,7 +83,7 @@ class AuthMapper {
             isLocked: user.isLocked,
             lockedUntil: user.lockedUntil,
 
-            roles: user.role ? [user.role] : [],
+            roles: user.roles || [],
         };
 
         return result;

@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IWorkspaceDoc } from './workspace.interface';
+import { IWorkspaceDoc, WorkspaceMemberRole } from './workspace.interface';
 import { DbModels } from '../../utils/enums.util';
 
 const WorkspaceSchema = new Schema<IWorkspaceDoc>(
@@ -13,8 +13,46 @@ const WorkspaceSchema = new Schema<IWorkspaceDoc>(
         },
         hackathons: [{ type: Schema.Types.ObjectId, ref: DbModels.HACKATHON }],
         projects: [{ type: Schema.Types.ObjectId, ref: DbModels.PROJECT }],
-        members: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
-        invites: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
+        members: [
+            {
+                user: {
+                    type: Schema.Types.ObjectId,
+                    ref: DbModels.USER,
+                    required: true,
+                },
+                role: {
+                    type: String,
+                    enum: Object.values(WorkspaceMemberRole),
+                    required: true,
+                },
+                joinedAt: { type: Date, default: Date.now },
+                invitedBy: {
+                    type: Schema.Types.ObjectId,
+                    ref: DbModels.USER,
+                },
+            },
+        ],
+        invites: [
+            {
+                user: {
+                    type: Schema.Types.ObjectId,
+                    ref: DbModels.USER,
+                    required: true,
+                },
+                role: {
+                    type: String,
+                    enum: Object.values(WorkspaceMemberRole),
+                    required: true,
+                },
+                invitedBy: {
+                    type: Schema.Types.ObjectId,
+                    ref: DbModels.USER,
+                    required: true,
+                },
+                invitedAt: { type: Date, default: Date.now },
+                expiresAt: { type: Date },
+            },
+        ],
         mentors: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
         judges: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
     },

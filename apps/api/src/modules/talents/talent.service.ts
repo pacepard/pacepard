@@ -6,6 +6,8 @@ import { IResult } from '../../utils/interfaces.util';
 import { IUserDoc, UserType } from '../user/user.interface';
 import { genSlug } from '../../utils/helpers.util';
 import { genUserCode } from '../../utils/code.util';
+import roleService from '../role/role.service';
+import PermissionService from '../permission/permission.service';
 
 class TalentService {
     public result: IResult;
@@ -90,6 +92,51 @@ class TalentService {
             result.message =
                 createResult.message || 'Failed to create talent profile';
             return result;
+        }
+
+        // Ensure user has TALENT role and permissions
+        try {
+            // Check if user already has roles
+            if (!user.roles || user.roles.length === 0) {
+                // Attach TALENT role
+                const roleAttachResult = await roleService.attachRole(
+                    user,
+                    UserType.TALENT,
+                );
+                if (!roleAttachResult.error) {
+                    user = roleAttachResult.data as IUserDoc;
+
+                    // Initialize permissions for TALENT role
+                    const permResult =
+                        await PermissionService.initiatePermissionData(user);
+                    if (!permResult.error) {
+                        user = permResult.data as IUserDoc;
+                    }
+
+                    // Clear permission cache
+                    await PermissionService.clearUserCache(String(user._id));
+                }
+            } else {
+                // Check if user already has TALENT role
+                const hasTalentRole = user.roles.some(
+                    (r: any) =>
+                        (r?.name || r?.toString()) === UserType.TALENT,
+                );
+                if (!hasTalentRole) {
+                    // Attach TALENT role
+                    const roleAttachResult = await roleService.attachRole(
+                        user,
+                        UserType.TALENT,
+                    );
+                    if (!roleAttachResult.error) {
+                        user = roleAttachResult.data as IUserDoc;
+                        await PermissionService.clearUserCache(String(user._id));
+                    }
+                }
+            }
+        } catch (error) {
+            // Log error but don't fail talent creation
+            console.error('Failed to initialize roles/permissions for talent:', error);
         }
 
         result.message = 'Talent profile created successfully';
