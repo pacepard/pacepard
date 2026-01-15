@@ -1,5 +1,5 @@
 import { Random } from '@btffamily/pacitude';
-import { UserType } from '../modules/user/user.interface';
+import { UserType } from '../modules/users/user/user.interface';
 
 /**
  * @name genUserCode
@@ -94,4 +94,100 @@ export const genTeamCode = (): string => {
     const code = Random.randomNum(6);
 
     return `tm-${year}-${code}`;
+};
+
+/**
+ * @name genMentorCode
+ * @description Generates a unique, standardized identification code for a mentor.
+ * @returns {string} A formatted string in format: mt-{year}-{random_6_digits}.
+ * @example
+ * // Returns "mt-2025-123456"
+ * const code = genMentorCode();
+ */
+export const genMentorCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `mt-${year}-${code}`;
+};
+
+/**
+ * @name genJudgeCode
+ * @description Generates a unique, standardized identification code for a judge.
+ * @returns {string} A formatted string in format: jd-{year}-{random_6_digits}.
+ * @example
+ * // Returns "jd-2025-123456"
+ * const code = genJudgeCode();
+ */
+export const genJudgeCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `jd-${year}-${code}`;
+};
+
+/**
+ * @name genHackathonCode
+ * @description Generates a unique, standardized identification code for a hackathon.
+ * @returns {string} A formatted string in format: hk-{year}-{random_6_digits}.
+ * @example
+ * // Returns "hk-2025-123456"
+ * const code = genHackathonCode();
+ */
+export const genHackathonCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `hk-${year}-${code}`;
+};
+
+/**
+ * @name genEntryCode
+ * @description Generates a unique, standardized identification code for an entry.
+ * @returns {string} A formatted string in format: ent-{year}-{random_6_digits}.
+ * @example
+ * // Returns "ent-2025-123456"
+ * const code = genEntryCode();
+ */
+export const genEntryCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `ent-${year}-${code}`;
+};
+
+/**
+ * @name genSquadCode
+ * @description Generates a unique, standardized identification code for a squad.
+ * @returns {string} A formatted string in format: sqd-{year}-{random_6_digits}.
+ * @example
+ * // Returns "sqd-2025-123456"
+ * const code = genSquadCode();
+ */
+export const genSquadCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `sqd-${year}-${code}`;
+};
+
+/**
+ * @name genSubmissionCode
+ * @description Generates a unique, standardized identification code for a submission.
+ * @returns {string} A formatted string in format: sub-{year}-{random_6_digits}.
+ * @example
+ * // Returns "sub-2025-123456"
+ * const code = genSubmissionCode();
+ */
+export const genSubmissionCode = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const code = Random.randomNum(6);
+
+    return `sub-${year}-${code}`;
 };

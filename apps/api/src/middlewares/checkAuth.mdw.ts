@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import ErrorResponse from '../utils/error.util';
-import userRepository from '../modules/user/user.repository';
+import userRepository from '../modules/users/user/user.repository';
 import asyncHandler from './async.mdw';
-import { IUserDoc } from '@/modules/user/user.interface';
+import { IUserDoc } from '@/modules/users/user/user.interface';
 import tokenService from '@/services/token.service';
-import authService from '../modules/auth/auth.service';
+import authService from '../modules/authentication/auth/auth.service';
 
 /**
  * @description Middleware to verify user authentication and token validity

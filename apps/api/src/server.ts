@@ -5,6 +5,7 @@ import redisHandler from './middlewares/redis.mdw';
 import { REDIS_CONFIG } from './configs/redis.config';
 import startWorkers from './tasks/workers/worker';
 import seedData from './configs/seeds/seeder.seed';
+import startScheduler, { shutdownScheduler } from './tasks/scheduler/scheduler';
 
 const PORT = process.env.APP_PORT as string;
 
@@ -21,6 +22,9 @@ await redisHandler.connect(REDIS_CONFIG);
 
 // Start Workers
 await startWorkers();
+
+// Start Scheduler (Bull + Cron)
+await startScheduler();
 
 startServer();
 
@@ -39,5 +43,6 @@ process.on('unhandledRejection', (err: any) => {
 
 process.on('SIGINT', async () => {
     console.log(colors.yellow('Server shutting down...'));
+    await shutdownScheduler();
     server.close(() => process.exit(0));
 });

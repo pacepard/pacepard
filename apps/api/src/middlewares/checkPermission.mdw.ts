@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import asyncHandler from './async.mdw';
-import { hasPermission } from '../modules/permission/permission.service';
+import { hasPermission } from '../modules/authentication/permission/permission.service';
 
 type PermInput = string | { entity: string; action: string };
 

@@ -1,9 +1,9 @@
 import logger from '../../utils/logger.util';
-import User from '@/modules/user/user.model';
-import Role from '@/modules/role/role.model';
-import { UserType, PasswordType, OnboardStatus, InviteStatus } from '@/modules/user/user.interface';
+import User from '@/modules/users/user/user.model';
+import Role from '@/modules/authentication/role/role.model';
+import { UserType, PasswordType, OnboardStatus, InviteStatus } from '@/modules/users/user/user.interface';
 import ErrorResponse from '@/utils/error.util';
-import authService from '@/modules/auth/auth.service';
+import authService from '@/modules/authentication/auth/auth.service';
 
 /**
  * @name seedUsers

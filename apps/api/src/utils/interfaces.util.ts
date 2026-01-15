@@ -10,7 +10,7 @@ import {
 } from './enums.util.ts';
 import { FileInfo } from 'busboy';
 import { PassThrough } from 'stream';
-import { IUserDoc } from '../modules/user/user.interface.ts';
+import { IUserDoc } from '../modules/users/user/user.interface.js';
 
 export type Nullable<T> = T | null;
 

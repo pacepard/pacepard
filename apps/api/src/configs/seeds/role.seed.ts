@@ -2,7 +2,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import logger from '../../utils/logger.util';
-import Role from '@/modules/role/role.model';
+import Role from '@/modules/authentication/role/role.model';
 import { IRoleDoc } from '../../utils/interfaces.util';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
