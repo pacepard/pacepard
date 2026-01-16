@@ -111,3 +111,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV CI=true
 WORKDIR /app
 CMD ["pnpm", "--filter", "@pacepard/service", "start"]
+ENV PORT=3000
+# Use the direct path to next in pnpm workspace
+CMD ["/app/node_modules/.pnpm/node_modules/.bin/next", "start"]

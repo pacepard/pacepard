@@ -116,3 +116,6 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
 
 # Start Next.js in production (run from workspace root)
 CMD ["pnpm", "--filter", "@pacepard/web", "start"]
+ENV PORT=3000
+# Use the direct path to next in pnpm workspace
+CMD ["/app/node_modules/.pnpm/node_modules/.bin/next", "start"]

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "pacepard",
   "private": true,
   "packageManager": "pnpm@9.0.0",
@@ -55,4 +56,63 @@
     "turbo": "^2.6.3",
     "typescript": "~5.9.3"
   }
+=======
+    "name": "pacepard",
+    "private": true,
+    "packageManager": "pnpm@9.0.0",
+    "engines": {
+        "node": ">=20"
+    },
+    "scripts": {
+        "build": "turbo run build",
+        "build:api": "turbo run build --filter=@pacepard/api",
+        "build:app": "turbo run build --filter=@pacepard/app",
+        "build:demo": "turbo run build --filter=@pacepard/demo",
+        "build:docs": "turbo run build --filter=@pacepard/api-docs",
+        "build:service": "turbo run build --filter=@pacepard/service",
+        "build:web": "turbo run build --filter=@pacepard/web",
+        "dev": "turbo run dev",
+        "dev:ui": "turbo run dev --ui=tui",
+        "dev:fe": "turbo run dev --ui=tui --filter=@pacepard/app --filter=@pacepard/web",
+        "dev:be": "turbo run dev --ui=tui --filter=@pacepard/api --filter=@pacepard/api-docs",
+        "dev:api": "turbo run dev --filter=@pacepard/api",
+        "dev:demo": "turbo run dev --filter=@pacepard/demo",
+        "dev:web": "turbo run dev --filter=@pacepard/web",
+        "dev:app": "turbo run dev --filter=@pacepard/app",
+        "dev:service": "turbo run dev --filter=@pacepard/service",
+        "dev:docs": "turbo run dev --filter=@pacepard/api-docs",
+        "test": "turbo run test",
+        "test:p": "postman collection run ../../postman/collections/api.postman_collection.json",
+        "test:api": "turbo run test --filter=@pacepard/api",
+        "test:api:watch": "turbo run test:watch --filter=@pacepard/api",
+        "test:api:coverage": "turbo run test:coverage --filter=@pacepard/api",
+        "test:api:ci": "turbo run test:ci --filter=@pacepard/api",
+        "test:api:unit": "turbo run test:unit --filter=@pacepard/api",
+        "test:api:integration": "turbo run test:integration --filter=@pacepard/api",
+        "test:api:modules": "turbo run test:modules --filter=@pacepard/api",
+        "check-types": "turbo run check-types",
+        "lint": "turbo lint",
+        "clean": "turbo run clean",
+        "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
+        "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx}\"",
+        "preview:docs": "pnpm --filter @pacepard/api-docs dev"
+    },
+    "dependencies": {
+        "colors": "^1.4.0",
+        "scheduler": "^0.27.0"
+    },
+    "devDependencies": {
+        "@changesets/cli": "^2.29.8",
+        "@pacepard/configs/eslint": "workspace:*",
+        "@pacepard/configs/typescript": "workspace:*",
+        "@swc/helpers": "^0.5.17",
+        "@types/node": "^25.0.2",
+        "del-cli": "^7.0.0",
+        "mintlify": "^4.2.240",
+        "prettier": "^3.6.2",
+        "rimraf": "^6.1.2",
+        "turbo": "^2.6.3",
+        "typescript": "~5.9.3"
+    }
+>>>>>>> 77db639 (deploy: local test)
 }

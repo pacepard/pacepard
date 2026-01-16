@@ -146,6 +146,8 @@ jobs:
     timeout-minutes: 30
     environment:
       name: ${{ needs.determine-environment.outputs.env }}
+    timeout-minutes: 25
+    needs: [determine-environment]
 
     steps:
       - name: Checkout code
