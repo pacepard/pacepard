@@ -819,6 +819,23 @@ test: add tests
 chore: maintenance tasks
 ```
 
+### Standard Commit Types
+
+Most teams follow [Conventional Commits](https://www.conventionalcommits.org/).
+
+| Type | Description |
+|------|-------------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `chore` | Maintenance, configs, dependencies |
+| `refactor` | Code change that does not add features or fix bugs |
+| `docs` | Documentation only |
+| `test` | Tests only |
+| `style` | Formatting, no logic change |
+| `perf` | Performance improvement |
+| `ci` | CI or pipeline changes |
+| `build` | Build system or dependencies |
+
 ### 7. Keep Your Branch Up to Date
 
 Before pushing or merging your feature, make sure your branch is up to date:
