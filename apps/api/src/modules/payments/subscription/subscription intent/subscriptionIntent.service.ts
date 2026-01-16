@@ -31,6 +31,22 @@ class SubscriptionIntentService {
     }
 
     /**
+     * @name findByTransactionReference
+     * @description Find a subscription intent by its payment transaction reference.
+     * @param reference The transaction reference to search for.
+     * @returns {Promise<ISubscriptionIntentDoc | null>} The subscription intent document or null if not found.
+     */
+    public async findByTransactionReference(
+        reference: string,
+    ): Promise<ISubscriptionIntentDoc | null> {
+        const intent = await SubscriptionIntent.findOne({
+            transactionReference: reference,
+        });
+
+        return intent;
+    }
+
+    /**
      * @name create
      * @description Create a new subscription intent.
      * @param intentData The data for the new subscription intent.

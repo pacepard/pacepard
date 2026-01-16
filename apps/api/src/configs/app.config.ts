@@ -1,4 +1,4 @@
-import express, { type Express } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import errorHandler from '../middlewares/error.mdw';

@@ -73,3 +73,12 @@ export enum BillingFrequency {
     MONTHLY = 'monthly',
     YEARLY = 'yearly',
 }
+
+export enum subRefStatus {
+    SUCCESS = 'success',
+    FAILED = 'failed',
+    ABANDONED = 'abandoned',
+    TIMEOUT = 'timeout',
+    PENDING = 'pending',
+    NOT_FOUND = 'not_found',
+}

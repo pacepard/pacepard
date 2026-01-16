@@ -173,6 +173,208 @@ export const newSubscription: RequestHandler = asyncHandler(
     },
 );
 
+/**
+ * @name handleCallback
+ * @description Handle a redirect to callback url after Payment
+ * @route GET /subscriptions/verify
+ * @access Private
+ */
+export const handleCallback = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        const user: IUserDoc = (req as any).user;
+        const { reference } = req.query;
+
+        if (!userId) {
+            return next(new ErrorResponse('Unauthorized', 401, []));
+        }
+        // Here we get the user profile if business or talent
+        let userProfile = null;
+
+        if (user.isTalent) {
+            const talentProfile = await talentService.getTalentProfile(
+                String(userId),
+            );
+            if (talentProfile.error || !talentProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        talentProfile.message || 'Talent profile not found',
+                        talentProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = talentProfile.data;
+        }
+
+        if (user.isBusiness) {
+            const businessProfile = await businessService.getBusinessProfile(
+                String(userId),
+            );
+            if (businessProfile.error || !businessProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        businessProfile.message || 'Business profile not found',
+                        businessProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = businessProfile.data;
+        }
+
+        if (!reference) {
+            return next(
+                new ErrorResponse('Missing Subscription reference', 400, []),
+            );
+        }
+        // find intent by reference
+        const intent =
+            await subscriptionIntentService.findByTransactionReference(
+                String(reference),
+            );
+
+        if (!intent) {
+            return next(
+                new ErrorResponse('Invalid subscription reference', 404, []),
+            );
+        }
+
+        const result = await subscriptionService.handleSubscriptionIntent(
+            intent,
+            userProfile,
+        );
+
+        res.status(result.code).json({
+            error: result.error,
+            message: result.message,
+            data: result.data,
+        });
+
+        return;
+    },
+);
+
+/**
+ * @name getUserSubscription
+ * @description Return the current user's subscription details.
+ * @route GET /subscriptions/me
+ * @access Private
+ */
+export const getUserSubscription = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        const user: IUserDoc = (req as any).user;
+
+        if (!userId) {
+            return next(new ErrorResponse('Unauthorized', 401, []));
+        }
+        // Here we get the user profile if business or talent
+        let userProfile = null;
+
+        if (user.isTalent) {
+            const talentProfile = await talentService.getTalentProfile(
+                String(userId),
+            );
+            if (talentProfile.error || !talentProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        talentProfile.message || 'Talent profile not found',
+                        talentProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = talentProfile.data;
+        }
+
+        if (user.isBusiness) {
+            const businessProfile = await businessService.getBusinessProfile(
+                String(userId),
+            );
+            if (businessProfile.error || !businessProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        businessProfile.message || 'Business profile not found',
+                        businessProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = businessProfile.data;
+        }
+        const result = await subscriptionService.userSubscription(userProfile);
+
+        res.status(result.code).json({
+            error: result.error,
+            message: result.message,
+            data: result.data,
+        });
+        return;
+    },
+);
+
+/**
+ * @name cancelUserSubscription
+ * @description Cancel the current user's subscription.
+ * @route POST /subscriptions/cancel
+ * @access Private
+ */
+export const cancelUserSubscription = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        const user: IUserDoc = (req as any).user;
+
+        if (!userId) {
+            return next(new ErrorResponse('Unauthorized', 401, []));
+        }
+        // Here we get the user profile if business or talent
+        let userProfile = null;
+
+        if (user.isTalent) {
+            const talentProfile = await talentService.getTalentProfile(
+                String(userId),
+            );
+            if (talentProfile.error || !talentProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        talentProfile.message || 'Talent profile not found',
+                        talentProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = talentProfile.data;
+        }
+
+        if (user.isBusiness) {
+            const businessProfile = await businessService.getBusinessProfile(
+                String(userId),
+            );
+            if (businessProfile.error || !businessProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        businessProfile.message || 'Business profile not found',
+                        businessProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = businessProfile.data;
+        }
+
+        const result =
+            await subscriptionService.cancelSubscription(userProfile);
+
+        res.status(result.code).json({
+            error: result.error,
+            message: result.message,
+            data: result.data,
+        });
+    },
+);
+
+// Helper functions for controller
 const samePlan = (
     intent: ISubscriptionIntentDoc,
     newPlan: { planId: string; currency: string; interval: string },
@@ -183,3 +385,7 @@ const samePlan = (
         intent.interval === newPlan.interval
     );
 };
+
+// const fetchUserProfile = async (user: IUserDoc) => {
+//     let userProfile = null;
+// }

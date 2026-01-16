@@ -89,3 +89,13 @@ export interface IDebitCard {
 
     provider: string;
 }
+
+export enum InitResultType {
+    AMOUNT_CHARGED = 'Amount_Charged',
+    PLAN_CHARGED = 'Plan_Charged',
+}
+
+export type PaymentInitResult = {
+    type: InitResultType;
+    response: unknown;
+};

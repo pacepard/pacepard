@@ -1,7 +1,9 @@
 export interface initializePaymentDTO {
     email: string;
-    amount: string; // kobo
+    amount?: string; // kobo
     plan?: string;
+    currency: string;
+    reference: string;
     metadata?: Record<string, any>;
     callback_url?: string;
 }

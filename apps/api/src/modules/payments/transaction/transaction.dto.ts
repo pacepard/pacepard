@@ -50,7 +50,8 @@ export interface TransactionInitializationResult {
 
 export interface SubscriptionDTO {
     email: string;
-    amount?: number;
+    amount?: string;
     planCode?: string;
     currency?: Currency;
+    reference: string;
 }

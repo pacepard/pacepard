@@ -27,20 +27,15 @@ export const initializePayment = async (
     try {
         const response = await paystack.transaction.initialize({
             email: dto.email,
-            amount: dto.amount,
+            amount: '1000000',
             plan: dto.plan,
+            reference: dto.reference,
             callback_url: dto.callback_url,
         });
         return response;
     } catch (err) {
-        console.log(err);
-        /**
-         * if (!response?.status) {
-        throw new Error('Failed to initialize Paystack transaction');
-    }
-
-    return response.data;
-         */
+        console.log(err.response.data);
+        return err.response.data;
     }
 };
 
@@ -52,7 +47,9 @@ export const verifyTransaction = async (reference: string): Promise<any> => {
         const response = await paystack.transaction.verify(reference);
         return response;
     } catch (err) {
-        console.log(err);
+        console.log(err.response.data);
+        return err.response.data;
+        /// create errror object
     }
 };
 
@@ -88,6 +85,18 @@ export const paystackPlanUpdate = async (
 
         return response;
     } catch (error) {}
+};
+
+/**
+ * Cancel a user subscription on paystack.
+ */
+export const cancelSubscription = async (subscriptionCode: string) => {
+    try {
+        const response = await paystack.subscription.disable();
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 // export const fetchPlan = async () => {};
