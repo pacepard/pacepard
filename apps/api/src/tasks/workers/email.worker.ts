@@ -17,7 +17,7 @@ const startEmailWorker = async () => {
     const jobName: QueueChannel = QueueChannel.Emails;
 
     // PROCESSOR: The function to execute when a job is received
-    const processor = await emailProcessor;
+    const processor = emailProcessor;
 
     const emailWorkerConfig: CreateWorkerDTO = {
         queueName,

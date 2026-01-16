@@ -1,11 +1,11 @@
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import Permission from '@/modules/permission/permission.model';
-import Role from '@/modules/role/role.model';
-import User from '@/modules/user/user.model';
-import { UserType } from '@/modules/user/user.interface';
-import PermissionService from '@/modules/permission/permission.service';
+import Permission from '@/modules/authentication/permission/permission.model';
+import Role from '@/modules/authentication/role/role.model';
+import User from '@/modules/users/user/user.model';
+import { UserType } from '@/modules/users/user/user.interface';
+import PermissionService from '@/modules/authentication/permission/permission.service';
 import logger from '@/utils/logger.util';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -48,7 +48,7 @@ const seedPermissions = async (): Promise<void> => {
 
         // Import rolePermissionMap from permission.util
         const { rolePermissionMap } =
-            await import('@/modules/permission/permission.util');
+            await import('@/modules/authentication/permission/permission.util');
 
         // If a rolePermissionMap is available, map role names to actions
         if (rolePermissionMap && typeof rolePermissionMap === 'object') {

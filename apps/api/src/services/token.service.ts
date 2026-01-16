@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { IResult } from '../utils/interfaces.util';
 import ErrorResponse from '../utils/error.util';
-import User from '../modules/user/user.model';
+import User from '../modules/users/user/user.model';
 import dotenv from 'dotenv';
-import { IUserDoc } from '../modules/user/user.interface';
+import { IUserDoc } from '../modules/users/user/user.interface';
 
 dotenv.config();
 class TokenService {

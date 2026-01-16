@@ -22,6 +22,7 @@ export enum DbModels {
     ENTRY = 'entry',
     HACKATHON = 'hackathon',
     INVITES = 'invites',
+    JUDGE = 'judge',
     LEADERBOARD = 'leaderboard',
     MENTOR = 'mentor',
     NOTIFICATION = 'notification',
@@ -111,6 +112,7 @@ export enum EmailTemplate {
     SUBSCRIPTION_RENEWED = 'subscription-renewed',
     TRIAL_STARTED = 'trial-started',
     RECOMMENDATION = 'recommendation',
+    HACKATHONS_THIS_WEEK = 'hackathons-this-week',
 }
 export enum EmailStatus {
     SENT = 'sent',

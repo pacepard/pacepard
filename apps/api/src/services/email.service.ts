@@ -1,4 +1,4 @@
-import { renderFile } from 'ejs';
+import pug from 'pug';
 import nodemailer from 'nodemailer';
 import appRootPath from 'app-root-path';
 import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
@@ -9,9 +9,9 @@ import { EmailConfig, IEmailJob, IResult } from '../utils/interfaces.util';
 import { EMAIL_CONFIG } from '../configs/email.config';
 import { addJob } from '../tasks/jobs/job';
 import { JobChannel, QueueChannel } from '../queues/channel.queue';
-import { IUserDoc, OtpType } from '../modules/user/user.interface';
+import { IUserDoc, OtpType } from '../modules/users/user/user.interface';
 
-const BASE_FOLDER = `${appRootPath.path}/src`;
+const BASE_FOLDER = `${appRootPath.path}/apps/api/src`;
 
 class AppEmailService {
     private config: EmailConfig;
@@ -43,7 +43,7 @@ class AppEmailService {
 
             case EmailService.ZEPTOMAIL:
                 this.zeptomailClient = new SendMailClient({
-                    url: 'api.zeptomail.com/',
+                    url: process.env.ZEPTO_HOST_URL as string,
                     token: this.config.apiKey as string,
                 });
                 break;
@@ -82,29 +82,33 @@ class AppEmailService {
                 templateFolder = 'authentication';
             } else if (data.template?.includes('generic')) {
                 templateFolder = 'authentication';
+            } else if (data.template?.includes('hackathons') || data.template?.includes('marketing')) {
+                templateFolder = 'marketing';
             }
 
-            const templatePath = `${BASE_FOLDER}/views/emails/${templateFolder}/${data.template}.ejs`;
+            const templatePath = `${BASE_FOLDER}/views/emails/${templateFolder}/${data.template}.pug`;
 
-            const html = await new Promise<string>((resolve, reject) => {
-                renderFile(
-                    templatePath,
-                    {
-                        ...data.payload,
-                        user: data.user,
-                        code: data.code,
-                        subject: data.subject,
-                    },
-                    {},
-                    (err, str) => {
-                        if (err || !str) {
-                            return reject(
-                                err || new Error('Failed to render template'),
-                            );
-                        }
-                        resolve(str);
-                    },
-                );
+            const html = pug.renderFile(templatePath, {
+                ...data.payload,
+                ...(data.metadata || {}), // Spread metadata to make it available in template
+                user: data.user,
+                code: data.code,
+                subject: data.subject,
+                expiry:
+                    (data.payload && 'expiry' in data.payload
+                        ? (data.payload as any).expiry
+                        : undefined) ||
+                    (data.options && 'expiry' in data.options
+                        ? (data.options as any).expiry
+                        : undefined) ||
+                    '15 minutes',
+                salute: data.options?.salute || data.payload?.emailSalute || data.payload?.salute,
+                bodyOne: data.options?.bodyOne || data.payload?.bodyOne,
+                bodyTwo: data.options?.bodyTwo || data.payload?.bodyTwo,
+                bodyThree: data.options?.bodyThree || data.payload?.bodyThree,
+                buttonText: data.options?.buttonText || data.payload?.buttonText,
+                buttonUrl: data.options?.buttonUrl || data.payload?.buttonUrl,
+                name: data.user?.firstName || data.user?.email || 'there',
             });
 
             const sendFnMap: Partial<
@@ -394,7 +398,7 @@ class AppEmailService {
         switch (type) {
             case OtpType.REGISTER:
             case OtpType.VERIFY:
-                return EmailTemplate.VERIFY_EMAIL;
+                return EmailTemplate.VERIFY_EMAIL; // Maps to verify-email.pug
 
             case OtpType.LOGIN:
                 return EmailTemplate.GENERIC;
@@ -406,7 +410,7 @@ class AppEmailService {
                 return EmailTemplate.PASSWORD_CHANGED;
 
             default:
-                return EmailTemplate.VERIFY_EMAIL;
+                return EmailTemplate.VERIFY_EMAIL; // Maps to verify-email.pug
         }
     }
 

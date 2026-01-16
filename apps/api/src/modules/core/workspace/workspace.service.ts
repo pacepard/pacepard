@@ -1,0 +1,884 @@
+import { Types } from 'mongoose';
+import { dateToday, IDateToday } from '@btffamily/pacitude';
+import { IWorkspaceDoc, WorkspaceMemberRole } from './workspace.interface';
+import {
+    CreateWorkspaceDTO,
+    UpdateWorkspaceDTO,
+    AddMemberDTO,
+    RemoveMemberDTO,
+    AddMentorDTO,
+    RemoveMentorDTO,
+    AddJudgeDTO,
+    RemoveJudgeDTO,
+} from './workspace.dto';
+import workspaceRepository from './workspace.repository';
+import { IResult } from '../../../utils/interfaces.util';
+import { IUserDoc } from '../../users/user/user.interface';
+import { genWorkspaceCode } from '../../../utils/code.util';
+import permissionService from '../../authentication/permission/permission.service';
+import { getWorkspaceMemberRole } from '../../authentication/role/role.util';
+
+type ObjectId = Types.ObjectId;
+
+class WorkspaceService {
+    public result: IResult;
+    public today: IDateToday;
+
+    constructor() {
+        this.today = dateToday(new Date());
+        this.result = { error: false, message: '', code: 200, data: {} };
+    }
+
+    /**
+     * @method createWorkspace
+     * @description Creates a new workspace in the system.
+     * @param {CreateWorkspaceDTO} data - The workspace payload.
+     * @returns {Promise<IResult>} A structured result object.
+     */
+    public async createWorkspace(
+        data: CreateWorkspaceDTO,
+    ): Promise<IResult<{ workspace: IWorkspaceDoc }>> {
+        let result: IResult<{ workspace: IWorkspaceDoc }> = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {} as { workspace: IWorkspaceDoc },
+        };
+
+        const { name, createdBy, user } = data;
+
+        if (!name || name.trim().length === 0) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Workspace name is required';
+            return result;
+        }
+
+        const userId = createdBy || user?._id || user?.id;
+        if (!userId) {
+            result.error = true;
+            result.code = 400;
+            result.message =
+                'Creator information is required to create a workspace';
+            return result;
+        }
+
+        // Generate unique workspace code
+        let workspaceCode = genWorkspaceCode();
+        let isUnique = false;
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        // Ensure code uniqueness
+        while (!isUnique && attempts < maxAttempts) {
+            const existingResult = await workspaceRepository.findOne({
+                code: workspaceCode,
+            });
+            if (existingResult.error || !existingResult.data) {
+                isUnique = true;
+            } else {
+                workspaceCode = genWorkspaceCode();
+                attempts++;
+            }
+        }
+
+        if (!isUnique) {
+            result.error = true;
+            result.code = 500;
+            result.message = 'Failed to generate unique workspace code';
+            return result;
+        }
+
+        const workspaceData = {
+            code: workspaceCode,
+            name: name.trim(),
+            createdBy: new Types.ObjectId(userId),
+            hackathons: [],
+            projects: [],
+            members: [
+                {
+                    user: new Types.ObjectId(userId),
+                    role: WorkspaceMemberRole.OWNER, // Creator is always OWNER
+                    joinedAt: new Date(),
+                },
+            ],
+            invites: [],
+            mentors: [],
+            judges: [],
+        };
+
+        const createResult =
+            await workspaceRepository.createWorkspace(workspaceData);
+        if (createResult.error || !createResult.data) {
+            result.error = true;
+            result.code = 500;
+            result.message =
+                createResult.message || 'Failed to create workspace';
+            return result;
+        }
+
+        result.message = 'Workspace created successfully';
+        result.code = 201;
+        result.data = { workspace: createResult.data as IWorkspaceDoc };
+        return result;
+    }
+
+    /**
+     * @name updateWorkspace
+     * @description Updates a workspace with new details
+     * @param data - UpdateWorkspaceDTO containing workspaceId, user, and update data
+     */
+    public async updateWorkspace(data: UpdateWorkspaceDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, user } = data;
+
+        // Find the workspace
+        const findResult = await workspaceRepository.findById(workspaceId);
+        if (findResult.error || !findResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = findResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            user,
+            { entity: 'workspace', action: 'update' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to update this workspace';
+            return result;
+        }
+
+        const updateData: Partial<IWorkspaceDoc> = {};
+        if (data.name !== undefined) {
+            updateData.name = data.name.trim();
+        }
+
+        // Update the workspace
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            updateData,
+        );
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Workspace updated successfully';
+        result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name getWorkspace
+     * @description Retrieves a workspace by ID, including populated relations
+     */
+    public async getWorkspace(workspaceId: string): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const workspaceResult = await workspaceRepository.findById(
+            workspaceId,
+            [
+                { path: 'hackathons' },
+                { path: 'projects' },
+                { path: 'members' },
+                { path: 'invites' },
+                { path: 'mentors' },
+                { path: 'judges' },
+                { path: 'createdBy' },
+            ],
+        );
+
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        result.data = workspaceResult.data;
+        result.message = 'Workspace retrieved successfully';
+        return result;
+    }
+
+    /**
+     * @name getWorkspaces
+     * @description Retrieves all workspaces with optional filtering and pagination
+     */
+    public async getWorkspaces(
+        filter?: any,
+        options?: {
+            select?: string;
+            sort?: string;
+            page?: number;
+            limit?: number;
+            populate?: string | any;
+        },
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: [],
+        };
+
+        const workspacesResult = await workspaceRepository.getWorkspaces(
+            filter,
+            options,
+        );
+
+        if (workspacesResult.error) {
+            result.error = true;
+            result.code = workspacesResult.code || 500;
+            result.message = workspacesResult.message;
+            return result;
+        }
+
+        result.data = workspacesResult.data;
+        result.pagination = workspacesResult.pagination;
+        result.pagination!.count = workspacesResult.pagination?.count || 0;
+        result.pagination!.total = workspacesResult.pagination?.total || 0;
+        result.message = 'Workspaces retrieved successfully';
+        return result;
+    }
+
+    /**
+     * @name deleteWorkspace
+     * @description Deletes a workspace
+     * @param workspaceId - The workspace ID
+     * @param user - Optional user for permission checking
+     */
+    public async deleteWorkspace(
+        workspaceId: string,
+        user?: IUserDoc | string,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        // Find the workspace
+        const findResult = await workspaceRepository.findById(workspaceId);
+        if (findResult.error || !findResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = findResult.data as IWorkspaceDoc;
+
+        // Check permissions if user is provided
+        if (user) {
+            const hasPermission = await permissionService.hasPermission(
+                user,
+                { entity: 'workspace', action: 'delete' },
+                {
+                    resource: workspace,
+                    resourceType: 'workspace',
+                    checkOwnership: true,
+                },
+            );
+
+            if (!hasPermission) {
+                result.error = true;
+                result.code = 403;
+                result.message = 'You do not have permission to delete this workspace';
+                return result;
+            }
+        }
+
+        // Delete the workspace
+        const deleteResult =
+            await workspaceRepository.deleteWorkspace(workspaceId);
+        if (deleteResult.error) {
+            result.error = true;
+            result.code = deleteResult.code;
+            result.message = deleteResult.message;
+            return result;
+        }
+
+        result.message = 'Workspace deleted successfully';
+        result.data = deleteResult.data;
+        return result;
+    }
+
+    /**
+     * @name addMember
+     * @description Adds a member to a workspace with a specific role
+     * @param data - AddMemberDTO containing workspaceId, userId, role, and requestingUser
+     */
+    public async addMember(data: AddMemberDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const {
+            workspaceId,
+            userId,
+            role = WorkspaceMemberRole.MANAGER,
+            invitedBy,
+            requestingUser,
+        } = data;
+
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-members' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage members in this workspace';
+            return result;
+        }
+
+        // Check if user is already a member
+        const existingMember = (workspace.members || []).find((m: any) => {
+            const memberUserId = typeof m.user === 'object' 
+                ? String(m.user._id || m.user.id) 
+                : String(m.user);
+            return memberUserId === userId;
+        });
+
+        if (existingMember) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'User is already a member of this workspace';
+            return result;
+        }
+
+        // Add new member with role
+        const members = [...(workspace.members || [])];
+        members.push({
+            user: new Types.ObjectId(userId),
+            role: role,
+            joinedAt: new Date(),
+            invitedBy: invitedBy ? new Types.ObjectId(invitedBy) : undefined,
+        });
+
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                members: members as any,
+            },
+        );
+
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Member added successfully';
+        result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name removeMember
+     * @description Removes a member from a workspace
+     * @param data - RemoveMemberDTO containing workspaceId, userId, and requestingUser
+     */
+    public async removeMember(data: RemoveMemberDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, userId, requestingUser } = data;
+
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-members' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage members in this workspace';
+            return result;
+        }
+
+        // Find and remove the member
+        const members = (workspace.members || []).filter((m: any) => {
+            const memberUserId = typeof m.user === 'object' 
+                ? String(m.user._id || m.user.id) 
+                : String(m.user);
+            return memberUserId !== userId;
+        });
+
+        // Check if member was found
+        if (members.length === (workspace.members || []).length) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Member not found in this workspace';
+            return result;
+        }
+
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                members: members as any,
+            },
+        );
+
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Member removed successfully';
+        result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name addMentor
+     * @description Adds a mentor to a workspace
+     * @param data - AddMentorDTO containing workspaceId, mentorId, and requestingUser
+     */
+    public async addMentor(data: AddMentorDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, mentorId, requestingUser } = data;
+
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-mentors' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage mentors in this workspace';
+            return result;
+        }
+
+        // Check if mentor is already in workspace
+        const existingMentor = (workspace.mentors || []).find((m: any) => {
+            const mentorIdStr = typeof m === 'object' 
+                ? String(m._id || m.id) 
+                : String(m);
+            return mentorIdStr === mentorId;
+        });
+
+        if (existingMentor) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Mentor is already in this workspace';
+            return result;
+        }
+
+        // Add mentor to workspace
+        const mentors = [...(workspace.mentors || [])];
+        mentors.push(new Types.ObjectId(mentorId));
+
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                mentors: mentors as any,
+            },
+        );
+
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Mentor added successfully';
+        result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name removeMentor
+     * @description Removes a mentor from a workspace
+     * @param data - RemoveMentorDTO containing workspaceId, mentorId, and requestingUser
+     */
+    public async removeMentor(data: RemoveMentorDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, mentorId, requestingUser } = data;
+
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-mentors' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage mentors in this workspace';
+            return result;
+        }
+
+        // Find and remove the mentor
+        const mentors = (workspace.mentors || []).filter((m: any) => {
+            const mentorIdStr = typeof m === 'object' 
+                ? String(m._id || m.id) 
+                : String(m);
+            return mentorIdStr !== mentorId;
+        });
+
+        // Check if mentor was found
+        if (mentors.length === (workspace.mentors || []).length) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Mentor not found in this workspace';
+            return result;
+        }
+
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                mentors: mentors as any,
+            },
+        );
+
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Mentor removed successfully';
+        result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name getMentors
+     * @description Gets all mentors in a workspace
+     * @param workspaceId - The workspace ID
+     */
+    public async getMentors(workspaceId: string): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: [],
+        };
+
+        const workspaceResult = await workspaceRepository.findById(
+            workspaceId,
+            [{ path: 'mentors' }],
+        );
+
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+        result.data = workspace.mentors || [];
+        result.message = 'Mentors retrieved successfully';
+        return result;
+    }
+
+    /**
+     * @name addJudge
+     * @description Adds a judge to a workspace
+     * @param data - AddJudgeDTO containing workspaceId, judgeId, and requestingUser
+     */
+    public async addJudge(data: AddJudgeDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, judgeId, requestingUser } = data;
+
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-judges' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage judges in this workspace';
+            return result;
+        }
+
+        // Check if judge is already in workspace
+        const existingJudge = (workspace.judges || []).find((j: any) => {
+            const judgeIdStr = typeof j === 'object' 
+                ? String(j._id || j.id) 
+                : String(j);
+            return judgeIdStr === judgeId;
+        });
+
+        if (existingJudge) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Judge is already in this workspace';
+            return result;
+        }
+
+        // Add judge to workspace
+        const judges = [...(workspace.judges || [])];
+        judges.push(new Types.ObjectId(judgeId));
+
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                judges: judges as any,
+            },
+        );
+
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Judge added successfully';
+        result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name removeJudge
+     * @description Removes a judge from a workspace
+     * @param data - RemoveJudgeDTO containing workspaceId, judgeId, and requestingUser
+     */
+    public async removeJudge(data: RemoveJudgeDTO): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, judgeId, requestingUser } = data;
+
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            requestingUser,
+            { entity: 'workspace', action: 'manage-judges' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message = 'You do not have permission to manage judges in this workspace';
+            return result;
+        }
+
+        // Find and remove the judge
+        const judges = (workspace.judges || []).filter((j: any) => {
+            const judgeIdStr = typeof j === 'object' 
+                ? String(j._id || j.id) 
+                : String(j);
+            return judgeIdStr !== judgeId;
+        });
+
+        // Check if judge was found
+        if (judges.length === (workspace.judges || []).length) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Judge not found in this workspace';
+            return result;
+        }
+
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                judges: judges as any,
+            },
+        );
+
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Judge removed successfully';
+        result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name getJudges
+     * @description Gets all judges in a workspace
+     * @param workspaceId - The workspace ID
+     */
+    public async getJudges(workspaceId: string): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: [],
+        };
+
+        const workspaceResult = await workspaceRepository.findById(
+            workspaceId,
+            [{ path: 'judges' }],
+        );
+
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+        result.data = workspace.judges || [];
+        result.message = 'Judges retrieved successfully';
+        return result;
+    }
+}
+
+export default new WorkspaceService();

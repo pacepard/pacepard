@@ -2,7 +2,7 @@ import {
   EmailService,
   EmailTemplate,
 } from '../utils/enums.util'
-import { IUserDoc, OtpType, UserType } from '../modules/user/user.interface'
+import { IUserDoc, OtpType, UserType } from '../modules/users/user/user.interface'
 
 
 export interface SendgridEmailDataDTO {
