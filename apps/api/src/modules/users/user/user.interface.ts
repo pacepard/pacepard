@@ -3,7 +3,7 @@ import { Nullable } from '../../../utils/interfaces.util';
 import { IAPIKey, IAPIKeyDoc } from '../../platform/apikey/apikey.interface';
 import { IRoleDoc } from '../../authentication/role/role.interface';
 import { IPermissionDoc } from '../../authentication/permission/permission.interface';
-import { INotificationDoc } from '../../platform/notification/notification.interface';
+import { INotificationDoc } from '../../notifications/push/push.interface';
 
 
 type ObjectId = Types.ObjectId;

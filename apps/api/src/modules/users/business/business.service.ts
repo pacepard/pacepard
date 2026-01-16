@@ -114,18 +114,21 @@ class BusinessService {
                     user,
                     UserType.BUSINESS,
                 );
-                if (!roleAttachResult.error) {
-                    let user = roleAttachResult.data as IUserDoc;
+                if (!roleAttachResult.error && roleAttachResult.data) {
+                    let updatedUser = roleAttachResult.data as IUserDoc;
 
                     // Initialize permissions for BUSINESS role
                     const permResult =
-                        await PermissionService.initiatePermissionData(user);
-                    if (!permResult.error) {
-                        user = permResult.data as IUserDoc;
+                        await PermissionService.initiatePermissionData(updatedUser);
+                    if (!permResult.error && permResult.data) {
+                        updatedUser = permResult.data as IUserDoc;
                     }
 
-                    // Clear permission cache
-                    await PermissionService.clearUserCache(String(user._id));
+                    // Clear permission cache (use updatedUser or fallback to original user)
+                    const userId = updatedUser?._id || user._id;
+                    if (userId) {
+                        await PermissionService.clearUserCache(String(userId));
+                    }
                 }
             } else {
                 // Check if user already has BUSINESS role
@@ -139,9 +142,12 @@ class BusinessService {
                         user,
                         UserType.BUSINESS,
                     );
-                    if (!roleAttachResult.error) {
-                        let user = roleAttachResult.data as IUserDoc;
-                        await PermissionService.clearUserCache(String(user._id));
+                    if (!roleAttachResult.error && roleAttachResult.data) {
+                        const updatedUser = roleAttachResult.data as IUserDoc;
+                        const userId = updatedUser?._id || user._id;
+                        if (userId) {
+                            await PermissionService.clearUserCache(String(userId));
+                        }
                     }
                 }
             }

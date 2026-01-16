@@ -11,14 +11,11 @@ export interface IAdminDoc extends Document {
     slug: string;
     email: string;
 
-    department: AdminDepartmentEnum; // product, platform, developer experience, infrastructure, data, security, education, people
+    adminType: AdminTypeEnum; // staff or board member
+    department: AdminDepartmentEnum; // product, platform, developer experience, infrastructure, data, security, education, people (required for all - executive board members have operational departments)
     position: CompanyRoleEnum; // junior, associate, intermediate, senior, staff, principal, manager, director, vp, executive
     
     accessLevel: number;
-    accessLevelName: string;
-    accessLevelDescription?: string;
-    
-    activityLog: Array<IActivityLog | any>;
 
     createdBy: ObjectId | any;
     settings: ObjectId | any;
@@ -34,11 +31,10 @@ export interface IAdminDoc extends Document {
     id: ObjectId;
 }
 
-export interface IActivityLog {
-    action: string;
-    target: DbModels;
-    targetId: ObjectId | any;
-    createdAt: Date;
+
+export enum AdminTypeEnum {
+    STAFF = 'staff', // Operational staff - must have a department
+    BOARD = 'board', // Board of directors - includes executives (with departments) and advisors (may not have operational departments, but governance focus)
 }
 
 export enum AdminDepartmentEnum {
@@ -51,6 +47,7 @@ export enum AdminDepartmentEnum {
     EDUCATION = 'education', // Owns operations and education e.g hackathon as a education platform, API or product education, etc.
     PEOPLE = 'people', // Owns people and operations e.g HR, finance, legal, support, customer success team, etc.
 }
+
 
 export enum CompanyRoleEnum {
     JUNIOR = 'junior',

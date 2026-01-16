@@ -43,7 +43,7 @@ class AppEmailService {
 
             case EmailService.ZEPTOMAIL:
                 this.zeptomailClient = new SendMailClient({
-                    url: 'api.zeptomail.com/',
+                    url: process.env.ZEPTO_HOST_URL as string,
                     token: this.config.apiKey as string,
                 });
                 break;

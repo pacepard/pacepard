@@ -60,7 +60,7 @@ export const inviteAdmin: RequestHandler = asyncHandler(
             invitedBy: userId,
             inviteeEmail: email.trim().toLowerCase(),
             inviteType: InvitationType.ADMIN,
-            resourceId: resourceId || userId, // Use userId as default resourceId if not provided
+            resourceId: userId, // Use userId as default resourceId if not provided
         } as any);
 
         if (invitationResult.error) {
@@ -564,18 +564,24 @@ export const acceptAdminInvitation: RequestHandler = asyncHandler(
 
             // Attach ADMIN role
             const attachRole = await roleService.attachRole(user, UserType.ADMIN);
-            if (!attachRole.error) {
-                user = attachRole.data as IUserDoc;
+            if (!attachRole.error && attachRole.data) {
+                let updatedUser = attachRole.data as IUserDoc;
 
                 // Initialize permissions for ADMIN role
                 const permResult =
-                    await PermissionService.initiatePermissionData(user);
-                if (!permResult.error) {
-                    user = permResult.data as IUserDoc;
+                    await PermissionService.initiatePermissionData(updatedUser);
+                if (!permResult.error && permResult.data) {
+                    updatedUser = permResult.data as IUserDoc;
                 }
 
+                // Update user reference
+                user = updatedUser;
+
                 // Clear permission cache
-                await PermissionService.clearUserCache(String(user._id));
+                const userId = updatedUser?._id || user._id;
+                if (userId) {
+                    await PermissionService.clearUserCache(String(userId));
+                }
             }
 
             await user.save();
@@ -601,7 +607,7 @@ export const acceptAdminInvitation: RequestHandler = asyncHandler(
                 },
             },
             message:
-                'Admin invitation accepted successfully. Please complete your profile setup.',
+                'Account activated successfully. Please complete your profile setup.',
             status: 201,
         });
     },

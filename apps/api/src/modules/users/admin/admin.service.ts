@@ -3,6 +3,7 @@ import { dateToday, IDateToday } from '@btffamily/pacitude';
 import {
     IAdminDoc,
     AdminDepartmentEnum,
+    AdminTypeEnum,
     CompanyRoleEnum,
 } from './admin.interface';
 import { CreateAdminDTO, UpdateAdminDTO } from './admin.dto';
@@ -11,7 +12,6 @@ import { IResult } from '../../../utils/interfaces.util';
 import { IUserDoc, UserType } from '../user/user.interface';
 import { genSlug } from '../../../utils/helpers.util';
 import { genUserCode } from '../../../utils/code.util';
-import userRepository from '../user/user.repository';
 import roleService from '../../authentication/role/role.service';
 import PermissionService from '../../authentication/permission/permission.service';
 
@@ -48,11 +48,10 @@ class AdminService {
             firstName,
             lastName,
             email,
+            adminType,
             department,
             position,
             accessLevel,
-            accessLevelName,
-            accessLevelDescription,
             createdBy,
         } = data;
 
@@ -64,11 +63,11 @@ class AdminService {
             return result;
         }
 
-        if (!firstName || !lastName || !email || !department || !position) {
+        if (!firstName || !lastName || !email || !adminType || !department || !position) {
             result.error = true;
             result.code = 400;
             result.message =
-                'First name, last name, email, department, and position are required';
+                'First name, last name, email, admin type, department, and position are required';
             return result;
         }
 
@@ -135,7 +134,6 @@ class AdminService {
             name: 'Junior',
         };
         const finalAccessLevel = accessLevel || accessInfo.level;
-        const finalAccessLevelName = accessLevelName || accessInfo.name;
 
         const adminData = {
             code: adminCode,
@@ -143,16 +141,14 @@ class AdminService {
             lastName: lastName.trim(),
             slug: uniqueSlug,
             email: email.toLowerCase().trim(),
-            department,
+            adminType,
+            department, // Required for all - executive board members have operational departments
             position,
             accessLevel: finalAccessLevel,
-            accessLevelName: finalAccessLevelName,
-            accessLevelDescription: accessLevelDescription || '',
             createdBy: createdBy
                 ? new Types.ObjectId(createdBy)
                 : user._id || user.id,
             user: user._id || user.id,
-            activityLog: [],
             settings: null,
         };
 
@@ -180,18 +176,21 @@ class AdminService {
                 user,
                 UserType.ADMIN,
             );
-            if (!roleAttachResult.error) {
+            if (!roleAttachResult.error && roleAttachResult.data) {
                 let updatedUser = roleAttachResult.data as IUserDoc;
 
                 // Initialize permissions for ADMIN role
                 const permResult =
                     await PermissionService.initiatePermissionData(updatedUser);
-                if (!permResult.error) {
+                if (!permResult.error && permResult.data) {
                     updatedUser = permResult.data as IUserDoc;
                 }
 
-                // Clear permission cache
-                await PermissionService.clearUserCache(String(updatedUser._id));
+                // Clear permission cache (use updatedUser or fallback to original user)
+                const userId = updatedUser?._id || user._id;
+                if (userId) {
+                    await PermissionService.clearUserCache(String(userId));
+                }
             }
         }
 
@@ -330,15 +329,17 @@ class AdminService {
             updateData.lastName = data.lastName.trim();
         if (data.email !== undefined)
             updateData.email = data.email.toLowerCase().trim();
-        if (data.department !== undefined)
+        if (data.adminType !== undefined) {
+            updateData.adminType = data.adminType;
+        }
+        if (data.department !== undefined) {
+            // Department can be updated for both STAFF and BOARD
+            // Executive board members have departments (operational + governance)
             updateData.department = data.department;
+        }
         if (data.position !== undefined) updateData.position = data.position;
         if (data.accessLevel !== undefined)
             updateData.accessLevel = data.accessLevel;
-        if (data.accessLevelName !== undefined)
-            updateData.accessLevelName = data.accessLevelName;
-        if (data.accessLevelDescription !== undefined)
-            updateData.accessLevelDescription = data.accessLevelDescription;
 
         // Update slug if name changed
         if (data.firstName || data.lastName) {

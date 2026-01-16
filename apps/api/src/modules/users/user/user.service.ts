@@ -122,16 +122,18 @@ class UserService {
 
         // Attach role based on userType
         const attachRole = await roleService.attachRole(user, userType);
-        if (!attachRole.error) {
-            
-            user = attachRole.data as IUserDoc;
+        if (!attachRole.error && attachRole.data) {
+            let updatedUser = attachRole.data as IUserDoc;
 
             // Initialize permissions for the role
             const permResult =
-                await PermissionService.initiatePermissionData(user);
-            if (!permResult.error) {
-                user = permResult.data as IUserDoc;
+                await PermissionService.initiatePermissionData(updatedUser);
+            if (!permResult.error && permResult.data) {
+                updatedUser = permResult.data as IUserDoc;
             }
+
+            // Update user reference
+            user = updatedUser;
         }
 
         await user.save();
@@ -195,14 +197,23 @@ class UserService {
                                         user,
                                         bulk.userType,
                                     );
-                                if (!roleAttachResult.error) {
-                                    user = roleAttachResult.data as IUserDoc;
-                                    await PermissionService.initiatePermissionData(
-                                        user,
+                                if (!roleAttachResult.error && roleAttachResult.data) {
+                                    let updatedUser = roleAttachResult.data as IUserDoc;
+                                    const permResult = await PermissionService.initiatePermissionData(
+                                        updatedUser,
                                     );
-                                    await PermissionService.clearUserCache(
-                                        String(user._id),
-                                    );
+                                    if (!permResult.error && permResult.data) {
+                                        updatedUser = permResult.data as IUserDoc;
+                                    }
+                                    
+                                    // Update user reference
+                                    user = updatedUser;
+                                    
+                                    // Clear permission cache
+                                    const userId = updatedUser?._id || user._id;
+                                    if (userId) {
+                                        await PermissionService.clearUserCache(String(userId));
+                                    }
                                 }
                             } catch (error) {
                                 // Log but don't fail bulk creation
@@ -464,14 +475,26 @@ class UserService {
             result.code = roleAttachResult.code || 500;
             return result;
         }
-        user = roleAttachResult.data as IUserDoc;
+        if (!roleAttachResult.data) {
+            result.error = true;
+            result.message = 'Failed to attach role: no user data returned';
+            result.code = 500;
+            return result;
+        }
+        let updatedUser = roleAttachResult.data as IUserDoc;
 
         // Initialize permissions for the user
-        const permResult = await PermissionService.initiatePermissionData(user);
+        const permResult = await PermissionService.initiatePermissionData(updatedUser);
         if (permResult.error) {
             result.error = true;
             result.message = permResult.message;
             result.code = permResult.code || 500;
+            return result;
+        }
+        if (!permResult.data) {
+            result.error = true;
+            result.message = 'Failed to initialize permissions: no user data returned';
+            result.code = 500;
             return result;
         }
         user = permResult.data as IUserDoc;
@@ -901,6 +924,12 @@ class UserService {
                 result.code = roleAttachResult.code || 500;
                 return result;
             }
+            if (!roleAttachResult.data) {
+                result.error = true;
+                result.message = 'Failed to attach role: no user data returned';
+                result.code = 500;
+                return result;
+            }
             user = roleAttachResult.data as IUserDoc;
         }
 
@@ -911,6 +940,12 @@ class UserService {
                 result.error = true;
                 result.message = permResult.message;
                 result.code = permResult.code || 500;
+                return result;
+            }
+            if (!permResult.data) {
+                result.error = true;
+                result.message = 'Failed to initialize permissions: no user data returned';
+                result.code = 500;
                 return result;
             }
             user = permResult.data as IUserDoc;

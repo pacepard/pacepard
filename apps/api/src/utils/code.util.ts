@@ -12,6 +12,7 @@ import { UserType } from '../modules/users/user/user.interface';
  */
 export const genUserCode = (userType: UserType): string => {
     const name: Record<string, string> = {
+        [UserType.SUPERADMIN]: 'sa',
         [UserType.TALENT]: 'tl',
         [UserType.BUSINESS]: 'bs', // Business/Organisation
         [UserType.ADMIN]: 'ad',

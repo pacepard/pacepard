@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IAdminDoc, AdminDepartmentEnum, CompanyRoleEnum } from './admin.interface';
+import { IAdminDoc, AdminDepartmentEnum, AdminTypeEnum, CompanyRoleEnum } from './admin.interface';
 import { DbModels } from '../../../utils/enums.util';
 
 /**
@@ -32,6 +32,12 @@ const AdminSchema = new Schema<IAdminDoc>(
             index: true,
         },
 
+        adminType: {
+            type: String,
+            enum: Object.values(AdminTypeEnum),
+            required: true,
+            index: true,
+        },
         department: {
             type: String,
             enum: Object.values(AdminDepartmentEnum),
@@ -51,26 +57,6 @@ const AdminSchema = new Schema<IAdminDoc>(
             max: 10,
             index: true,
         },
-
-        accessLevelName: { type: String, required: true },
-        accessLevelDescription: { type: String },
-
-        activityLog: [{
-            action: { type: String, required: true },
-            target: {
-                type: String,
-                enum: Object.values(DbModels),
-                required: true,
-            },
-            targetId: {
-                type: Schema.Types.ObjectId,
-                required: true,
-            },
-            createdAt: {
-                type: Date,
-                default: Date.now,
-            },
-        }],
 
         createdBy: {
             type: Schema.Types.ObjectId,

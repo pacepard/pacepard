@@ -72,7 +72,7 @@ class BullQueue {
      * @name addProcessor
      * @param data 
      */
-    public async addProcessor(data: CreateWorkerDTO, callback: (data: Job<JobDataDTO>, done: DoneCallback) => Promise<void>): Promise<Queue> {
+    public async addProcessor(data: CreateWorkerDTO, callback: (data: Job<JobDataDTO>, done?: DoneCallback) => Promise<any> | void): Promise<Queue> {
 
         const { queueName, jobName, concurrency = 10 } = data;
 

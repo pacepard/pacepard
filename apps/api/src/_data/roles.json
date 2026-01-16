@@ -23,5 +23,15 @@
         "name": "user",
         "slug": "user",
         "description": "General platform users who can participate in projects, view content, and engage with the Pacepard community."
+    },
+    {
+        "name": "mentor",
+        "slug": "mentor",
+        "description": "Mentors who provide guidance and support in projects, hackathons, and workspaces. Can have platform accounts or exist as external profiles only."
+    },
+    {
+        "name": "judge",
+        "slug": "judge",
+        "description": "Judges who evaluate projects and hackathons. Can have platform accounts or exist as external profiles only."
     }
 ]

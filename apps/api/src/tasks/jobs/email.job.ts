@@ -1,4 +1,4 @@
-import { Job, DoneCallback } from 'bull';
+import { Job } from 'bull';
 import { IEmailJob, IResult } from '../../utils/interfaces.util';
 import emailService from '../../services/email.service';
 import logger from '../../utils/logger.util';
@@ -6,11 +6,11 @@ import logger from '../../utils/logger.util';
 /**
  * @name emailProcessor
  * @description The core function that the Bull worker executes for each 'emails:send' job.
- * It uses the AppEmailService to dispatch the email and uses the 'done' callback to signal completion.
+ * It uses the AppEmailService to dispatch the email.
+ * Uses pure async/await pattern (no done callback) to avoid promisify deprecation warning.
  * @param job The Bull job object containing the email data
- * @param done The Bull done callback function
  */
-const emailProcessor = async (job: Job<IEmailJob>, done: DoneCallback) => {
+const emailProcessor = async (job: Job<IEmailJob>) => {
     const email = job.data.user?.email;
     const template = job.data.template;
 
@@ -26,7 +26,7 @@ const emailProcessor = async (job: Job<IEmailJob>, done: DoneCallback) => {
         const result: IResult = await emailService.sendEmail(job.data);
 
         if (result.error) {
-            // Log error and call done(error) to signal Bull to retry the job
+            // Log error and throw to signal Bull to retry the job
             // (if attempts are configured in the original addJob call).
             logger.log({
                 data: `Failed to process Email Job ID: ${job.id}. Error: ${result.message}`,
@@ -34,7 +34,7 @@ const emailProcessor = async (job: Job<IEmailJob>, done: DoneCallback) => {
                 type: 'error',
             });
 
-            return done(new Error(result.message));
+            throw new Error(result.message);
         }
 
         logger.log({
@@ -43,8 +43,8 @@ const emailProcessor = async (job: Job<IEmailJob>, done: DoneCallback) => {
             type: 'success',
         });
 
-        // Success: Call done(null, result) to mark the job as completed successfully
-        done(null, result);
+        // Success: Return result (Bull will mark job as completed)
+        return result;
     } catch (error) {
         // Catch any critical errors during processing (e.g., connection issue)
         logger.log({
@@ -53,8 +53,8 @@ const emailProcessor = async (job: Job<IEmailJob>, done: DoneCallback) => {
             type: 'error',
         });
 
-        // Signal Bull that the job failed
-        done(error as Error);
+        // Re-throw error to signal Bull that the job failed
+        throw error;
     }
 };
 

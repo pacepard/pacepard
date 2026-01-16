@@ -1,5 +1,5 @@
 import { IUserDoc } from '../user/user.interface';
-import { AdminDepartmentEnum, CompanyRoleEnum } from './admin.interface';
+import { AdminDepartmentEnum, AdminTypeEnum, CompanyRoleEnum } from './admin.interface';
 
 export interface CreateAdminDTO {
     code: string
@@ -7,11 +7,10 @@ export interface CreateAdminDTO {
     firstName: string;
     lastName: string;
     email: string;
-    department: AdminDepartmentEnum;
+    adminType: AdminTypeEnum;
+    department: AdminDepartmentEnum; // Required for all - executive board members have operational departments
     position: CompanyRoleEnum;
     accessLevel?: number;
-    accessLevelName?: string;
-    accessLevelDescription?: string;
     createdBy?: string;
 }
 
@@ -19,11 +18,10 @@ export interface UpdateAdminDTO {
     firstName?: string;
     lastName?: string;
     email?: string;
+    adminType?: AdminTypeEnum;
     department?: AdminDepartmentEnum;
     position?: CompanyRoleEnum;
     accessLevel?: number;
-    accessLevelName?: string;
-    accessLevelDescription?: string;
 }
 
 export interface InviteAdminDTO {

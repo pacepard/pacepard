@@ -4,10 +4,13 @@ import { IMentorDoc, MentorTypeEnum, MentorVisibiltyEnum, MentorStatusEnum } fro
 import { createMentorDTO } from './mentor.dto';
 import mentorRepository from './mentor.repository';
 import { IResult, IFile } from '../../../utils/interfaces.util';
-import { IUserDoc } from '../user/user.interface';
+import { IUserDoc, UserType } from '../user/user.interface';
 import { genSlug } from '../../../utils/helpers.util';
 import { genMentorCode } from '../../../utils/code.util';
 import storageService from '../../../services/storage.service';
+import User from '../user/user.model';
+import roleService from '../../authentication/role/role.service';
+import PermissionService from '../../authentication/permission/permission.service';
 
 class MentorService {
     public result: IResult;
@@ -176,6 +179,44 @@ class MentorService {
             }
         }
 
+        // Check if a user account exists with this email (standalone mentor with account)
+        // If user exists, link them and assign MENTOR role
+        // If no user exists, create profile-only mentor (external, no account)
+        let linkedUser: IUserDoc | null = null;
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        
+        if (existingUser) {
+            linkedUser = existingUser;
+            
+            // Check if user already has MENTOR role
+            const hasMentorRole = linkedUser.roles?.some(
+                (r: any) => (r?.name || r?.toString()) === UserType.MENTOR
+            );
+            
+            if (!hasMentorRole) {
+                // Attach MENTOR role for standalone mentors (with accounts)
+                const roleAttachResult = await roleService.attachRole(
+                    linkedUser,
+                    UserType.MENTOR
+                );
+                if (!roleAttachResult.error && roleAttachResult.data) {
+                    let updatedUser = roleAttachResult.data as IUserDoc;
+                    
+                    // Initialize permissions for MENTOR role
+                    const permResult = await PermissionService.initiatePermissionData(updatedUser);
+                    if (!permResult.error && permResult.data) {
+                        updatedUser = permResult.data as IUserDoc;
+                    }
+                    
+                    // Clear permission cache (use updatedUser or fallback to linkedUser)
+                    const userId = updatedUser?._id || linkedUser._id;
+                    if (userId) {
+                        await PermissionService.clearUserCache(String(userId));
+                    }
+                }
+            }
+        }
+
         const mentorData = {
             code: mentorCode,
             firstName: firstName.trim(),
@@ -193,6 +234,7 @@ class MentorService {
             visibility: visibility || MentorVisibiltyEnum.PUBLIC,
             status: status || MentorStatusEnum.ACTIVE,
             createdBy: new Types.ObjectId(data.orgId),
+            user: linkedUser ? linkedUser._id : undefined, // Link user if exists (standalone), leave undefined for profile-only
             settings: {},
             hackathons: [],
             entries: [],
@@ -210,7 +252,9 @@ class MentorService {
             return result;
         }
 
-        result.message = 'Mentor profile created successfully';
+        result.message = linkedUser 
+            ? 'Mentor profile created successfully with linked user account'
+            : 'Mentor profile created successfully (profile-only, no user account)';
         result.code = 201;
         result.data = { mentor: createResult.data as IMentorDoc };
         return result;

@@ -4,9 +4,13 @@ import { IJudgeDoc, JudgeVisibiltyEnum, JudgeStatusEnum } from './judge.interfac
 import { createJudgeDTO } from './judge.dto';
 import judgeRepository from './judge.repository';
 import { IResult, IFile } from '../../../utils/interfaces.util';
+import { IUserDoc, UserType } from '../user/user.interface';
 import { genSlug } from '../../../utils/helpers.util';
 import { genJudgeCode } from '../../../utils/code.util';
 import storageService from '../../../services/storage.service';
+import User from '../user/user.model';
+import roleService from '../../authentication/role/role.service';
+import PermissionService from '../../authentication/permission/permission.service';
 
 class JudgeService {
     public result: IResult;
@@ -175,6 +179,44 @@ class JudgeService {
             }
         }
 
+        // Check if a user account exists with this email (standalone judge with account)
+        // If user exists, link them and assign JUDGE role
+        // If no user exists, create profile-only judge (external, no account)
+        let linkedUser: IUserDoc | null = null;
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        
+        if (existingUser) {
+            linkedUser = existingUser;
+            
+            // Check if user already has JUDGE role
+            const hasJudgeRole = linkedUser.roles?.some(
+                (r: any) => (r?.name || r?.toString()) === UserType.JUDGE
+            );
+            
+            if (!hasJudgeRole) {
+                // Attach JUDGE role for standalone judges (with accounts)
+                const roleAttachResult = await roleService.attachRole(
+                    linkedUser,
+                    UserType.JUDGE
+                );
+                if (!roleAttachResult.error && roleAttachResult.data) {
+                    let updatedUser = roleAttachResult.data as IUserDoc;
+                    
+                    // Initialize permissions for JUDGE role
+                    const permResult = await PermissionService.initiatePermissionData(updatedUser);
+                    if (!permResult.error && permResult.data) {
+                        updatedUser = permResult.data as IUserDoc;
+                    }
+                    
+                    // Clear permission cache (use updatedUser or fallback to linkedUser)
+                    const userId = updatedUser?._id || linkedUser._id;
+                    if (userId) {
+                        await PermissionService.clearUserCache(String(userId));
+                    }
+                }
+            }
+        }
+
         const judgeData = {
             code: judgeCode,
             firstName: firstName.trim(),
@@ -191,6 +233,7 @@ class JudgeService {
             visibility: visibility || JudgeVisibiltyEnum.PUBLIC,
             status: status || JudgeStatusEnum.ACTIVE,
             createdBy: new Types.ObjectId(data.orgId),
+            user: linkedUser ? linkedUser._id : undefined, // Link user if exists (standalone), leave undefined for profile-only
             settings: {},
             hackathons: [],
             projects: [],
@@ -207,7 +250,9 @@ class JudgeService {
             return result;
         }
 
-        result.message = 'Judge profile created successfully';
+        result.message = linkedUser 
+            ? 'Judge profile created successfully with linked user account'
+            : 'Judge profile created successfully (profile-only, no user account)';
         result.code = 201;
         result.data = { judge: createResult.data as IJudgeDoc };
         return result;

@@ -1,6 +1,10 @@
 import { InvitationStatus, InvitationType } from './invitation.interface';
 import { IResult } from '../../../utils/interfaces.util';
-import { CreateInvitationDTO, InviteTokenDTO, CreateBulkInvitationDTO } from './invitation.dto';
+import {
+    CreateInvitationDTO,
+    InviteTokenDTO,
+    CreateBulkInvitationDTO,
+} from './invitation.dto';
 import invitationRepository from './invitation.repository';
 import Invites from './invitation.model';
 import { dateToday, IDateToday, Random } from '@btffamily/pacitude';
@@ -15,7 +19,6 @@ import mongoose from 'mongoose';
  */
 
 class InvitationService {
-
     public result: IResult;
     public today: IDateToday;
 
@@ -27,52 +30,6 @@ class InvitationService {
         this.result = { error: false, message: '', code: 200, data: {} };
     }
 
-    /**
-     * @name validateEmailFormat
-     * @description Validates email format
-     * @param email - Email to validate
-     * @returns boolean
-     */
-    private validateEmailFormat(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    /**
-     * @name validateObjectId
-     * @description Validates MongoDB ObjectId format
-     * @param id - ID to validate
-     * @returns boolean
-     */
-    private validateObjectId(id: string): boolean {
-        return mongoose.Types.ObjectId.isValid(id) && 
-               new mongoose.Types.ObjectId(id).toString() === id;
-    }
-
-    /**
-     * @name validateStatusTransition
-     * @description Validates if a status transition is allowed
-     * @param currentStatus - Current invitation status
-     * @param newStatus - New invitation status
-     * @returns boolean
-     */
-    private validateStatusTransition(currentStatus: InvitationStatus, newStatus: InvitationStatus): boolean {
-        const validTransitions: Record<InvitationStatus, InvitationStatus[]> = {
-            [InvitationStatus.PENDING]: [
-                InvitationStatus.ACCEPTED,
-                InvitationStatus.REVOKED,
-                InvitationStatus.DECLINED,
-                InvitationStatus.EXPIRED,
-            ],
-            [InvitationStatus.ACCEPTED]: [], // Terminal state
-            [InvitationStatus.REVOKED]: [], // Terminal state
-            [InvitationStatus.DECLINED]: [], // Terminal state
-            [InvitationStatus.EXPIRED]: [], // Terminal state
-            [InvitationStatus.VALIDATED]: [], // Terminal state
-        };
-
-        return validTransitions[currentStatus]?.includes(newStatus) || false;
-    }
     /**
      * @name newInvitation
      * @description Creates a new invitation.
@@ -117,21 +74,24 @@ class InvitationService {
         if (!this.validateObjectId(invitedBy)) {
             result.error = true;
             result.code = 400;
-            result.message = 'Invalid invitedBy format (must be valid ObjectId)';
+            result.message =
+                'Invalid invitedBy format (must be valid ObjectId)';
             return result;
         }
 
         if (!this.validateObjectId(resourceId)) {
             result.error = true;
             result.code = 400;
-            result.message = 'Invalid resourceId format (must be valid ObjectId)';
+            result.message =
+                'Invalid resourceId format (must be valid ObjectId)';
             return result;
         }
 
         if (inviteeUserId && !this.validateObjectId(inviteeUserId)) {
             result.error = true;
             result.code = 400;
-            result.message = 'Invalid inviteeUserId format (must be valid ObjectId)';
+            result.message =
+                'Invalid inviteeUserId format (must be valid ObjectId)';
             return result;
         }
 
@@ -184,7 +144,11 @@ class InvitationService {
         });
 
         // Calculate expiration date (use provided or default)
-        const expirationDate = expiresAt || new Date(Date.now() + this.DEFAULT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
+        const expirationDate =
+            expiresAt ||
+            new Date(
+                Date.now() + this.DEFAULT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000,
+            );
 
         const saveInvite = await invitationRepository.createInvite({
             inviteType,
@@ -206,7 +170,7 @@ class InvitationService {
         }
 
         result.message = 'invite created Successfully';
-        result.data = { 
+        result.data = {
             token,
             invitationId: saveInvite.data?._id || saveInvite.data?.id,
             status: InvitationStatus.PENDING,
@@ -229,20 +193,24 @@ class InvitationService {
         do {
             const gencode = Random.randomCode(29, true);
             token = gencode.toString();
-            
+
             // Check if token exists (encrypt and check)
             const encryptToken = await systemService.encryptData({
                 password: token,
                 payload: '', // Empty payload for checking uniqueness
                 separator: '-',
             });
-            
-            const existingInvite = await Invites.findOne({ inviteToken: encryptToken });
+
+            const existingInvite = await Invites.findOne({
+                inviteToken: encryptToken,
+            });
             exists = !!existingInvite;
             attempts++;
 
             if (attempts >= maxAttempts) {
-                throw new Error('Failed to generate unique token after maximum attempts');
+                throw new Error(
+                    'Failed to generate unique token after maximum attempts',
+                );
             }
         } while (exists);
 
@@ -263,7 +231,7 @@ class InvitationService {
             data: {},
         };
         const { email, token } = dto;
-        
+
         if (!token) {
             result.error = true;
             result.code = 400;
@@ -345,7 +313,12 @@ class InvitationService {
 
         if (today > expiresAt) {
             // Mark invitation as expired
-            if (this.validateStatusTransition(invite.inviteStatus, InvitationStatus.EXPIRED)) {
+            if (
+                this.validateStatusTransition(
+                    invite.inviteStatus,
+                    InvitationStatus.EXPIRED,
+                )
+            ) {
                 invite.inviteStatus = InvitationStatus.EXPIRED;
                 await invite.save();
             }
@@ -356,7 +329,12 @@ class InvitationService {
         }
 
         // Validate status transition
-        if (!this.validateStatusTransition(invite.inviteStatus, InvitationStatus.ACCEPTED)) {
+        if (
+            !this.validateStatusTransition(
+                invite.inviteStatus,
+                InvitationStatus.ACCEPTED,
+            )
+        ) {
             result.error = true;
             result.code = 400;
             result.message = `Invalid status transition from ${invite.inviteStatus} to ${InvitationStatus.ACCEPTED}`;
@@ -419,7 +397,12 @@ class InvitationService {
         }
 
         // Validate status transition
-        if (!this.validateStatusTransition(invite.inviteStatus, InvitationStatus.REVOKED)) {
+        if (
+            !this.validateStatusTransition(
+                invite.inviteStatus,
+                InvitationStatus.REVOKED,
+            )
+        ) {
             result.error = true;
             result.code = 400;
             result.message = `Invalid status transition from ${invite.inviteStatus} to ${InvitationStatus.REVOKED}`;
@@ -493,8 +476,13 @@ class InvitationService {
         const today = new Date();
         if (invite.expiresAt && today > invite.expiresAt) {
             // Mark as expired if not already marked
-            if (invite.inviteStatus !== InvitationStatus.EXPIRED && 
-                this.validateStatusTransition(invite.inviteStatus, InvitationStatus.EXPIRED)) {
+            if (
+                invite.inviteStatus !== InvitationStatus.EXPIRED &&
+                this.validateStatusTransition(
+                    invite.inviteStatus,
+                    InvitationStatus.EXPIRED,
+                )
+            ) {
                 invite.inviteStatus = InvitationStatus.EXPIRED;
                 await invite.save();
             }
@@ -512,13 +500,15 @@ class InvitationService {
 
         // update invite state
         invite.inviteToken = encryptNewToken;
-        invite.expiresAt = new Date(Date.now() + this.DEFAULT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
+        invite.expiresAt = new Date(
+            Date.now() + this.DEFAULT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000,
+        );
         invite.inviteStatus = InvitationStatus.PENDING;
 
         await invite.save();
 
         result.message = 'Invite resent successfully';
-        result.data = { 
+        result.data = {
             newToken,
             invitationId: invite._id.toString(),
             status: invite.inviteStatus,
@@ -563,12 +553,18 @@ class InvitationService {
         if (!invite) {
             result.error = true;
             result.code = 404;
-            result.message = 'No Pending invite found by the provided token and email';
+            result.message =
+                'No Pending invite found by the provided token and email';
             return result;
         }
 
         // Validate status transition
-        if (!this.validateStatusTransition(invite.inviteStatus, InvitationStatus.DECLINED)) {
+        if (
+            !this.validateStatusTransition(
+                invite.inviteStatus,
+                InvitationStatus.DECLINED,
+            )
+        ) {
             result.error = true;
             result.code = 400;
             result.message = `Invalid status transition from ${invite.inviteStatus} to ${InvitationStatus.DECLINED}`;
@@ -594,7 +590,9 @@ class InvitationService {
      * @param dto - Data required to create bulk invitations.
      * @returns Promise<IResult>
      */
-    public async bulkInvitation(dto: CreateBulkInvitationDTO): Promise<IResult> {
+    public async bulkInvitation(
+        dto: CreateBulkInvitationDTO,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -613,7 +611,12 @@ class InvitationService {
         } = dto;
 
         // Validate required fields
-        if (!invitedBy || !inviteeEmails || !Array.isArray(inviteeEmails) || inviteeEmails.length === 0) {
+        if (
+            !invitedBy ||
+            !inviteeEmails ||
+            !Array.isArray(inviteeEmails) ||
+            inviteeEmails.length === 0
+        ) {
             result.error = true;
             result.code = 400;
             result.message = 'invitedBy and inviteeEmails array are required';
@@ -634,14 +637,16 @@ class InvitationService {
         if (!this.validateObjectId(invitedBy)) {
             result.error = true;
             result.code = 400;
-            result.message = 'Invalid invitedBy format (must be valid ObjectId)';
+            result.message =
+                'Invalid invitedBy format (must be valid ObjectId)';
             return result;
         }
 
         if (!this.validateObjectId(resourceId)) {
             result.error = true;
             result.code = 400;
-            result.message = 'Invalid resourceId format (must be valid ObjectId)';
+            result.message =
+                'Invalid resourceId format (must be valid ObjectId)';
             return result;
         }
 
@@ -657,7 +662,8 @@ class InvitationService {
             if (inviteeUserIds.length !== inviteeEmails.length) {
                 result.error = true;
                 result.code = 400;
-                result.message = 'inviteeUserIds array length must match inviteeEmails array length';
+                result.message =
+                    'inviteeUserIds array length must match inviteeEmails array length';
                 return result;
             }
 
@@ -671,14 +677,21 @@ class InvitationService {
             }
         }
 
-        const expirationDate = expiresAt || new Date(Date.now() + this.DEFAULT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
+        const expirationDate =
+            expiresAt ||
+            new Date(
+                Date.now() + this.DEFAULT_EXPIRATION_DAYS * 24 * 60 * 60 * 1000,
+            );
         const tokens: string[] = [];
         const errors: string[] = [];
 
         // Create invitations
         for (let i = 0; i < inviteeEmails.length; i++) {
             const inviteeEmail = inviteeEmails[i]?.toLowerCase();
-            const inviteeUserId = Array.isArray(inviteeUserIds) && inviteeUserIds?.[i] ? inviteeUserIds[i] : undefined;
+            const inviteeUserId =
+                Array.isArray(inviteeUserIds) && inviteeUserIds?.[i]
+                    ? inviteeUserIds[i]
+                    : undefined;
 
             try {
                 // Check if already invited
@@ -688,7 +701,9 @@ class InvitationService {
                 });
 
                 if (existingInvite) {
-                    errors.push(`User ${inviteeEmail} already invited with status: ${existingInvite.inviteStatus}`);
+                    errors.push(
+                        `User ${inviteeEmail} already invited with status: ${existingInvite.inviteStatus}`,
+                    );
                     continue;
                 }
 
@@ -714,12 +729,16 @@ class InvitationService {
                 });
 
                 if (saveInvite.error) {
-                    errors.push(`Failed to create invitation for ${inviteeEmail}: ${saveInvite.message}`);
+                    errors.push(
+                        `Failed to create invitation for ${inviteeEmail}: ${saveInvite.message}`,
+                    );
                 } else {
                     tokens.push(token);
                 }
             } catch (error: any) {
-                errors.push(`Error creating invitation for ${inviteeEmail}: ${error.message}`);
+                errors.push(
+                    `Error creating invitation for ${inviteeEmail}: ${error.message}`,
+                );
             }
         }
 
@@ -746,7 +765,10 @@ class InvitationService {
      * @param status - Optional invitation status filter
      * @returns Promise<IResult>
      */
-    public async getInvitationsByResource(resourceId: string, status?: InvitationStatus): Promise<IResult> {
+    public async getInvitationsByResource(
+        resourceId: string,
+        status?: InvitationStatus,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -794,7 +816,9 @@ class InvitationService {
             return result;
         }
 
-        const invitations = await Invites.find({ invitedBy }).sort({ createdAt: -1 });
+        const invitations = await Invites.find({ invitedBy }).sort({
+            createdAt: -1,
+        });
 
         result.message = `Found ${invitations.length} invitation(s)`;
         result.data = invitations;
@@ -822,7 +846,9 @@ class InvitationService {
             return result;
         }
 
-        const invitations = await Invites.find({ inviteeEmail: email.toLowerCase() }).sort({ createdAt: -1 });
+        const invitations = await Invites.find({
+            inviteeEmail: email.toLowerCase(),
+        }).sort({ createdAt: -1 });
 
         result.message = `Found ${invitations.length} invitation(s)`;
         result.data = invitations;
@@ -835,7 +861,9 @@ class InvitationService {
      * @param inviteeUserId - Invitee user ID
      * @returns Promise<IResult>
      */
-    public async getInvitationsByInviteeUserId(inviteeUserId: string): Promise<IResult> {
+    public async getInvitationsByInviteeUserId(
+        inviteeUserId: string,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -850,7 +878,9 @@ class InvitationService {
             return result;
         }
 
-        const invitations = await Invites.find({ inviteeUserId }).sort({ createdAt: -1 });
+        const invitations = await Invites.find({ inviteeUserId }).sort({
+            createdAt: -1,
+        });
 
         result.message = `Found ${invitations.length} invitation(s)`;
         result.data = invitations;
@@ -898,7 +928,9 @@ class InvitationService {
      * @param daysUntilExpiry - Number of days until expiry
      * @returns Promise<IResult>
      */
-    public async getExpiringInvitations(daysUntilExpiry: number = 1): Promise<IResult> {
+    public async getExpiringInvitations(
+        daysUntilExpiry: number = 1,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -907,7 +939,9 @@ class InvitationService {
         };
 
         const today = new Date();
-        const expiryDate = new Date(today.getTime() + daysUntilExpiry * 24 * 60 * 60 * 1000);
+        const expiryDate = new Date(
+            today.getTime() + daysUntilExpiry * 24 * 60 * 60 * 1000,
+        );
 
         const invitations = await Invites.find({
             inviteStatus: InvitationStatus.PENDING,
@@ -928,7 +962,9 @@ class InvitationService {
      * @param daysOld - Number of days old (default: 30)
      * @returns Promise<IResult>
      */
-    public async cleanupExpiredInvitations(daysOld: number = 30): Promise<IResult> {
+    public async cleanupExpiredInvitations(
+        daysOld: number = 30,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -955,7 +991,10 @@ class InvitationService {
      * @param metadata - Metadata to update
      * @returns Promise<IResult>
      */
-    public async updateInvitationMetadata(invitationId: string, metadata: Record<string, unknown>): Promise<IResult> {
+    public async updateInvitationMetadata(
+        invitationId: string,
+        metadata: Record<string, unknown>,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -988,6 +1027,58 @@ class InvitationService {
             metadata: invitation.metadata,
         };
         return result;
+    }
+
+    /**
+     * @name validateEmailFormat
+     * @description Validates email format
+     * @param email - Email to validate
+     * @returns boolean
+     */
+    private validateEmailFormat(email: string): boolean {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    /**
+     * @name validateObjectId
+     * @description Validates MongoDB ObjectId format
+     * @param id - ID to validate
+     * @returns boolean
+     */
+    private validateObjectId(id: string): boolean {
+        return (
+            mongoose.Types.ObjectId.isValid(id) &&
+            new mongoose.Types.ObjectId(id).toString() === id
+        );
+    }
+
+    /**
+     * @name validateStatusTransition
+     * @description Validates if a status transition is allowed
+     * @param currentStatus - Current invitation status
+     * @param newStatus - New invitation status
+     * @returns boolean
+     */
+    private validateStatusTransition(
+        currentStatus: InvitationStatus,
+        newStatus: InvitationStatus,
+    ): boolean {
+        const validTransitions: Record<InvitationStatus, InvitationStatus[]> = {
+            [InvitationStatus.PENDING]: [
+                InvitationStatus.ACCEPTED,
+                InvitationStatus.REVOKED,
+                InvitationStatus.DECLINED,
+                InvitationStatus.EXPIRED,
+            ],
+            [InvitationStatus.ACCEPTED]: [], // Terminal state
+            [InvitationStatus.REVOKED]: [], // Terminal state
+            [InvitationStatus.DECLINED]: [], // Terminal state
+            [InvitationStatus.EXPIRED]: [], // Terminal state
+            [InvitationStatus.VALIDATED]: [], // Terminal state
+        };
+
+        return validTransitions[currentStatus]?.includes(newStatus) || false;
     }
 }
 
