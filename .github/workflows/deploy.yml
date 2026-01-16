@@ -57,6 +57,7 @@ jobs:
     name: Build for Deployment
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    needs: [determine-environment]
 
     steps:
       - name: Checkout code

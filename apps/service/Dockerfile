@@ -66,4 +66,6 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 
 # Start Next.js in production mode
 ENV NODE_ENV=production
-CMD ["pnpm", "start"]
+ENV PORT=3000
+# Use the direct path to next in pnpm workspace
+CMD ["/app/node_modules/.pnpm/node_modules/.bin/next", "start"]

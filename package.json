@@ -34,6 +34,7 @@
     "lint": "turbo lint",
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx}\"",
 
     "preview:docs": "pnpm --filter @pacepard/api-docs dev"
   },

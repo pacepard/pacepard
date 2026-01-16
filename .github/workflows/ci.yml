@@ -63,9 +63,10 @@ jobs:
 
       - name: Type check
         run: pnpm check-types
+        continue-on-error: false
 
       - name: Format check
-        run: pnpm format --check || true
+        run: pnpm format:check || true
         continue-on-error: true
 
   test:
@@ -186,8 +187,20 @@ jobs:
     steps:
       - name: Check job status
         run: |
-          if [ "${{ needs.validate.result }}" != "success" ] || [ "${{ needs.build.result }}" != "success" ]; then
-            echo "CI pipeline failed"
+          VALIDATE_RESULT="${{ needs.validate.result }}"
+          BUILD_RESULT="${{ needs.build.result }}"
+          
+          echo "Validate job result: $VALIDATE_RESULT"
+          echo "Build job result: $BUILD_RESULT"
+          
+          if [ "$VALIDATE_RESULT" != "success" ]; then
+            echo "❌ Validation job failed"
             exit 1
           fi
-          echo "CI pipeline passed"
+          
+          if [ "$BUILD_RESULT" != "success" ]; then
+            echo "❌ Build job failed"
+            exit 1
+          fi
+          
+          echo "✅ CI pipeline passed successfully"
