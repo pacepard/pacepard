@@ -1,11 +1,12 @@
 {
   "extends": "@pacepard/configs/typescript/react-library.json",
   "compilerOptions": {
+    "composite": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["."],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

@@ -57,7 +57,7 @@ const computeInPath = (inroute: IInRoute): string => {
 
         // PRODUCE => '/dashboard/{route}/{subroute}/${inroute}/path/:url?query=value'
 
-        const subroute = route.subroutes.find((m) => m.name === inroute.parent);
+        const subroute = route.subroutes.find((m: IRouteItem) => m.name === inroute.parent);
 
         if (subroute) {
             const merged = subroute.url === inroute.url ? subroute.url : subroute.url + inroute.url;
@@ -129,11 +129,11 @@ const inRoute = (payload: { route: string, name: string, params?: Array<IRoutePa
 
     if (_route && _route.inroutes && _route.inroutes.length > 0) {
 
-        const inroute = _route.inroutes.find((m) => m.name === name);
+        const inroute = _route.inroutes.find((m: IInRoute) => m.name === name);
 
         if (inroute && _route.subroutes && _route.subroutes.length > 0) {
 
-            const subroute = _route.subroutes.find((z) => z.name === inroute.parent);
+            const subroute = _route.subroutes.find((z: IRouteItem) => z.name === inroute.parent);
 
             if (subroute) {
 
@@ -152,7 +152,7 @@ const inRoute = (payload: { route: string, name: string, params?: Array<IRoutePa
 
     } else if (_route && _route.subroutes && _route.subroutes.length > 0) {
 
-        const subroute = _route.subroutes.find((z) => z.name === name);
+        const subroute = _route.subroutes.find((z: IRouteItem) => z.name === name);
 
         if (subroute) {
             const merged = subroute.url
