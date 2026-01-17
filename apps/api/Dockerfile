@@ -59,15 +59,22 @@ WORKDIR /app/apps/api
 # Switch to non-root user
 USER nodejs
 
-# Expose port (default 5015, can be overridden via PORT env var)
-EXPOSE 5015
+# Expose port (Coolify uses dynamic port assignment via $PORT env var)
+# Standard port is 3000, but Coolify will map dynamically
+EXPOSE 3000
 
-# Health check
+# Health check (uses APP_PORT or PORT env var, defaults to 3000)
+# Note: Server uses APP_PORT, but Coolify sets PORT
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5015/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+  CMD node -e "const port = process.env.APP_PORT || process.env.PORT || 3000; require('http').get(`http://localhost:${port}/health`, (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Start API in production mode
-ENV NODE_ENV=production
-ENV APP_PORT=5015
+# ⚠️ IMPORTANT: Do NOT set NODE_ENV here if using Coolify!
+# NODE_ENV should be set in Coolify as Runtime only (not buildtime)
+# This allows devDependencies to be installed during build
+
+# Coolify automatically sets PORT, which should map to APP_PORT
+# Set APP_PORT=PORT in Coolify environment variables if server only reads APP_PORT
+# Or update server code to use: process.env.PORT || process.env.APP_PORT || 3000
 
 CMD ["node", "dist/server.js"]
