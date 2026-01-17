@@ -58,16 +58,16 @@ COPY --from=base /app/apps/web/tsconfig.json ./apps/web/
 ENV PNPM_STORE_DIR=/app/.pnpm-store
 ENV PNPM_HOME=/app/.local/share/pnpm
 
-# Create store directory with proper ownership
+# Create store directory and ensure /app is owned by nodejs BEFORE switching users
 RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm && \
-    chown -R nodejs:nodejs /app/.pnpm-store /app/.local/share/pnpm
+    chown -R nodejs:nodejs /app
 
 # Switch to nodejs user BEFORE installing to avoid store path conflicts
 USER nodejs
 
 # Install production dependencies only (this creates proper node_modules for workspace)
 # We need to install for the entire workspace to resolve workspace:* dependencies
-# Note: Installing as nodejs user ensures correct store path
+# Note: Installing as nodejs user ensures correct store path and permissions
 RUN pnpm install --frozen-lockfile --prod
 
 # Copy built Next.js app (as root temporarily for file operations)
@@ -75,7 +75,7 @@ USER root
 COPY --from=base /app/apps/web/.next ./apps/web/.next
 COPY --from=base /app/apps/web/public ./apps/web/public
 
-# Ensure all files are owned by nodejs user
+# Ensure all files are owned by nodejs user (especially the newly copied files)
 RUN chown -R nodejs:nodejs /app
 
 # Switch back to nodejs user for runtime
