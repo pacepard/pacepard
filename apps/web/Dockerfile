@@ -53,19 +53,32 @@ COPY --from=base /app/apps/web/next.config.* ./apps/web/
 COPY --from=base /app/apps/web/postcss.config.* ./apps/web/
 COPY --from=base /app/apps/web/tsconfig.json ./apps/web/
 
+# Set pnpm store directory to a consistent location (fixes store mismatch issues)
+# This ensures pnpm uses the same store regardless of user
+ENV PNPM_STORE_DIR=/app/.pnpm-store
+ENV PNPM_HOME=/app/.local/share/pnpm
+
+# Create store directory with proper ownership
+RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm && \
+    chown -R nodejs:nodejs /app/.pnpm-store /app/.local/share/pnpm
+
+# Switch to nodejs user BEFORE installing to avoid store path conflicts
+USER nodejs
+
 # Install production dependencies only (this creates proper node_modules for workspace)
 # We need to install for the entire workspace to resolve workspace:* dependencies
-# Note: Next.js needs next binary, so we install prod deps but ensure binaries are available
+# Note: Installing as nodejs user ensures correct store path
 RUN pnpm install --frozen-lockfile --prod
 
-# Copy built Next.js app
+# Copy built Next.js app (as root temporarily for file operations)
+USER root
 COPY --from=base /app/apps/web/.next ./apps/web/.next
 COPY --from=base /app/apps/web/public ./apps/web/public
 
-# Change ownership of all files to nodejs user before switching
+# Ensure all files are owned by nodejs user
 RUN chown -R nodejs:nodejs /app
 
-# Switch to non-root user
+# Switch back to nodejs user for runtime
 USER nodejs
 
 # Expose port (default 3000, can be overridden via PORT env var)
@@ -73,6 +86,9 @@ EXPOSE 3000
 
 # Start Next.js in production mode from workspace root using pnpm filter
 # This ensures binaries are found correctly in the workspace structure
+# Set environment variables to prevent Next.js from trying to install dependencies
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV CI=true
 WORKDIR /app
 CMD ["pnpm", "--filter", "@pacepard/web", "start"]
