@@ -91,8 +91,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV CI=true
-# Ensure PATH includes node_modules/.bin from workspace root for binary resolution
-ENV PATH="/app/node_modules/.bin:$PATH"
-WORKDIR /app/apps/service
-# Run next start from the service directory, binary will be found via PATH
-CMD ["next", "start"]
+WORKDIR /app
+CMD ["pnpm", "--filter", "@pacepard/service", "start"]

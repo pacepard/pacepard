@@ -67,15 +67,19 @@ RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm /app/.tmp && \
 # Switch to nodejs user BEFORE installing to avoid store path conflicts
 USER nodejs
 
-# Install production dependencies only (this creates proper node_modules for workspace)
+# Install all dependencies (needed for TypeScript to load next.config.ts)
+# Next.js requires TypeScript at runtime to load next.config.ts
 # We need to install for the entire workspace to resolve workspace:* dependencies
-# Note: Installing as nodejs user ensures correct store path and permissions
-RUN pnpm install --frozen-lockfile --prod
+# Clear any potential pnpm cache/store issues first, then install fresh
+RUN rm -rf /app/.pnpm-store /app/.local/share/pnpm node_modules 2>/dev/null || true && \
+    mkdir -p /app/.pnpm-store /app/.local/share/pnpm && \
+    pnpm install --frozen-lockfile
 
-# Copy built Next.js app (as root temporarily for file operations)
+# Copy built Next.js app and source files (needed for server components at runtime)
 USER root
 COPY --from=base /app/apps/web/.next ./apps/web/.next
 COPY --from=base /app/apps/web/public ./apps/web/public
+COPY --from=base /app/apps/web/src ./apps/web/src
 
 # Ensure all files are owned by nodejs user (especially the newly copied files)
 RUN chown -R nodejs:nodejs /app
@@ -85,6 +89,10 @@ USER nodejs
 
 # Expose port (default 3000, can be overridden via PORT env var)
 EXPOSE 3000
+
+# Health check - check root page since there's no /api/health endpoint
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Start Next.js in production mode from workspace root using pnpm filter
 # This ensures binaries are found correctly in the workspace structure
