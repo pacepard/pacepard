@@ -2,6 +2,7 @@
   "extends": "@pacepard/configs/typescript/react-library.json",
   "compilerOptions": {
     "composite": true,
+    "incremental": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

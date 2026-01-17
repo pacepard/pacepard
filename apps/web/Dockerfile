@@ -57,9 +57,11 @@ COPY --from=base /app/apps/web/tsconfig.json ./apps/web/
 # This ensures pnpm uses the same store regardless of user
 ENV PNPM_STORE_DIR=/app/.pnpm-store
 ENV PNPM_HOME=/app/.local/share/pnpm
+# Set temp directory to a writable location within /app
+ENV TMPDIR=/app/.tmp
 
-# Create store directory and ensure /app is owned by nodejs BEFORE switching users
-RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm && \
+# Create store directory and temp directory, ensure /app is owned by nodejs BEFORE switching users
+RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm /app/.tmp && \
     chown -R nodejs:nodejs /app
 
 # Switch to nodejs user BEFORE installing to avoid store path conflicts
