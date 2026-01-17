@@ -49,11 +49,13 @@ COPY .npmrc* ./
 COPY --from=base --chown=nodejs:nodejs /app/packages ./packages
 COPY --from=base --chown=nodejs:nodejs /app/configs ./configs
 
-# Install only production dependencies
+# Copy API package.json BEFORE install (required for pnpm workspace resolution)
+COPY --from=base --chown=nodejs:nodejs /app/apps/api/package.json ./apps/api/
+
+# Install only production dependencies (pnpm needs all package.json files present)
 RUN pnpm install --frozen-lockfile --prod
 
-# Copy built API app
-COPY --from=base --chown=nodejs:nodejs /app/apps/api/package.json ./apps/api/
+# Copy built API app dist folder
 COPY --from=base --chown=nodejs:nodejs /app/apps/api/dist ./apps/api/dist
 
 # Set working directory to API
