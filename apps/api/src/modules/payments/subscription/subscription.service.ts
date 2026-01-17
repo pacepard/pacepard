@@ -107,7 +107,7 @@ class SubscriptionService {
 
             case SubscriptionIntentState.VALIDATING:
                 return this.handleValidatingState(intent, userProfile);
-
+            
             case SubscriptionIntentState.AWAITING_PAYMENT:
                 return this.handleAwaitingPayment(intent);
 
