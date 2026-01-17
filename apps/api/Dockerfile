@@ -23,10 +23,10 @@ COPY apps/api ./apps/api
 RUN pnpm install --frozen-lockfile
 
 # Build packages first (they're dependencies)
+# Note: || true allows packages/configs without build scripts to skip
 RUN pnpm build --filter './packages/*' --filter './configs/*' || true
 
 # Build API app
-WORKDIR /app
 RUN pnpm build --filter @pacepard/api
 
 # Production stage
@@ -41,13 +41,16 @@ RUN addgroup -g 1001 -S nodejs && \
 
 WORKDIR /app
 
-# Copy workspace configuration
+# Copy workspace configuration files for dependency resolution
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc* ./
 
-# Copy production dependencies (excluding dev dependencies)
-COPY --from=base --chown=nodejs:nodejs /app/node_modules ./node_modules
+# Copy workspace packages/configs (needed for runtime resolution)
 COPY --from=base --chown=nodejs:nodejs /app/packages ./packages
 COPY --from=base --chown=nodejs:nodejs /app/configs ./configs
+
+# Install only production dependencies
+RUN pnpm install --frozen-lockfile --prod
 
 # Copy built API app
 COPY --from=base --chown=nodejs:nodejs /app/apps/api/package.json ./apps/api/
@@ -60,13 +63,14 @@ WORKDIR /app/apps/api
 USER nodejs
 
 # Expose port (Coolify uses dynamic port assignment via $PORT env var)
-# Standard port is 3000, but Coolify will map dynamically
-EXPOSE 3000
+# Standard port is 5015, but Coolify will map dynamically
+EXPOSE 5015
 
-# Health check (uses APP_PORT or PORT env var, defaults to 3000)
-# Note: Server uses APP_PORT, but Coolify sets PORT
+# Health check (uses APP_PORT or PORT env var, defaults to 5015)
+# Endpoint: /api/v1/ returns health status (renders health-check view)
+# Note: localhost is correct here - HEALTHCHECK runs inside the container
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "const port = process.env.APP_PORT || process.env.PORT || 3000; require('http').get(`http://localhost:${port}/health`, (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
+  CMD node -e "const port = process.env.APP_PORT || process.env.PORT || 5015; require('http').get(`http://localhost:${port}/api/v1/`, (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Start API in production mode
 # ⚠️ IMPORTANT: Do NOT set NODE_ENV here if using Coolify!
@@ -75,6 +79,6 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
 
 # Coolify automatically sets PORT, which should map to APP_PORT
 # Set APP_PORT=PORT in Coolify environment variables if server only reads APP_PORT
-# Or update server code to use: process.env.PORT || process.env.APP_PORT || 3000
+# Or update server code to use: process.env.PORT || process.env.APP_PORT || 5015
 
 CMD ["node", "dist/server.js"]

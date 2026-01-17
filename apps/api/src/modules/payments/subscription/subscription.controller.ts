@@ -150,6 +150,15 @@ export const newSubscription: RequestHandler = asyncHandler(
             interval,
         });
 
+        if (!newIntent) {
+            return next(
+                new ErrorResponse(
+                    'Failed to create subscription intent',
+                    500,
+                    [],
+                ),
+            );
+        }
         const result = await subscriptionService.handleSubscriptionIntent(
             newIntent,
             userProfile,

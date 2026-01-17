@@ -17,17 +17,17 @@ class UserMapper {
       lastName: user.lastName,
       email: user.email,
 
-      phoneNumber: user.phoneNumber,
-      phoneCode: user.phoneCode,
-      country: user.country,
+      phoneNumber: user.location?.phoneNumber,
+      phoneCode: user.location?.phoneCode,
+      country: user.location?.country,
 
-      dateOfBirth: user.dateOfBirth,
-      gender: user.gender,
+      dateOfBirth: undefined,
+      gender: undefined,
 
       userType: user.userType,
       isSuper: user.isSuper,
       isAdmin: user.isAdmin,
-      isOrganisation: user.isOrganisation,
+      isOrganisation: false,
       isTalent: user.isTalent,
 
       
@@ -54,13 +54,13 @@ class UserMapper {
       lastName: user.lastName,
       email: user.email,
 
-      phoneNumber: user.phoneNumber,
-      phoneCode: user.phoneCode,
-      country: user.country,
+      phoneNumber: user.location?.phoneNumber,
+      phoneCode: user.location?.phoneCode,
+      country: user.location?.country,
 
       
-      dateOfBirth: user.dateOfBirth,
-      gender: user.gender,
+      dateOfBirth: undefined,
+      gender: undefined,
 
       userType: user.userType,
       

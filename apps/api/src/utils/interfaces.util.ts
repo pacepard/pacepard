@@ -1,13 +1,13 @@
 import { Model, Document, Types } from 'mongoose';
 import {
     EmailType,
-    OtpType,
     EmailService,
     OAuthProvider,
     FileType,
     FileFormat,
     FileMimeType,
-} from './enums.util.ts';
+} from './enums.util.js';
+import { OtpType } from '../modules/users/user/user.interface.js';
 import { FileInfo } from 'busboy';
 import { PassThrough } from 'stream';
 import { IUserDoc } from '../modules/users/user/user.interface.js';
@@ -70,6 +70,7 @@ export interface IResult<T = any> {
     data: T;
     token?: string;
     status?: number;
+    filters?: any;
 }
 
 export interface IPagination {

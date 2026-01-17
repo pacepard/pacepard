@@ -41,7 +41,7 @@ class ProjectMapper {
       category: project.category || "General",
       type: project.type,
       status: project.status,
-      image: project.image || "",
+      image: typeof project.image === 'string' ? project.image : (project.image?.s3Key || ""),
       tags: project.tags || [],
       documentation: project.documentation || "",
 
