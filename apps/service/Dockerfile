@@ -54,23 +54,29 @@ COPY --from=base /app/apps/service/tsconfig.json ./apps/service/
 # This ensures pnpm uses the same store regardless of user
 ENV PNPM_STORE_DIR=/app/.pnpm-store
 ENV PNPM_HOME=/app/.local/share/pnpm
+# Set temp directory to a writable location within /app
+ENV TMPDIR=/app/.tmp
 
-# Create store directory and ensure /app is owned by nodejs BEFORE switching users
-RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm && \
+# Create store directory and temp directory, ensure /app is owned by nodejs BEFORE switching users
+RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm /app/.tmp && \
     chown -R nodejs:nodejs /app
 
 # Switch to nodejs user BEFORE installing to avoid store path conflicts
 USER nodejs
 
-# Install production dependencies only (this creates proper node_modules for workspace)
+# Install all dependencies (needed for TypeScript to load next.config.ts)
+# Next.js requires TypeScript at runtime to load next.config.ts
 # We need to install for the entire workspace to resolve workspace:* dependencies
-# Note: Installing as nodejs user ensures correct store path and permissions
-RUN pnpm install --frozen-lockfile --prod
+# Clear any potential pnpm cache/store issues first, then install fresh
+RUN rm -rf /app/.pnpm-store /app/.local/share/pnpm node_modules 2>/dev/null || true && \
+    mkdir -p /app/.pnpm-store /app/.local/share/pnpm && \
+    pnpm install --frozen-lockfile
 
-# Copy built Next.js app (as root temporarily for file operations)
+# Copy built Next.js app and source files (needed for server components at runtime)
 USER root
 COPY --from=base /app/apps/service/.next ./apps/service/.next
 COPY --from=base /app/apps/service/public ./apps/service/public
+COPY --from=base /app/apps/service/src ./apps/service/src
 
 # Ensure all files are owned by nodejs user (especially the newly copied files)
 RUN chown -R nodejs:nodejs /app
