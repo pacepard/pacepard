@@ -68,11 +68,6 @@ USER nodejs
 # Standard port is 5015, but Coolify will map dynamically
 EXPOSE 5015
 
-# Health check (uses APP_PORT or PORT env var, defaults to 5015)
-# Endpoint: /api/v1/ returns health status (renders health-check view)
-# Note: localhost is correct here - HEALTHCHECK runs inside the container
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "const port = process.env.APP_PORT || process.env.PORT || 5015; require('http').get(`http://localhost:${port}/api/v1/`, (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Start API in production mode
 # ⚠️ IMPORTANT: Do NOT set NODE_ENV here if using Coolify!
