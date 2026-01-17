@@ -41,18 +41,26 @@ RUN addgroup -g 1001 -S nodejs && \
 WORKDIR /app
 
 # Copy workspace configuration
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
+COPY .npmrc* ./
 
-# Copy production dependencies (excluding dev dependencies)
-COPY --from=base --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=base --chown=nodejs:nodejs /app/packages ./packages
-COPY --from=base --chown=nodejs:nodejs /app/configs ./configs
+# Copy package.json files and source code for workspace dependencies
+# Exclude node_modules as they'll be installed fresh in production
+COPY --from=base /app/packages ./packages
+COPY --from=base /app/configs ./configs
+COPY --from=base /app/apps/web/package.json ./apps/web/
+
+# Install production dependencies only (this creates proper node_modules for workspace)
+# We need to install for the entire workspace to resolve workspace:* dependencies
+RUN pnpm install --frozen-lockfile --prod
 
 # Copy built Next.js app
-COPY --from=base --chown=nodejs:nodejs /app/apps/web/package.json ./apps/web/
-COPY --from=base --chown=nodejs:nodejs /app/apps/web/.next ./apps/web/.next
-COPY --from=base --chown=nodejs:nodejs /app/apps/web/public ./apps/web/public
-COPY --from=base --chown=nodejs:nodejs /app/apps/web/next.config.* ./apps/web/
+COPY --from=base /app/apps/web/.next ./apps/web/.next
+COPY --from=base /app/apps/web/public ./apps/web/public
+COPY --from=base /app/apps/web/next.config.* ./apps/web/
+
+# Change ownership of all files to nodejs user before switching
+RUN chown -R nodejs:nodejs /app
 
 # Set working directory to Web
 WORKDIR /app/apps/web
