@@ -4,6 +4,6 @@
   "version": "0.10.00",
   "scripts": {
     "dev": "mintlify dev -p 3010",
-    "build": "mintlify build"
+    "build": "echo 'No build step required for Mintlify documentation'"
   }
 }
