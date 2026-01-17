@@ -45,25 +45,25 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.json ./
 COPY .npmrc* ./
 
 # Copy package.json files and source code for workspace dependencies
-# Exclude node_modules as they'll be installed fresh in production
+# Note: packages use source files directly (no dist), so we need their src directories
 COPY --from=base /app/packages ./packages
 COPY --from=base /app/configs ./configs
 COPY --from=base /app/apps/web/package.json ./apps/web/
+COPY --from=base /app/apps/web/next.config.* ./apps/web/
+COPY --from=base /app/apps/web/postcss.config.* ./apps/web/
+COPY --from=base /app/apps/web/tsconfig.json ./apps/web/
 
 # Install production dependencies only (this creates proper node_modules for workspace)
 # We need to install for the entire workspace to resolve workspace:* dependencies
+# Note: Next.js needs next binary, so we install prod deps but ensure binaries are available
 RUN pnpm install --frozen-lockfile --prod
 
 # Copy built Next.js app
 COPY --from=base /app/apps/web/.next ./apps/web/.next
 COPY --from=base /app/apps/web/public ./apps/web/public
-COPY --from=base /app/apps/web/next.config.* ./apps/web/
 
 # Change ownership of all files to nodejs user before switching
 RUN chown -R nodejs:nodejs /app
-
-# Set working directory to Web
-WORKDIR /app/apps/web
 
 # Switch to non-root user
 USER nodejs
@@ -71,6 +71,8 @@ USER nodejs
 # Expose port (default 3000, can be overridden via PORT env var)
 EXPOSE 3000
 
-# Start Next.js in production mode
+# Start Next.js in production mode from workspace root using pnpm filter
+# This ensures binaries are found correctly in the workspace structure
 ENV NODE_ENV=production
-CMD ["pnpm", "start"]
+WORKDIR /app
+CMD ["pnpm", "--filter", "@pacepard/web", "start"]
