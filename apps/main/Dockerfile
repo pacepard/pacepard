@@ -25,21 +25,21 @@ RUN pnpm build --filter './packages/*' --filter './configs/*' || true
 WORKDIR /app
 RUN pnpm build --filter @pacepard/app
 
-# Production stage - use nginx to serve static files
-FROM nginx:alpine AS production
+# Production stage - use Caddy to serve static files (lightweight, fast, SPA-friendly)
+FROM caddy:2-alpine AS production
 
 # Copy built static files
-COPY --from=base /app/apps/main/dist /usr/share/nginx/html
+COPY --from=base /app/apps/main/dist /usr/share/caddy
 
-# Copy nginx configuration (optional - uses default if not present)
-# COPY apps/main/nginx.conf /etc/nginx/conf.d/default.conf
+# Copy Caddyfile for SPA routing and configuration
+COPY --from=base /app/apps/main/Caddyfile /etc/caddy/Caddyfile
 
 # Expose port 80
 EXPOSE 80
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start Caddy (runs as non-root by default)
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
