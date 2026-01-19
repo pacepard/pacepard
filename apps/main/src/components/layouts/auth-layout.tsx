@@ -14,6 +14,7 @@ interface IAuthLayout {
     onButtonClick?: () => void;
     showTermsAndPrivacy?: boolean;
     authType?: 'signup' | 'signin';
+    hideHeaderOnSuccess?: boolean;
 }
 
 export const AuthLayout = (props: IAuthLayout) => {
@@ -26,6 +27,7 @@ export const AuthLayout = (props: IAuthLayout) => {
         onButtonClick,
         showTermsAndPrivacy = true,
         authType = 'signup',
+        hideHeaderOnSuccess = false,
     } = props;
 
     const maxWidthClass = {
@@ -40,12 +42,14 @@ export const AuthLayout = (props: IAuthLayout) => {
             <div className={`${maxWidthClass} w-full`}>
                 <PacepardIcon className="h-20 w-20 text-green-500 ml-5" />
 
-                <AuthHeader
-                    title={title}
-                    description={description}
-                    buttonLabel={buttonLabel}
-                    onButtonClick={onButtonClick}
-                />
+                {!hideHeaderOnSuccess && (
+                    <AuthHeader
+                        title={title}
+                        description={description}
+                        buttonLabel={buttonLabel}
+                        onButtonClick={onButtonClick}
+                    />
+                )}
 
                 {children}
 

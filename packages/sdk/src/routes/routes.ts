@@ -7,9 +7,13 @@ import workspaceRoutes from './workspace.route';
 import businessRoutes from './business.route';
 import adminRoutes from './admin.route';
 import talentRoutes from './talent.route';
+import sidebarRoutes from './sidebar.route';
+import onboardRoutes from './onboard.route';
 
 const routes: Array<IRoute> = [
     ...appRoutes,
+    ...sidebarRoutes,
+    ...onboardRoutes,
     ...footer,
     ...productRoutes,
     ...helpRoutes,

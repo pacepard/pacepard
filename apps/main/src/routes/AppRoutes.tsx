@@ -3,14 +3,23 @@ import { Routes, Route } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { routes, routil, type IRouteItem, type IInRoute } from '@pacepard/sdk';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
+import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 
 // Lazy load components
 const Login = lazy(() => import('@/app/auth/Login'));
 const Register = lazy(() => import('@/app/auth/Register'));
 const ActivateAccount = lazy(() => import('@/app/auth/Verification'));
+const ForgotPassword = lazy(() => import('@/app/auth/ForgotPassword'));
 const ResetPassword = lazy(() => import('@/app/auth/ResetPassword'));
 const Preview = lazy(() => import('@/app/generics/preview'));
 const NoNetwork = lazy(() => import('@/app/generics/no-network'));
+
+const Onboard = lazy(() => import('@/app/onboard/onboard'));
+const Welcome = lazy(() => import('@/components/blocks/onboading/welcome'));
+const SubmitInfo = lazy(() => import('@/components/blocks/onboading/submit-info'));
+const TalentInfo = lazy(() => import('@/components/blocks/onboading/talent-info'));
+const CreateWorkspace = lazy(() => import('@/components/blocks/onboading/create-workspace'));
+const InviteTeammates = lazy(() => import('@/components/blocks/onboading/invite-teammates'));
 
 import MyInbox from '@/app/dashboard/partials/inbox/my-inbox';
 import TalentDashboard from '@/app/dashboard/partials/home/talent-home';
@@ -79,7 +88,7 @@ import Roadmap from '@/app/dashboard/product/roadmap';
 import FeatureRequests from '@/app/dashboard/product/feature-requests';
 
 import Dashboard from '@/app/dashboard/dashboard';
-import Onboard from '@/app/onboard/onboard';
+
 
 import Tabs from '@/components/blocks/activity/test-tab';
 import { ReusableTabs } from '@/components/blocks/activity';
@@ -91,6 +100,13 @@ const HomeComponent = () => (
 );
 
 const AppRoutes = () => {
+    /**
+     * Check if a route is an onboarding route
+     */
+    const isOnboardingRoute = (name: string): boolean => {
+        return name.startsWith('onboard') || name === 'onboarding';
+    };
+
     /**
      * Maps route names to React components
      */
@@ -106,6 +122,8 @@ const AppRoutes = () => {
             case 'activate-account':
             case 'verify-otp':
                 return <ActivateAccount />;
+            case 'forgot-password':
+                return <ForgotPassword />;
             case 'reset-password':
                 return <ResetPassword />;
             case 'no-network':
@@ -242,9 +260,23 @@ const AppRoutes = () => {
                 return <FeatureRequests />;
 
             // Sidebar routes
-            case 'dashboard':
+            case 'dashboard':           
                 return <Dashboard />;
-            case 'onboard':
+            case 'onboarding':
+                return <Onboard />;
+            case 'onboard-welcome':
+                return <Welcome />;
+            case 'onboard-submit-info':
+                return <SubmitInfo />;
+            case 'onboard-create-workspace':
+                return <CreateWorkspace />;
+            case 'onboard-invite-teammates':
+                return <InviteTeammates />;
+            case 'onboard-talent-info':
+                return <TalentInfo />;
+            case 'onboard-business-info':
+            case 'onboard-complete':
+            case 'onboard-status':
                 return <Onboard />;
             case 'security':
                 return <Security />;
@@ -269,16 +301,111 @@ const AppRoutes = () => {
                 <Fragment key={`route-${index + 1}`}>
                     {/* Public routes */}
                     {!route.isAuth && (
-                        <Route
-                            path={routil.computeAppRoute(route)}
-                            element={
-                                route.redirect ? (
-                                    <Navigate to={route.redirect} replace />
-                                ) : (
-                                    getAppPages(route.name)
-                                )
-                            }
-                        />
+                        <>
+                            <Route
+                                path={routil.computeAppRoute(route)}
+                                element={
+                                    route.redirect ? (
+                                        <Navigate to={route.redirect} replace />
+                                    ) : isOnboardingRoute(route.name) ? (
+                                        <OnboardingLayout
+                                            title={route.title || route.name}
+                                            logo=""
+                                            description={(route.content as any)?.description}
+                                            maxWidth={(route.content as any)?.maxWidth || 'md'}
+                                            onboardingType={(route.content as any)?.onboardingType || 'talent'}
+                                        >
+                                            {getAppPages(route.name)}
+                                        </OnboardingLayout>
+                                    ) : (
+                                        route.subroutes && route.subroutes.length > 0 ? (
+                                            <DashboardLayout
+                                                component={getAppPages(route.name)}
+                                                title={
+                                                    route.title
+                                                        ? route.title
+                                                        : route.name
+                                                }
+                                                back={
+                                                    route.content.backButton
+                                                        ? route.content.backButton
+                                                        : false
+                                                }
+                                                sidebar={{
+                                                    collapsed: route.content
+                                                        .collapsed
+                                                        ? route.content.collapsed
+                                                        : false,
+                                                }}
+                                            />
+                                        ) : (
+                                            getAppPages(route.name)
+                                        )
+                                    )
+                                }
+                            />
+                            {/* Subroutes for public routes */}
+                            {route.subroutes &&
+                                route.subroutes.length > 0 &&
+                                route.subroutes.map(
+                                    (
+                                        subroute: IRouteItem,
+                                        subIndex: number,
+                                    ) => (
+                                        <Fragment
+                                            key={`${subroute.name}-route-${subIndex + 1}`}
+                                        >
+                                            {subroute.name !== 'divider' && (
+                                                <Route
+                                                    path={
+                                                        route.url === '/dashboard'
+                                                            ? routil.computeSubPath(
+                                                                  route,
+                                                                  subroute,
+                                                              )
+                                                            : route.url + subroute.url
+                                                    }
+                                                    element={
+                                                        isOnboardingRoute(subroute.name) ? (
+                                                            <OnboardingLayout
+                                                                title={subroute.title || subroute.name}
+                                                                logo=""
+                                                                description={(subroute.content as any)?.description}
+                                                                maxWidth={(subroute.content as any)?.maxWidth || '4xl'}
+                                                                onboardingType={(subroute.content as any)?.onboardingType || 'talent'}
+                                                            >
+                                                                {getAppPages(subroute.name)}
+                                                            </OnboardingLayout>
+                                                        ) : (
+                                                            <DashboardLayout
+                                                                component={getAppPages(
+                                                                    subroute.name,
+                                                                )}
+                                                                title={
+                                                                    subroute.title
+                                                                        ? subroute.title
+                                                                        : subroute.name
+                                                                }
+                                                                back={true}
+                                                                sidebar={{
+                                                                    collapsed:
+                                                                        subroute
+                                                                            .content
+                                                                            .collapsed
+                                                                            ? subroute
+                                                                                .content
+                                                                                .collapsed
+                                                                            : false,
+                                                                }}
+                                                            />
+                                                        )
+                                                    }
+                                                />
+                                            )}
+                                        </Fragment>
+                                    ),
+                                )}
+                        </>
                     )}
 
                     {/* Private routes */}
@@ -289,8 +416,8 @@ const AppRoutes = () => {
                                 path={routil.computePath(route.url)}
                                 element={
                                     route.action === 'open-secondary' &&
-                                    route.subroutes &&
-                                    route.subroutes.length > 0 ? (
+                                        route.subroutes &&
+                                        route.subroutes.length > 0 ? (
                                         <Navigate
                                             to={routil.computeSubPath(
                                                 route,
@@ -298,6 +425,16 @@ const AppRoutes = () => {
                                             )}
                                             replace
                                         />
+                                    ) : isOnboardingRoute(route.name) ? (
+                                        <OnboardingLayout
+                                            title={route.title || route.name}
+                                            logo=""
+                                            description={route.content.description}
+                                            maxWidth={route.content.maxWidth || 'md'}
+                                            onboardingType={route.content.onboardingType || 'talent'}
+                                        >
+                                            {getAppPages(route.name)}
+                                        </OnboardingLayout>
                                     ) : (
                                         <DashboardLayout
                                             component={getAppPages(route.name)}
@@ -340,27 +477,39 @@ const AppRoutes = () => {
                                                         subroute,
                                                     )}
                                                     element={
-                                                        <DashboardLayout
-                                                            component={getAppPages(
-                                                                subroute.name,
-                                                            )}
-                                                            title={
-                                                                subroute.title
-                                                                    ? subroute.title
-                                                                    : subroute.name
-                                                            }
-                                                            back={true}
-                                                            sidebar={{
-                                                                collapsed:
-                                                                    subroute
-                                                                        .content
-                                                                        .collapsed
-                                                                        ? subroute
-                                                                              .content
-                                                                              .collapsed
-                                                                        : false,
-                                                            }}
-                                                        />
+                                                        isOnboardingRoute(subroute.name) ? (
+                                                            <OnboardingLayout
+                                                                title={subroute.title || subroute.name}
+                                                                logo=""
+                                                                description={(subroute.content as any)?.description}
+                                                                maxWidth={(subroute.content as any)?.maxWidth || '6xl'}
+                                                                onboardingType={(subroute.content as any)?.onboardingType || 'talent'}
+                                                            >
+                                                                {getAppPages(subroute.name)}
+                                                            </OnboardingLayout>
+                                                        ) : (
+                                                            <DashboardLayout
+                                                                component={getAppPages(
+                                                                    subroute.name,
+                                                                )}
+                                                                title={
+                                                                    subroute.title
+                                                                        ? subroute.title
+                                                                        : subroute.name
+                                                                }
+                                                                back={true}
+                                                                sidebar={{
+                                                                    collapsed:
+                                                                        subroute
+                                                                            .content
+                                                                            .collapsed
+                                                                            ? subroute
+                                                                                .content
+                                                                                .collapsed
+                                                                            : false,
+                                                                }}
+                                                            />
+                                                        )
                                                     }
                                                 />
                                             )}
@@ -381,26 +530,38 @@ const AppRoutes = () => {
                                                     inroute,
                                                 )}
                                                 element={
-                                                    <DashboardLayout
-                                                        component={getAppPages(
-                                                            inroute.name,
-                                                        )}
-                                                        title={
-                                                            inroute.title
-                                                                ? inroute.title
-                                                                : inroute.name
-                                                        }
-                                                        back={true}
-                                                        sidebar={{
-                                                            collapsed: inroute
-                                                                .content
-                                                                .collapsed
-                                                                ? inroute
-                                                                      .content
-                                                                      .collapsed
-                                                                : false,
-                                                        }}
-                                                    />
+                                                    isOnboardingRoute(inroute.name) ? (
+                                                        <OnboardingLayout
+                                                            title={inroute.title || inroute.name}
+                                                            logo=""
+                                                            description={(inroute.content as any)?.description}
+                                                            maxWidth={(inroute.content as any)?.maxWidth || 'md'}
+                                                            onboardingType={(inroute.content as any)?.onboardingType || 'talent'}
+                                                        >
+                                                            {getAppPages(inroute.name)}
+                                                        </OnboardingLayout>
+                                                    ) : (
+                                                        <DashboardLayout
+                                                            component={getAppPages(
+                                                                inroute.name,
+                                                            )}
+                                                            title={
+                                                                inroute.title
+                                                                    ? inroute.title
+                                                                    : inroute.name
+                                                            }
+                                                            back={true}
+                                                            sidebar={{
+                                                                collapsed: inroute
+                                                                    .content
+                                                                    .collapsed
+                                                                    ? inroute
+                                                                        .content
+                                                                        .collapsed
+                                                                    : false,
+                                                            }}
+                                                        />
+                                                    )
                                                 }
                                             />
                                         </Fragment>

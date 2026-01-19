@@ -39,6 +39,7 @@ const OtpForm = ({
         handleSubmit,
         setValue,
         watch,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<VerifyOtpFormValues>({
         resolver: zodResolver(verifyOtpSchema),
@@ -123,18 +124,26 @@ const OtpForm = ({
                       });
 
             if (response.error) {
-                toast.error(
-                    response.message || response.data || "OTP verification failed"
-                );
+                // Use React Hook Form's setError for server errors (inline, not toast)
+                setError('otp', {
+                    type: 'server',
+                    message: response.message || response.data || "Invalid OTP. Please try again.",
+                });
             } else {
-                toast.success(successMessage);
+                // Navigate first, then show optional success toast
                 onSuccess?.();
                 if (redirectTo) {
                     navigate(redirectTo);
                 }
+                // Optional: Show success toast after navigation (non-blocking, informational)
+                toast.success(successMessage);
             }
         } catch (error) {
-            toast.error("An error occurred during OTP verification");
+            // Use React Hook Form's setError for unexpected errors
+            setError('otp', {
+                type: 'server',
+                message: "An error occurred during OTP verification. Please try again.",
+            });
             console.error("OTP verification error:", error);
         }
     };
@@ -151,14 +160,21 @@ const OtpForm = ({
             });
 
             if (response.error) {
-                toast.error(
-                    response.message || response.data || "Failed to resend OTP"
-                );
+                // Use React Hook Form's setError for resend failures (inline, not toast)
+                setError('root', {
+                    type: 'server',
+                    message: response.message || response.data || "Failed to resend OTP. Please try again.",
+                });
             } else {
+                // Toast for resend success - non-blocking, informational
                 toast.success("OTP resent successfully");
             }
         } catch (error) {
-            toast.error("An error occurred while resending OTP");
+            // Use React Hook Form's setError for unexpected errors
+            setError('root', {
+                type: 'server',
+                message: "An error occurred while resending OTP. Please try again.",
+            });
             console.error("Resend OTP error:", error);
         }
 
@@ -206,6 +222,12 @@ const OtpForm = ({
                     {errors.otp && (
                         <p className="text-sm text-destructive text-center">
                             {errors.otp.message}
+                        </p>
+                    )}
+                    {/* Server error from React Hook Form (inline, not toast) */}
+                    {errors.root && (
+                        <p className="text-sm text-destructive text-center">
+                            {errors.root.message}
                         </p>
                     )}
                 </div>

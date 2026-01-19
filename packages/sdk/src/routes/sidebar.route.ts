@@ -11,18 +11,6 @@ const sidebarRoutes: Array<IRoute> = [
         isAuth: false,
         params: [],
         content: { collapsed: false },
-        subroutes: [
-            {
-                name: 'onboard',
-                title: 'Onboard',
-                iconName: 'nav',
-                url: '/onboard',
-                action: 'navigate',
-                isAuth: false,
-                params: [],
-                content: { collapsed: false, backButton: true }
-            },
-        ]
     },
     {
         name: 'settings',

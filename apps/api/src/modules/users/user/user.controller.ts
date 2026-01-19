@@ -243,6 +243,7 @@ export const onboardStep1: RequestHandler = asyncHandler(
   }
 );
 
+
 /**
  * @name onboardStep2
  * @description Step 2: Set basic user information

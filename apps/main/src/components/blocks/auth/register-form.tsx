@@ -34,6 +34,7 @@ const RegisterForm = () => {
     register: formRegister,
     handleSubmit,
     watch,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -55,19 +56,32 @@ const RegisterForm = () => {
   }, [passwordValue]);
 
   const onSubmit = async (data: RegisterFormValues) => {
-    
+    try {
       const response = await pacepardAPI.auth.registerUser({
         email: data.email,
         password: data.password,
       });
       
       if (response.error) {
-        toast.error(response.message || response.data.message);
+        // Use React Hook Form's setError for server errors (inline, not toast)
+        setError('root', {
+          type: 'server',
+          message: response.message || response.data?.message || 'Registration failed. Please try again.',
+        });
       } else {
-
-        toast.success("Registration successful! Please check your email to verify your account.");
+        // Navigate first, then show optional success toast
         navigate("/activate-account");
+        // Optional: Show success toast after navigation (non-blocking, informational)
+        toast.success("Registration successful! Please check your email to verify your account.");
       }
+    } catch (error) {
+      // Use React Hook Form's setError for unexpected errors
+      setError('root', {
+        type: 'server',
+        message: 'An unexpected error occurred. Please try again.',
+      });
+      console.error('Registration error:', error);
+    }
   };
 
   return (
@@ -124,6 +138,13 @@ const RegisterForm = () => {
           {errors.password && (
             <p className="text-sm text-destructive">
               {errors.password.message}
+            </p>
+          )}
+
+          {/* Server error from React Hook Form (inline, not toast) */}
+          {errors.root && (
+            <p className="text-sm text-destructive mt-1">
+              {errors.root.message}
             </p>
           )}
 

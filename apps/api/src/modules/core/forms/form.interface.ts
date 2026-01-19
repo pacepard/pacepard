@@ -54,6 +54,9 @@ export interface IFormSettings {
     closeMessageTitle: string;
     closeMessageDescription: string;
     submissionLimit: number;
+    colors: Record<string, string>;
+    typography: Record<string, string>;
+    notifications: Record<string, string>;
 }
 
 export enum FormStatusType {

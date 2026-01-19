@@ -2,22 +2,22 @@ import { Button } from '@pacepard/ui/components/button';
 import { ArrowRightIcon } from '@phosphor-icons/react';
 import { useEffect } from 'react';
 
-interface IPageHeader {
+interface IAuthHeader {
     title: string;
     description?: string;
     buttonLabel?: string;
     onButtonClick?: () => void;
 }
 
-const AuthHeader = (props: IPageHeader) => {
+const AuthHeader = (props: IAuthHeader) => {
     const {
         title,
         description = '',
         buttonLabel = '',
-        onButtonClick = () => {},
+        onButtonClick = () => { },
     } = props;
 
-    useEffect(() => {}, []);
+    useEffect(() => { }, []);
     return (
         <>
             <div className="px-6 py-2 text-start w-full">

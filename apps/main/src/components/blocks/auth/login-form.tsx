@@ -31,6 +31,7 @@ const LoginForm = () => {
         register: formRegister,
         handleSubmit,
         watch,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
@@ -52,20 +53,32 @@ const LoginForm = () => {
     }, [passwordValue]);
 
     const onSubmit = async (data: RegisterFormValues) => {
-        
+        try {
             const response = await pacepardAPI.auth.loginUser({
                 email: data.email,
                 password: data.password,
             });
             
             if (response.error) {
-                
-                toast.error(response.message || response.data.message);
-
+                // Use React Hook Form's setError for server errors (inline, not toast)
+                setError('root', {
+                    type: 'server',
+                    message: response.message || response.data?.message || 'Invalid email or password',
+                });
             } else {
-                toast.success('Login successful!');
+                // Navigate first, then show optional success toast
                 navigate('/dashboard');
+                // Optional: Show success toast after navigation (non-blocking, informational)
+                toast.success('Login successful!');
             }
+        } catch (error) {
+            // Use React Hook Form's setError for unexpected errors
+            setError('root', {
+                type: 'server',
+                message: 'An unexpected error occurred. Please try again.',
+            });
+            console.error('Login error:', error);
+        }
     };
 
     return (
@@ -96,12 +109,13 @@ const LoginForm = () => {
                 <div className="flex flex-col gap-2 space-y-1">
                     <div className="flex items-center">
                         <Label htmlFor="password">Enter your password</Label>
-                        <a
-                            href="/forgot-password"
+                        <button
+                            type="button"
+                            onClick={() => navigate('/forgot-password')}
                             className="ml-auto text-sm underline-offset-4 hover:underline"
                         >
                             Forgot your password?
-                        </a>
+                        </button>
                     </div>
                     <div className="relative">
                         <LockSimpleIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -132,6 +146,13 @@ const LoginForm = () => {
                     {errors.password && (
                         <p className="text-sm text-destructive">
                             {errors.password.message}
+                        </p>
+                    )}
+
+                    {/* Server error from React Hook Form (inline, not toast) */}
+                    {errors.root && (
+                        <p className="text-sm text-destructive mt-1">
+                            {errors.root.message}
                         </p>
                     )}
 
