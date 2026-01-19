@@ -87,8 +87,6 @@ class TransactionService {
 
 export default new TransactionService();
 
-new TransactionService().initializeTransaction();
-
 /**
  * REMINDERS
  *Design rules you must not violate (Paystack-specific)

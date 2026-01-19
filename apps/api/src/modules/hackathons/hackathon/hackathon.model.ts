@@ -5,6 +5,7 @@ import {
     HackathonType,
     HackathonMemberRole,
 } from './hackathon.interface';
+import { FormType } from '../../core/forms/form.interface';
 import { DbModels } from '../../../utils/enums.util';
 
 const HackathonSchema = new Schema<IHackathonDoc>(
@@ -46,7 +47,11 @@ const HackathonSchema = new Schema<IHackathonDoc>(
             redirectOnClose: { type: String, default: '' },
         },
 
-        formtype: { type: String, default: '' },
+        formtype: { 
+            type: String, 
+            enum: Object.values(FormType),
+            default: FormType.REGISTRATION 
+        },
 
         workspace: {
             type: Schema.Types.ObjectId,

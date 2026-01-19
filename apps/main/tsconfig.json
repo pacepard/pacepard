@@ -1,12 +1,17 @@
 {
   "files": [],
   "extends": "@pacepard/configs/typescript/base.app",
-
+  "references": [
+    {
+      "path": "../../packages/sdk"
+    }
+  ],
   "include": ["src"],
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["./src/*"],
+      "@pacepard/sdk/*": ["../../packages/sdk/src/*"]
     }
   }
 }

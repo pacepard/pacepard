@@ -1,4 +1,4 @@
-import { Admin } from "@/dtos/admin.dto";
+import type Admin from "@/dtos/admin.dto";
 import Entry from "@/dtos/entry.dto";
 import Hackathon from "@/dtos/hackathon.dto";
 import Project from "@/dtos/project.dto";

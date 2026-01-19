@@ -5,12 +5,14 @@
     "type": "module",
     "version": "0.10.00",
     "scripts": {
+        "clean": "rm -rf dist",
         "clean:js": "find src -name '*.js' -type f -delete",
+        "prebuild": "pnpm clean",
         "dev": "tsx watch src/server.ts",
         "dev:worker": "tsx watch  src/queues/workers/runWorker.ts",
         "start": "node dist/server.js",
         "start:worker": "node dist/src/queues/workers/runWorker.js",
-        "build": "tsc --noEmit false && tsc-alias && copyfiles -u 1 src/_data/**/* dist/ && copyfiles -u 1 src/views/**/* dist/",
+        "build": "tsc --incremental --skipLibCheck && tsc-alias && ts-add-js-extension --dir=dist --include=dist && copyfiles -u 1 \"src/_data/**/*\" \"src/views/**/*\" dist/",
         "staging": "NODE_ENV=staging node dist/server.js",
         "prod": "NODE_ENV=production node dist/server.js",
         "test": "NODE_OPTIONS=--experimental-vm-modules jest",
@@ -87,6 +89,7 @@
         "mongodb-memory-server": "^10.0.1",
         "supertest": "^7.0.0",
         "swagger-cli": "^4.0.4",
+        "ts-add-js-extension": "^1.6.6",
         "ts-jest": "^29.1.2",
         "tsc-alias": "^1.8.8",
         "tsx": "^4.21.0"

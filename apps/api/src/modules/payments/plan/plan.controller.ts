@@ -142,6 +142,11 @@ export const updatePlan: RequestHandler = asyncHandler(
         }
 
         const planId = req.params.planId;
+        if (!planId) {
+            return next(
+                new ErrorResponse('Plan ID is required', 400, []),
+            );
+        }
         const updates = req.body;
 
         // validate for acceptable fields

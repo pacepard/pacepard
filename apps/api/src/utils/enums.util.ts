@@ -44,6 +44,8 @@ export enum DbModels {
     USER = 'user',
     VERIFICATION = 'verification',
     WORKSPACE = 'workspace',
+    PLAN = 'plan',
+    SUBSCRIPTION_INTENT = 'subscription-intent',
 }
 
 export enum FileType {

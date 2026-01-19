@@ -1,4 +1,5 @@
-import { IAppMetrics, ICoreResource, IHackDomain, IPagination, IProjectDomain, ISidebarProps, IToast } from "@/utils/interfaces";
+import { IAppMetrics, IPagination, ISidebarProps, IToast } from "@/utils/interfaces";
+import { ICoreResource, IHackDomain, IProjectDomain } from "./interface";
 import { ICollection } from "./interface";
 import sidebarRoutes from "../../routes/sidebar.route";
 import { IAPIResponse } from "@/api/types";
