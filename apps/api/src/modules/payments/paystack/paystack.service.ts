@@ -1,4 +1,5 @@
-import Paystack from 'paystack-sdk';
+import { Paystack } from 'paystack-sdk';
+
 import crypto from 'crypto';
 import {
     CreatePlanDTO,
@@ -7,6 +8,7 @@ import {
 } from './paystack.interface';
 import dotenv from 'dotenv';
 import { RequestHandler } from 'express';
+import transactionService from '../transaction/transaction.service';
 dotenv.config();
 
 const secretKey = process.env.PAYSTACK_SECRET_KEY;
@@ -30,7 +32,7 @@ export const initializePayment = async (
             amount: '1000000',
             plan: dto.plan,
             reference: dto.reference,
-            callback_url: dto.callback_url,
+            callback_url: dto.callbackUrl,
         });
         return response;
     } catch (err) {
@@ -69,7 +71,8 @@ export const paystackCreatePlan = async (dto: CreatePlanDTO): Promise<any> => {
 
         return response;
     } catch (err) {
-        console.log(err);
+        console.log(err.response.data);
+        return err.response.data;
     }
 };
 
@@ -90,12 +93,19 @@ export const paystackPlanUpdate = async (
 /**
  * Cancel a user subscription on paystack.
  */
-export const cancelSubscription = async (subscriptionCode: string) => {
+export const cancelSubscription = async (
+    subscriptionCode: string,
+    token: string,
+) => {
     try {
-        const response = await paystack.subscription.disable();
+        const response = await paystack.subscription.disable({
+            code: subscriptionCode,
+            token,
+        });
         return response;
     } catch (error) {
-        console.log(error);
+        console.log(error.response.data);
+        return error.response.data;
     }
 };
 
@@ -109,14 +119,35 @@ export const cancelSubscription = async (subscriptionCode: string) => {
  * IMPORTANT:
  * `payload` MUST be the raw request body (Buffer or string).
  */
-export const verifyWebhookSignature = (dto: verifWebhookDTO): boolean => {
-    const { paystackSecret, signature, payload } = dto;
-
+export const verifyWebhookSignature = (
+    signature: string,
+    payload: any,
+): boolean => {
     const hash = crypto
-        .createHmac('sha512', paystackSecret)
-        .update(payload)
+        .createHmac('sha512', secretKey)
+        .update(JSON.stringify(payload))
         .digest('hex');
     return hash === signature;
+};
+
+/**
+ * Handle Paystack webhook calling the appropriate service based on event type.
+ */
+export const handlePaystackWebhook = async (eventData: any): Promise<void> => {
+    const eventType = eventData.event;
+    switch (eventType) {
+        case 'charge.success':
+            // handle charge success
+            await transactionService.handleWebhook(eventData);
+
+            break;
+        case 'subscription.create':
+            // handle subscription creation
+            break;
+        // add more cases as needed
+        default:
+            console.log(`Unhandled event type: ${eventType}`);
+    }
 };
 
 /**

@@ -1,13 +1,25 @@
-import { IResult } from '../../../utils/interfaces.util';
-import { initializePayment } from '../paystack/paystack.service';
-import { IResult } from '../../utils/interfaces.util';
+import { ITalentDoc } from '@/modules/users/talent/talent.interface';
+import { IResult } from '@/utils/interfaces.util';
 import {
     initializePayment,
     verifyTransaction,
 } from '../paystack/paystack.service';
 import { Currency } from '../subscription/subscription.interface';
-import { NewTransactionDTO, SubscriptionDTO } from './transaction.dto';
-import { InitResultType, PaymentInitResult } from './transaction.interface';
+import {
+    NewTransactionDTO,
+    PendingDTO,
+    SubscriptionDTO,
+} from './transaction.dto';
+import {
+    IDebitCard,
+    InitResultType,
+    PaymentInitResult,
+    TransactionLabel,
+    TransactionStatus,
+    TransactionType,
+} from './transaction.interface';
+import transactionRepository from './transaction.repository';
+import { IBusinessDoc } from '@/modules/users/business/business.interface';
 
 /**
  * Responsible for handling transactions. Paystack-based
@@ -21,7 +33,10 @@ class TransactionService {
      * @returns {Promise<IResult>}
      *
      */
-    public async initializeTransaction(dto: SubscriptionDTO): Promise<IResult> {
+    public async initializeTransaction(
+        dto: SubscriptionDTO,
+        userProfile: ITalentDoc | IBusinessDoc,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -29,7 +44,8 @@ class TransactionService {
             data: {},
         };
 
-        const { email, amount, planCode, currency, reference } = dto;
+        const { email, amount, planCode, currency, reference, callbackUrl } =
+            dto;
 
         if (!email) {
             throw new Error('Email is required to initialize Transaction');
@@ -45,6 +61,13 @@ class TransactionService {
             throw new Error('Amount must be positive');
         }
 
+        // handle reference
+        let referenceToUse = reference;
+        if (!reference) {
+            const newReference = `PCPD-TXN-${Date.now()}`;
+            referenceToUse = newReference;
+        }
+
         let responseType: PaymentInitResult;
 
         if (amount != null) {
@@ -53,7 +76,8 @@ class TransactionService {
                 email,
                 amount: `${amount}`,
                 currency,
-                reference,
+                reference: referenceToUse,
+                callbackUrl,
             });
             responseType = {
                 type: InitResultType.AMOUNT_CHARGED,
@@ -64,13 +88,25 @@ class TransactionService {
                 email,
                 plan: planCode,
                 currency,
-                reference,
+                reference: referenceToUse,
+                callbackUrl,
             });
             responseType = {
                 type: InitResultType.PLAN_CHARGED,
                 response,
             };
         }
+
+        // create transaction locally
+        const transaction = await this.createPendingTransaction(
+            {
+                amount: Number(amount) ?? 0,
+                currency,
+                reference: referenceToUse,
+                userId: userProfile.user.id.toString(),
+            },
+            userProfile,
+        );
 
         switch (responseType.type) {
             case InitResultType.AMOUNT_CHARGED: {
@@ -81,11 +117,10 @@ class TransactionService {
                     result.error = true;
                     result.code = 402;
                     result.message =
-                        responseType.response.message ?? 'Payment failed';
+                        responseType.response.message ??
+                        "We're having trouble initializing your payment. Please try again shortly";
                     return result;
                 }
-
-                //create transaction locally
 
                 result.message = 'Please proceed with checkout';
                 result.data = responseType.response?.data;
@@ -101,13 +136,11 @@ class TransactionService {
                     result.code = 400;
                     result.message =
                         responseType.response.message ??
-                        'Subscription initialization failed';
+                        "We're having trouble initializing your payment. Please try again shortly";
                     return result;
                 }
 
-                //create transaction locally
-
-                result.message = 'Subscription successful';
+                result.message = 'Please proceed with checkout';
                 result.data = responseType.response?.data;
                 return result;
             }
@@ -136,7 +169,16 @@ class TransactionService {
 
         const response = await verifyTransaction(reference);
 
-        // for now im returning a generic response, then i'll complete and update the local transaction
+        if (!response.status) {
+            result.error = true;
+            result.code = 400;
+        }
+
+        // we mark transactionsuccessfull with webhook only
+        // await this.markTransactionSuccessful(
+        //     response.data.reference,
+        //     response.data,
+        // );
 
         result.data = {
             status: response.data.status,
@@ -164,7 +206,25 @@ class TransactionService {
      * @param payload - Raw webhook payload
      * @returns {Promise<void>}
      */
-    public handleWebhook() {}
+    public async handleWebhook(eventData: any): Promise<void> {
+        const eventType = eventData.event;
+        switch (eventType) {
+            case 'charge.success':
+                await this.markTransactionSuccessful(
+                    eventData.data.reference,
+                    eventData.data,
+                );
+                break;
+            case 'charge.failed':
+                await this.markTransactionFailed(
+                    eventData.data.reference,
+                    eventData.data.reason,
+                );
+                break;
+            default:
+                console.log(`Unhandled event type: ${eventType}`);
+        }
+    }
 
     /**
      * @name markTransactionSuccessful
@@ -176,8 +236,91 @@ class TransactionService {
      */
     private async markTransactionSuccessful(
         reference: string,
-        providerData: object,
-    ) {}
+        providerData: any,
+    ) {
+        const result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        // find transaction and check status
+        const findResult =
+            await transactionRepository.findTransactionByReference(reference);
+
+        if (findResult.error) {
+            throw new Error(
+                `Transaction not found for reference: ${reference}`,
+            );
+        }
+
+        const transaction = findResult.data as any;
+
+        // compare amount and currency to avoid fraud
+        if (
+            transaction.amount !== providerData.amount ||
+            transaction.currency !== providerData.currency
+        ) {
+            throw new Error(
+                `Transaction amount or currency mismatch for reference: ${reference}`,
+            );
+        }
+
+        if (transaction.status === TransactionStatus.SUCCESS) {
+            // idempotent
+            result.message = 'Transaction already marked as successful';
+            result.data = transaction;
+            return result;
+        }
+
+        // update transaction
+        const updateTrans = {
+            ...transaction,
+            meta: {
+                ...transaction.metadata,
+            },
+            status: TransactionStatus.SUCCESS,
+
+            //relations
+            card: this.cardDetails(providerData.authorization),
+
+            // money
+            unitAmount: providerData.amount / 100,
+            fee: providerData.fees,
+            unitFee: providerData.fees / 100,
+
+            // metadata
+            metadata: [
+                // ...transaction.metadata,
+                {
+                    email: providerData.customer.email,
+                    code: providerData.customer.customer_code,
+                    planName: providerData.plan.name,
+                    planCode: providerData.plan.plan_code,
+                },
+            ],
+            channel: providerData.channel,
+            reason: providerData.reason,
+            message: providerData.gateway_response,
+
+            // provider
+            providerName: 'Paystack',
+            providerRef: providerData.id,
+            providerData: [providerData],
+
+            policed: false,
+
+            webhookProcessed: true,
+        };
+
+        const updateResult = await transactionRepository.updateTransaction(
+            transaction._id,
+            updateTrans,
+        );
+
+        console.log(updateResult);
+    }
 
     /**
      *@name markTransactionFailed
@@ -196,124 +339,98 @@ class TransactionService {
      *
      * @returns {Promise<Object|null>} Transaction or null.
      */
-    async getTransactionByReference(reference: string) {}
+    async getTransactionByReference(reference: string) {
+        const result =
+            await transactionRepository.findTransactionByReference(reference);
+        return result;
+    }
+
+    /**
+     * @name verifyPaymentForSub
+     * @description Verify payment for subscription purchases.
+     * @param {string} reference - Paystack reference.
+     *
+     * @returns {Promise<Object>} Verification result.
+     */
+    public async verifyPaymentForSub(reference: string): Promise<IResult> {
+        const result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+        // find transaction and check status
+        const findResult =
+            await transactionRepository.findTransactionByReference(reference);
+        if (findResult.error) {
+            // transaction not found
+            result.error = true;
+            result.code = 404;
+            result.message = `Transaction not found for reference: ${reference}`;
+            return result;
+        }
+        const transaction = findResult.data as any;
+
+        if (
+            transaction.status === TransactionStatus.SUCCESS &&
+            transaction.webhookProcessed
+        ) {
+            result.message = 'Transaction already marked as successful';
+            result.data = transaction;
+            return result;
+        }
+    }
+
+    /**
+     * @name createPendingTransaction
+     * @description Create a local transaction with PENDING status before initializing with Paystack.
+     * @param {} dto - Transaction data.
+     *
+     * @returns {Promise<Object>} Created transaction.
+     */
+    private async createPendingTransaction(
+        dto: PendingDTO,
+        userProfile: ITalentDoc | IBusinessDoc,
+    ) {
+        const result = await transactionRepository.addNewTransaction({
+            type: TransactionType.PAYMENT,
+            status: TransactionStatus.PENDING,
+            label: TransactionLabel.SUBSCRIPTION_PAYMENT,
+            description: `Subscription payment of ${dto.amount} ${dto.currency} for user ${dto.userId}`,
+            reference: dto.reference,
+            currency: dto.currency,
+            amount: dto.amount,
+            user: dto.userId,
+            userProfile: userProfile,
+        });
+
+        if (result.error) {
+            throw new Error(
+                `Failed to create pending transaction: ${result.message}`,
+            );
+        }
+        return result.data;
+    }
+
+    /**
+     * @cardDetails Extract debit card details from Paystack authorization data.
+     * @param authorizationData - Paystack authorization object.
+     * @returns IDebitCard
+     */
+    private cardDetails(authorizationData: any): IDebitCard {
+        return {
+            authCode: authorizationData.authorization_code,
+            cardBin: authorizationData.bin,
+            cardLast: authorizationData.last4,
+            cardType: authorizationData.card_type,
+            cardBrand: authorizationData.brand,
+            expiryMonth: authorizationData.exp_month,
+            expiryYear: authorizationData.exp_year,
+            token: authorizationData.token,
+            cardSignature: authorizationData.signature,
+            provider: 'Paystack',
+        };
+    }
 }
 
 export default new TransactionService();
-
-// new TransactionService()
-//     .initializeTransaction({
-//         email: 'princessnaomi@gmail.com',
-//         currency: Currency.NGN,
-//         reference: 'hjkuubvcdfg',
-//         planCode: 'PLN_fq936uuklutkjtx',
-//     })
-//     .then((result) => console.log(result));
-new TransactionService().verifyTransaction('hjkuubvcdfg');
-/**
- * REMINDERS
- *Design rules you must not violate (Paystack-specific)
-
-1.Never mark success on redirect
-Redirect ≠ payment
-Verification or webhook only
-
-2. Webhooks win
-If verification says success but webhook later contradicts → webhook wins
-
-3. Amount & currency must match
-If Paystack returns a different amount → flag fraud, fail transaction
-
-4. Idempotency
-Webhooks will retry
-Verification will be called twice
-
-VerifyTransaction
-must compare amount currency reference status
- */
-
-//pnpm tsx watch ./src/modules/transaction/transaction.service.ts
-
-/**
- * {
-  status: true,
-  message: 'Verification successful',      
-  data: {
-    id: 5716858631,
-    domain: 'test',
-    status: 'success',
-    reference: 'haouefoeueoeou',
-    receipt_number: null,
-    amount: 25000000,
-    message: null,
-    gateway_response: 'Successful',        
-    paid_at: '2026-01-08T19:35:26.000Z',   
-    created_at: '2026-01-08T19:33:56.000Z',
-    channel: 'card',
-    currency: 'NGN',
-    ip_address: '129.205.124.244',
-    metadata: '',
-    log: {
-      start_time: 1767900919,
-      time_spent: 7,
-      attempts: 1,
-      errors: 0,
-      success: true,
-      mobile: false,
-      input: [],
-      history: [Array]
-    },
-    fees: 200000,
-    fees_split: null,
-    authorization: {
-      authorization_code: 'AUTH_kro3tdkea6',
-      bin: '408408',
-      last4: '4081',
-      exp_month: '12',
-      exp_year: '2030',
-      channel: 'card',
-      card_type: 'visa ',
-      bank: 'TEST BANK',
-      country_code: 'NG',
-      brand: 'visa',
-      reusable: true,
-      signature: 'SIG_uZPyvE4g06Kvr2JWjfJ1',
-      account_name: null
-    },
-    customer: {
-      id: 331007782,
-      first_name: null,
-      last_name: null,
-      email: 'happiness@gmail.com',
-      customer_code: 'CUS_8zv1x0i5kelk47t',
-      phone: null,
-      metadata: null,
-      risk_action: 'default',
-      international_format_phone: null
-    },
-    plan: 'PLN_fq936uuklutkjtx',
-    split: {},
-    order_id: null,
-    paidAt: '2026-01-08T19:35:26.000Z',
-    createdAt: '2026-01-08T19:33:56.000Z',
-    requested_amount: 25000000,
-    pos_transaction_data: null,
-    source: null,
-    fees_breakdown: null,
-    connect: null,
-    transaction_date: '2026-01-08T19:33:56.000Z',
-    plan_object: {
-      id: 3388823,
-      name: 'PLN-2025-06590995',
-      plan_code: 'PLN_fq936uuklutkjtx',
-      description: 'Advanced plan for growing businesses with higher limits.',
-      amount: 25000000,
-      interval: 'annually',
-      send_invoices: true,
-      send_sms: true,
-      currency: 'NGN'
-    },
-    subaccount: {}
-  }
-}
- */

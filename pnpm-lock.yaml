@@ -66,6 +66,9 @@ importers:
       '@exortek/express-mongo-sanitize':
         specifier: ^1.1.1
         version: 1.1.1
+      '@paystack/paystack-sdk':
+        specifier: ^1.0.1
+        version: 1.0.1
       '@types/bull':
         specifier: ^4.10.4
         version: 4.10.4
@@ -3370,6 +3373,7 @@ packages:
   '@paralleldrive/cuid2@2.3.1':
     resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
 
+<<<<<<< HEAD
   '@parcel/watcher-android-arm64@2.5.6':
     resolution: {integrity: sha512-YQxSS34tPF/6ZG7r/Ih9xy+kP/WwediEUsqmtf0cuCV5TPPKw/PQHRhueUo6JdeFJaqV3pyjm0GdYjZotbRt/A==}
     engines: {node: '>= 10.0.0'}
@@ -3457,6 +3461,17 @@ packages:
   '@parcel/watcher@2.5.6':
     resolution: {integrity: sha512-tmmZ3lQxAe/k/+rNnXQRawJ4NjxO2hqiOLTHvWchtGZULp4RyFeh6aU4XdOYBFe2KE1oShQTv4AblOs2iOrNnQ==}
     engines: {node: '>= 10.0.0'}
+=======
+  '@paystack/paystack-sdk@1.0.1':
+    resolution: {integrity: sha512-IZT3KI8O6yX+ZFLK2WYq/IjhYduxCWkqh0HesJcSD1TUcHYyoi8iREiM02Qg+nnVCiPaTKdAw7Ogfeg9eVp9wA==}
+
+  '@phosphor-icons/react@2.1.10':
+    resolution: {integrity: sha512-vt8Tvq8GLjheAZZYa+YG/pW7HDbov8El/MANW8pOAz4eGxrwhnbfrQZq0Cp4q8zBEu8NIhHdnr+r8thnfRSNYA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>= 16.8'
+      react-dom: '>= 16.8'
+>>>>>>> a7a43b1 (feat: Payment Service implementation v1)
 
   '@paystack/inline-js@2.22.8':
     resolution: {integrity: sha512-NDcVzK8kxEpZYs3YbdJzIVYZL7x1GzjWpqcG7veperQXhma4wkQptTDGqEbOVlNmGD8K3PtW7BKQ7TO4uUG+2w==}
@@ -15567,6 +15582,9 @@ snapshots:
     optional: true
 
   '@parcel/watcher@2.5.6':
+  '@paystack/paystack-sdk@1.0.1': {}
+
+  '@phosphor-icons/react@2.1.10(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       detect-libc: 2.1.2
       is-glob: 4.0.3

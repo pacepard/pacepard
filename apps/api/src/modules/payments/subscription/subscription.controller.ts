@@ -2,8 +2,6 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import asyncHandler from '../../../middlewares/async.mdw';
 import ErrorResponse from '../../../utils/error.util';
 import { IUserDoc } from '../../users/user/user.interface';
-import talentService from '../../users/talent/talent.service';
-import businessService from '../../users/business/business.service';
 import subscriptionService from './subscription.service';
 import systemService from '../../internals/system.service';
 import subscriptionIntentService from './subscription intent/subscriptionIntent.service';
@@ -24,44 +22,7 @@ export const newSubscription: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         const user: IUserDoc = (req as any).user;
-
-        if (!userId) {
-            return next(new ErrorResponse('Unauthorized', 401, []));
-        }
-        // Here we get the user profile if business or talent
-        let userProfile = null;
-
-        if (user.isTalent) {
-            const talentProfile = await talentService.getTalentProfile(
-                String(userId),
-            );
-            if (talentProfile.error || !talentProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        talentProfile.message || 'Talent profile not found',
-                        talentProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = talentProfile.data;
-        }
-
-        if (user.isBusiness) {
-            const businessProfile = await businessService.getBusinessProfile(
-                String(userId),
-            );
-            if (businessProfile.error || !businessProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        businessProfile.message || 'Business profile not found',
-                        businessProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = businessProfile.data;
-        }
+        const userProfile = (req as any).userProfile;
 
         // validate dto from request body
         const validationResult = await subscriptionService.validateDto(
@@ -79,11 +40,8 @@ export const newSubscription: RequestHandler = asyncHandler(
         }
 
         const { planId, currency, interval } = req.body;
-        // we need to create a key that has this three values cos if the plan is same but different interval it wouldn't proceed
-        // Same plan + different interval = same key → WRONG intent reuse
 
         // create idempotency key
-        // const idempotencyKey = `sub_${userId}_${planId}_${Date.now()}`;
 
         const idempotencyKey = await systemService.encryptData({
             payload: `${planId}:${currency}:${interval}`,
@@ -119,7 +77,6 @@ export const newSubscription: RequestHandler = asyncHandler(
         if (activeIntent) {
             // we compare the plan
 
-            //compare logic samePlan must compare planid, currency, interval
             if (samePlan(activeIntent, { planId, currency, interval })) {
                 const result =
                     await subscriptionService.handleSubscriptionIntent(
@@ -153,7 +110,7 @@ export const newSubscription: RequestHandler = asyncHandler(
         if (!newIntent) {
             return next(
                 new ErrorResponse(
-                    'Failed to create subscription intent',
+                    'Failed to start subscription process. Please try again.',
                     500,
                     [],
                 ),
@@ -179,49 +136,12 @@ export const newSubscription: RequestHandler = asyncHandler(
  * @route GET /subscriptions/verify
  * @access Private
  */
-export const handleCallback = asyncHandler(
+export const handleCallback: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         const user: IUserDoc = (req as any).user;
+        const userProfile = (req as any).userProfile;
         const { reference } = req.query;
-
-        if (!userId) {
-            return next(new ErrorResponse('Unauthorized', 401, []));
-        }
-        // Here we get the user profile if business or talent
-        let userProfile = null;
-
-        if (user.isTalent) {
-            const talentProfile = await talentService.getTalentProfile(
-                String(userId),
-            );
-            if (talentProfile.error || !talentProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        talentProfile.message || 'Talent profile not found',
-                        talentProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = talentProfile.data;
-        }
-
-        if (user.isBusiness) {
-            const businessProfile = await businessService.getBusinessProfile(
-                String(userId),
-            );
-            if (businessProfile.error || !businessProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        businessProfile.message || 'Business profile not found',
-                        businessProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = businessProfile.data;
-        }
 
         if (!reference) {
             return next(
@@ -263,46 +183,8 @@ export const handleCallback = asyncHandler(
  */
 export const getUserSubscription = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        const user: IUserDoc = (req as any).user;
+        const userProfile = (req as any).userProfile;
 
-        if (!userId) {
-            return next(new ErrorResponse('Unauthorized', 401, []));
-        }
-        // Here we get the user profile if business or talent
-        let userProfile = null;
-
-        if (user.isTalent) {
-            const talentProfile = await talentService.getTalentProfile(
-                String(userId),
-            );
-            if (talentProfile.error || !talentProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        talentProfile.message || 'Talent profile not found',
-                        talentProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = talentProfile.data;
-        }
-
-        if (user.isBusiness) {
-            const businessProfile = await businessService.getBusinessProfile(
-                String(userId),
-            );
-            if (businessProfile.error || !businessProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        businessProfile.message || 'Business profile not found',
-                        businessProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = businessProfile.data;
-        }
         const result = await subscriptionService.userSubscription(userProfile);
 
         res.status(result.code).json({
@@ -324,44 +206,7 @@ export const cancelUserSubscription = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const userId = (req as any).user?.id;
         const user: IUserDoc = (req as any).user;
-
-        if (!userId) {
-            return next(new ErrorResponse('Unauthorized', 401, []));
-        }
-        // Here we get the user profile if business or talent
-        let userProfile = null;
-
-        if (user.isTalent) {
-            const talentProfile = await talentService.getTalentProfile(
-                String(userId),
-            );
-            if (talentProfile.error || !talentProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        talentProfile.message || 'Talent profile not found',
-                        talentProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = talentProfile.data;
-        }
-
-        if (user.isBusiness) {
-            const businessProfile = await businessService.getBusinessProfile(
-                String(userId),
-            );
-            if (businessProfile.error || !businessProfile.data) {
-                return next(
-                    new ErrorResponse(
-                        businessProfile.message || 'Business profile not found',
-                        businessProfile.code || 404,
-                        [],
-                    ),
-                );
-            }
-            userProfile = businessProfile.data;
-        }
+        const userProfile = (req as any).userProfile;
 
         const result =
             await subscriptionService.cancelSubscription(userProfile);
@@ -385,7 +230,3 @@ const samePlan = (
         intent.interval === newPlan.interval
     );
 };
-
-// const fetchUserProfile = async (user: IUserDoc) => {
-//     let userProfile = null;
-// }

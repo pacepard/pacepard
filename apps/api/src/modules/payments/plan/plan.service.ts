@@ -623,11 +623,11 @@ const testNewPlan: newPlanDTO = {
     },
 };
 
-new PlanService()
-    .createNewPlan(testNewPlan)
-    .then((res) => {
-        console.log(res);
-    })
-    .catch((err) => {
-        console.error(err);
-    });
+// new PlanService()
+//     .createNewPlan(testNewPlan)
+//     .then((res) => {
+//         console.log(res);
+//     })
+//     .catch((err) => {
+//         console.error(err);
+//     });

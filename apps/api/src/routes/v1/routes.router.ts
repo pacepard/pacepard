@@ -15,6 +15,9 @@ import squadRoutes from '../../modules/hackathons/squad/squad.router';
 import submissionRoutes from '../../modules/hackathons/submission/submission.router';
 import { ENVType } from '@/utils/enums.util';
 import ENV from '@/utils/env.util';
+import planRoutes from '@/modules/payments/plan/plan.routes';
+import subscriptionRoutes from '@/modules/payments/subscription/subscription.routes';
+import webhookRoutes from '@/modules/webhook/webhook.routes';
 
 const router: Router = express.Router();
 
@@ -32,6 +35,9 @@ router.use('/hackathons', hackathonRoutes);
 router.use('/entries', entryRoutes);
 router.use('/squads', squadRoutes);
 router.use('/submissions', submissionRoutes);
+router.use('/plans', planRoutes);
+router.use('/subscriptions', subscriptionRoutes);
+router.use('/webhooks', webhookRoutes);
 // Add new routes
 
 router.get('/me', (req: Request, res: Response, next: NextFunction) => {

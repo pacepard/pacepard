@@ -38,12 +38,13 @@ export interface ITransactionDoc extends Document {
     // relations
     card: IDebitCard;
     user: any; // ObjectId | populated
-    talent: ITalentDoc;
-    business: IBusinessDoc;
+    userProfile: ITalentDoc | IBusinessDoc;
     subscription: ISubscriptionDoc;
 
     // flags
     policed: boolean;
+
+    webhookProcessed: boolean;
 
     // time stamps
     createdAt: Date;
@@ -80,12 +81,15 @@ export interface IDebitCard {
 
     cardBin: string;
     cardLast: string;
+    cardType: string;
+    cardBrand: string;
 
     expiryMonth: string;
     expiryYear: string;
 
     //     cardPan: string; // PCI VIOLATION
     token: string;
+    cardSignature: string;
 
     provider: string;
 }

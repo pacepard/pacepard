@@ -65,7 +65,7 @@ class SubscriptionIntentService {
                 currency,
                 interval,
                 state: SubscriptionIntentState.INITIATED,
-                expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+                expiresAt: new Date(Date.now() + 30 * 60 * 1000), // expires in 30 minutes
             });
 
             return newIntent;

@@ -78,8 +78,12 @@ const TransactionSchema = new Schema<ITransactionDoc>(
         card: { type: DebitCardSchema },
 
         user: { type: Schema.Types.ObjectId, ref: DbModels.USER },
-        talent: { type: Schema.Types.ObjectId, ref: DbModels.TALENT },
-        business: { type: Schema.Types.ObjectId, ref: DbModels.BUSINESS },
+        // talent: { type: Schema.Types.ObjectId, ref: DbModels.TALENT },
+        // business: { type: Schema.Types.ObjectId, ref: DbModels.BUSINESS },
+        userProfile: {
+            type: Schema.Types.ObjectId,
+            refPath: 'resource',
+        },
         subscription: {
             type: Schema.Types.ObjectId,
             ref: DbModels.SUBSCRIPTION,
@@ -88,6 +92,8 @@ const TransactionSchema = new Schema<ITransactionDoc>(
 
         // flags
         policed: { type: Boolean, default: false },
+
+        webhookProcessed: { type: Boolean, default: false },
     },
     {
         timestamps: true,

@@ -52,6 +52,14 @@ export interface SubscriptionDTO {
     email: string;
     amount?: string;
     planCode?: string;
-    currency?: Currency;
+    currency?: string;
     reference: string;
+    callbackUrl?: string;
+}
+
+export interface PendingDTO {
+    amount: number;
+    currency: string;
+    reference: string;
+    userId: string;
 }

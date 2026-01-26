@@ -37,6 +37,7 @@
         "@aws-sdk/s3-request-presigner": "^3.953.0",
         "@btffamily/pacitude": "^1.0.32",
         "@exortek/express-mongo-sanitize": "^1.1.1",
+        "@paystack/paystack-sdk": "^1.0.1",
         "@types/bull": "^4.10.4",
         "@types/busboy": "^1.5.4",
         "@types/dotenv": "^8.2.3",

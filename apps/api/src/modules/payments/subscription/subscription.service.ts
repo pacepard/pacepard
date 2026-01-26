@@ -17,13 +17,15 @@ import {
     Currency,
     IBilling,
     ISubscriptionDoc,
+    PlanAvailability,
     subRefStatus,
     SubscriptionStatus,
 } from './subscription.interface';
 import subscriptionRepository from './subscription.repository';
-import businessRepository from '../business/business.repository';
-import talentRepository from '../talents/talent.repository';
+import businessRepository from '@/modules/users/business/business.repository';
+import talentRepository from '@/modules/users/talent/talent.repository';
 import planRepository from '../plan/plan.repository';
+import { cancelSubscription } from '../paystack/paystack.service';
 
 class SubscriptionService {
     /**
@@ -116,7 +118,13 @@ class SubscriptionService {
                 return this.handleValidatingState(intent, userProfile);
 
             case SubscriptionIntentState.AWAITING_PAYMENT:
-                return this.handleAwaitingPayment(intent);
+                return this.handleAwaitingPayment(intent, userProfile);
+
+            case SubscriptionIntentState.PAYMENT_PROCESSING:
+                return this.handlePaymentProcessing(intent, userProfile);
+
+            case SubscriptionIntentState.SUBSCRIPTION_CREATING:
+                return this.handlePaymentProcessing(intent, userProfile);
 
             default:
                 result.error = true;
@@ -161,52 +169,60 @@ class SubscriptionService {
 
         if (!updatedIntent) {
             result.error = true;
-            result.message = 'Failed to update subscription intent';
+            result.message = 'Something went wrong. Please try again.';
             result.code = 500;
             return result;
         }
 
         //2. check if user has consumed a trial
-        const consumeTrialResult = await this.hasNotConsumeTrial(
+        const checkTrialUsage = await this.hasConsumeTrial(
             updatedIntent,
             userProfile,
         );
 
-        // true if trial has been used. false if trial hasn't been used so should proceed
-        if (consumeTrialResult.error) {
-            return consumeTrialResult;
+        if (checkTrialUsage) {
+            result.error = true;
+            result.message =
+                'Trial already used; subscription will start with charges.';
+            return result;
         }
 
         //2. check against active subscription
-        const activeResult = await this.hasActiveSubscription(userProfile);
-        // same here if false continue, if true return to client
-        if (activeResult.error) {
-            activeResult.error = false;
-            return activeResult;
-        }
+        const activeSubscription =
+            await this.hasActiveSubscription(userProfile);
 
-        //3. Validate plan
-        if (!updatedIntent) {
+        if (activeSubscription) {
+            result.code = 400;
             result.error = true;
-            result.message = 'Failed to update subscription intent';
-            result.code = 500;
+            result.message =
+                "You're currently on an active Subscription or on a trial";
             return result;
         }
+
+        //3. Validate plan availability
         const planResult = await this.checkPlanAvailability(
             String(updatedIntent.planId),
             updatedIntent,
         );
-        // make decisions base on code
-        if (planResult.code === 400) {
-            return planResult;
+
+        // Return base on plan availability
+        if (planResult.available === false) {
+            result.code = 400;
+            result.error = true;
+            result.message = 'Plan currently not available for subscription';
+            return result;
         }
-        if (planResult.code === 200) {
-            return planResult;
+
+        if (planResult.available === true && planResult?.hasTrial === false) {
+            result.error = false;
+            result.message =
+                'Trial not enabled on plan choosen; subscription will start with charges.';
+            return result;
         }
 
         const { currency, interval } = updatedIntent;
 
-        const { planTrial, paystackCodes } = planResult.data;
+        const { trial, paystackCodes } = planResult?.plan;
 
         const planCode = this.getPlanCode(currency, interval, paystackCodes);
 
@@ -214,23 +230,29 @@ class SubscriptionService {
 
         const subReference = this.newReference(String(updatedIntent?._id));
 
-        const transactionResult = await this.handleTransaction({
-            trial: true,
-            planCode,
-            email: userProfile.email,
-            currency,
-            reference: subReference,
-        });
-
-        // change state to awaiting payment, added payment reference to the intent
-        subscriptionIntentService.updateIntent(String(updatedIntent?._id), {
-            state: SubscriptionIntentState.AWAITING_PAYMENT,
-            transactionReference: subReference,
-            metaData: {
-                authUrl: transactionResult.data.authorization_url,
-                mode: 'trial',
+        const transactionResult = await this.handleTransaction(
+            {
+                trial: true,
+                planCode,
+                email: userProfile.email,
+                currency,
+                reference: subReference,
             },
-        });
+            userProfile,
+        );
+
+        // Gaurd against authUrl not generated
+        if (!transactionResult.error) {
+            // change state to awaiting payment, added payment reference to the intent
+            subscriptionIntentService.updateIntent(String(updatedIntent?._id), {
+                state: SubscriptionIntentState.AWAITING_PAYMENT,
+                transactionReference: subReference,
+                metaData: {
+                    authUrl: transactionResult.data.authorization_url,
+                    mode: 'trial',
+                },
+            });
+        }
 
         return transactionResult;
     }
@@ -317,22 +339,29 @@ class SubscriptionService {
         // This state makes use of metadata to check each state of validation and continue from where it left of
         //1.skipTrial
         if (!intent.metaData?.skipTrial) {
-            const consumeTrialResult = await this.hasNotConsumeTrial(
+            const checkTrialUsage = await this.hasConsumeTrial(
                 intent,
                 userProfile,
             );
 
-            if (consumeTrialResult.error) {
-                return consumeTrialResult;
+            if (checkTrialUsage) {
+                result.error = true;
+                result.message =
+                    'Trial already used; subscription will start with charges.';
+                return result;
             }
         }
 
         // add meta data to skip subscription check
-        const activeResult = await this.hasActiveSubscription(userProfile);
+        const activeSubscription =
+            await this.hasActiveSubscription(userProfile);
 
-        if (activeResult.error) {
-            activeResult.error = false;
-            return activeResult;
+        if (activeSubscription) {
+            result.code = 400;
+            result.error = true;
+            result.message =
+                "You're currently on an active Subscription or on a trial";
+            return result;
         }
 
         //2.proceedWithoutTrial has been set to true then no need for plan check
@@ -342,40 +371,56 @@ class SubscriptionService {
             intent,
         );
 
-        if (planResult.code === 400) {
-            return planResult;
+        if (planResult.available === false) {
+            result.code = 400;
+            result.error = true;
+            result.message = 'Plan currently not available for subscription';
+            return result;
         }
+
         if (!intent.metaData?.proceedWithNoTrial) {
-            if (planResult.code === 200) {
-                return planResult;
+            if (
+                planResult.available === true &&
+                planResult?.hasTrial === false
+            ) {
+                result.error = false;
+                result.message =
+                    'Trial not enabled on plan choosen; subscription will start with charges.';
+                return result;
             }
         }
 
         const { currency, interval } = intent;
 
-        const { planTrial, paystackCodes } = planResult.data;
+        const { trial, paystackCodes } = planResult.plan;
 
         const planCode = this.getPlanCode(currency, interval, paystackCodes);
 
         const subReference = this.newReference(String(intent._id));
 
-        const transactionResult = await this.handleTransaction({
-            trial: false,
-            planCode,
-            email: userProfile.email,
-            currency,
-            reference: subReference,
-        });
-
-        // change state to awaiting payment, add payment reference
-        subscriptionIntentService.updateIntent(String(intent?._id), {
-            state: SubscriptionIntentState.AWAITING_PAYMENT,
-            transactionReference: subReference,
-            metaData: {
-                authUrl: transactionResult.data.authorization_url,
-                mode: 'direct_charge',
+        const transactionResult = await this.handleTransaction(
+            {
+                trial: false,
+                planCode,
+                email: userProfile.email,
+                currency,
+                reference: subReference,
             },
-        });
+            userProfile,
+        );
+
+        if (!transactionResult.error) {
+            // change state to awaiting payment, add payment reference
+            subscriptionIntentService.updateIntent(String(intent?._id), {
+                state: SubscriptionIntentState.AWAITING_PAYMENT,
+                transactionReference: subReference,
+                metaData: {
+                    authUrl: transactionResult.data.authorization_url,
+                    mode: 'direct_charge',
+                },
+            });
+        }
+
         return transactionResult;
     }
 
@@ -387,6 +432,7 @@ class SubscriptionService {
      */
     private async handleAwaitingPayment(
         intent: ISubscriptionIntentDoc,
+        userProfile: ITalentDoc | IBusinessDoc,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -419,7 +465,7 @@ class SubscriptionService {
                     String(intent._id),
                     SubscriptionIntentState.PAYMENT_PROCESSING,
                 );
-                return this.handlePaymentProcessing(intent);
+                return this.handlePaymentProcessing(intent, userProfile);
 
             case subRefStatus.FAILED:
                 subscriptionIntentService.updateState(
@@ -463,6 +509,7 @@ class SubscriptionService {
      */
     private async handlePaymentProcessing(
         intent: ISubscriptionIntentDoc,
+        userProfile: ITalentDoc | IBusinessDoc,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -471,11 +518,12 @@ class SubscriptionService {
             data: {},
         };
 
-        if (intent.metaData?.paymentConfirmedAt) {
-            result.message =
-                'Payment already confirmed, setting up subscription';
-            return result;
-        }
+        // if (intent.metaData?.paymentConfirmedAt) {
+        //     // await this.handleSubscriptionCreating(updatedIntent,userProfile,transactionData);
+        //     result.message =
+        //         'Payment already confirmed, setting up subscription';
+        //     return result;
+        // }
 
         // first check if transactionReference exists
         const { transactionReference } = intent;
@@ -492,12 +540,23 @@ class SubscriptionService {
             return result;
         }
 
-        const { error, data } =
-            await transactionService.verifyTransaction(transactionReference);
+        // Verify payment is confirmed after webhook processing and transaction marked as successful to db
+        const { error, data: transactionData } =
+            await transactionService.verifyPaymentForSub(transactionReference);
 
-        // is transaction verified, that is webhook has been processed and all data is verified. this would happen here. transactionVerifyForSub - this would be called from db after webhook and callback has been processed and transaction marked as successful to the database.
+        if (error || !transactionData) {
+            subscriptionIntentService.updateState(
+                String(intent._id),
+                SubscriptionIntentState.FAILED,
+            );
 
-        if (data.status !== subRefStatus.SUCCESS) {
+            result.error = true;
+            result.code = 400;
+            result.message =
+                "Payment verification failed. Couldn't confirm payment. Please kindly retry subscription process";
+        }
+
+        if (transactionData.status !== subRefStatus.SUCCESS) {
             subscriptionIntentService.updateState(
                 String(intent._id),
                 SubscriptionIntentState.FAILED,
@@ -510,19 +569,26 @@ class SubscriptionService {
             return result;
         }
 
-        subscriptionIntentService.updateIntent(String(intent?._id), {
-            state: SubscriptionIntentState.SUBSCRIPTION_CREATING,
-            metaData: {
-                paymentConfirmedAt: Date.now(),
+        const updatedIntent = await subscriptionIntentService.updateIntent(
+            String(intent?._id),
+            {
+                state: SubscriptionIntentState.SUBSCRIPTION_CREATING,
+                metaData: {
+                    paymentConfirmedAt: Date.now(),
+                },
             },
-        });
+        );
+
+        // call create subscription with transaction data and things needed
+        await this.handleSubscriptionCreating(
+            updatedIntent,
+            userProfile,
+            transactionData,
+        );
 
         result.message = 'Payment confirmed, setting up subscription';
 
-        // call create subscription with transaction data and things needed
         return result;
-
-        // this should be a background process, enques creating of subscription.
     }
 
     /**
@@ -534,7 +600,7 @@ class SubscriptionService {
     private async handleSubscriptionCreating(
         intent: ISubscriptionIntentDoc,
         userProfile: ITalentDoc | IBusinessDoc,
-        transactionData: Object,
+        transactionData: unknown,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -582,6 +648,7 @@ class SubscriptionService {
                 // set status to trialing, save authcode to metadata, schedule job to subscribe user to paystack, mark user trial as used
                 newSubscription.status = SubscriptionStatus.TRIALING;
                 newSubscription.metadata = {
+                    ...transactionData?.metadata[0],
                     authCode: transactionData?.card.authCode,
                 };
 
@@ -590,16 +657,21 @@ class SubscriptionService {
                     String(userProfile._id),
                     String(intent.planId),
                 );
+
                 // schedule job to subscribe user to paystack at end of trial period
 
                 break;
+
             case 'direct_charge':
                 // set status to active
                 newSubscription.status = SubscriptionStatus.ACTIVE;
                 newSubscription.metadata = {
+                    ...transactionData?.metadata[0],
                     authCode: transactionData?.card.authCode,
                 };
+
                 break;
+
             default:
                 break;
         }
@@ -639,6 +711,7 @@ class SubscriptionService {
 
         newSubscription.billing = billing;
 
+        // save to db
         const { error: subError, data: createdSubscription } =
             await subscriptionRepository.addNewSubscription(newSubscription);
 
@@ -661,6 +734,10 @@ class SubscriptionService {
                 subscription: String(createdSubscription._id),
             });
         }
+
+        result.message = 'Subscription successfull';
+        result.data = createdSubscription;
+        return result;
     }
 
     private async updateTrialUsage(
@@ -696,17 +773,10 @@ class SubscriptionService {
      */
     private async hasActiveSubscription(
         userProfile: ITalentDoc | IBusinessDoc,
-    ) {
-        let result: IResult = {
-            error: false,
-            message: '',
-            code: 200,
-            data: {},
-        };
-
+    ): Promise<boolean> {
         const subscriptionId = userProfile.subscription;
         if (!subscriptionId) {
-            return result;
+            return false;
         }
 
         const subscriptionResult =
@@ -719,15 +789,11 @@ class SubscriptionService {
                 subscriptionResult.data.status === SubscriptionStatus.ACTIVE ||
                 subscriptionResult.data.status === SubscriptionStatus.TRIALING
             ) {
-                result.code = 400;
-                result.error = true;
-                result.message =
-                    "You're currently on an active Subscription or on a trial";
-                return result;
+                return true;
             }
         }
 
-        return result;
+        return false;
     }
 
     /**
@@ -739,21 +805,11 @@ class SubscriptionService {
     private async checkPlanAvailability(
         planId: string,
         intent: ISubscriptionIntentDoc,
-    ) {
-        let result: IResult = {
-            error: false,
-            message: '',
-            code: 200,
-            data: {},
-        };
-
+    ): Promise<PlanAvailability> {
         const planAvailability = await planService.getPlanAvailability(planId);
 
         if (!planAvailability.isAvailable) {
-            result.code = 400;
-            result.error = true;
-            result.message = 'Plan currently not available for subscription';
-            return result;
+            return { available: false, plan: null, hasTrial: false };
         }
 
         //if trial on plan is enabled
@@ -765,28 +821,21 @@ class SubscriptionService {
                 String(intent?._id),
                 intent,
             );
-            result.error = false;
-            result.message =
-                'Trial not enabled on plan choosen; subscription will start with charges.';
-            return result;
+
+            return {
+                available: true,
+                plan: planAvailability.data,
+                hasTrial: false,
+            };
         }
 
-        result.code = 202;
-        result.data = planAvailability.data;
-        return result;
+        return { available: true, plan: planAvailability.data, hasTrial: true };
     }
 
-    private async hasNotConsumeTrial(
+    private async hasConsumeTrial(
         intent: ISubscriptionIntentDoc,
         userProfile: ITalentDoc | IBusinessDoc,
-    ) {
-        let result: IResult = {
-            error: false,
-            message: '',
-            code: 200,
-            data: {},
-        };
-
+    ): Promise<boolean> {
         if (userProfile.trial.hasUsedTrial) {
             if (!intent.metaData) intent.metaData = {};
             intent.metaData.skipTrial = true;
@@ -796,13 +845,10 @@ class SubscriptionService {
                 intent,
             );
 
-            result.error = true;
-            result.message =
-                'Trial already used; subscription will start with charges.';
-            return result;
+            return true;
         }
 
-        return result;
+        return false;
     }
 
     /**
@@ -832,13 +878,16 @@ class SubscriptionService {
      * @param -full object with details if the transaction is to charge immediately or for card collection if you pass in amount for card tokenization and plancodes to charge immediately
      * @returns {Promise<IResult>} with data containing a url and payment reference
      */
-    private async handleTransaction(dto: {
-        trial: boolean;
-        planCode: string;
-        email: string;
-        currency: Currency;
-        reference: string;
-    }): Promise<IResult> {
+    private async handleTransaction(
+        dto: {
+            trial: boolean;
+            planCode: string;
+            email: string;
+            currency: Currency;
+            reference: string;
+        },
+        userProfile: ITalentDoc | IBusinessDoc,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -846,39 +895,43 @@ class SubscriptionService {
             data: {},
         };
 
+        const CARD_TOKENIZATION_AMOUNT = {
+            NGN: 50_00,
+            USD: 1_00,
+        };
+
         if (dto.trial === true) {
             // If trial is true, this is to show that subscription for the plan is on trial so we charge just for card tokenization and to save authorization
-            const nairaAmount = 50;
-            const cardAmount = Math.round(nairaAmount * 100); // kobo
+            const cardAmount = Math.round(
+                CARD_TOKENIZATION_AMOUNT[dto.currency],
+            ); // kobo
             const paymentResult =
-                await transactionService.initializeTransaction({
-                    email: dto.email,
-                    amount: cardAmount,
-                    currency: dto.currency,
-                    reference: dto.reference,
-                });
+                await transactionService.initializeTransaction(
+                    {
+                        email: dto.email,
+                        amount: cardAmount,
+                        currency: dto.currency,
+                        reference: dto.reference,
+                        callbackUrl:
+                            'https://unaxiomatically-adopted-antwan.ngrok-free.dev/subscription/verify',
+                    },
+                    userProfile,
+                );
 
-            // if (paymentResult.error) {
-            //     result.error = true;
-            //     result.code = 500;
-            //     result.message = 'Something went wrong';
-            //     return result;
-            // }
-            return paymentResult; // already contains auth url and reference code
+            return paymentResult; // already contains auth url and reference code or doesn't if error is true
         }
 
-        const paymentResult = await transactionService.initializeTransaction({
-            email: dto.email,
-            planCode: dto.planCode,
-            reference: dto.reference,
-        });
+        const paymentResult = await transactionService.initializeTransaction(
+            {
+                email: dto.email,
+                planCode: dto.planCode,
+                reference: dto.reference,
+                callbackUrl:
+                    'https://unaxiomatically-adopted-antwan.ngrok-free.dev/subscription/verify',
+            },
+            userProfile,
+        );
 
-        // if (paymentResult.error) {
-        //     result.error = true;
-        //     result.code = 500;
-        //     result.message = 'Something went wrong';
-        //     return result;
-        // }
         return paymentResult; // already contains auth url and reference code
     }
 
@@ -890,6 +943,10 @@ class SubscriptionService {
      */
     private async subRefStatus(ref: string) {
         const { error, data } = await transactionService.verifyTransaction(ref);
+
+        if (error) {
+            throw new Error(`Couldn't verify status for sub ref ${ref}`);
+        }
         return data.status;
     }
 
@@ -925,7 +982,7 @@ class SubscriptionService {
         if (!subscriptionId) {
             result.code = 404;
             result.error = true;
-            result.message = 'No subscription found for this user.';
+            result.message = 'Profile has no subscription.';
             return result;
         }
         const subscriptionResult =
@@ -956,7 +1013,7 @@ class SubscriptionService {
         if (!subscriptionId) {
             result.code = 404;
             result.error = true;
-            result.message = 'No subscription found for this user.';
+            result.message = 'You have no active subscription';
             return result;
         }
 
@@ -969,16 +1026,117 @@ class SubscriptionService {
             return subscriptionResult;
         }
 
-        // Proceed to cancel the subscription
+        if (
+            subscriptionResult.data.status === SubscriptionStatus.CANCELED ||
+            subscriptionResult.data.status === SubscriptionStatus.EXPIRED
+        ) {
+            result.message = 'Subscription already cancled or expired';
+            return result;
+        }
+
+        if (subscriptionResult.data.status === SubscriptionStatus.ACTIVE) {
+            // Proceed to cancel the subscription
+            await this.cancelPaystackSub(
+                subscriptionResult.data.metadata?.subscriptionCode,
+                subscriptionResult.data.metadata?.emailToken,
+            );
+        }
+
+        if (subscriptionResult.data.status === SubscriptionStatus.TRIALING) {
+            // cancel scheduled job
+        }
+
+        // Update the subscription status in the database
+        const updatedSubscription =
+            await subscriptionRepository.updateSubscription(
+                String(subscriptionResult.data._id),
+                { status: SubscriptionStatus.CANCELED },
+            );
+
+        return updatedSubscription;
     }
-    // /**
-    //  * @name validatePlanForSub
-    //  * @description Helper function to validate if plan is availabe for subscription
-    //  * @param planId
-    //  */
-    // private async validatePlanForSub(planId: string) {
-    //     const planAvailability = await planService.getPlanAvailability(planId);
-    // }
+
+    /**
+     * @name cancelPaystackSub
+     * @description Cancels/disable subscription on paystack
+     * @param {subscriptionCode: string, emailToken: string}
+     */
+    private async cancelPaystackSub(
+        subscriptionCode: string,
+        emailToken: string,
+    ) {
+        const response = await cancelSubscription(subscriptionCode, emailToken);
+        //handle respsone using status:true or status:false
+        if (!response.status) {
+            throw new Error(
+                `Couldn't cancel subscription for ${subscriptionCode}`,
+            );
+        }
+        return response;
+    }
+
+    /**
+     * @name handleWebhook
+     * @description Handles Paystack webhook events related to subscriptions.
+     * @param eventData - The data received from the Paystack webhook.
+     * Expected events:
+     * - subscription.create
+     * - subscription.disable
+     * - subscription.not_renew
+     */
+    public async handleWebhook(eventData: any): Promise<void> {
+        const eventType = eventData.event;
+        switch (eventType) {
+            case 'subscription.create':
+                await this.handleSubscriptionCreate(eventData.data);
+                break;
+            case 'subscription.disable':
+                // await this.handleSubscriptionDisable(eventData.data);
+                break;
+            case 'subscription.not_renew':
+                // await this.handleSubscriptionNotRenew(eventData.data);
+                break;
+        }
+    }
+
+    private async handleSubscriptionCreate(data: any) {
+        // Handle subscription creation. At this point, subscription record has been created locally, this is just to update metadata with paystack subscription code and email token
+        const paymentEmail = data.customer.email;
+
+        const subscriptionResult =
+            await subscriptionRepository.findByEmail(paymentEmail);
+
+        if (subscriptionResult.error) {
+            throw new Error(
+                `Subscription not found for webhook update: ${paymentEmail}`,
+            );
+        }
+        const updatedSubscription =
+            await subscriptionRepository.updateSubscription(
+                String(subscriptionResult.data._id),
+                {
+                    metadata: {
+                        ...subscriptionResult.data.metadata,
+                        subscriptionCode: data.subscription_code,
+                        emailToken: data.email_token,
+                    },
+                },
+            );
+
+        if (updatedSubscription.error) {
+            throw new Error(
+                `Could not update subscription with paystack data for ${paymentEmail}`,
+            );
+        }
+    }
+
+    private async handleSubscriptionDisable(data: any) {
+        // Handle subscription disable
+    }
+
+    private async handleSubscriptionNotRenew(data: any) {
+        // Handle subscription not renew
+    }
 }
 
 export default new SubscriptionService();

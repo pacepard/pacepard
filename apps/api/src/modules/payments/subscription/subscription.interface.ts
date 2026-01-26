@@ -82,3 +82,9 @@ export enum subRefStatus {
     PENDING = 'pending',
     NOT_FOUND = 'not_found',
 }
+
+export type PlanAvailability = {
+    available: boolean;
+    hasTrial: boolean;
+    plan: any;
+};

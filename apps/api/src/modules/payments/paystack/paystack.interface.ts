@@ -5,7 +5,7 @@ export interface initializePaymentDTO {
     currency: string;
     reference: string;
     metadata?: Record<string, any>;
-    callback_url?: string;
+    callbackUrl?: string;
 }
 
 export interface CreatePlanDTO {
