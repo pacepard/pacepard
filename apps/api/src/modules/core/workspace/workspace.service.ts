@@ -10,13 +10,21 @@ import {
     RemoveMentorDTO,
     AddJudgeDTO,
     RemoveJudgeDTO,
+    UpdateDomainAccessDTO,
+    GenerateShareableLinkDTO,
+    JoinWorkspaceByLinkDTO,
 } from './workspace.dto';
 import workspaceRepository from './workspace.repository';
-import { IResult } from '../../../utils/interfaces.util';
+import { IResult, IFile } from '../../../utils/interfaces.util';
 import { IUserDoc } from '../../users/user/user.interface';
 import { genWorkspaceCode } from '../../../utils/code.util';
 import permissionService from '../../authentication/permission/permission.service';
-import { getWorkspaceMemberRole } from '../../authentication/role/role.util';
+import storageService from '../../platform/storage/storage.service';
+import shareableLinkService from '../../platform/ShareableLink/shareable-link.service';
+import { ShareableLinkType } from '../../platform/ShareableLink/shareable-link.interface';
+import userRepository from '../../users/user/user.repository';
+import guestRepository from '../../users/guest/guest.repository';
+import { GuestTypeEnum } from '../../users/guest/guest.interface';
 
 type ObjectId = Types.ObjectId;
 
@@ -45,7 +53,7 @@ class WorkspaceService {
             data: {} as { workspace: IWorkspaceDoc },
         };
 
-        const { name, createdBy, user } = data;
+        const { name, createdBy, user, icon } = data;
 
         if (!name || name.trim().length === 0) {
             result.error = true;
@@ -61,6 +69,44 @@ class WorkspaceService {
             result.message =
                 'Creator information is required to create a workspace';
             return result;
+        }
+
+        // Handle icon upload if provided
+        let iconData: { fileName: string; s3Key: string } | undefined;
+        if (icon) {
+            // If icon is an IFile with stream, upload it
+            if (typeof icon === 'object' && (icon as IFile).stream) {
+                const uploadResult = await storageService.uploadFile(
+                    icon as IFile,
+                );
+
+                if (uploadResult.error) {
+                    result.error = true;
+                    result.code = uploadResult.code || 500;
+                    result.message = uploadResult.message;
+                    return result;
+                }
+
+                iconData = {
+                    fileName: uploadResult.data.fileName,
+                    s3Key: uploadResult.data.s3Key,
+                };
+            } else if (typeof icon === 'object') {
+                // If it's already uploaded, check if it has s3Key
+                const iconWithS3Key = icon as any;
+                if (iconWithS3Key.s3Key) {
+                    iconData = {
+                        fileName: iconWithS3Key.fileName,
+                        s3Key: iconWithS3Key.s3Key,
+                    };
+                } else {
+                    result.error = true;
+                    result.code = 400;
+                    result.message =
+                        'Icon s3Key is required for already uploaded images';
+                    return result;
+                }
+            }
         }
 
         // Generate unique workspace code
@@ -89,7 +135,7 @@ class WorkspaceService {
             return result;
         }
 
-        const workspaceData = {
+        const workspaceData: any = {
             code: workspaceCode,
             name: name.trim(),
             createdBy: new Types.ObjectId(userId),
@@ -107,13 +153,18 @@ class WorkspaceService {
             judges: [],
         };
 
+        // Add icon if uploaded
+        if (iconData) {
+            workspaceData.icon = iconData;
+        }
+
         const createResult =
             await workspaceRepository.createWorkspace(workspaceData);
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
             result.message =
-                createResult.message || 'Failed to create workspace';
+                createResult.message;
             return result;
         }
 
@@ -502,8 +553,8 @@ class WorkspaceService {
 
     /**
      * @name addMentor
-     * @description Adds a mentor to a workspace
-     * @param data - AddMentorDTO containing workspaceId, mentorId, and requestingUser
+     * @description Adds a mentor (guest with type: MENTOR) to a workspace
+     * @param data - AddMentorDTO containing workspaceId, mentorId (guestId), and requestingUser
      */
     public async addMentor(data: AddMentorDTO): Promise<IResult> {
         let result: IResult = {
@@ -520,6 +571,23 @@ class WorkspaceService {
             result.error = true;
             result.code = 404;
             result.message = 'Workspace not found';
+            return result;
+        }
+
+        // Verify the guest exists and is of type MENTOR
+        const guestResult = await guestRepository.findGuest(mentorId);
+        if (guestResult.error || !guestResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Guest not found';
+            return result;
+        }
+
+        const guest = guestResult.data as any;
+        if (guest.type !== GuestTypeEnum.MENTOR) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Guest must be of type MENTOR to be added as a mentor';
             return result;
         }
 
@@ -692,8 +760,8 @@ class WorkspaceService {
 
     /**
      * @name addJudge
-     * @description Adds a judge to a workspace
-     * @param data - AddJudgeDTO containing workspaceId, judgeId, and requestingUser
+     * @description Adds a judge (guest with type: JUDGE) to a workspace
+     * @param data - AddJudgeDTO containing workspaceId, judgeId (guestId), and requestingUser
      */
     public async addJudge(data: AddJudgeDTO): Promise<IResult> {
         let result: IResult = {
@@ -710,6 +778,23 @@ class WorkspaceService {
             result.error = true;
             result.code = 404;
             result.message = 'Workspace not found';
+            return result;
+        }
+
+        // Verify the guest exists and is of type JUDGE
+        const guestResult = await guestRepository.findGuest(judgeId);
+        if (guestResult.error || !guestResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Guest not found';
+            return result;
+        }
+
+        const guest = guestResult.data as any;
+        if (guest.type !== GuestTypeEnum.JUDGE) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Guest must be of type JUDGE to be added as a judge';
             return result;
         }
 
@@ -877,6 +962,280 @@ class WorkspaceService {
         const workspace = workspaceResult.data as IWorkspaceDoc;
         result.data = workspace.judges || [];
         result.message = 'Judges retrieved successfully';
+        return result;
+    }
+
+    /**
+     * @name updateDomainAccess
+     * @description Updates domain-based access configuration for a workspace
+     * @param data - UpdateDomainAccessDTO containing workspaceId, allowDomainAccess, and optional domain
+     * @returns Promise<IResult>
+     */
+    public async updateDomainAccess(
+        data: UpdateDomainAccessDTO,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, allowDomainAccess, domain } = data;
+
+        // Find the workspace
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        const { user } = data;
+        if (!user) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'User is required';
+            return result;
+        }
+
+        // Check permissions (only workspace owner can update domain access)
+        const hasPermission = await permissionService.hasPermission(
+            user,
+            { entity: 'workspace', action: 'update' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message =
+                'You do not have permission to update domain access for this workspace';
+            return result;
+        }
+
+        const updateData: Partial<IWorkspaceDoc> = {
+            allowDomainAccess: allowDomainAccess,
+        };
+
+        // If enabling domain access and domain is provided, add it to allowedDomains
+        if (allowDomainAccess && domain) {
+            const normalizedDomain = domain.trim().toLowerCase();
+            const currentDomains = workspace.allowedDomains || [];
+            
+            // Add domain if not already present
+            if (!currentDomains.includes(normalizedDomain)) {
+                updateData.allowedDomains = [...currentDomains, normalizedDomain];
+            } else {
+                updateData.allowedDomains = currentDomains;
+            }
+        } else if (!allowDomainAccess) {
+            // If disabling domain access, clear allowed domains
+            updateData.allowedDomains = [];
+        } else {
+            // Keep existing domains if just toggling without new domain
+            updateData.allowedDomains = workspace.allowedDomains || [];
+        }
+
+        // Update the workspace
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            updateData,
+        );
+
+        if (updateResult.error) {
+            result.error = true;
+            result.code = updateResult.code;
+            result.message = updateResult.message;
+            return result;
+        }
+
+        result.message = 'Domain access updated successfully';
+        result.data = {
+            allowDomainAccess: updateData.allowDomainAccess,
+            allowedDomains: updateData.allowedDomains,
+        };
+        return result;
+    }
+
+    /**
+     * @name generateShareableLink
+     * @description Generates a shareable link token for a workspace
+     * @param data - GenerateShareableLinkDTO containing workspaceId, expiresInDays, and user
+     * @returns Promise<IResult>
+     */
+    public async generateShareableLink(
+        data: GenerateShareableLinkDTO,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { workspaceId, expiresInDays = 7, user } = data;
+
+        if (!user) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'User is required';
+            return result;
+        }
+
+        // Find the workspace
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Check permissions (only workspace owner can generate shareable link)
+        const hasPermission = await permissionService.hasPermission(
+            user,
+            { entity: 'workspace', action: 'update' },
+            {
+                resource: workspace,
+                resourceType: 'workspace',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message =
+                'You do not have permission to generate shareable link for this workspace';
+            return result;
+        }
+
+        // Get user ID (handle both string and IUserDoc)
+        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+
+        if (!userId) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Invalid user ID';
+            return result;
+        }
+
+        // Prepare metadata with workspace domain access settings
+        const metadata: Record<string, unknown> = {};
+        if (workspace.allowDomainAccess !== undefined) {
+            metadata.allowDomainAccess = workspace.allowDomainAccess;
+        }
+        if (workspace.allowedDomains) {
+            metadata.allowedDomains = workspace.allowedDomains;
+        }
+
+        // Generate shareable link using the service
+        const linkResult = await shareableLinkService.generateShareableLink({
+            linkType: ShareableLinkType.WORKSPACE,
+            resourceId: workspaceId,
+            createdBy: userId,
+            expiresInDays,
+            metadata,
+        });
+
+        if (linkResult.error) {
+            result.error = true;
+            result.code = linkResult.code || 500;
+            result.message = linkResult.message;
+            return result;
+        }
+
+        result.message = 'Shareable link generated successfully';
+        result.data = {
+            token: (linkResult.data as any).token,
+            expiresAt: (linkResult.data as any).expiresAt,
+            shareableUrl: `${process.env.CLIENT_APP_URL || ''}/workspace/invite/join?token=${(linkResult.data as any).token}&workspaceId=${workspaceId}`,
+            linkId: (linkResult.data as any).linkId,
+        };
+        return result;
+    }
+
+    /**
+     * @name joinWorkspaceByLink
+     * @description Allows a user to join a workspace using a shareable link token
+     * @param data - JoinWorkspaceByLinkDTO containing token, workspaceId, and optional userEmail
+     * @returns Promise<IResult>
+     */
+    public async joinWorkspaceByLink(
+        data: JoinWorkspaceByLinkDTO,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const { token, workspaceId, userEmail } = data;
+
+        // Find the workspace
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Workspace not found';
+            return result;
+        }
+
+        const workspace = workspaceResult.data as IWorkspaceDoc;
+
+        // Validate shareable link using the service
+        const validateResult = await shareableLinkService.validateShareableLink({
+            token,
+            resourceId: workspaceId,
+            linkType: ShareableLinkType.WORKSPACE,
+        });
+
+        if (validateResult.error) {
+            result.error = true;
+            result.code = validateResult.code || 400;
+            result.message = validateResult.message;
+            return result;
+        }
+
+        // Get metadata from validated link
+        const linkMetadata = (validateResult.data as any).metadata || {};
+        const allowDomainAccess = linkMetadata.allowDomainAccess || workspace.allowDomainAccess;
+        const allowedDomains = linkMetadata.allowedDomains || workspace.allowedDomains || [];
+
+        // If domain access is enabled, validate user email domain
+        if (allowDomainAccess && userEmail) {
+            const emailDomain = userEmail.split('@')[1]?.toLowerCase();
+
+            if (!emailDomain || !allowedDomains.includes(emailDomain)) {
+                result.error = true;
+                result.code = 403;
+                result.message = `Your email domain is not allowed. Allowed domains: ${allowedDomains.join(', ')}`;
+                return result;
+            }
+        }
+
+        // Note: The actual user joining logic should be handled by the controller
+        // which will have access to the authenticated user
+        // This service method just validates the token and domain
+
+        result.message = 'Shareable link is valid';
+        result.data = {
+            workspaceId: workspaceId,
+            workspaceName: workspace.name,
+            allowDomainAccess: allowDomainAccess,
+            allowedDomains: allowedDomains,
+        };
         return result;
     }
 }

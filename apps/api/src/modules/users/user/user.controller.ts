@@ -6,10 +6,11 @@ import userService from './user.service';
 import userRepository from './user.repository';
 import { IUserDoc } from './user.interface';
 import {
-  OnboardStep1DTO,
-  OnboardStep2DTO,
-  OnboardStep3TalentDTO,
-  OnboardStep3BusinessDTO,
+  OnboardUserTypeDTO,
+  OnboardBasicInfoDTO,
+  OnboardTalentInfoDTO,
+  OnboardBusinessInfoDTO,
+  OnboardUserInfoDTO,
 } from "../../authentication/auth/auth.dto";
 import redisWrapper from "../../../middlewares/redis.mdw";
 
@@ -55,8 +56,8 @@ export const getUser: RequestHandler = asyncHandler(
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
-        phoneNumber: user.location?.phoneNumber || '',
-        phoneCode: user.location?.phoneCode || '',
+        phoneNumber: user.phoneNumber || '',
+        phoneCode: user.phoneCode || '',
         activated: user.isActivated || false,
       };
 
@@ -212,159 +213,6 @@ export const deactivateAccount: RequestHandler = asyncHandler(
 );
 
 
-/**
- * @name onboardStep1
- * @description Step 1: Set user type (TALENT or BUSINESS)
- * @route POST /user/onboard/step-1
- * @access Private (Authenticated users only)
- */
-export const onboardStep1: RequestHandler = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return next(new ErrorResponse("Unauthorized", 401, []));
-    }
-
-    const data: OnboardStep1DTO = req.body;
-
-    const result = await userService.step1SetUserType(userId, data);
-
-    if (result.error) {
-      return next(new ErrorResponse(result.message, result.code || 400, []));
-    }
-
-    res.status(200).json({
-      error: false,
-      message: result.message,
-      status: 200,
-      errors: [],
-      data: result.data,
-    });
-  }
-);
-
-
-/**
- * @name onboardStep2
- * @description Step 2: Set basic user information
- * @route POST /user/onboard/step-2
- * @access Private (Authenticated users only)
- */
-export const onboardStep2: RequestHandler = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return next(new ErrorResponse("Unauthorized", 401, []));
-    }
-
-    const data: OnboardStep2DTO = req.body;
-
-    const result = await userService.step2SetBasicInfo(userId, data);
-
-    if (result.error) {
-      return next(new ErrorResponse(result.message, result.code || 400, []));
-    }
-
-    res.status(200).json({
-      error: false,
-      message: result.message,
-      status: 200,
-      errors: [],
-      data: result.data,
-    });
-  }
-);
-
-/**
- * @name onboardStep3Talent
- * @description Step 3: Set talent-specific information
- * @route POST /user/onboard/step-3-talent
- * @access Private (Authenticated users with TALENT type only)
- */
-export const onboardStep3Talent: RequestHandler = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return next(new ErrorResponse("Unauthorized", 401, []));
-    }
-
-    const data: OnboardStep3TalentDTO = req.body;
-
-    const result = await userService.step3SetTalentInfo(userId, data);
-
-    if (result.error) {
-      return next(new ErrorResponse(result.message, result.code || 400, []));
-    }
-
-    res.status(200).json({
-      error: false,
-      message: result.message,
-      status: 200,
-      errors: [],
-      data: result.data,
-    });
-  }
-);
-
-/**
- * @name onboardStep3Business
- * @description Step 3: Set business-specific information
- * @route POST /user/onboard/step-3-business
- * @access Private (Authenticated users with BUSINESS type only)
- */
-export const onboardStep3Business: RequestHandler = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return next(new ErrorResponse("Unauthorized", 401, []));
-    }
-
-    const data: OnboardStep3BusinessDTO = req.body;
-
-    const result = await userService.step3SetBusinessInfo(userId, data);
-
-    if (result.error) {
-      return next(new ErrorResponse(result.message, result.code || 400, []));
-    }
-
-    res.status(200).json({
-      error: false,
-      message: result.message,
-      status: 200,
-      errors: [],
-      data: result.data,
-    });
-  }
-);
-
-/**
- * @name onboardComplete
- * @description Step 4: Complete onboarding process
- * @route POST /user/onboard/complete
- * @access Private (Authenticated users only)
- */
-export const onboardComplete: RequestHandler = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
-    if (!userId) {
-      return next(new ErrorResponse("Unauthorized", 401, []));
-    }
-
-    const result = await userService.step4CompleteOnboarding(userId);
-
-    if (result.error) {
-      return next(new ErrorResponse(result.message, result.code || 400, []));
-    }
-
-    res.status(200).json({
-      error: false,
-      message: result.message,
-      status: 200,
-      errors: [],
-      data: result.data,
-    });
-  }
-);
 
 /**
  * @name getOnboardingStatus
@@ -380,6 +228,191 @@ export const getOnboardingStatus: RequestHandler = asyncHandler(
     }
 
     const result = await userService.getOnboardingStatus(userId);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+// New meaningful controller names
+/**
+ * @name setUserType
+ * @description Set user type (TALENT or BUSINESS) - meaningful name
+ * @route POST /user/onboard/user-type
+ * @access Private (Authenticated users only)
+ */
+export const setUserType: RequestHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardUserTypeDTO = req.body;
+
+    const result = await userService.setUserType(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name setBasicInfo
+ * @description Set basic user information - meaningful name
+ * @route POST /user/onboard/basic-info
+ * @access Private (Authenticated users only)
+ */
+export const setBasicInfo: RequestHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardBasicInfoDTO = req.body;
+
+    const result = await userService.setBasicInfo(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name setTalentInfo
+ * @description Set talent-specific information - meaningful name
+ * @route POST /user/onboard/talent-info
+ * @access Private (Authenticated users with TALENT type only)
+ */
+export const setTalentInfo: RequestHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardTalentInfoDTO = req.body;
+
+    const result = await userService.setTalentInfo(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name setBusinessInfo
+ * @description Set business-specific information - meaningful name
+ * @route POST /user/onboard/business-info
+ * @access Private (Authenticated users with BUSINESS type only)
+ */
+export const setBusinessInfo: RequestHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardBusinessInfoDTO = req.body;
+
+    const result = await userService.setBusinessInfo(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name setUserInfo
+ * @description Set user information (specialty, role, discovery) - works for all user types
+ * @route POST /user/onboard/user-info
+ * @access Private (Authenticated users only)
+ */
+export const setUserInfo: RequestHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const data: OnboardUserInfoDTO = req.body;
+
+    const result = await userService.setUserInfo(userId, data);
+
+    if (result.error) {
+      return next(new ErrorResponse(result.message, result.code || 400, []));
+    }
+
+    res.status(200).json({
+      error: false,
+      message: result.message,
+      status: 200,
+      errors: [],
+      data: result.data,
+    });
+  }
+);
+
+/**
+ * @name completeOnboarding
+ * @description Complete onboarding process - meaningful name
+ * @route POST /user/onboard/complete
+ * @access Private (Authenticated users only)
+ */
+export const completeOnboarding: RequestHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401, []));
+    }
+
+    const result = await userService.completeOnboarding(userId);
 
     if (result.error) {
       return next(new ErrorResponse(result.message, result.code || 400, []));

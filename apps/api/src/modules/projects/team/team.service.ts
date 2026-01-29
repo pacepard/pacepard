@@ -9,8 +9,12 @@ import businessRepository from '../../users/business/business.repository';
 import { IResult } from '../../../utils/interfaces.util';
 import { genTeamCode } from '../../../utils/code.util';
 import taskRepository from '../task/task.repository';
-import storageService from '../../../services/storage.service';
+import storageService from '../../platform/storage/storage.service';
 import { IFile } from '../../../utils/interfaces.util';
+import shareableLinkService from '../../platform/ShareableLink/shareable-link.service';
+import { ShareableLinkType } from '../../platform/ShareableLink/shareable-link.interface';
+import permissionService from '../../authentication/permission/permission.service';
+import { IUserDoc } from '../../users/user/user.interface';
 
 class TeamService {
     public result: IResult;
@@ -138,7 +142,7 @@ class TeamService {
                     result.error = true;
                     result.code = uploadResult.code || 500;
                     result.message =
-                        uploadResult.message || 'Failed to upload image';
+                        uploadResult.message;
                     return result;
                 }
 
@@ -278,7 +282,7 @@ class TeamService {
         if (queryResult.error) {
             result.error = true;
             result.code = queryResult.code || 500;
-            result.message = queryResult.message || 'Failed to retrieve teams';
+            result.message = queryResult.message;
             return result;
         }
 
@@ -318,7 +322,7 @@ class TeamService {
             result.error = true;
             result.code = findResult.code || 500;
             result.message =
-                findResult.message || 'Failed to retrieve teams for project';
+                findResult.message;
             return result;
         }
 
@@ -400,7 +404,7 @@ class TeamService {
                     result.error = true;
                     result.code = uploadResult.code || 500;
                     result.message =
-                        uploadResult.message || 'Failed to upload image';
+                        uploadResult.message;
                     return result;
                 }
 
@@ -441,7 +445,7 @@ class TeamService {
         if (updateResult.error) {
             result.error = true;
             result.code = updateResult.code || 500;
-            result.message = updateResult.message || 'Failed to update team';
+            result.message = updateResult.message;
             return result;
         }
 
@@ -498,7 +502,7 @@ class TeamService {
                 result.error = true;
                 result.code = deleteResult.code || 500;
                 result.message =
-                    deleteResult.message || 'Failed to delete team';
+                    deleteResult.message;
                 return result;
             }
 
@@ -623,7 +627,7 @@ class TeamService {
             result.error = true;
             result.code = updateResult.code || 500;
             result.message =
-                updateResult.message || 'Failed to add member to team';
+                updateResult.message;
             return result;
         }
 
@@ -764,7 +768,7 @@ class TeamService {
             result.error = true;
             result.code = updateResult.code || 500;
             result.message =
-                updateResult.message || 'Failed to update member role';
+                updateResult.message;
             return result;
         }
 
@@ -868,7 +872,7 @@ class TeamService {
                 result.error = true;
                 result.code = addResult.code || 500;
                 result.message =
-                    addResult.message || 'Failed to add member to target team';
+                    addResult.message;
                 return result;
             }
 
@@ -881,6 +885,91 @@ class TeamService {
             result.message = `Failed to rotate member: ${error.message}`;
             return result;
         }
+    }
+
+    /**
+     * @name generateShareableLink
+     * @description Generates a shareable link for a team
+     * @param teamId - Team ID
+     * @param user - User creating the link
+     * @param expiresInDays - Expiration in days (default: 7)
+     * @returns Promise<IResult>
+     */
+    public async generateShareableLink(
+        teamId: string,
+        user: IUserDoc | string,
+        expiresInDays: number = 7,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        // Find the team
+        const teamResult = await teamRepository.findById(teamId);
+        if (teamResult.error || !teamResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Team not found';
+            return result;
+        }
+
+        const team = teamResult.data as ITeamDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            user,
+            { entity: 'team', action: 'update' },
+            {
+                resource: team,
+                resourceType: 'team',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message =
+                'You do not have permission to generate shareable link for this team';
+            return result;
+        }
+
+        // Get user ID
+        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+
+        if (!userId) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Invalid user ID';
+            return result;
+        }
+
+        // Generate shareable link
+        const linkResult = await shareableLinkService.generateShareableLink({
+            linkType: ShareableLinkType.TEAM,
+            resourceId: teamId,
+            createdBy: userId,
+            expiresInDays,
+        });
+
+        if (linkResult.error) {
+            result.error = true;
+            result.code = linkResult.code || 500;
+            result.message = linkResult.message;
+            return result;
+        }
+
+        result.message = 'Shareable link generated successfully';
+        result.data = {
+            token: (linkResult.data as any).token,
+            expiresAt: (linkResult.data as any).expiresAt,
+            shareableUrl: `${process.env.CLIENT_APP_URL || ''}/team/${teamId}/join?token=${(linkResult.data as any).token}`,
+            linkId: (linkResult.data as any).linkId,
+        };
+        return result;
     }
 }
 

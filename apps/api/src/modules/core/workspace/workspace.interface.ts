@@ -2,6 +2,7 @@ import { Document, Types } from 'mongoose';
 import { IHackathonDoc } from '../../hackathons/hackathon/hackathon.interface';
 import { IUserDoc } from '../../users/user/user.interface';
 import { IProjectDoc } from '../../projects/project/project.interface';
+import { IGuestDoc } from '../../users/guest/guest.interface';
 
 type ObjectId = Types.ObjectId;
 
@@ -15,6 +16,10 @@ export interface IWorkspaceDoc extends Document {
     name: string;
     description: string;
     index: number;
+    icon?: {
+        fileName: string;
+        s3Key: string;
+    }; // Optional workspace icon
 
     createdBy: IUserDoc | any; // owner of workspace
 
@@ -25,8 +30,12 @@ export interface IWorkspaceDoc extends Document {
     hackathons: Array<IHackathonDoc | any>;
     projects: Array<IProjectDoc | any>; // challeges or projects that a business created
    
-    mentors: Array<IUserDoc | any>; // mentors who can mentor an entry or submission in the workspace
-    judges: Array<IUserDoc | any>; // judge who can judge an entry or submission in the workspace
+    mentors: Array<IGuestDoc | any>; // mentors (guests with type: MENTOR) who can mentor an entry or submission in the workspace
+    judges: Array<IGuestDoc | any>; // judges (guests with type: JUDGE) who can judge an entry or submission in the workspace
+
+    // domain access configuration
+    allowDomainAccess?: boolean; // Allow anyone with allowed domain email to join
+    allowedDomains?: Array<string>; // Array of allowed email domains (e.g., ['company.com', 'example.org'])
 
     // time stamps
     createdAt: Date;

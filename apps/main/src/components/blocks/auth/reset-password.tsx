@@ -6,12 +6,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, ResetPasswordFormValues } from './validation';
 import {
-    CircleNotchIcon,
-    EyeIcon,
-    EyeSlashIcon,
-} from '@phosphor-icons/react';
-import { LockSimpleIcon } from '@phosphor-icons/react/dist/ssr';
-import { pacepardAPI } from '@/config/pacepard';
+    Loader2,
+    Eye,
+    EyeOff,
+    Lock,
+} from 'lucide-react';
+import { PacepardAPI } from '@/config/pacepard';
 import { toast } from '@pacepard/ui';
 import { useNavigate } from 'react-router';
 import { storage } from '@pacepard/sdk';
@@ -72,7 +72,7 @@ const ResetPasswordForm = () => {
         }
 
         try {
-            const resetResponse = await pacepardAPI.auth.resetPassword({
+            const resetResponse = await PacepardAPI.auth.resetPassword({
                 email,
                 newPassword: data.newPassword,
             });
@@ -103,7 +103,7 @@ const ResetPasswordForm = () => {
                 <div className="flex flex-col gap-2 space-y-1">
                     <Label htmlFor="newPassword">New Password</Label>
                     <div className="relative">
-                        <LockSimpleIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             id="newPassword"
                             type={showPassword ? 'text' : 'password'}
@@ -121,9 +121,9 @@ const ResetPasswordForm = () => {
                             onClick={() => setShowPassword((prev) => !prev)}
                         >
                             {showPassword ? (
-                                <EyeSlashIcon className="h-4 w-4 text-muted-foreground" />
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
                             ) : (
-                                <EyeIcon className="h-4 w-4 text-muted-foreground" />
+                                <Eye className="h-4 w-4 text-muted-foreground" />
                             )}
                         </Button>
                     </div>
@@ -151,7 +151,7 @@ const ResetPasswordForm = () => {
                 <div className="flex flex-col gap-2 space-y-1">
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
                     <div className="relative">
-                        <LockSimpleIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             id="confirmPassword"
                             type={showConfirmPassword ? 'text' : 'password'}
@@ -197,7 +197,7 @@ const ResetPasswordForm = () => {
                     type="submit"
                 >
                     {isSubmitting && (
-                        <CircleNotchIcon className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                     )}
                     {isSubmitting ? 'Resetting password...' : 'Reset Password'}
                 </Button>

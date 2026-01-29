@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Icon } from '@phosphor-icons/react';
+import type { LucideIcon } from 'lucide-react';
 import { Badge, badgeVariants } from '@pacepard/ui/components/badge';
 import { ScrollArea, ScrollBar } from '@pacepard/ui/components/scroll-area';
 import {
@@ -15,7 +15,7 @@ type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
 export interface TabItem {
     value: string;
     label: string;
-    icon?: Icon;
+    icon?: LucideIcon;
     badge?: string | number;
     badgeVariant?: BadgeVariant;
     content: React.ReactNode;

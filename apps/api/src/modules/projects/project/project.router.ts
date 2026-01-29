@@ -10,6 +10,7 @@ import {
   removeMember,
   publishProject,
   closeProject,
+  generateProjectShareableLink,
 } from "./project.controller";
 
 const projectRoutes: Router = Router({ mergeParams: true });
@@ -30,5 +31,8 @@ projectRoutes.post("/:id/close", Protect, closeProject);
 // Project members routes
 projectRoutes.post("/:id/members", Protect, addMember);
 projectRoutes.delete("/:id/members/:userId", Protect, removeMember);
+
+// Project shareable link routes
+projectRoutes.post("/:id/invite/shareable-link", Protect, generateProjectShareableLink);
 
 export default projectRoutes;

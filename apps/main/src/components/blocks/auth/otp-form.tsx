@@ -8,8 +8,8 @@ import { verifyOtpSchema, VerifyOtpFormValues } from "./validation";
 import { toast } from "@pacepard/ui";
 import { useNavigate } from "react-router";
 import { OtpType, storage } from "@pacepard/sdk";
-import { pacepardAPI } from "@/config/pacepard";
-import { CircleNotchIcon } from "@phosphor-icons/react";
+import { PacepardAPI } from "@/config/pacepard";
+import { Loader2 } from "lucide-react";
 
 interface OtpFormProps {
     className?: string;
@@ -112,12 +112,12 @@ const OtpForm = ({
             // Use activateUser for account activation, verifyOTP for other OTP types
             const response =
                 otpType === OtpType.ACTIVATEACCOUNT
-                    ? await pacepardAPI.auth.activateUser({
+                    ? await PacepardAPI.auth.activateUser({
                           email: cleanEmail(),
                           otp: Number(otp),
                           otpType,
                       })
-                    : await pacepardAPI.auth.verifyOTP({
+                    : await PacepardAPI.auth.verifyOTP({
                           email: cleanEmail(),
                           otp: Number(otp),
                           otpType,
@@ -154,7 +154,7 @@ const OtpForm = ({
         otpRefs.current[0]?.focus();
 
         try {
-            const response = await pacepardAPI.auth.resendOTP({
+            const response = await PacepardAPI.auth.resendOTP({
                 email: cleanEmail(),
                 otpType,
             });
@@ -253,7 +253,7 @@ const OtpForm = ({
                     className="w-full h-11 justify-center items-center gap-2"
                 >
                     {isSubmitting && (
-                        <CircleNotchIcon className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                     )}
                     {isSubmitting ? "Verifying..." : "Verify code"}
                 </Button>

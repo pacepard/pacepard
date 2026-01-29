@@ -9,6 +9,7 @@ import {
   updateTeamMemberRole,
   rotateMember,
   deleteTeam,
+  generateTeamShareableLink,
 } from "./team.controller";
 
 const teamRoutes: Router = Router({ mergeParams: true });
@@ -25,6 +26,9 @@ teamRoutes.get("/projects/:projectId/teams", Protect, getProjectTeams);
 teamRoutes.post("/:teamId/members", Protect, addTeamMember);
 teamRoutes.delete("/:teamId/members/:userId", Protect, removeTeamMember);
 teamRoutes.put("/:teamId/members/:userId/role", Protect, updateTeamMemberRole);
+
+// Team shareable link routes
+teamRoutes.post("/:id/invite/shareable-link", Protect, generateTeamShareableLink);
 
 // Team rotation route
 teamRoutes.post("/projects/:projectId/teams/rotate", Protect, rotateMember);

@@ -6,6 +6,10 @@ const WorkspaceSchema = new Schema<IWorkspaceDoc>(
     {
         code: { type: String, required: true, unique: true },
         name: { type: String, required: true },
+        icon: {
+            fileName: { type: String },
+            s3Key: { type: String },
+        },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: DbModels.USER,
@@ -53,8 +57,19 @@ const WorkspaceSchema = new Schema<IWorkspaceDoc>(
                 expiresAt: { type: Date },
             },
         ],
-        mentors: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
-        judges: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
+        mentors: [{ type: Schema.Types.ObjectId, ref: DbModels.GUEST }],
+        judges: [{ type: Schema.Types.ObjectId, ref: DbModels.GUEST }],
+        allowDomainAccess: {
+            type: Boolean,
+            default: false,
+        },
+        allowedDomains: [
+            {
+                type: String,
+                trim: true,
+                lowercase: true,
+            },
+        ],
     },
     {
         timestamps: true,

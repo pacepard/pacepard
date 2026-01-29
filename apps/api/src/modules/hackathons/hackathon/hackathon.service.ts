@@ -19,6 +19,8 @@ import { IUserDoc } from '../../users/user/user.interface';
 import { genHackathonCode } from '../../../utils/code.util';
 import { genSlug } from '../../../utils/helpers.util';
 import permissionService from '../../authentication/permission/permission.service';
+import shareableLinkService from '../../platform/ShareableLink/shareable-link.service';
+import { ShareableLinkType } from '../../platform/ShareableLink/shareable-link.interface';
 
 type ObjectId = Types.ObjectId;
 
@@ -191,7 +193,7 @@ class HackathonService {
             result.error = true;
             result.code = 500;
             result.message = 
-                createResult.message || 'Failed to create hackathon';
+                createResult.message;
             return result;
         }
 
@@ -597,6 +599,91 @@ class HackathonService {
 
         result.message = 'Member removed successfully';
         result.data = updateResult.data;
+        return result;
+    }
+
+    /**
+     * @name generateShareableLink
+     * @description Generates a shareable link for a hackathon
+     * @param hackathonId - Hackathon ID
+     * @param user - User creating the link
+     * @param expiresInDays - Expiration in days (default: 7)
+     * @returns Promise<IResult>
+     */
+    public async generateShareableLink(
+        hackathonId: string,
+        user: IUserDoc | string,
+        expiresInDays: number = 7,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        // Find the hackathon
+        const hackathonResult = await hackathonRepository.findById(hackathonId);
+        if (hackathonResult.error || !hackathonResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Hackathon not found';
+            return result;
+        }
+
+        const hackathon = hackathonResult.data as IHackathonDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            user,
+            { entity: 'hackathon', action: 'update' },
+            {
+                resource: hackathon,
+                resourceType: 'hackathon',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message =
+                'You do not have permission to generate shareable link for this hackathon';
+            return result;
+        }
+
+        // Get user ID
+        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+
+        if (!userId) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Invalid user ID';
+            return result;
+        }
+
+        // Generate shareable link
+        const linkResult = await shareableLinkService.generateShareableLink({
+            linkType: ShareableLinkType.HACKATHON,
+            resourceId: hackathonId,
+            createdBy: userId,
+            expiresInDays,
+        });
+
+        if (linkResult.error) {
+            result.error = true;
+            result.code = linkResult.code || 500;
+            result.message = linkResult.message;
+            return result;
+        }
+
+        result.message = 'Shareable link generated successfully';
+        result.data = {
+            token: (linkResult.data as any).token,
+            expiresAt: (linkResult.data as any).expiresAt,
+            shareableUrl: `${process.env.CLIENT_APP_URL || ''}/hackathon/${hackathonId}/join?token=${(linkResult.data as any).token}`,
+            linkId: (linkResult.data as any).linkId,
+        };
         return result;
     }
 }

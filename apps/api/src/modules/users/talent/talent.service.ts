@@ -90,7 +90,7 @@ class TalentService {
             result.error = true;
             result.code = 500;
             result.message =
-                createResult.message || 'Failed to create talent profile';
+                createResult.message;
             return result;
         }
 

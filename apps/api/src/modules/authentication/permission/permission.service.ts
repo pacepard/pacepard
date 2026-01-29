@@ -6,6 +6,7 @@ import { IResult } from "../../../utils/interfaces.util";
 import { IRoleDoc } from "../role/role.interface";
 import { IUserDoc } from "../../users/user/user.interface";
 import { DbModels } from "../../../utils/enums.util";
+import { GuestTypeEnum } from "../../users/guest/guest.interface";
 import {
     getWorkspaceMemberRole,
     getProjectMemberRole,
@@ -159,44 +160,46 @@ export async function hasPermission(
         if (memberRole) {
           contextualPerms = getContextualPermissions('project', memberRole);
         }
-        // Check project mentor/judge roles via mentor/judge profiles
-        // We need to check if user has an active mentor/judge profile for this project
+        // Check project mentor/judge roles via guest profiles
+        // We need to check if user has an active guest profile (type: MENTOR or JUDGE) for this project
         if (options.resource?._id) {
           const projectId = String(options.resource._id);
           const userId = String(user._id);
           
-          // Check mentor profile - use mongoose.model() to safely get model if it exists
+          // Check mentor guest profile - use mongoose.model() to safely get model if it exists
           try {
-            const Mentor = mongoose.models[DbModels.MENTOR];
-            if (Mentor) {
-              const mentorProfile = await Mentor.findOne({
+            const Guest = mongoose.models[DbModels.GUEST];
+            if (Guest) {
+              const mentorGuestProfile = await Guest.findOne({
                 user: userId,
                 projects: projectId,
+                type: GuestTypeEnum.MENTOR,
                 status: 'active',
               }).lean();
-              if (mentorProfile) {
+              if (mentorGuestProfile) {
                 contextualPerms = [...contextualPerms, ...getProjectMentorPermissions()];
               }
             }
           } catch (err) {
-            // Mentor model might not exist yet, skip silently
+            // Guest model might not exist yet, skip silently
           }
           
-          // Check judge profile - use mongoose.model() to safely get model if it exists
+          // Check judge guest profile - use mongoose.model() to safely get model if it exists
           try {
-            const Judge = mongoose.models['judge'];
-            if (Judge) {
-              const judgeProfile = await Judge.findOne({
+            const Guest = mongoose.models[DbModels.GUEST];
+            if (Guest) {
+              const judgeGuestProfile = await Guest.findOne({
                 user: userId,
                 projects: projectId,
+                type: GuestTypeEnum.JUDGE,
                 status: 'active',
               }).lean();
-              if (judgeProfile) {
+              if (judgeGuestProfile) {
                 contextualPerms = [...contextualPerms, ...getProjectJudgePermissions()];
               }
             }
           } catch (err) {
-            // Judge model might not exist yet, skip silently
+            // Guest model might not exist yet, skip silently
           }
         }
         break;
@@ -277,7 +280,7 @@ export async function initiatePermissionData(user: IUserDoc): Promise<IResult> {
   } catch (err: any) {
     result.error = true;
     result.code = 500;
-    result.message = err?.message || 'Failed to initiate permission data';
+    result.message = err?.message;
     return result;
   }
 }
@@ -320,7 +323,7 @@ export default {
     } catch (err: any) {
       result.error = true;
       result.code = 500;
-      result.message = err?.message || "Failed to update permissions";
+      result.message = err?.message;
       return result;
     }
   },

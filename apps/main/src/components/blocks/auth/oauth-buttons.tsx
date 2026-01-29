@@ -1,5 +1,5 @@
 import { Button } from "@pacepard/ui/components/button";
-import { GoogleLogoIcon } from "@phosphor-icons/react";
+import { Chrome } from "lucide-react";
 
 
 
@@ -33,7 +33,7 @@ export function OAuthButtons({ className, formType }: OAuthButtonsProps) {
           onClick={() => handleOAuthLogin("google")}
           className="w-full h-11 border-border hover:bg-muted/50 transition-colors bg-muted"
         >
-          <GoogleLogoIcon className="mr-2 h-4 w-4" />
+          <Chrome className="mr-2 h-4 w-4" />
           Continue with Google 
         </Button>
         {/* <Button

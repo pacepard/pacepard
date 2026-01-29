@@ -1,5 +1,5 @@
 import { Button } from '@pacepard/ui/components/button';
-import { ArrowRightIcon } from '@phosphor-icons/react';
+import { ArrowRight } from 'lucide-react';
 import { useEffect } from 'react';
 
 interface IAuthHeader {
@@ -34,7 +34,7 @@ const AuthHeader = (props: IAuthHeader) => {
                                 className="inline-flex items-center border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 hover:no-underline"
                             >
                                 {buttonLabel}
-                                <ArrowRightIcon className=" h-4 w-4" />
+                                <ArrowRight className=" h-4 w-4" />
                             </Button>
                         )}
                     </div>

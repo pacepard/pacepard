@@ -1,10 +1,13 @@
 import { IUserDoc } from '../../users/user/user.interface';
 import { WorkspaceMemberRole } from './workspace.interface';
 
+import { IFile } from '../../../utils/interfaces.util';
+
 export interface CreateWorkspaceDTO {
   name: string;
   createdBy?: string;
   user?: IUserDoc;
+  icon?: IFile; // Optional icon file for workspace
 }
 
 export interface UpdateWorkspaceDTO {
@@ -33,6 +36,11 @@ export interface InviteMemberDTO {
   email: string;
 }
 
+export interface BulkInviteMemberDTO {
+  workspaceId: string;
+  emails: string[]; // Array of email addresses
+}
+
 export interface AddMemberDTO {
   workspaceId: string;
   userId: string;
@@ -47,6 +55,20 @@ export interface RemoveMemberDTO {
   requestingUser: IUserDoc | string;
 }
 
+export interface AddGuestDTO {
+  workspaceId: string;
+  guestId: string;
+  guestType: 'mentor' | 'judge'; // Type of guest to add
+  requestingUser: IUserDoc | string;
+}
+
+export interface RemoveGuestDTO {
+  workspaceId: string;
+  guestId: string;
+  requestingUser: IUserDoc | string;
+}
+
+// Legacy DTOs for backward compatibility during migration (will be removed)
 export interface AddMentorDTO {
   workspaceId: string;
   mentorId: string;
@@ -69,4 +91,23 @@ export interface RemoveJudgeDTO {
   workspaceId: string;
   judgeId: string;
   requestingUser: IUserDoc | string;
+}
+
+export interface UpdateDomainAccessDTO {
+  workspaceId: string;
+  allowDomainAccess: boolean;
+  domain?: string; // Extract from first email if not provided
+  user?: IUserDoc | string; // Requesting user (for permission check)
+}
+
+export interface GenerateShareableLinkDTO {
+  workspaceId: string;
+  expiresInDays?: number; // Default 7 days
+  user?: IUserDoc | string; // Requesting user (for permission check)
+}
+
+export interface JoinWorkspaceByLinkDTO {
+  token: string;
+  workspaceId: string;
+  userEmail?: string; // Optional: user's email for domain validation
 }

@@ -14,12 +14,12 @@ const ResetPassword = lazy(() => import('@/app/auth/ResetPassword'));
 const Preview = lazy(() => import('@/app/generics/preview'));
 const NoNetwork = lazy(() => import('@/app/generics/no-network'));
 
-const Onboard = lazy(() => import('@/app/onboard/onboard'));
-const Welcome = lazy(() => import('@/components/blocks/onboading/welcome'));
-const SubmitInfo = lazy(() => import('@/components/blocks/onboading/submit-info'));
-const TalentInfo = lazy(() => import('@/components/blocks/onboading/talent-info'));
-const CreateWorkspace = lazy(() => import('@/components/blocks/onboading/create-workspace'));
-const InviteTeammates = lazy(() => import('@/components/blocks/onboading/invite-teammates'));
+const Onboard = lazy(() => import('@/components/blocks/onboarding/onboard'));
+const BasicInfo = lazy(() => import('@/components/blocks/onboarding/basic-info'));
+const UserInfo = lazy(() => import('@/components/blocks/onboarding/user-info'));
+const BusinessInfo = lazy(() => import('@/components/blocks/onboarding/business-info'));
+const CreateWorkspace = lazy(() => import('@/components/blocks/onboarding/create-workspace'));
+const InviteTeammates = lazy(() => import('@/components/blocks/onboarding/invite-teammates'));
 
 import MyInbox from '@/app/dashboard/partials/inbox/my-inbox';
 import TalentDashboard from '@/app/dashboard/partials/home/talent-home';
@@ -89,6 +89,7 @@ import FeatureRequests from '@/app/dashboard/product/feature-requests';
 
 import Dashboard from '@/app/dashboard/dashboard';
 
+import EditorPage from '@/app/editor/editor-page';
 
 import Tabs from '@/components/blocks/activity/test-tab';
 import { ReusableTabs } from '@/components/blocks/activity';
@@ -112,9 +113,18 @@ const AppRoutes = () => {
      */
     const getAppPages = (name: string) => {
         switch (name) {
-            // Public routes
+            // Utility routes
             case 'preview':
                 return <Preview />;
+               
+            case 'no-network':
+                return <NoNetwork />;
+         
+            case 'not-found':
+                return <NotFound />;
+
+
+            // authentication routes
             case 'login':
                 return <Login />;
             case 'register':
@@ -126,10 +136,24 @@ const AppRoutes = () => {
                 return <ForgotPassword />;
             case 'reset-password':
                 return <ResetPassword />;
-            case 'no-network':
-                return <NoNetwork />;
-            case 'not-found':
-                return <NotFound />;
+
+            //onboarding routes
+            case 'onboarding':
+                return <Onboard />;
+            case 'onboard-basic-user':
+                return <BasicInfo />
+            case 'onboard-user-info':
+                return <UserInfo />;
+            case 'onboard-business-info':
+                return <BusinessInfo />
+            case 'onboard-create-workspace':
+                return <CreateWorkspace />;
+            case 'onboard-invite-teammates':
+                return <InviteTeammates />;
+
+            // dasboard
+            case 'dashboard':
+                return <Dashboard />;
 
             // Business routes
             case 'search':
@@ -260,24 +284,6 @@ const AppRoutes = () => {
                 return <FeatureRequests />;
 
             // Sidebar routes
-            case 'dashboard':           
-                return <Dashboard />;
-            case 'onboarding':
-                return <Onboard />;
-            case 'onboard-welcome':
-                return <Welcome />;
-            case 'onboard-submit-info':
-                return <SubmitInfo />;
-            case 'onboard-create-workspace':
-                return <CreateWorkspace />;
-            case 'onboard-invite-teammates':
-                return <InviteTeammates />;
-            case 'onboard-talent-info':
-                return <TalentInfo />;
-            case 'onboard-business-info':
-            case 'onboard-complete':
-            case 'onboard-status':
-                return <Onboard />;
             case 'security':
                 return <Security />;
             case 'notifications':
@@ -312,7 +318,7 @@ const AppRoutes = () => {
                                             title={route.title || route.name}
                                             logo=""
                                             description={(route.content as any)?.description}
-                                            maxWidth={(route.content as any)?.maxWidth || 'md'}
+                                            maxWidth={(route.content as any)?.maxWidth || '4xl'}
                                             onboardingType={(route.content as any)?.onboardingType || 'talent'}
                                         >
                                             {getAppPages(route.name)}
@@ -360,9 +366,9 @@ const AppRoutes = () => {
                                                     path={
                                                         route.url === '/dashboard'
                                                             ? routil.computeSubPath(
-                                                                  route,
-                                                                  subroute,
-                                                              )
+                                                                route,
+                                                                subroute,
+                                                            )
                                                             : route.url + subroute.url
                                                     }
                                                     element={
@@ -430,7 +436,7 @@ const AppRoutes = () => {
                                             title={route.title || route.name}
                                             logo=""
                                             description={route.content.description}
-                                            maxWidth={route.content.maxWidth || 'md'}
+                                            maxWidth={route.content.maxWidth || '4xl'}
                                             onboardingType={route.content.onboardingType || 'talent'}
                                         >
                                             {getAppPages(route.name)}
@@ -535,7 +541,7 @@ const AppRoutes = () => {
                                                             title={inroute.title || inroute.name}
                                                             logo=""
                                                             description={(inroute.content as any)?.description}
-                                                            maxWidth={(inroute.content as any)?.maxWidth || 'md'}
+                                                            maxWidth={(inroute.content as any)?.maxWidth || '4xl'}
                                                             onboardingType={(inroute.content as any)?.onboardingType || 'talent'}
                                                         >
                                                             {getAppPages(inroute.name)}
@@ -571,6 +577,30 @@ const AppRoutes = () => {
                     )}
                 </Fragment>
             ))}
+
+            {/* Editor routes */}
+            <Route
+                path="/editor"
+                element={
+                    <DashboardLayout
+                        component={<EditorPage />}
+                        title="Editor"
+                        back={false}
+                        sidebar={{ collapsed: false }}
+                    />
+                }
+            />
+            <Route
+                path="/editor/:roomId"
+                element={
+                    <DashboardLayout
+                        component={<EditorPage />}
+                        title="Editor"
+                        back={false}
+                        sidebar={{ collapsed: false }}
+                    />
+                }
+            />
 
             {/* Fallback routes */}
             <Route

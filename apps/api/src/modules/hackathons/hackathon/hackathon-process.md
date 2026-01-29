@@ -93,7 +93,7 @@ This document outlines the complete user journey and system behavior for hackath
 
 **Step 3**: System locates hackathon
 - System searches for hackathon by identifier or slug
-- System populates hackathon relations (workspace, business, members, mentors, judges, etc.)
+- System populates hackathon relations (workspace, business, members, mentors (guests with type: MENTOR), judges (guests with type: JUDGE), etc.)
 - If hackathon not found, system returns error message and stops process
 - If hackathon found, system continues to next step
 

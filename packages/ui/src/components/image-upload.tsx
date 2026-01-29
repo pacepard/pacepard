@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cn } from "@pacepard/ui/lib/utils"
-import { Image, X } from "@phosphor-icons/react"
+import { Image as ImageIcon, X } from "lucide-react"
 
 export interface ImageUploadProps {
   /**
@@ -226,7 +226,7 @@ export function ImageUpload({
                 )}
                 aria-label="Remove image"
               >
-                <X size={14} weight="bold" />
+                <X size={14} />
               </button>
             )}
           </>
@@ -235,10 +235,9 @@ export function ImageUpload({
             {placeholder ? (
               placeholder
             ) : (
-              <Image
+              <ImageIcon
                 size={size === "sm" ? 24 : size === "md" ? 28 : 32}
                 className="text-[#787774] dark:text-[#9b9a97]"
-                weight="regular"
               />
             )}
           </div>

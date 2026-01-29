@@ -101,7 +101,7 @@ class BusinessService {
             result.error = true;
             result.code = 500;
             result.message =
-                createResult.message || 'Failed to create business profile';
+                createResult.message;
             return result;
         }
 

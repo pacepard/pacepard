@@ -1,5 +1,5 @@
 import React from 'react';
-import { LinkSimple, Eye } from '@phosphor-icons/react';
+import { Link, Eye } from 'lucide-react';
 import { ScrollArea, ScrollBar } from '@pacepard/ui/components/scroll-area';
 import {
     Tabs,
@@ -38,7 +38,7 @@ export function ShareTabs({
             <ScrollArea>
                 <TabsList className="mb-3">
                     <TabsTrigger value="share" className="group">
-                        <LinkSimple
+                        <Link
                             aria-hidden="true"
                             className="-ms-0.5 me-1.5 opacity-60"
                             size={16}

@@ -91,7 +91,7 @@ const HackathonSchema = new Schema<IHackathonDoc>(
             {
                 user: {
                     type: Schema.Types.ObjectId,
-                    ref: DbModels.USER,
+                    ref: DbModels.GUEST,
                     required: true,
                 },
                 assignedAt: { type: Date, default: Date.now },
@@ -112,7 +112,7 @@ const HackathonSchema = new Schema<IHackathonDoc>(
             {
                 user: {
                     type: Schema.Types.ObjectId,
-                    ref: DbModels.USER,
+                    ref: DbModels.GUEST,
                     required: true,
                 },
                 assignedAt: { type: Date, default: Date.now },

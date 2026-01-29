@@ -274,20 +274,20 @@ This document outlines the complete user journey and system behavior for permiss
 
 ### Workspace Context
 - System checks workspace member roles
-- System checks workspace mentor roles
-- System checks workspace judge roles
+- System checks workspace mentor guest profiles (guests with type: MENTOR)
+- System checks workspace judge guest profiles (guests with type: JUDGE)
 - System grants permissions based on contextual role
 
 ### Project Context
 - System checks project member roles
-- System checks project mentor profiles
-- System checks project judge profiles
+- System checks project mentor guest profiles (guests with type: MENTOR)
+- System checks project judge guest profiles (guests with type: JUDGE)
 - System grants permissions based on contextual role
 
 ### Hackathon Context
 - System checks hackathon member roles
-- System checks hackathon judge roles
-- System checks hackathon mentor roles
+- System checks hackathon judge guest profiles (guests with type: JUDGE)
+- System checks hackathon mentor guest profiles (guests with type: MENTOR)
 - System grants permissions based on contextual role
 
 ---

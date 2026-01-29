@@ -91,12 +91,12 @@ export const rolePermissionMap: Record<string, string[]> = {
         'form:update',
         'form:delete',
 
-        // Mentor Management
-        'mentor:create',
-        'mentor:read',
-        'mentor:update',
-        'mentor:delete',
-        'mentor:assign',
+        // Guest Management (replaces mentor/judge)
+        'guest:create',
+        'guest:read',
+        'guest:update',
+        'guest:delete',
+        'guest:assign',
 
         // Invitation Management
         'invitation:create',
@@ -251,12 +251,12 @@ export const rolePermissionMap: Record<string, string[]> = {
         'form:update',
         'form:delete',
 
-        // Mentor Management
-        'mentor:create',
-        'mentor:read',
-        'mentor:update',
-        'mentor:delete',
-        'mentor:assign',
+        // Guest Management (replaces mentor/judge)
+        'guest:create',
+        'guest:read',
+        'guest:update',
+        'guest:delete',
+        'guest:assign',
 
         // Invitation Management
         'invitation:create',
@@ -386,9 +386,9 @@ export const rolePermissionMap: Record<string, string[]> = {
         'form:update',
         'form:delete',
 
-        // Mentor Management - Assign mentors
-        'mentor:read',
-        'mentor:assign',
+        // Guest Management - Assign guests (mentors/judges)
+        'guest:read',
+        'guest:assign',
 
         // Invitation Management - Send invitations
         'invitation:create',
@@ -501,72 +501,7 @@ export const rolePermissionMap: Record<string, string[]> = {
         'notification:delete',
     ],
 
-    [UserType.MENTOR]: [
-        // Mentor Profile Management - Own profile
-        'mentor:read',
-        'mentor:update',
-
-        // Project Management - View assigned projects (contextual permissions from profile)
-        'project:read',
-
-        // Hackathon Management - View assigned hackathons (contextual permissions from profile)
-        'hackathon:read',
-
-        // Entry Management - View assigned entries
-        'entry:read',
-
-        // Task Management - View and mentor tasks (contextual permissions from profile)
-        'task:read',
-
-        // Team Management - View teams in assigned projects
-        'team:read',
-
-        // User Management - Own profile
-        'user:read',
-        'user:update',
-
-        // Notification Management
-        'notification:read',
-        'notification:update',
-        'notification:delete',
-
-        // Note: Contextual permissions (project:mentor, task:mentor, etc.) 
-        // are granted via mentor profile assignments, not base role
-    ],
-
-    [UserType.JUDGE]: [
-        // Judge Profile Management - Own profile
-        'judge:read',
-        'judge:update',
-
-        // Project Management - View assigned projects (contextual permissions from profile)
-        'project:read',
-
-        // Hackathon Management - View assigned hackathons (contextual permissions from profile)
-        'hackathon:read',
-
-        // Entry Management - View assigned entries
-        'entry:read',
-
-        // Submission Management - View and evaluate submissions (contextual permissions from profile)
-        'submission:read',
-
-        // Task Management - View and evaluate tasks (contextual permissions from profile)
-        'task:read',
-
-        // Team Management - View teams in assigned projects
-        'team:read',
-
-        // User Management - Own profile
-        'user:read',
-        'user:update',
-
-        // Notification Management
-        'notification:read',
-        'notification:update',
-        'notification:delete',
-
-        // Note: Contextual permissions (project:judge, task:evaluate, etc.) 
-        // are granted via judge profile assignments, not base role
-    ],
+    // Note: MENTOR and JUDGE user types have been removed.
+    // Guest profiles (type: MENTOR or JUDGE) are now used instead.
+    // Permissions for guests are handled via contextual permissions in the permission service.
 };

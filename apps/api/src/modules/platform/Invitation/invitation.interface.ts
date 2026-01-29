@@ -34,11 +34,10 @@ export interface IInvitationDoc extends Document {
 
 export enum InvitationType {
     TEAM = 'teamInvite',
-    MENTOR = 'mentorInvite',
+    GUEST = 'guestInvite',
     ADMIN = 'adminInvite',
     TALENT = 'talentInvite',
     BUSINESS = 'businessInvite',
-    JUDGE = 'judgeInvite',
     PROJECT = 'projectInvite',
     WORKSPACE = 'workspaceInvite',
     SQUAD = 'squadInvite',

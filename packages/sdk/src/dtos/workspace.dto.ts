@@ -1,6 +1,7 @@
 import Hackathon from '@/dtos/hackathon.dto';
 import Project from '@/dtos/project.dto';
 import User from '@/dtos/user.dto';
+import Guest from '@/dtos/guest.dto';
 
 interface Workspace {
     code: string;
@@ -17,8 +18,8 @@ interface Workspace {
     hackathons: Array<Hackathon>;
     projects: Array<Project>; // challeges or projects that a business created
 
-    mentors: Array<User>; // mentors who can mentor an entry or submission in the workspace
-    judges: Array<User>; // judge who can judge an entry or submission in the workspace
+    mentors: Array<Guest>; // mentors (guests with type: MENTOR) who can mentor an entry or submission in the workspace
+    judges: Array<Guest>; // judges (guests with type: JUDGE) who can judge an entry or submission in the workspace
 
     // time stamps
     createdAt: Date;

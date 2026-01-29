@@ -1,11 +1,11 @@
 import {
-    CaretDown,
-    DotsThreeIcon,
+    ChevronDown,
+    MoreHorizontal,
     Folder,
-    ShareNetwork,
-    Trash,
-    type Icon,
-} from '@phosphor-icons/react';
+    Share2,
+    Trash2,
+    type LucideIcon,
+} from 'lucide-react';
 
 import {
     Collapsible,
@@ -35,7 +35,7 @@ import {
 type WorkspaceItem = {
     name: string;
     url: string;
-    icon: Icon;
+    icon: LucideIcon;
 };
 
 type WorkspaceSection = {
@@ -71,7 +71,7 @@ export function NavWorkspaces({ sections }: { sections: WorkspaceSection[] }) {
                                             aria-label={`Toggle ${section.label}`}
                                             onClick={(e) => e.stopPropagation()}
                                         >
-                                            <CaretDown className="size-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/collapsible:rotate-0" />
+                                            <ChevronDown className="size-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/collapsible:rotate-0" />
                                         </button>
                                     </CollapsibleTrigger>
                                     <span>{section.label}</span>
@@ -79,7 +79,7 @@ export function NavWorkspaces({ sections }: { sections: WorkspaceSection[] }) {
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/workspace-button:opacity-100 group-hover/workspace-button:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
-                                            <DotsThreeIcon />
+                                            <MoreHorizontal />
                                             <span className="sr-only">
                                                 More
                                             </span>
@@ -95,12 +95,12 @@ export function NavWorkspaces({ sections }: { sections: WorkspaceSection[] }) {
                                             <span>View</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem>
-                                            <ShareNetwork className="text-muted-foreground" />
+                                            <Share2 className="text-muted-foreground" />
                                             <span>Share</span>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem>
-                                            <Trash className="text-muted-foreground" />
+                                            <Trash2 className="text-muted-foreground" />
                                             <span>Delete</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -123,7 +123,7 @@ export function NavWorkspaces({ sections }: { sections: WorkspaceSection[] }) {
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/item:opacity-100 group-hover/item:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
-                                                        <DotsThreeIcon />
+                                                        <MoreHorizontal />
                                                         <span className="sr-only">
                                                             More
                                                         </span>
@@ -147,12 +147,12 @@ export function NavWorkspaces({ sections }: { sections: WorkspaceSection[] }) {
                                                         <span>View</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem>
-                                                        <ShareNetwork className="text-muted-foreground" />
+                                                        <Share2 className="text-muted-foreground" />
                                                         <span>Share</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem>
-                                                        <Trash className="text-muted-foreground" />
+                                                        <Trash2 className="text-muted-foreground" />
                                                         <span>Delete</span>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>

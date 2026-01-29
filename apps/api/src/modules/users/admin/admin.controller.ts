@@ -547,7 +547,7 @@ export const acceptAdminInvitation: RequestHandler = asyncHandler(
             if (createUserResult.error) {
                 return next(
                     new ErrorResponse(
-                        createUserResult.message || 'Failed to create user account',
+                        createUserResult.message,
                         500,
                         [],
                     ),

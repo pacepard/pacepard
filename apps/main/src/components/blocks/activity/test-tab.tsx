@@ -1,11 +1,11 @@
 import { ReusableTabs, type TabItem } from '@/components/blocks/activity';
-import { House, Folder, Package, Users, ChartLine, Gear } from '@phosphor-icons/react';
+import { Home, Folder, Package, Users, TrendingUp, Settings } from 'lucide-react';
 
 const Tabs: TabItem[] = [
   {
     value: 'overview',
     label: 'Overview',
-    icon: House,
+    icon: Home,
     content: <div>Overview content</div>
   },
   {
@@ -42,7 +42,7 @@ const Tabs: TabItem[] = [
   {
     value: 'insights',
     label: 'Insights',
-    icon: ChartLine,
+    icon: TrendingUp,
     content: (
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-2">Insights</h3>
@@ -53,7 +53,7 @@ const Tabs: TabItem[] = [
   {
     value: 'settings',
     label: 'Settings',
-    icon: Gear,
+    icon: Settings,
     content: (
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-2">Settings</h3>

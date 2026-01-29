@@ -157,7 +157,7 @@ class AdminService {
             result.error = true;
             result.code = 500;
             result.message =
-                createResult.message || 'Failed to create admin profile';
+                createResult.message;
             return result;
         }
 

@@ -54,7 +54,7 @@ This document outlines the complete user journey and system behavior for workspa
 - System stores creator reference
 - System initializes empty arrays for hackathons and projects
 - System adds creator as workspace member with owner role
-- System initializes empty arrays for invites, mentors, and judges
+- System initializes empty arrays for invites, mentors (guests with type: MENTOR), and judges (guests with type: JUDGE)
 - System stores workspace creation timestamp
 
 **Step 5**: System returns creation response
@@ -83,7 +83,7 @@ This document outlines the complete user journey and system behavior for workspa
 
 **Step 3**: System locates workspace
 - System searches for workspace with provided identifier
-- System populates workspace relations including hackathons, projects, members, invites, mentors, judges, and creator
+- System populates workspace relations including hackathons, projects, members, invites, mentors (guests with type: MENTOR), judges (guests with type: JUDGE), and creator
 - If workspace not found, system returns error message and stops process
 - If workspace found, system continues to next step
 
@@ -316,20 +316,20 @@ This document outlines the complete user journey and system behavior for workspa
 
 ### User Story
 **As a** workspace owner or manager  
-**I want to** add a mentor to workspace  
+**I want to** add a mentor (guest with type: MENTOR) to workspace  
 **So that** the mentor can provide guidance in the workspace
 
 ### Algorithm: Add Mentor Process
 
 **Step 1**: User submits mentor addition request
 - User provides workspace identifier
-- User provides user identifier to add as mentor
+- User provides guest identifier (guest with type: MENTOR) to add as mentor
 - User provides requesting user information
 - System receives mentor addition request
 
 **Step 2**: System validates request
 - System checks if workspace identifier is provided
-- System checks if user identifier is provided
+- System checks if guest identifier is provided
 - If any field missing, system returns error message and stops process
 
 **Step 3**: System locates workspace
@@ -338,22 +338,28 @@ This document outlines the complete user journey and system behavior for workspa
 - If workspace found, system continues to next step
 
 **Step 4**: System checks permissions
-- System checks if requesting user has permission to manage mentors
+- System checks if requesting user has permission to manage guests
 - System validates permission against workspace resource
 - System checks ownership if ownership checking enabled
 - If user does not have permission, system returns error message and stops process
 - If user has permission, system continues to next step
 
-**Step 5**: System checks existing mentorship
-- System checks if user is already a mentor in workspace
-- If user is already a mentor, system returns error message and stops process
-- If user is not a mentor, system continues to next step
+**Step 5**: System validates guest profile
+- System locates guest profile by identifier
+- System verifies guest type is MENTOR
+- If guest not found or type is not MENTOR, system returns error message and stops process
+- If guest is valid, system continues to next step
 
-**Step 6**: System adds mentor to workspace
-- System adds user to workspace mentors array
+**Step 6**: System checks existing mentorship
+- System checks if guest is already a mentor in workspace
+- If guest is already a mentor, system returns error message and stops process
+- If guest is not a mentor, system continues to next step
+
+**Step 7**: System adds mentor to workspace
+- System adds guest to workspace mentors array
 - System saves workspace record to database
 
-**Step 7**: System returns addition response
+**Step 8**: System returns addition response
 - System returns success response
 - Response includes updated workspace information
 - Response indicates mentor added successfully
@@ -364,20 +370,20 @@ This document outlines the complete user journey and system behavior for workspa
 
 ### User Story
 **As a** workspace owner or manager  
-**I want to** remove a mentor from workspace  
+**I want to** remove a mentor (guest with type: MENTOR) from workspace  
 **So that** the mentor no longer has access to workspace mentoring features
 
 ### Algorithm: Remove Mentor Process
 
 **Step 1**: User submits mentor removal request
 - User provides workspace identifier
-- User provides user identifier to remove as mentor
+- User provides guest identifier to remove as mentor
 - User provides requesting user information
 - System receives mentor removal request
 
 **Step 2**: System validates request
 - System checks if workspace identifier is provided
-- System checks if user identifier is provided
+- System checks if guest identifier is provided
 - If any field missing, system returns error message and stops process
 
 **Step 3**: System locates workspace
@@ -386,14 +392,14 @@ This document outlines the complete user journey and system behavior for workspa
 - If workspace found, system continues to next step
 
 **Step 4**: System checks permissions
-- System checks if requesting user has permission to manage mentors
+- System checks if requesting user has permission to manage guests
 - System validates permission against workspace resource
 - System checks ownership if ownership checking enabled
 - If user does not have permission, system returns error message and stops process
 - If user has permission, system continues to next step
 
 **Step 5**: System removes mentor from workspace
-- System removes user from workspace mentors array
+- System removes guest from workspace mentors array
 - System saves workspace record to database
 
 **Step 6**: System validates removal
@@ -412,20 +418,20 @@ This document outlines the complete user journey and system behavior for workspa
 
 ### User Story
 **As a** workspace owner or manager  
-**I want to** add a judge to workspace  
+**I want to** add a judge (guest with type: JUDGE) to workspace  
 **So that** the judge can evaluate submissions in the workspace
 
 ### Algorithm: Add Judge Process
 
 **Step 1**: User submits judge addition request
 - User provides workspace identifier
-- User provides user identifier to add as judge
+- User provides guest identifier (guest with type: JUDGE) to add as judge
 - User provides requesting user information
 - System receives judge addition request
 
 **Step 2**: System validates request
 - System checks if workspace identifier is provided
-- System checks if user identifier is provided
+- System checks if guest identifier is provided
 - If any field missing, system returns error message and stops process
 
 **Step 3**: System locates workspace
@@ -434,22 +440,28 @@ This document outlines the complete user journey and system behavior for workspa
 - If workspace found, system continues to next step
 
 **Step 4**: System checks permissions
-- System checks if requesting user has permission to manage judges
+- System checks if requesting user has permission to manage guests
 - System validates permission against workspace resource
 - System checks ownership if ownership checking enabled
 - If user does not have permission, system returns error message and stops process
 - If user has permission, system continues to next step
 
-**Step 5**: System checks existing judgeship
-- System checks if user is already a judge in workspace
-- If user is already a judge, system returns error message and stops process
-- If user is not a judge, system continues to next step
+**Step 5**: System validates guest profile
+- System locates guest profile by identifier
+- System verifies guest type is JUDGE
+- If guest not found or type is not JUDGE, system returns error message and stops process
+- If guest is valid, system continues to next step
 
-**Step 6**: System adds judge to workspace
-- System adds user to workspace judges array
+**Step 6**: System checks existing judgeship
+- System checks if guest is already a judge in workspace
+- If guest is already a judge, system returns error message and stops process
+- If guest is not a judge, system continues to next step
+
+**Step 7**: System adds judge to workspace
+- System adds guest to workspace judges array
 - System saves workspace record to database
 
-**Step 7**: System returns addition response
+**Step 8**: System returns addition response
 - System returns success response
 - Response includes updated workspace information
 - Response indicates judge added successfully
@@ -460,20 +472,20 @@ This document outlines the complete user journey and system behavior for workspa
 
 ### User Story
 **As a** workspace owner or manager  
-**I want to** remove a judge from workspace  
+**I want to** remove a judge (guest with type: JUDGE) from workspace  
 **So that** the judge no longer has access to workspace judging features
 
 ### Algorithm: Remove Judge Process
 
 **Step 1**: User submits judge removal request
 - User provides workspace identifier
-- User provides user identifier to remove as judge
+- User provides guest identifier to remove as judge
 - User provides requesting user information
 - System receives judge removal request
 
 **Step 2**: System validates request
 - System checks if workspace identifier is provided
-- System checks if user identifier is provided
+- System checks if guest identifier is provided
 - If any field missing, system returns error message and stops process
 
 **Step 3**: System locates workspace
@@ -482,14 +494,14 @@ This document outlines the complete user journey and system behavior for workspa
 - If workspace found, system continues to next step
 
 **Step 4**: System checks permissions
-- System checks if requesting user has permission to manage judges
+- System checks if requesting user has permission to manage guests
 - System validates permission against workspace resource
 - System checks ownership if ownership checking enabled
 - If user does not have permission, system returns error message and stops process
 - If user has permission, system continues to next step
 
 **Step 5**: System removes judge from workspace
-- System removes user from workspace judges array
+- System removes guest from workspace judges array
 - System saves workspace record to database
 
 **Step 6**: System validates removal

@@ -18,6 +18,7 @@ import emailService from '../../../services/email.service';
 import { EMAIL_CONFIG } from '../../../configs/email.config';
 import userRepository from '../../users/user/user.repository';
 import authService from '../../authentication/auth/auth.service';
+import { GuestTypeEnum } from '../../users/guest/guest.interface';
 
 /**
  * @name createHackathon
@@ -546,8 +547,11 @@ export const inviteMentor: RequestHandler = asyncHandler(
         const invitationResult = await invitationService.newInvitation({
             invitedBy: userId,
             inviteeEmail: email.trim().toLowerCase(),
-            inviteType: InvitationType.MENTOR,
+            inviteType: InvitationType.GUEST,
             resourceId: hackathonId,
+            metadata: {
+                guestType: GuestTypeEnum.MENTOR,
+            },
         });
 
         if (invitationResult.error) {
@@ -658,8 +662,11 @@ export const inviteJudge: RequestHandler = asyncHandler(
         const invitationResult = await invitationService.newInvitation({
             invitedBy: userId,
             inviteeEmail: email.trim().toLowerCase(),
-            inviteType: InvitationType.JUDGE,
+            inviteType: InvitationType.GUEST,
             resourceId: hackathonId,
+            metadata: {
+                guestType: GuestTypeEnum.JUDGE,
+            },
         });
 
         if (invitationResult.error) {
@@ -916,6 +923,52 @@ export const resendJudgeInvite: RequestHandler = asyncHandler(
                 emailQueued: !emailResult.error,
             },
             message: resendResult.message || 'Judge invitation resent successfully.',
+            status: 200,
+        });
+    },
+);
+
+/**
+ * @name generateHackathonShareableLink
+ * @description Generates a shareable link for a hackathon
+ * @route POST /hackathons/:id/invite/shareable-link
+ * @access  Private
+ */
+export const generateHackathonShareableLink: RequestHandler = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { id } = req.params;
+        if (!id)
+            return next(new ErrorResponse('Hackathon ID is required', 400, []));
+
+        const { expiresInDays } = req.body;
+
+        const result = await hackathonService.generateShareableLink(
+            id,
+            userId,
+            expiresInDays || 7,
+        );
+
+        if (result.error) {
+            return next(
+                new ErrorResponse(result.message, result.code || 500, []),
+            );
+        }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`hackathon:${id}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
             status: 200,
         });
     },

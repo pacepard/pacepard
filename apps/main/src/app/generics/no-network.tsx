@@ -15,9 +15,9 @@ const NoNetwork = (data: INoNetwork) => {
   
     const {
         className,
-        title = "404",
-        description = "Your internet is down currently",
-        buttonText = "Return to website",
+        title = "Your internet is down",
+        description = "Check your internet connection",
+        buttonText = "Try again",
         onReturnHome,
         homeHref = "/",
         LinkComponent,

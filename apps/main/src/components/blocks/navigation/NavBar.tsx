@@ -1,4 +1,4 @@
-import { BellIcon } from '@phosphor-icons/react';
+import { Bell } from 'lucide-react';
 import TopNav from './top-nav';
 import Trigger from './trigger';
 
@@ -17,7 +17,7 @@ const NavBar = () => {
             {/* RIGHT */}
             <div className="flex items-center cursor-pointer gap-2 justify-end">
                 {/* <ThemeToggle/> */}
-                <BellIcon className="h-5 w-5" />
+                <Bell className="h-5 w-5" />
                 {/* <UserAvatar /> */}
             </div>
         </nav>

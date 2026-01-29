@@ -9,7 +9,7 @@ import teamRepository from '../team/team.repository';
 import { IResult } from '../../../utils/interfaces.util';
 import { IUserDoc } from '../../users/user/user.interface';
 import { genTaskCode } from '../../../utils/code.util';
-import storageService from '../../../services/storage.service';
+import storageService from '../../platform/storage/storage.service';
 import { IFile } from '../../../utils/interfaces.util';
 
 class TaskService {
@@ -125,7 +125,7 @@ class TaskService {
                         error: true,
                         code: uploadResult.code || 500,
                         message:
-                            uploadResult.message || 'Failed to upload image',
+                            uploadResult.message,
                         data: {} as any,
                     };
                 }
@@ -200,7 +200,7 @@ class TaskService {
             return {
                 error: true,
                 code: 500,
-                message: createResult.message || 'Failed to persist task',
+                message: createResult.message,
                 data: {} as any,
             };
         }
@@ -426,7 +426,7 @@ class TaskService {
                     result.error = true;
                     result.code = uploadResult.code || 500;
                     result.message =
-                        uploadResult.message || 'Failed to upload image';
+                        uploadResult.message;
                     return result;
                 }
 

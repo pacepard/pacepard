@@ -6,10 +6,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { forgotPasswordSchema, ForgotPasswordFormValues, verifyOtpSchema, VerifyOtpFormValues } from './validation';
 import {
-    CircleNotchIcon,
-    EnvelopeSimpleIcon,
-} from '@phosphor-icons/react';
-import { pacepardAPI } from '@/config/pacepard';
+    Loader2,
+    Mail,
+} from 'lucide-react';
+import { PacepardAPI } from '@/config/pacepard';
 import { toast } from '@pacepard/ui';
 import { useNavigate } from 'react-router';
 import { storage, OtpType } from '@pacepard/sdk';
@@ -74,7 +74,7 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
             // Store email in localStorage
             storage.keepLegacy('userEmail', data.email);
 
-            const response = await pacepardAPI.auth.forgotPassword({
+            const response = await PacepardAPI.auth.forgotPassword({
                 email: data.email,
             });
 
@@ -151,7 +151,7 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
 
     const handleOtpSubmit = async (data: VerifyOtpFormValues) => {
         try {
-            const response = await pacepardAPI.auth.verifyOTP({
+            const response = await PacepardAPI.auth.verifyOTP({
                 email,
                 otp: Number(data.otp),
                 otpType: OtpType.FORGOTPASSWORD,
@@ -183,7 +183,7 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
         otpRefs.current[0]?.focus();
 
         try {
-            const response = await pacepardAPI.auth.resendOTP({
+            const response = await PacepardAPI.auth.resendOTP({
                 email,
                 otpType: OtpType.FORGOTPASSWORD,
             });
@@ -224,7 +224,7 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                     <div className="flex flex-col gap-2 space-y-1">
                         <Label htmlFor="email">Enter your email</Label>
                         <div className="relative">
-                            <EnvelopeSimpleIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 id="email"
                                 type="email"
@@ -252,7 +252,7 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                         type="submit"
                     >
                         {emailForm.formState.isSubmitting && (
-                            <CircleNotchIcon className="h-4 w-4 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                         )}
                         {emailForm.formState.isSubmitting ? 'Sending OTP...' : 'Request OTP'}
                     </Button>
@@ -348,7 +348,7 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                         disabled={otpForm.formState.isSubmitting}
                     >
                         {otpForm.formState.isSubmitting && (
-                            <CircleNotchIcon className="h-4 w-4 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                         )}
                         {otpForm.formState.isSubmitting ? 'Verifying...' : 'Verify code'}
                     </Button>

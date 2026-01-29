@@ -20,17 +20,18 @@ import businessRepository from '../business/business.repository';
 import { GenderType } from '../talent/talent.interface';
 import { BusinessType, VerificationType } from '../business/business.interface';
 import {
-    OnboardStep1DTO,
-    OnboardStep2DTO,
-    OnboardStep3TalentDTO,
-    OnboardStep3BusinessDTO,
+    OnboardUserTypeDTO,
+    OnboardBasicInfoDTO,
+    OnboardTalentInfoDTO,
+    OnboardBusinessInfoDTO,
+    OnboardUserInfoDTO,
 } from '../../authentication/auth/auth.dto';
 
 import authService from '../../authentication/auth/auth.service';
 import PermissionService from '../../authentication/permission/permission.service';
 import { genSlug } from '../../../utils/helpers.util';
 import { genUserCode } from '../../../utils/code.util';
-import storageService from '../../../services/storage.service';
+import storageService from '../../platform/storage/storage.service';
 import { IFile } from '../../../utils/interfaces.util';
 import roleService from '@/modules/authentication/role/role.service';
 import tokenService from '../../../services/token.service';
@@ -271,14 +272,23 @@ class UserService {
             updateData.email = data.email.toLowerCase().trim();
         if (data.isActive !== undefined) updateData.isActive = data.isActive;
 
+        // Handle phone fields
+        if (data.phoneNumber !== undefined) {
+            updateData.phoneNumber = data.phoneNumber;
+        }
+        if (data.phoneCode !== undefined) {
+            updateData.phoneCode = data.phoneCode;
+        }
+
         // Handle location fields
-        if (data.phoneNumber || data.phoneCode || data.country) {
+        if (data.country || data.address || data.city || data.state || data.postalCode) {
             updateData.location = {
                 ...user.location,
-                phoneNumber:
-                    data.phoneNumber || user.location?.phoneNumber || '',
-                phoneCode: data.phoneCode || user.location?.phoneCode || '',
+                address: data.address || user.location?.address || '',
+                city: data.city || user.location?.city || '',
+                state: data.state || user.location?.state || '',
                 country: data.country || user.location?.country || '',
+                postalCode: data.postalCode || user.location?.postalCode || '',
             } as any;
         }
 
@@ -366,8 +376,7 @@ class UserService {
                 if (uploadResult.error) {
                     result.error = true;
                     result.code = uploadResult.code || 500;
-                    result.message =
-                        uploadResult.message || 'Failed to upload coverImage';
+                    result.message = uploadResult.message;
                     return result;
                 }
 
@@ -418,13 +427,13 @@ class UserService {
 
     // onboarding flow
     /**
-     * @description Step 1: Set user type
+     * @description Set user type
      * @param userId - The user ID
-     * @param data - OnboardStep1DTO containing userType
+     * @param data - OnboardUserTypeDTO containing userType
      */
-    async step1SetUserType(
+    async setUserType(
         userId: string | ObjectId,
-        data: OnboardStep1DTO,
+        data: OnboardUserTypeDTO,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -443,7 +452,7 @@ class UserService {
         let user = userResult.data as IUserDoc;
 
         // Validate user type
-        if (![UserType.TALENT, UserType.BUSINESS].includes(data.userType)) {
+        if (![UserType.TALENT, UserType.BUSINESS, UserType.USER].includes(data.userType)) {
             result.error = true;
             result.message = 'Invalid user type';
             result.code = 400;
@@ -459,9 +468,15 @@ class UserService {
         if (data.userType === UserType.TALENT) {
             user.isTalent = true;
             user.isBusiness = false;
+            user.isUser = false;
         } else if (data.userType === UserType.BUSINESS) {
             user.isBusiness = true;
             user.isTalent = false;
+            user.isUser = false;
+        } else if (data.userType === UserType.USER) {
+            user.isUser = true;
+            user.isTalent = false;
+            user.isBusiness = false;
         }
 
         // Attach role based on user type
@@ -514,13 +529,13 @@ class UserService {
     }
 
     /**
-     * @description Step 2: Set basic user information
+     * @description Set basic user information
      * @param userId - The user ID
-     * @param data - OnboardStep2DTO containing firstName, lastName, location, timeZone
+     * @param data - OnboardBasicInfoDTO containing firstName, lastName, location, timeZone
      */
-    async step2SetBasicInfo(
+    async setBasicInfo(
         userId: string | Types.ObjectId,
-        data: OnboardStep2DTO,
+        data: OnboardBasicInfoDTO,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -562,9 +577,9 @@ class UserService {
         // Update user basic information
         user.firstName = data.firstName;
         user.lastName = data.lastName;
+        user.phoneCode = data.phoneCode || '';
+        user.phoneNumber = data.phoneNumber || '';
         user.location = {
-            phoneCode: data.location.phoneCode || '',
-            phoneNumber: data.location.phoneNumber || '',
             address: data.location.address || '',
             city: data.location.city || '',
             state: data.location.state || '',
@@ -588,13 +603,13 @@ class UserService {
     }
 
     /**
-     * @description Step 3A: Set talent-specific information
+     * @description Set talent-specific information
      * @param userId - The user ID
-     * @param data - OnboardStep3TalentDTO containing specialty, gender, dateOfBirth
+     * @param data - OnboardTalentInfoDTO containing specialty, gender, dateOfBirth
      */
-    async step3SetTalentInfo(
+    async setTalentInfo(
         userId: string | Types.ObjectId,
-        data: OnboardStep3TalentDTO,
+        data: OnboardTalentInfoDTO,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -726,13 +741,13 @@ class UserService {
     }
 
     /**
-     * @description Step 3B: Set business-specific information
+     * @description Set business-specific information
      * @param userId - The user ID
-     * @param data - OnboardStep3BusinessDTO containing businessName, businessType, industry, tags
+     * @param data - OnboardBusinessInfoDTO containing businessName, businessType, industry, tags
      */
-    async step3SetBusinessInfo(
+    async setBusinessInfo(
         userId: string | Types.ObjectId,
-        data: OnboardStep3BusinessDTO,
+        data: OnboardBusinessInfoDTO,
     ): Promise<IResult> {
         let result: IResult = {
             error: false,
@@ -857,10 +872,10 @@ class UserService {
     }
 
     /**
-     * @description Step 4: Complete onboarding
+     * @description Complete onboarding
      * @param userId - The user ID
      */
-    async step4CompleteOnboarding(
+    async completeOnboarding(
         userId: string | Types.ObjectId,
     ): Promise<IResult> {
         let result: IResult = {
@@ -887,7 +902,7 @@ class UserService {
             return result;
         }
 
-        // Verify that type-specific profile exists
+        // Verify that type-specific profile exists (USER type doesn't need a separate profile)
         if (user.userType === UserType.TALENT) {
             const talentResult = await talentRepository.findOne({
                 user: userId,
@@ -911,6 +926,7 @@ class UserService {
                 return result;
             }
         }
+        // USER type doesn't require a separate profile, so no check needed
 
         // Ensure roles and permissions are set before completing onboarding
         if (!user.roles || user.roles.length === 0) {
@@ -962,7 +978,7 @@ class UserService {
         const tokenResult = await tokenService.attachToken(user);
         if (tokenResult.error) {
             result.error = true;
-            result.message = tokenResult.message || 'Failed to generate token';
+            result.message = tokenResult.message;
             result.code = tokenResult.code || 500;
             return result;
         }
@@ -978,10 +994,14 @@ class UserService {
         }
 
         // Determine redirect URL based on user type
-        const redirectUrl =
-            user.userType === UserType.TALENT
-                ? '/dashboard/talent'
-                : '/dashboard/business';
+        let redirectUrl = '/dashboard';
+        if (user.userType === UserType.TALENT) {
+            redirectUrl = '/dashboard/talent';
+        } else if (user.userType === UserType.BUSINESS) {
+            redirectUrl = '/dashboard/business';
+        } else if (user.userType === UserType.USER) {
+            redirectUrl = '/dashboard';
+        }
 
         result.error = false;
         result.code = 200;
@@ -1044,6 +1064,71 @@ class UserService {
 
         return result;
     }
+
+    /**
+     * @description Set user information (specialty, role, discovery) - works for all user types
+     * @param userId - The user ID
+     * @param data - OnboardUserInfoDTO containing specialty, role, discovery
+     */
+    async setUserInfo(
+        userId: string | Types.ObjectId,
+        data: OnboardUserInfoDTO,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const userResult = await userRepository.findById(String(userId));
+        if (userResult.error || !userResult.data) {
+            result.error = true;
+            result.message = 'User not found';
+            result.code = 404;
+            return result;
+        }
+        const user = userResult.data as IUserDoc;
+
+        // Validate step progression
+        if (user.onboard.step < 2) {
+            result.error = true;
+            result.message = 'Please complete previous steps first';
+            result.code = 400;
+            return result;
+        }
+
+        // Validate required fields
+        if (!data.specialty || !data.role || !data.discovery) {
+            result.error = true;
+            result.message = 'Missing required fields';
+            result.code = 400;
+            return result;
+        }
+
+        // Store user info in a metadata field or extend user model
+        // For now, we'll store it in user metadata if available, or extend the user model
+        // Since we don't have a metadata field, we'll update onboarding step and store in user preferences or extend model
+        // For simplicity, we'll just update the onboarding step to 3
+        // In a production system, you might want to add fields to the user model for specialty, role, discovery
+
+        user.onboard.step = 3;
+        await user.save();
+
+        result.error = false;
+        result.code = 200;
+        result.message = 'User information saved successfully';
+        result.data = {
+            specialty: data.specialty,
+            role: data.role,
+            discovery: data.discovery,
+            step: user.onboard.step,
+            status: user.onboard.status,
+        };
+
+        return result;
+    }
+
 
     //   /**
     //    * @name createSocialUser

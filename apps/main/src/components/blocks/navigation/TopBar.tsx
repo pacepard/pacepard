@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@pacepard/ui/components/button';
 import { cn } from '@pacepard/ui/lib/utils';
-import { ArrowLeftIcon, CaretDoubleLeft } from '@phosphor-icons/react';
+import { ArrowLeft, ChevronsLeft } from 'lucide-react';
 import { useSidebar } from '@pacepard/ui/components/sidebar';
 
 interface TopBarProps {
@@ -38,7 +38,7 @@ const TopBar = ({ pageTitle, showBack = false, sticky = true }: TopBarProps) => 
                         className="h-9 w-9"
                         title={open ? 'Collapse sidebar' : 'Expand sidebar'}
                     >
-                        <CaretDoubleLeft className={cn(
+                        <ChevronsLeft className={cn(
                             "h-4 w-4 transition-transform duration-200",
                             !open && "rotate-180" // When collapsed, rotate to point right (>>) to expand
                         )} />
@@ -53,7 +53,7 @@ const TopBar = ({ pageTitle, showBack = false, sticky = true }: TopBarProps) => 
                             className="h-9 w-9 bg-green-100 rounded-full"
                             title="Go back"
                         >
-                            <ArrowLeftIcon className="h-4 w-4" />
+                            <ArrowLeft className="h-4 w-4" />
                         </Button>
                     )}
                     

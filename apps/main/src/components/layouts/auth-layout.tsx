@@ -2,7 +2,7 @@
 import React, { ReactNode } from 'react';
 import AuthHeader from '../blocks/auth/auth-header';
 import { TermsAndPrivacy } from '../blocks/auth/terms-and-privacy';
-import { SphereIcon } from '@phosphor-icons/react';
+// Removed unused import
 import PacepardIcon from '../common/LogoIcon';
 
 interface IAuthLayout {
@@ -62,7 +62,6 @@ export const AuthLayout = (props: IAuthLayout) => {
 // // src/components/layouts/auth-layout.tsx
 // import React, { ReactNode } from "react";
 // import AuthHeader from "../shared/auth/auth-header";
-// import { SphereIcon } from "@phosphor-icons/react";
 // import PacepardIcon from "../shared/common/LogoIcon";
 
 // interface IAuthLayout {

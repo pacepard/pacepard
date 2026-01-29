@@ -1,4 +1,4 @@
-import { type Icon } from '@phosphor-icons/react';
+import { type LucideIcon } from 'lucide-react';
 
 import {
     SidebarGroup,
@@ -15,7 +15,7 @@ export function NavHelp({
     projects: {
         name: string;
         url: string;
-        icon: Icon;
+        icon: LucideIcon;
     }[];
 }) {
     const { isMobile } = useSidebar();

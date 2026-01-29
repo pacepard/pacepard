@@ -1,13 +1,19 @@
 import { Router } from 'express';
 import Protect from '../../../middlewares/checkAuth.mdw';
+import uploadHandler from '../../../middlewares/upload.mdw';
 import {
     createWorkspace,
     getWorkspace,
     getWorkspaces,
     updateWorkspace,
+    updateDomainAccess,
     deleteWorkspace,
     addMember,
     removeMember,
+    inviteMember,
+    bulkInviteMembers,
+    generateShareableLink,
+    joinWorkspaceByLink,
     inviteMentor,
     inviteJudge,
     resendMentorInvite,
@@ -23,15 +29,24 @@ import {
 const workspaceRoutes: Router = Router({ mergeParams: true });
 
 // Workspace routes
-workspaceRoutes.post('/', Protect, createWorkspace);
+workspaceRoutes.post('/', Protect, uploadHandler, createWorkspace);
 workspaceRoutes.get('/list', Protect, getWorkspaces);
 workspaceRoutes.get('/:id', Protect, getWorkspace);
 workspaceRoutes.put('/:id', Protect, updateWorkspace);
+workspaceRoutes.put('/:id/domain-access', Protect, updateDomainAccess);
 workspaceRoutes.delete('/:id', Protect, deleteWorkspace);
 
 // Workspace members routes
 workspaceRoutes.post('/:id/members', Protect, addMember);
 workspaceRoutes.delete('/:id/members/:userId', Protect, removeMember);
+
+// Workspace member invitation routes
+workspaceRoutes.post('/:id/invite', Protect, inviteMember);
+workspaceRoutes.post('/:id/invite/bulk', Protect, bulkInviteMembers);
+workspaceRoutes.post('/:id/invite/shareable-link', Protect, generateShareableLink);
+
+// Workspace join by shareable link (public route, but requires authentication)
+workspaceRoutes.post('/invite/join', Protect, joinWorkspaceByLink);
 
 // Workspace mentor/judge invitation routes
 workspaceRoutes.post('/:id/invite/mentor', Protect, inviteMentor);

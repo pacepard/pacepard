@@ -164,7 +164,7 @@ A highly flexible and reusable tab component that can be configured with any num
 interface TabItem {
   value: string;                    // Unique identifier for the tab
   label: string;                     // Display text for the tab
-  icon?: Icon;                       // Optional icon from @phosphor-icons/react
+  icon?: LucideIcon;                 // Optional icon from lucide-react
   badge?: string | number;           // Optional badge (string or number)
   badgeVariant?: 'default' | 'secondary' | 'destructive' | 'outline';
   content: React.ReactNode;          // Content to display when tab is active
@@ -175,7 +175,7 @@ interface TabItem {
 
 ```tsx
 import { ReusableTabs, type TabItem } from '@/components/blocks/activity';
-import { House, Folder, Package, Users, ChartLine, Gear } from '@phosphor-icons/react';
+import { Home, Folder, Package, Users, TrendingUp, Settings } from 'lucide-react';
 
 function MyComponent() {
   const tabs: TabItem[] = [
@@ -275,7 +275,7 @@ function MyComponent() {
 #### Features
 
 - ✅ **Flexible Configuration**: Define any number of tabs with custom content
-- ✅ **Icon Support**: Optional icons from `@phosphor-icons/react`
+- ✅ **Icon Support**: Optional icons from `lucide-react`
 - ✅ **Badge Support**: Display badges with numbers or text
 - ✅ **Badge Variants**: Support for different badge styles (default, secondary, destructive, outline)
 - ✅ **Active Tab Indicator**: Underline effect on active tab
@@ -311,7 +311,7 @@ import {
 These components rely on:
 
 - `@pacepard/ui` - UI component library
-- `@phosphor-icons/react` - Icon library
+- `lucide-react` - Icon library
 - `react` - React framework
 
 ## Styling
@@ -348,7 +348,7 @@ function SharePage() {
 ```tsx
 import { ReusableTabs, type TabItem } from '@/components/blocks/activity';
 import { ShareLink, LinkPreview } from '@/components/blocks/activity';
-import { LinkSimple, Eye } from '@phosphor-icons/react';
+import { Link, Eye } from 'lucide-react';
 
 function CustomSharePage() {
   const tabs: TabItem[] = [
@@ -383,7 +383,7 @@ function CustomSharePage() {
 
 import React from 'react';
 import { ReusableTabs, type TabItem } from '@/components/blocks/activity';
-import { House, Folder, Package, Users, ChartLine, Gear } from '@phosphor-icons/react';
+import { Home, Folder, Package, Users, TrendingUp, Settings } from 'lucide-react';
 
 export const tabs: TabItem[] = [
   {

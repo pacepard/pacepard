@@ -137,7 +137,7 @@ class EntryService {
             forms: [],
             submissions: [],
             members: [new Types.ObjectId(userId)], // Creator is automatically a member
-            mentors: [],
+            mentors: [], // Will reference Guest (type: MENTOR)
             settings: data.settings || {
                 transferOwnershipTo: undefined,
             },
@@ -147,7 +147,7 @@ class EntryService {
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message = createResult.message || 'Failed to create entry';
+            result.message = createResult.message;
             return result;
         }
 

@@ -4,6 +4,7 @@ import { IBusinessDoc } from '../../users/business/business.interface';
 import { IEntryDoc } from '../entry/entry.interface';
 import { ISubmissionDoc } from '../submission/submission.interface';
 import { IUserDoc } from '../../users/user/user.interface';
+import { IGuestDoc } from '../../users/guest/guest.interface';
 import { FormType, IFormDoc } from '../../core/forms/form.interface';
 
 type ObjectId = Types.ObjectId;
@@ -91,14 +92,14 @@ export interface IHackathonMember {
 }
 
 export interface IHackathonMentor {
-    user: ObjectId | IUserDoc;
+    user: ObjectId | IGuestDoc; // Changed to Guest (type: MENTOR)
     assignedAt: Date;
     assignedBy: ObjectId;
     status?: 'active' | 'inactive';
 }
 
 export interface IHackathonJudge {
-    user: ObjectId | IUserDoc;
+    user: ObjectId | IGuestDoc; // Changed to Guest (type: JUDGE)
     assignedAt: Date;
     assignedBy: ObjectId;
     status?: 'active' | 'inactive';

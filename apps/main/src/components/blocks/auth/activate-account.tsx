@@ -6,10 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { VerifyOtpFormValues, verifyOtpSchema } from './validation';
-import { CircleNotchIcon } from '@phosphor-icons/react';
+import { Loader2 } from 'lucide-react';
 import { OAuthButtons } from './oauth-buttons';
 import { OtpType, storage } from '@pacepard/sdk';
-import { pacepardAPI } from '@/config/pacepard';
+import { PacepardAPI } from '@/config/pacepard';
 
 export interface IForm extends React.ComponentProps<'form'> {
     className?: string;
@@ -97,7 +97,7 @@ const ActivateUserForm = (data: IForm) => {
             }
         }
 
-        await pacepardAPI.auth.activateUser({
+        await PacepardAPI.auth.activateUser({
             email: cleanEmail,
             otp: Number(otp),
             otpType: OtpType.ACTIVATEACCOUNT,
@@ -173,7 +173,7 @@ const ActivateUserForm = (data: IForm) => {
                     type="submit"
                 >
                     {isSubmitting && (
-                        <CircleNotchIcon className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                     )}
                     {isSubmitting ? 'Verifying code...' : 'Verify code'}
                 </Button>

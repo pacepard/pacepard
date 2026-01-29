@@ -18,6 +18,9 @@ export interface IUserDoc extends Document {
     passwordType: PasswordType;
     userType: UserType;
 
+    phoneCode: string;
+    phoneNumber: string;
+
     avatar: {
         fileName: string;
         s3Key: string;
@@ -101,8 +104,6 @@ export enum UserType {
     ADMIN = 'admin',
     BUSINESS = 'business',
     TALENT = 'talent',
-    MENTOR = 'mentor',
-    JUDGE = 'judge',
     USER = 'user',
 }
 
@@ -115,13 +116,11 @@ export enum OtpType {
     ACTIVATEACCOUNT = 'activate-account',
     CHANGEPASSWORD = 'change-password',
     FORGOTPASSWORD = 'forgot-password',
-    MENTOR_INVITE = 'mentor-type',
+    GUEST_INVITE = 'guest-invite',
     TEAM_INVITE = 'team-invite',
 }
 
 export interface ILocation {
-    phoneCode: string;
-    phoneNumber: string;
     address: string;
     city: string;
     state: string;

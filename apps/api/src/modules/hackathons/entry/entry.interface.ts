@@ -1,5 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { IUserDoc } from '../../users/user/user.interface';
+import { IGuestDoc } from '../../users/guest/guest.interface';
 import { IFormDoc } from '../../core/forms/form.interface';
 import { ISubmissionDoc } from '../../hackathons/submission/submission.interface';
 import { IHackathonDoc } from '../../hackathons/hackathon/hackathon.interface';
@@ -33,7 +34,7 @@ export interface IEntryDoc extends Document {
     submissions: Array<ISubmissionDoc | any>; // forms used for this entry
 
     members: Array<IUserDoc | any>; // team members putting the entry
-    mentors: Array<IUserDoc | any>;
+    mentors: Array<IGuestDoc | any>; // mentors (guests with type: MENTOR)
 
     // time stamps
     createdAt: Date;

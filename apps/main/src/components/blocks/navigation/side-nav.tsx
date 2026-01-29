@@ -28,36 +28,36 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@pacepard/ui/components/dropdown-menu';
-import { CaretRight, CaretDown, Plus, ChartLine, Trophy, Lightning, Folder, List, Question, Circle, Cube, FileText, Sparkle, MapTrifold, Lightbulb, Play, Book, Lifebuoy, Trash, DotsThree, ShareNetwork, House, Envelope, Users, User, Briefcase, Buildings, Gear, CreditCard, ShoppingBag, Gift, Star, Shield, Bell, MagnifyingGlass, AddressBook, Code, PencilSimple, Globe, type Icon } from '@phosphor-icons/react';
+import { ChevronRight, ChevronDown, Plus, TrendingUp, Trophy, Zap, Folder, List, HelpCircle, Circle, Box, FileText, Sparkles, Map, Lightbulb, Play, Book, LifeBuoy, Trash2, MoreHorizontal, Share2, Home, Mail, Users, User, Briefcase, Building2, Settings, CreditCard, ShoppingBag, Gift, Star, Shield, Bell, Search, Contact, Code, Pencil, Globe, type LucideIcon } from 'lucide-react';
 import { routes, routil, type IRoute, type IRouteItem, type IInRoute, UserType, UserContext, AppContext } from '@pacepard/sdk';
 import { NavUser } from '@/components/blocks/navigation/nav-user';
 import { cn } from '@pacepard/ui/lib/utils';
 
 // Icon mapping helper
-const getIcon = (iconName?: string): Icon | null => {
+const getIcon = (iconName?: string): LucideIcon | null => {
     if (!iconName) return null;
     
-    const iconMap: Record<string, Icon> = {
-        'chart': ChartLine,
+    const iconMap: Record<string, LucideIcon> = {
+        'chart': TrendingUp,
         'trophy': Trophy,
-        'zap': Lightning,
-        'lightning': Lightning,
+        'zap': Zap,
+        'lightning': Zap,
         'folder': Folder,
         'nav': List,
         'list': List,
-        'question': Question,
-        'help': Question,
+        'question': HelpCircle,
+        'help': HelpCircle,
         'circle': Circle,
-        'layout-right': Cube,
-        'product': Cube,
+        'layout-right': Box,
+        'product': Box,
         // Product route icons
         'templates': FileText,
         'filetext': FileText,
-        'whats-new': Sparkle,
-        'sparkle': Sparkle,
-        'roadmap': MapTrifold,
-        'maptrifold': MapTrifold,
-        'map': MapTrifold,
+        'whats-new': Sparkles,
+        'sparkle': Sparkles,
+        'roadmap': Map,
+        'maptrifold': Map,
+        'map': Map,
         'feature-requests': Lightbulb,
         'lightbulb': Lightbulb,
         // Help route icons
@@ -65,23 +65,23 @@ const getIcon = (iconName?: string): Icon | null => {
         'play': Play,
         'how-to-guides': Book,
         'book': Book,
-        'help-center': Lifebuoy,
-        'lifebuoy': Lifebuoy,
-        'trash': Trash,
+        'help-center': LifeBuoy,
+        'lifebuoy': LifeBuoy,
+        'trash': Trash2,
         // Common navigation icons
-        'home': House,
-        'house': House,
-        'inbox': Envelope,
-        'envelope': Envelope,
-        'message': Envelope,
-        'messages': Envelope,
+        'home': Home,
+        'house': Home,
+        'inbox': Mail,
+        'envelope': Mail,
+        'message': Mail,
+        'messages': Mail,
         'users': Users,
         'user': User,
         'briefcase': Briefcase,
-        'buildings': Buildings,
-        'building': Buildings,
-        'settings': Gear,
-        'gear': Gear,
+        'buildings': Building2,
+        'building': Building2,
+        'settings': Settings,
+        'gear': Settings,
         'credit-card': CreditCard,
         'creditcard': CreditCard,
         'shopping-bag': ShoppingBag,
@@ -90,17 +90,17 @@ const getIcon = (iconName?: string): Icon | null => {
         'star': Star,
         'shield': Shield,
         'bell': Bell,
-        'search': MagnifyingGlass,
-        'magnifyingglass': MagnifyingGlass,
+        'search': Search,
+        'magnifyingglass': Search,
         'workshops': Code,
         'workshop': Code,
-        'challenges': Lightning,
+        'challenges': Zap,
         'mentors': Users,
         'upgrade-plan': Trophy,
         'domains': Globe,
-        'members': AddressBook,
-        'edit': PencilSimple,
-        'pencil': PencilSimple,
+        'members': Contact,
+        'edit': Pencil,
+        'pencil': Pencil,
         'create': Plus,
     };
     
@@ -347,11 +347,11 @@ const AppSidebar = (data: ISideBar) => {
                                                     align={isMobile ? 'end' : 'start'}
                                                 >
                                                     <DropdownMenuItem>
-                                                        <PencilSimple className="text-muted-foreground h-4 w-4" />
+                                                                                        <Pencil className="text-muted-foreground h-4 w-4" />
                                                         <span>Rename</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem>
-                                                        <AddressBook className="text-muted-foreground h-4 w-4" />
+                                                                                        <Contact className="text-muted-foreground h-4 w-4" />
                                                         <span>Members</span>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -380,7 +380,7 @@ const AppSidebar = (data: ISideBar) => {
                                                                                     isActive={isRouteActive(route, subroute)}
                                                                                     className={cn("flex-1", isRouteActive(route, subroute) && "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700")}
                                                                                 >
-                                                                                    <CaretDown className="h-4 w-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/sub-collapsible:rotate-0 flex-shrink-0" />
+                                                                                    <ChevronDown className="h-4 w-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/sub-collapsible:rotate-0 flex-shrink-0" />
                                                                                     <span className="flex-1">
                                                                                         {subroute.title || subroute.name}
                                                                                     </span>
@@ -389,7 +389,7 @@ const AppSidebar = (data: ISideBar) => {
                                                                             <DropdownMenu>
                                                                                 <DropdownMenuTrigger asChild>
                                                                                     <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/subroute-button:opacity-100 group-hover/subroute-button:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
-                                                                                        <DotsThree className="h-4 w-4" />
+                                                                                        <MoreHorizontal className="h-4 w-4" />
                                                                                         <span className="sr-only">More</span>
                                                                                     </SidebarMenuAction>
                                                                                 </DropdownMenuTrigger>
@@ -403,12 +403,12 @@ const AppSidebar = (data: ISideBar) => {
                                                                                         <span>View</span>
                                                                                     </DropdownMenuItem>
                                                                                     <DropdownMenuItem>
-                                                                                        <ShareNetwork className="text-muted-foreground h-4 w-4" />
+                                                                                        <Share2 className="text-muted-foreground h-4 w-4" />
                                                                                         <span>Share</span>
                                                                                     </DropdownMenuItem>
                                                                                     <DropdownMenuSeparator />
                                                                                     <DropdownMenuItem>
-                                                                                        <Trash className="text-muted-foreground h-4 w-4" />
+                                                                                        <Trash2 className="text-muted-foreground h-4 w-4" />
                                                                                         <span>Delete</span>
                                                                                     </DropdownMenuItem>
                                                                                 </DropdownMenuContent>
@@ -447,7 +447,7 @@ const AppSidebar = (data: ISideBar) => {
                                                                                         <DropdownMenu>
                                                                                             <DropdownMenuTrigger asChild>
                                                                                                 <SidebarMenuAction className="peer-data-[active=true]/item-button:text-sidebar-accent-foreground group-focus-within/item:opacity-100 group-hover/item:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
-                                                                                                    <DotsThree className="h-4 w-4" />
+                                                                                                    <MoreHorizontal className="h-4 w-4" />
                                                                                                     <span className="sr-only">More</span>
                                                                                                 </SidebarMenuAction>
                                                                                             </DropdownMenuTrigger>
@@ -461,12 +461,12 @@ const AppSidebar = (data: ISideBar) => {
                                                                                                     <span>View</span>
                                                                                                 </DropdownMenuItem>
                                                                                                 <DropdownMenuItem>
-                                                                                                    <ShareNetwork className="text-muted-foreground h-4 w-4" />
+                                                                                                    <Share2 className="text-muted-foreground h-4 w-4" />
                                                                                                     <span>Share</span>
                                                                                                 </DropdownMenuItem>
                                                                                                 <DropdownMenuSeparator />
                                                                                                 <DropdownMenuItem>
-                                                                                                    <Trash className="text-muted-foreground h-4 w-4" />
+                                                                                                    <Trash2 className="text-muted-foreground h-4 w-4" />
                                                                                                     <span>Delete</span>
                                                                                                 </DropdownMenuItem>
                                                                                             </DropdownMenuContent>

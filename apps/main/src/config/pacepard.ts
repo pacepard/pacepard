@@ -12,7 +12,7 @@ const getApiBaseUrl = () => {
 };
 
 // Initialize Pacepard SDK with API base URL
-export const pacepardAPI = new Pacepard(getApiBaseUrl());
+export const PacepardAPI = new Pacepard(getApiBaseUrl());
 
-// Also export as PacepardAPI for consistency
-export { pacepardAPI as PacepardAPI };
+// Also export as PacepardAPI for consistency//
+//export { pacepardAPI as PacepardAPI };

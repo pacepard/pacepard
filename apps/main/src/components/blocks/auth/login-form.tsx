@@ -8,15 +8,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterFormValues } from './validation';
 import zxcvbn from 'zxcvbn';
 import {
-    CircleNotchIcon,
-    EnvelopeSimpleIcon,
-    EyeIcon,
-    EyeSlashIcon,
-} from '@phosphor-icons/react';
+    Loader2,
+    Mail,
+    Eye,
+    EyeOff,
+    Lock,
+} from 'lucide-react';
 import { strengthColors } from '@/utils/helpers';
 import { OAuthButtons } from './oauth-buttons';
-import { LockSimpleIcon } from '@phosphor-icons/react/dist/ssr';
-import { pacepardAPI } from '@/config/pacepard';
+import { PacepardAPI } from '@/config/pacepard';
 import { toast } from '@pacepard/ui';
 import { useNavigate } from 'react-router';
 
@@ -54,7 +54,7 @@ const LoginForm = () => {
 
     const onSubmit = async (data: RegisterFormValues) => {
         try {
-            const response = await pacepardAPI.auth.loginUser({
+            const response = await PacepardAPI.auth.loginUser({
                 email: data.email,
                 password: data.password,
             });
@@ -88,7 +88,7 @@ const LoginForm = () => {
                 <div className="flex flex-col gap-2 space-y-1">
                     <Label htmlFor="email">Enter your email</Label>
                     <div className="relative">
-                        <EnvelopeSimpleIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             id="email"
                             type="email"
@@ -118,7 +118,7 @@ const LoginForm = () => {
                         </button>
                     </div>
                     <div className="relative">
-                        <LockSimpleIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                             id="password"
                             type={showPassword ? 'text' : 'password'}
@@ -136,9 +136,9 @@ const LoginForm = () => {
                             onClick={() => setShowPassword((v) => !v)}
                         >
                             {showPassword ? (
-                                <EyeSlashIcon className="h-4 w-4 text-muted-foreground" />
+                                <EyeOff className="h-4 w-4 text-muted-foreground" />
                             ) : (
-                                <EyeIcon className="h-4 w-4 text-muted-foreground" />
+                                <Eye className="h-4 w-4 text-muted-foreground" />
                             )}
                         </Button>
                     </div>
@@ -178,7 +178,7 @@ const LoginForm = () => {
                     type="submit"
                 >
                     {isSubmitting && (
-                        <CircleNotchIcon className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                     )}
                     {isSubmitting ? 'Signing in...' : 'Continue'}
                 </Button>

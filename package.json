@@ -9,6 +9,7 @@
     "build": "turbo run build",
     "build:api": "turbo run build --filter=@pacepard/api",
     "build:app": "turbo run build --filter=@pacepard/app",
+    "build:demo": "turbo run build --filter=@pacepard/demo",
     "build:docs": "turbo run build --filter=@pacepard/api-docs",
     "build:service": "turbo run build --filter=@pacepard/service",
     "build:web": "turbo run build --filter=@pacepard/web",
@@ -17,6 +18,7 @@
     "dev:fe": "turbo run dev --ui=tui --filter=@pacepard/app --filter=@pacepard/web",
     "dev:be": "turbo run dev --ui=tui --filter=@pacepard/api --filter=@pacepard/api-docs",
     "dev:api": "turbo run dev --filter=@pacepard/api",
+    "dev:demo": "turbo run dev --filter=@pacepard/demo",
     "dev:web": "turbo run dev --filter=@pacepard/web",
     "dev:app": "turbo run dev --filter=@pacepard/app",
     "dev:service": "turbo run dev --filter=@pacepard/service",
@@ -34,7 +36,6 @@
     "lint": "turbo lint",
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",
-
     "preview:docs": "pnpm --filter @pacepard/api-docs dev"
   },
   "dependencies": {

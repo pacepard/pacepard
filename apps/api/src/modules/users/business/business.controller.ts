@@ -524,7 +524,7 @@ export const acceptBusinessInvitation: RequestHandler = asyncHandler(
             } catch (error: any) {
                 return next(
                     new ErrorResponse(
-                        error.message || 'Failed to create user account',
+                        error.message,
                         500,
                         [],
                     ),

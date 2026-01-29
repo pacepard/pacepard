@@ -24,13 +24,26 @@ class AxiosService {
 
         let urlpath = `${this.baseUrl}${path}`;
 
+        // Check if payload is FormData - if so, don't set Content-Type (let browser set it with boundary)
+        const isFormData = payload instanceof FormData;
+        const baseHeaders = isAuth
+            ? storage.getConfigWithBearer().headers
+            : storage.getConfig().headers;
+        
+        // If FormData, exclude Content-Type to let browser set it automatically with boundary
+        let headers: any;
+        if (isFormData) {
+            headers = { ...baseHeaders };
+            delete headers['Content-Type'];
+        } else {
+            headers = baseHeaders;
+        }
+
         await Axios({
             method: method,
             url: urlpath,
             data: payload,
-            headers: isAuth
-                ? storage.getConfigWithBearer().headers
-                : storage.getConfig().headers,
+            headers: headers,
         })
             .then((resp) => {
                 result = resp.data;

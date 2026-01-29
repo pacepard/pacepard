@@ -1,16 +1,16 @@
 import { Model, Document, Types } from 'mongoose';
 import {
     EmailType,
-    OtpType,
     EmailService,
     OAuthProvider,
     FileType,
     FileFormat,
     FileMimeType,
-} from './enums.util.ts';
+} from './enums.util';
 import { FileInfo } from 'busboy';
 import { PassThrough } from 'stream';
-import { IUserDoc } from '../modules/users/user/user.interface.js';
+import { IUserDoc, OtpType } from '../modules/users/user/user.interface';
+
 
 export type Nullable<T> = T | null;
 

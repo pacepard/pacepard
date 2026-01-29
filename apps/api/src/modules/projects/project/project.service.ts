@@ -17,8 +17,11 @@ import { genProjectCode } from '../../../utils/code.util';
 import teamRepository from '../../projects/team/team.repository';
 import taskRepository from '../../projects/task/task.repository';
 import { DbModels } from '../../../utils/enums.util';
-import storageService from '../../../services/storage.service';
+import storageService from '../../platform/storage/storage.service';
 import { IFile } from '../../../utils/interfaces.util';
+import shareableLinkService from '../../platform/ShareableLink/shareable-link.service';
+import { ShareableLinkType } from '../../platform/ShareableLink/shareable-link.interface';
+import permissionService from '../../authentication/permission/permission.service';
 
 type ObjectId = Types.ObjectId;
 
@@ -128,7 +131,7 @@ class ProjectService {
                     result.error = true;
                     result.code = uploadResult.code || 500;
                     result.message =
-                        uploadResult.message || 'Failed to upload image';
+                        uploadResult.message;
                     return result;
                 }
 
@@ -276,7 +279,7 @@ class ProjectService {
             result.error = true;
             result.code = queryResult.code || 500;
             result.message =
-                queryResult.message || 'Failed to retrieve projects';
+                queryResult.message;
             return result;
         }
 
@@ -440,7 +443,7 @@ class ProjectService {
                     result.error = true;
                     result.code = uploadResult.code || 500;
                     result.message =
-                        uploadResult.message || 'Failed to upload image';
+                        uploadResult.message;
                     return result;
                 }
 
@@ -499,7 +502,7 @@ class ProjectService {
         if (updateResult.error) {
             result.error = true;
             result.code = updateResult.code || 500;
-            result.message = updateResult.message || 'Failed to update project';
+            result.message = updateResult.message;
             return result;
         }
 
@@ -566,7 +569,7 @@ class ProjectService {
             result.error = true;
             result.code = updateResult.code || 500;
             result.message =
-                updateResult.message || 'Failed to publish project';
+                updateResult.message;
             return result;
         }
 
@@ -624,7 +627,7 @@ class ProjectService {
         if (updateResult.error) {
             result.error = true;
             result.code = updateResult.code || 500;
-            result.message = updateResult.message || 'Failed to close project';
+            result.message = updateResult.message;
             return result;
         }
 
@@ -679,7 +682,7 @@ class ProjectService {
                 result.error = true;
                 result.code = deleteResult.code || 500;
                 result.message =
-                    deleteResult.message || 'Failed to delete project';
+                    deleteResult.message;
                 return result;
             }
 
@@ -782,7 +785,7 @@ class ProjectService {
             result.error = true;
             result.code = updateResult.code || 500;
             result.message =
-                updateResult.message || 'Failed to add member to project';
+                updateResult.message;
             return result;
         }
 
@@ -947,6 +950,91 @@ class ProjectService {
         // });
 
         result.message = 'Invitation process initiated';
+        return result;
+    }
+
+    /**
+     * @name generateShareableLink
+     * @description Generates a shareable link for a project
+     * @param projectId - Project ID
+     * @param user - User creating the link
+     * @param expiresInDays - Expiration in days (default: 7)
+     * @returns Promise<IResult>
+     */
+    public async generateShareableLink(
+        projectId: string,
+        user: IUserDoc | string,
+        expiresInDays: number = 7,
+    ): Promise<IResult> {
+        let result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        // Find the project
+        const projectResult = await projectRepository.findById(projectId);
+        if (projectResult.error || !projectResult.data) {
+            result.error = true;
+            result.code = 404;
+            result.message = 'Project not found';
+            return result;
+        }
+
+        const project = projectResult.data as IProjectDoc;
+
+        // Check permissions
+        const hasPermission = await permissionService.hasPermission(
+            user,
+            { entity: 'project', action: 'update' },
+            {
+                resource: project,
+                resourceType: 'project',
+                checkOwnership: true,
+            },
+        );
+
+        if (!hasPermission) {
+            result.error = true;
+            result.code = 403;
+            result.message =
+                'You do not have permission to generate shareable link for this project';
+            return result;
+        }
+
+        // Get user ID
+        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+
+        if (!userId) {
+            result.error = true;
+            result.code = 400;
+            result.message = 'Invalid user ID';
+            return result;
+        }
+
+        // Generate shareable link
+        const linkResult = await shareableLinkService.generateShareableLink({
+            linkType: ShareableLinkType.PROJECT,
+            resourceId: projectId,
+            createdBy: userId,
+            expiresInDays,
+        });
+
+        if (linkResult.error) {
+            result.error = true;
+            result.code = linkResult.code || 500;
+            result.message = linkResult.message;
+            return result;
+        }
+
+        result.message = 'Shareable link generated successfully';
+        result.data = {
+            token: (linkResult.data as any).token,
+            expiresAt: (linkResult.data as any).expiresAt,
+            shareableUrl: `${process.env.CLIENT_APP_URL || ''}/project/${projectId}/share?token=${(linkResult.data as any).token}`,
+            linkId: (linkResult.data as any).linkId,
+        };
         return result;
     }
 }

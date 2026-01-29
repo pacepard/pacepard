@@ -1,15 +1,17 @@
+
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, loadEnv } from "vite";
 import react from '@vitejs/plugin-react-swc';
 import { sdkPathAliasPlugin } from './vite-sdk-plugin';
+import { blocsPathAliasPlugin } from './vite-blocs-plugin';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const PORT = env.PORT ? parseInt(env.PORT) : 5176;
 
   return {
-    plugins: [sdkPathAliasPlugin(), react(), tailwindcss()],
+    plugins: [sdkPathAliasPlugin(), blocsPathAliasPlugin(), react(), tailwindcss()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -19,13 +21,15 @@ export default defineConfig(({ mode }) => {
         "@pacepard/ui/components": path.resolve(__dirname, "../../packages/ui/src/components"),
         "@pacepard/ui/hooks": path.resolve(__dirname, "../../packages/ui/src/hooks"),
         "@pacepard/sdk": path.resolve(__dirname, "../../packages/sdk/src"),
+        "@pacepard/blocs/primitives": path.resolve(__dirname, "../../packages/blocs/src/core/primitives"),
+        "@pacepard/blocs/ui": path.resolve(__dirname, "../../packages/blocs/src/core/ui"),
+        "@pacepard/blocs/node": path.resolve(__dirname, "../../packages/blocs/src/core/node"),
+        "@pacepard/blocs/icons": path.resolve(__dirname, "../../packages/blocs/src/core/icons"),
+        "@pacepard/blocs": path.resolve(__dirname, "../../packages/blocs/src"),
       },
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       preserveSymlinks: true,
       dedupe: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/query-core', '@tanstack/query-devtools'],
-    },
-    define: {
-      'import.meta.env.VITE_APP_API_URL': JSON.stringify(env.VITE_APP_API_URL || ''),
     },
     server: {
       port: PORT,
@@ -33,12 +37,12 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       include: [
         '@pacepard/ui',
-        '@pacepard/core',
         'react',
         'react-dom',
       ],
       exclude: [
         '@pacepard/sdk',
+        '@pacepard/blocs',
       ],
       esbuildOptions: {
         resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs'],

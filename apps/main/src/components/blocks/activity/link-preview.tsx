@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkle } from '@phosphor-icons/react';
+import { Sparkles } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 
 interface LinkPreviewProps {
@@ -41,13 +41,11 @@ export function LinkPreview({
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1.5">
-                            <Sparkle
-                                weight="fill"
-                                className="size-5 text-yellow-500"
+                            <Sparkles
+                                className="size-5 text-yellow-500 fill-yellow-500"
                             />
-                            <Sparkle
-                                weight="fill"
-                                className="size-5 text-yellow-500"
+                            <Sparkles
+                                className="size-5 text-yellow-500 fill-yellow-500"
                             />
                         </div>
                         <h3 className="text-base font-semibold text-card-foreground">

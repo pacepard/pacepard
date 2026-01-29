@@ -18,7 +18,6 @@ export const genUserCode = (userType: UserType): string => {
         [UserType.ADMIN]: 'ad',
         [UserType.USER]: 'ppl',
         // [UserType.TEAM]: "tm",
-        // [UserType.MENTOR]: "mt",
     };
 
     const baseName = name[userType] || 'ppl';
@@ -97,36 +96,21 @@ export const genTeamCode = (): string => {
     return `tm-${year}-${code}`;
 };
 
+
 /**
- * @name genMentorCode
- * @description Generates a unique, standardized identification code for a mentor.
- * @returns {string} A formatted string in format: mt-{year}-{random_6_digits}.
+ * @name genGuestCode
+ * @description Generates a unique, standardized identification code for a guest.
+ * @returns {string} A formatted string in format: gt-{year}-{random_6_digits}.
  * @example
- * // Returns "mt-2025-123456"
- * const code = genMentorCode();
+ * // Returns "gt-2025-123456"
+ * const code = genGuestCode();
  */
-export const genMentorCode = (): string => {
+export const genGuestCode = (): string => {
     const now = new Date();
     const year = now.getFullYear();
     const code = Random.randomNum(6);
 
-    return `mt-${year}-${code}`;
-};
-
-/**
- * @name genJudgeCode
- * @description Generates a unique, standardized identification code for a judge.
- * @returns {string} A formatted string in format: jd-{year}-{random_6_digits}.
- * @example
- * // Returns "jd-2025-123456"
- * const code = genJudgeCode();
- */
-export const genJudgeCode = (): string => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const code = Random.randomNum(6);
-
-    return `jd-${year}-${code}`;
+    return `gt-${year}-${code}`;
 };
 
 /**

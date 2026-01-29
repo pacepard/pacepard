@@ -1,4 +1,4 @@
-import { BoxingGloveIcon, EnvelopeSimpleIcon, SeatbeltIcon, UserIcon } from "@phosphor-icons/react";
+import { Mail, Settings, User } from "lucide-react";
 
   export const navItems = {
     mainNav: [
@@ -10,13 +10,13 @@ import { BoxingGloveIcon, EnvelopeSimpleIcon, SeatbeltIcon, UserIcon } from "@ph
           {
             title: "Home",
             url: "/talent-dashboard",
-            icon: BoxingGloveIcon,
+            icon: User,
             isActive: false,
           },
           {
             title: "My Inbox",
             url: "/message",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
         ],
@@ -31,43 +31,43 @@ import { BoxingGloveIcon, EnvelopeSimpleIcon, SeatbeltIcon, UserIcon } from "@ph
           {
             title: "Projects",
             url: "/projects",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Hackers",
             url: "/hackers",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Mentors",
             url: "/mentors",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "About",
             url: "/hack-ogbomoso",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Resources",
             url: "/resources",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Evaluation",
             url: "/evaluation",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Analytics",
             url: "/analytics",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
         ],
@@ -82,25 +82,25 @@ import { BoxingGloveIcon, EnvelopeSimpleIcon, SeatbeltIcon, UserIcon } from "@ph
           {
             title: "Hackers",
             url: "/hackers",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Series",
             url: "/my-series",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Drafts",
             url: "/user-draft",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
           {
             title: "Trash",
             url: "/user-trash",
-            icon: EnvelopeSimpleIcon,
+            icon: Mail,
             isActive: false,
           },
         ],
@@ -112,12 +112,12 @@ import { BoxingGloveIcon, EnvelopeSimpleIcon, SeatbeltIcon, UserIcon } from "@ph
     {
       title: "Account",
       url: "/account",
-      icon: UserIcon,
+      icon: User,
     },
     {
       title: "Settings",
       url: "/settings",
-      icon: SeatbeltIcon,
+      icon: Settings,
     },
   ];
   

@@ -4,12 +4,13 @@ import {
     getUser,
     getUsers,
     deactivateAccount,
-    onboardStep1,
-    onboardStep2,
-    onboardStep3Talent,
-    onboardStep3Business,
-    onboardComplete,
     getOnboardingStatus,
+    setUserType,
+    setBasicInfo,
+    setTalentInfo,
+    setBusinessInfo,
+    setUserInfo,
+    completeOnboarding,
 } from './user.controller';
 
 const userRoutes: Router = Router({ mergeParams: true });
@@ -20,11 +21,12 @@ userRoutes.get('/list', Protect, getUsers);
 userRoutes.delete('/deactivate', Protect, deactivateAccount);
 
 // Onboarding routes - all require authentication
-userRoutes.post('/onboard/step-1', Protect, onboardStep1);
-userRoutes.post('/onboard/step-2', Protect, onboardStep2);
-userRoutes.post('/onboard/step-3-talent', Protect, onboardStep3Talent);
-userRoutes.post('/onboard/step-3-business', Protect, onboardStep3Business);
-userRoutes.post('/onboard/complete', Protect, onboardComplete);
+userRoutes.post('/onboard/user-type', Protect, setUserType);
+userRoutes.post('/onboard/basic-info', Protect, setBasicInfo);
+userRoutes.post('/onboard/talent-info', Protect, setTalentInfo);
+userRoutes.post('/onboard/business-info', Protect, setBusinessInfo);
+userRoutes.post('/onboard/user-info', Protect, setUserInfo);
+userRoutes.post('/onboard/complete', Protect, completeOnboarding);
 userRoutes.get('/onboard/status', Protect, getOnboardingStatus);
 
 export default userRoutes;

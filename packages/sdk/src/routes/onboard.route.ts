@@ -4,6 +4,7 @@ const onboardRoutes: Array<IRoute> = [
     {
         name: 'onboarding',
         title: 'Onboard',
+        displayTitle: 'Onboarding',
         url: '/onboarding',
         iconName: 'nav',
         action: 'navigate',
@@ -23,11 +24,44 @@ const onboardRoutes: Array<IRoute> = [
                 content: { collapsed: false, backButton: true }
             },
             {
-                name: 'onboard-submit-info',
-                title: 'Step 2: Basic Info',
-                displayTitle: 'Basic Information',
-                iconName: 'user-circle',
-                url: '/submit-info',
+                name: 'onboard-basic-user',
+                title: 'Basic Info',
+                displayTitle: 'User Basic Info',
+                iconName: 'user',
+                url: '/basic-info',
+                action: 'navigate',
+                isAuth: false,
+                params: [],
+                content: { collapsed: false, backButton: true }
+            },
+            {
+                name: 'onboard-user-info',
+                title: 'User Info',
+                displayTitle: 'User Information',
+                iconName: 'user',
+                url: '/user-info',
+                action: 'navigate',
+                isAuth: false,
+                params: [],
+                content: { collapsed: false, backButton: true }
+            },
+            {
+                name: 'onboard-business-user',
+                title: 'Business Info',
+                displayTitle: 'Business Information',
+                iconName: 'building',
+                url: '/business-user',
+                action: 'navigate',
+                isAuth: false,
+                params: [],
+                content: { collapsed: false, backButton: true }
+            },
+            {
+                name: 'onboard-business-info',
+                title: 'Step 3: Business Info',
+                displayTitle: 'Business Information',
+                iconName: 'building',
+                url: '/business-info',
                 action: 'navigate',
                 isAuth: false,
                 params: [],
@@ -56,22 +90,11 @@ const onboardRoutes: Array<IRoute> = [
                 content: { collapsed: false, backButton: true }
             },
             {
-                name: 'onboard-talent-info',
-                title: 'Step 3: Talent Info',
-                displayTitle: 'Talent Information',
-                iconName: 'user-check',
-                url: '/talent-info',
-                action: 'navigate',
-                isAuth: false,
-                params: [],
-                content: { collapsed: false, backButton: true }
-            },
-            {
-                name: 'onboard-business-info',
-                title: 'Step 3: Business Info',
-                displayTitle: 'Business Information',
-                iconName: 'building',
-                url: '/business-info',
+                name: 'onboard-status',
+                title: 'Onboarding Status',
+                displayTitle: 'Onboarding Status',
+                iconName: 'info',
+                url: '/status',
                 action: 'navigate',
                 isAuth: false,
                 params: [],
@@ -88,19 +111,22 @@ const onboardRoutes: Array<IRoute> = [
                 params: [],
                 content: { collapsed: false, backButton: true }
             },
-            {
-                name: 'onboard-status',
-                title: 'Onboarding Status',
-                displayTitle: 'Onboarding Status',
-                iconName: 'info',
-                url: '/status',
-                action: 'navigate',
-                isAuth: false,
-                params: [],
-                content: { collapsed: false, backButton: true }
-            },
+          
         ]
     },
 ]
 
 export default onboardRoutes;
+
+
+            // {
+            //     name: 'onboard-submit-info',
+            //     title: 'Step 2: Basic Info',
+            //     displayTitle: 'Basic Information',
+            //     iconName: 'user-circle',
+            //     url: '/submit-info',
+            //     action: 'navigate',
+            //     isAuth: false,
+            //     params: [],
+            //     content: { collapsed: false, backButton: true }
+            // },

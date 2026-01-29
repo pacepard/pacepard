@@ -3,8 +3,7 @@ import { WorkspaceMemberRole, IWorkspaceDoc, IWorkspaceMember } from '../../core
 import { ProjectMemberRole, IProjectDoc, IProjectMember } from '../../projects/project/project.interface';
 import { HackathonMemberRole, IHackathonDoc, IHackathonMember } from '../../hackathons/hackathon/hackathon.interface';
 import { IUserDoc } from '../../users/user/user.interface';
-import { IMentorDoc } from '../../users/mentor/mentor.interface';
-import { IJudgeDoc } from '../../users/judge/judge.interface';
+import { IGuestDoc, GuestTypeEnum } from '../../users/guest/guest.interface';
 
 type ObjectId = Types.ObjectId;
 
@@ -71,8 +70,7 @@ export const hackathonMemberPermissionMap: Record<HackathonMemberRole, string[]>
         'entry:delete',
         'submission:read',
         'submission:evaluate',
-        'mentor:assign',
-        'judge:assign',
+        'guest:assign', // Replaces mentor:assign and judge:assign
     ],
 };
 
@@ -266,6 +264,7 @@ export function getHackathonMemberRole(
 
 /**
  * Check if user is a judge in a hackathon
+ * Checks if user has a guest profile (type: JUDGE) in the hackathon's judges array
  */
 export function isHackathonJudge(
     user: IUserDoc | ObjectId | string,
@@ -276,13 +275,28 @@ export function isHackathonJudge(
     const userId = extractUserId(user);
 
     return hackathon.judges.some((judge: any) => {
-        const judgeUserId = extractUserIdFromField(judge.user);
-        return judgeUserId === userId && judge.status !== 'inactive';
+        // judge.user is now a Guest reference
+        const judgeGuestId = extractUserIdFromField(judge.user);
+        if (!judgeGuestId) return false;
+        
+        // Check if the guest's user matches the userId and type is JUDGE
+        // If judge.user is populated, check directly; otherwise we'd need to query
+        const judgeGuest = judge.user;
+        if (judgeGuest && typeof judgeGuest === 'object') {
+            // If populated, check user and type
+            const guestUserId = extractUserIdFromField(judgeGuest.user);
+            return guestUserId === userId && judgeGuest.type === GuestTypeEnum.JUDGE && judge.status !== 'inactive';
+        }
+        
+        // If not populated, we can't verify without a query, so return false
+        // The permission service will handle the actual check via database query
+        return false;
     });
 }
 
 /**
  * Check if user is a mentor in a hackathon
+ * Checks if user has a guest profile (type: MENTOR) in the hackathon's mentors array
  */
 export function isHackathonMentor(
     user: IUserDoc | ObjectId | string,
@@ -293,14 +307,28 @@ export function isHackathonMentor(
     const userId = extractUserId(user);
 
     return hackathon.mentors.some((mentor: any) => {
-        const mentorUserId = extractUserIdFromField(mentor.user);
-        return mentorUserId === userId && mentor.status !== 'inactive';
+        // mentor.user is now a Guest reference
+        const mentorGuestId = extractUserIdFromField(mentor.user);
+        if (!mentorGuestId) return false;
+        
+        // Check if the guest's user matches the userId and type is MENTOR
+        // If mentor.user is populated, check directly; otherwise we'd need to query
+        const mentorGuest = mentor.user;
+        if (mentorGuest && typeof mentorGuest === 'object') {
+            // If populated, check user and type
+            const guestUserId = extractUserIdFromField(mentorGuest.user);
+            return guestUserId === userId && mentorGuest.type === GuestTypeEnum.MENTOR && mentor.status !== 'inactive';
+        }
+        
+        // If not populated, we can't verify without a query, so return false
+        // The permission service will handle the actual check via database query
+        return false;
     });
 }
 
 /**
  * Check if user is a mentor for a project
- * Checks if user has a mentor profile that includes this project
+ * Checks if user has a guest profile (type: MENTOR) that includes this project
  */
 export function isProjectMentor(
     user: IUserDoc | ObjectId | string,
@@ -311,17 +339,16 @@ export function isProjectMentor(
     const userId = extractUserId(user);
     const projectId = (project._id as any)?.toString() || project._id?.toString() || String(project._id);
 
-    // Check if user has a mentor profile with this project
-    // This assumes mentor profiles are populated or we need to query them
-    // For now, we'll check if the project is in the mentor's projects array
-    // In practice, you'd query: Mentor.findOne({ user: userId, projects: projectId, status: 'active' })
+    // Check if user has a guest profile (type: MENTOR) with this project
+    // This will be checked via database query in permission service
+    // Query: Guest.findOne({ user: userId, projects: projectId, type: 'mentor', status: 'active' })
     // For now, return false and let the permission service handle the actual check
     return false; // Will be implemented via database query in permission service
 }
 
 /**
  * Check if user is a judge for a project
- * Checks if user has a judge profile that includes this project
+ * Checks if user has a guest profile (type: JUDGE) that includes this project
  */
 export function isProjectJudge(
     user: IUserDoc | ObjectId | string,
@@ -332,15 +359,16 @@ export function isProjectJudge(
     const userId = extractUserId(user);
     const projectId = (project._id as any)?.toString() || project._id?.toString() || String(project._id);
 
-    // Check if user has a judge profile with this project
-    // This assumes judge profiles are populated or we need to query them
-    // In practice, you'd query: Judge.findOne({ user: userId, projects: projectId, status: 'active' })
+    // Check if user has a guest profile (type: JUDGE) with this project
+    // This will be checked via database query in permission service
+    // Query: Guest.findOne({ user: userId, projects: projectId, type: 'judge', status: 'active' })
     // For now, return false and let the permission service handle the actual check
     return false; // Will be implemented via database query in permission service
 }
 
 /**
  * Check if user is a mentor in a workspace
+ * Checks if user has a guest profile (type: MENTOR) in the workspace's mentors array
  */
 export function isWorkspaceMentor(
     user: IUserDoc | ObjectId | string,
@@ -351,13 +379,25 @@ export function isWorkspaceMentor(
     const userId = extractUserId(user);
 
     return workspace.mentors.some((mentor: any) => {
-        const mentorUserId = extractUserIdFromField(mentor);
-        return mentorUserId === userId;
+        // mentor is now a Guest reference
+        const mentorGuestId = extractUserIdFromField(mentor);
+        if (!mentorGuestId) return false;
+        
+        // If mentor is populated, check user and type
+        if (mentor && typeof mentor === 'object' && mentor.user) {
+            const guestUserId = extractUserIdFromField(mentor.user);
+            return guestUserId === userId && mentor.type === 'mentor';
+        }
+        
+        // If not populated, we can't verify without a query
+        // The permission service will handle the actual check via database query
+        return false;
     });
 }
 
 /**
  * Check if user is a judge in a workspace
+ * Checks if user has a guest profile (type: JUDGE) in the workspace's judges array
  */
 export function isWorkspaceJudge(
     user: IUserDoc | ObjectId | string,
@@ -368,8 +408,19 @@ export function isWorkspaceJudge(
     const userId = extractUserId(user);
 
     return workspace.judges.some((judge: any) => {
-        const judgeUserId = extractUserIdFromField(judge);
-        return judgeUserId === userId;
+        // judge is now a Guest reference
+        const judgeGuestId = extractUserIdFromField(judge);
+        if (!judgeGuestId) return false;
+        
+        // If judge is populated, check user and type
+        if (judge && typeof judge === 'object' && judge.user) {
+            const guestUserId = extractUserIdFromField(judge.user);
+            return guestUserId === userId && judge.type === GuestTypeEnum.JUDGE;
+        }
+        
+        // If not populated, we can't verify without a query
+        // The permission service will handle the actual check via database query
+        return false;
     });
 }
 

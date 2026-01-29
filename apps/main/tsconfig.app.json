@@ -30,7 +30,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@pacepard/ui/*": ["../../packages/ui/src/*"]
+      "@pacepard/ui/*": ["../../packages/ui/src/*"],
+      "@pacepard/blocs": ["../../packages/blocs/src/index.ts"],
+      "@pacepard/blocs/primitives/*": ["../../packages/blocs/src/core/primitives/*"],
+      "@pacepard/blocs/ui/*": ["../../packages/blocs/src/core/ui/*"],
+      "@pacepard/blocs/node/*": ["../../packages/blocs/src/core/node/*"],
+      "@pacepard/blocs/icons/*": ["../../packages/blocs/src/core/icons/*"],
+      "@pacepard/blocs/utils/*": ["../../packages/blocs/src/utils/*"],
+      "@pacepard/blocs/hooks/*": ["../../packages/blocs/src/hooks/*"]
     }
     // ...
   },

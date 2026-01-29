@@ -1,11 +1,11 @@
 import {
     Bell,
-    CaretDown,
+    ChevronDown,
     CreditCard,
-    IdentificationBadgeIcon,
-    SignOut,
-    Sparkle,
-} from '@phosphor-icons/react';
+    UserCircle,
+    LogOut,
+    Sparkles,
+} from 'lucide-react';
 import {
     Avatar,
     AvatarFallback,
@@ -69,7 +69,7 @@ export function NavUser({
                                             type="button"
                                             className="flex items-center justify-center"
                                         >
-                                            <CaretDown className="size-4 shrink-0" />
+                                            <ChevronDown className="size-4 shrink-0" />
                                         </button>
                                     </DropdownMenuTrigger>
                                 </div>
@@ -99,7 +99,7 @@ export function NavUser({
 
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
-                                <IdentificationBadgeIcon />
+                                <UserCircle />
                                 Account
                             </DropdownMenuItem>
                             <DropdownMenuItem>
@@ -113,7 +113,7 @@ export function NavUser({
                         </DropdownMenuGroup>
 
                         <DropdownMenuItem>
-                            <SignOut />
+                            <LogOut />
                             Log out
                         </DropdownMenuItem>
                     </DropdownMenuContent>

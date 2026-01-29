@@ -13,6 +13,7 @@ import {
     inviteJudge,
     resendMentorInvite,
     resendJudgeInvite,
+    generateHackathonShareableLink,
 } from './hackathon.controller';
 
 const hackathonRoutes: Router = Router({ mergeParams: true });
@@ -28,6 +29,7 @@ hackathonRoutes.delete('/:id', Protect, deleteHackathon);
 hackathonRoutes.post('/:id/members', Protect, addMember);
 hackathonRoutes.delete('/:id/members/:userId', Protect, removeMember);
 hackathonRoutes.post('/:id/invite', Protect, inviteMember);
+hackathonRoutes.post('/:id/invite/shareable-link', Protect, generateHackathonShareableLink);
 
 // Hackathon mentor/judge invitation routes
 hackathonRoutes.post('/:id/invite/mentor', Protect, inviteMentor);

@@ -25,7 +25,11 @@ export interface EditUserDTO {
   email?: string;
   phoneNumber?: string;
   phoneCode?: string;
+  address?: string;
+  city?: string;
+  state?: string;
   country?: string;
+  postalCode?: string;
   avatar?: IFile | string;
   coverImage?: IFile | string;
   dateOfBirth?: Date;

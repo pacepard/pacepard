@@ -1,73 +1,108 @@
-# React + TypeScript + Vite
+# @pacepard/app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Main application entry point for Pacepard. A Vite-based React application that serves as the primary user interface.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This is the main application that provides the core user experience for Pacepard, including workspace management, project collaboration, and talent engagement features.
 
-## React Compiler
+## Getting Started
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js (v20 or higher)
+- pnpm (for package management)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+From the monorepo root:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Start the development server:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# From the monorepo root
+pnpm dev --filter @pacepard/app
+
+# Or from the app directory
+cd apps/main
+pnpm dev
 ```
+
+The app will be available at `http://localhost:5196` (configured port).
+
+### Building
+
+Build the application for production:
+
+```bash
+# From the monorepo root
+pnpm build --filter @pacepard/app
+
+# Or from the app directory
+cd apps/main
+pnpm build
+```
+
+### Preview
+
+Preview the production build:
+
+```bash
+# From the monorepo root
+pnpm preview --filter @pacepard/app
+
+# Or from the app directory
+cd apps/main
+pnpm preview
+```
+
+The preview will be available at `http://localhost:5196` (configured port).
+
+## Project Structure
+
+```
+apps/main/
+├── src/
+│   ├── app/              # Application routes and pages
+│   ├── components/       # React components
+│   ├── config/           # Configuration files
+│   ├── hooks/            # Custom React hooks
+│   ├── routes/           # Route definitions
+│   └── utils/            # Utility functions
+├── public/               # Static assets
+├── vite.config.ts        # Vite configuration
+├── tsconfig.json         # TypeScript configuration
+└── package.json          # Package dependencies
+```
+
+## Dependencies
+
+This application uses:
+
+- **@pacepard/tiptap**: Tiptap editor functionality
+- **@pacepard/sdk**: SDK for API interactions
+- **@pacepard/ui**: UI component library
+- **React**: UI framework
+- **React Router**: Client-side routing
+- **Vite**: Build tool and dev server
+- **TanStack Query**: Data fetching and state management
+
+## Configuration
+
+The app uses shared configurations from the monorepo:
+
+- **TypeScript**: Extends `@pacepard/configs/typescript/base.app.json`
+- **ESLint**: Uses `@pacepard/configs/eslint/react-internal`
+
+## Development Notes
+
+- Development server runs on port `5196` (configured in `package.json`)
+- Uses Vite with React SWC plugin for fast refresh
+- Includes Tailwind CSS for styling
+- SDK path aliases are configured via custom Vite plugin

@@ -95,7 +95,7 @@ class RoleService {
         } catch (error: any) {
             result.error = true;
             result.code = 500;
-            result.message = error.message || 'Failed to attach role';
+            result.message = error.message;
             return result;
         }
     }
@@ -178,7 +178,7 @@ class RoleService {
         } catch (error: any) {
             result.error = true;
             result.code = 500;
-            result.message = error.message || 'Failed to detach role';
+            result.message = error.message;
             return result;
         }
     }
@@ -212,7 +212,7 @@ class RoleService {
         } catch (error: any) {
             result.error = true;
             result.code = 500;
-            result.message = error.message || 'Failed to get user roles';
+            result.message = error.message;
             return result;
         }
     }

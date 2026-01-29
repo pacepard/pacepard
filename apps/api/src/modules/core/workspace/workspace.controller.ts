@@ -7,6 +7,10 @@ import {
     UpdateWorkspaceDTO,
     CreateWorkspaceDTO,
     InviteMemberDTO,
+    BulkInviteMemberDTO,
+    UpdateDomainAccessDTO,
+    GenerateShareableLinkDTO,
+    JoinWorkspaceByLinkDTO,
     AddMemberDTO,
     RemoveMemberDTO,
     AddMentorDTO,
@@ -18,10 +22,13 @@ import redisWrapper from '../../../middlewares/redis.mdw';
 import invitationService from '../../platform/Invitation/invitation.service';
 import { InvitationType } from '../../platform/Invitation/invitation.interface';
 import { InviteTokenDTO } from '../../platform/Invitation/invitation.dto';
+import { WorkspaceMemberRole } from './workspace.interface';
 import emailService from '../../../services/email.service';
 import { EMAIL_CONFIG } from '../../../configs/email.config';
 import userRepository from '../../users/user/user.repository';
 import authService from '../../authentication/auth/auth.service';
+import { IFile } from '../../../utils/interfaces.util';
+import { GuestTypeEnum } from '../../users/guest/guest.interface';
 
 /**
  * @name createWorkspace
@@ -35,9 +42,19 @@ export const createWorkspace: RequestHandler = asyncHandler(
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
+        // Extract icon file from req.files if present
+        const files = (req as any).files as IFile[] | undefined;
+        let iconFile: IFile | undefined;
+        
+        if (files && files.length > 0) {
+            // Find the icon file (fieldname should be 'icon' based on frontend)
+            iconFile = files.find(file => file.fieldname === 'icon');
+        }
+
         const data: CreateWorkspaceDTO = {
             ...req.body,
             createdBy: userId,
+            icon: iconFile, // Pass the icon file to the service
         };
 
         const result = await workspaceService.createWorkspace(data);
@@ -232,6 +249,67 @@ export const updateWorkspace: RequestHandler = asyncHandler(
         }
 
         const result = await workspaceService.updateWorkspace(data);
+
+        if (result.error) {
+            return next(
+                new ErrorResponse(result.message, result.code || 500, []),
+            );
+        }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${id}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 200,
+        });
+    },
+);
+
+/**
+ * @name updateDomainAccess
+ * @description Updates domain-based access configuration for a workspace
+ * @route PUT /workspace/:id/domain-access
+ * @access  Private
+ */
+export const updateDomainAccess: RequestHandler = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { id } = req.params;
+        if (!id)
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
+
+        const { allowDomainAccess, domain } = req.body;
+
+        if (allowDomainAccess === undefined) {
+            return next(
+                new ErrorResponse('allowDomainAccess is required', 400, []),
+            );
+        }
+
+        // Verify workspace exists
+        const workspaceResult = await workspaceRepository.findById(id);
+        if (workspaceResult.error || !workspaceResult.data) {
+            return next(new ErrorResponse('Workspace not found', 404, []));
+        }
+
+        const data: UpdateDomainAccessDTO = {
+            workspaceId: id,
+            allowDomainAccess: Boolean(allowDomainAccess),
+            domain: domain,
+            user: userId,
+        };
+
+        const result = await workspaceService.updateDomainAccess(data);
 
         if (result.error) {
             return next(
@@ -519,6 +597,157 @@ export const inviteMember: RequestHandler = asyncHandler(
 );
 
 /**
+ * @name bulkInviteMembers
+ * @description Invites multiple members to a workspace by email
+ * @route POST /workspace/:id/invite/bulk
+ * @access  Private
+ */
+export const bulkInviteMembers: RequestHandler = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { emails, workspaceId }: BulkInviteMemberDTO = req.body;
+
+        if (!workspaceId)
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
+
+        if (!emails || !Array.isArray(emails) || emails.length === 0)
+            return next(
+                new ErrorResponse(
+                    'Emails array is required and must not be empty',
+                    400,
+                    [],
+                ),
+            );
+
+        // Verify workspace exists
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            return next(new ErrorResponse('Workspace not found', 404, []));
+        }
+
+        // Get the inviter's user details for email personalization
+        const inviterResult = await userRepository.findById(userId);
+        const inviter = inviterResult.data as any;
+
+        const results = {
+            successful: [] as Array<{ email: string; token?: string }>,
+            failed: [] as Array<{ email: string; error: string }>,
+        };
+
+        // Process each email
+        for (const email of emails) {
+            const trimmedEmail = email.trim().toLowerCase();
+
+            // Skip empty emails
+            if (!trimmedEmail) {
+                results.failed.push({
+                    email: email,
+                    error: 'Empty email address',
+                });
+                continue;
+            }
+
+            // Email validation
+            const mailCheck = await authService.checkEmail(trimmedEmail);
+            if (!mailCheck) {
+                results.failed.push({
+                    email: trimmedEmail,
+                    error: 'Invalid email format',
+                });
+                continue;
+            }
+
+            try {
+                // Create invitation
+                const invitationResult = await invitationService.newInvitation({
+                    invitedBy: userId,
+                    inviteeEmail: trimmedEmail,
+                    inviteType: InvitationType.WORKSPACE,
+                    resourceId: workspaceId,
+                });
+
+                if (invitationResult.error) {
+                    results.failed.push({
+                        email: trimmedEmail,
+                        error: invitationResult.message,
+                    });
+                    continue;
+                }
+
+                // Extract token from invitation result
+                const token = (invitationResult.data as any)?.token;
+                if (!token) {
+                    results.failed.push({
+                        email: trimmedEmail,
+                        error: 'Failed to generate invitation token',
+                    });
+                    continue;
+                }
+
+                // Construct invitation URL with token
+                const invitationUrl = `${EMAIL_CONFIG.clientUrl}/workspace/invite/accept?token=${token}&email=${encodeURIComponent(trimmedEmail)}`;
+
+                // Create a minimal user object for the invitee
+                const inviteeUser = {
+                    email: trimmedEmail,
+                    firstName: trimmedEmail.split('@')[0] || 'Member',
+                    lastName: '',
+                } as any;
+
+                // Send invitation email
+                const emailResult = await emailService.sendInvitationEmail(
+                    inviteeUser,
+                    inviter?.firstName || 'A team member',
+                    invitationUrl,
+                    'Workspace Member',
+                );
+
+                if (emailResult.error) {
+                    // Log error but still count as successful since invitation was created
+                    console.error(
+                        `Failed to queue invitation email for ${trimmedEmail}:`,
+                        emailResult.message,
+                    );
+                }
+
+                results.successful.push({
+                    email: trimmedEmail,
+                    token: token,
+                });
+            } catch (error: any) {
+                results.failed.push({
+                    email: trimmedEmail,
+                    error: error.message || 'Unknown error',
+                });
+            }
+        }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${workspaceId}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(201).json({
+            error: false,
+            errors: [],
+            data: {
+                successful: results.successful,
+                failed: results.failed,
+                total: emails.length,
+                successfulCount: results.successful.length,
+                failedCount: results.failed.length,
+            },
+            message: `Bulk invitation processed. ${results.successful.length} successful, ${results.failed.length} failed.`,
+            status: 201,
+        });
+    },
+);
+
+/**
  * @name inviteMentor
  * @description Invites a mentor to a workspace by email
  * @route POST /workspace/:id/invite/mentor
@@ -553,8 +782,11 @@ export const inviteMentor: RequestHandler = asyncHandler(
         const invitationResult = await invitationService.newInvitation({
             invitedBy: userId,
             inviteeEmail: email.trim().toLowerCase(),
-            inviteType: InvitationType.MENTOR,
+            inviteType: InvitationType.GUEST,
             resourceId: workspaceId,
+            metadata: {
+                guestType: GuestTypeEnum.MENTOR,
+            },
         });
 
         if (invitationResult.error) {
@@ -665,8 +897,11 @@ export const inviteJudge: RequestHandler = asyncHandler(
         const invitationResult = await invitationService.newInvitation({
             invitedBy: userId,
             inviteeEmail: email.trim().toLowerCase(),
-            inviteType: InvitationType.JUDGE,
+            inviteType: InvitationType.GUEST,
             resourceId: workspaceId,
+            metadata: {
+                guestType: GuestTypeEnum.JUDGE,
+            },
         });
 
         if (invitationResult.error) {
@@ -1223,6 +1458,173 @@ export const getJudges: RequestHandler = asyncHandler(
             errors: [],
             data: result.data,
             message: result.message,
+            status: 200,
+        });
+    },
+);
+
+/**
+ * @name generateShareableLink
+ * @description Generates a shareable link for a workspace
+ * @route POST /workspace/:id/invite/shareable-link
+ * @access  Private
+ */
+export const generateShareableLink: RequestHandler = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { id } = req.params;
+        if (!id)
+            return next(new ErrorResponse('Workspace ID is required', 400, []));
+
+        const { expiresInDays } = req.body;
+
+        // Verify workspace exists
+        const workspaceResult = await workspaceRepository.findById(id);
+        if (workspaceResult.error || !workspaceResult.data) {
+            return next(new ErrorResponse('Workspace not found', 404, []));
+        }
+
+        const data: GenerateShareableLinkDTO = {
+            workspaceId: id,
+            expiresInDays: expiresInDays || 7,
+            user: userId,
+        };
+
+        const result = await workspaceService.generateShareableLink(data);
+
+        if (result.error) {
+            return next(
+                new ErrorResponse(result.message, result.code || 500, []),
+            );
+        }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${id}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: result.data,
+            message: result.message,
+            status: 200,
+        });
+    },
+);
+
+/**
+ * @name joinWorkspaceByLink
+ * @description Allows a user to join a workspace using a shareable link token
+ * @route POST /workspace/invite/join
+ * @access  Private (user must be authenticated)
+ */
+export const joinWorkspaceByLink: RequestHandler = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const userId = (req as any).user?.id;
+        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
+
+        const { token, workspaceId, userEmail } = req.body;
+
+        if (!token || !workspaceId) {
+            return next(
+                new ErrorResponse('Token and workspace ID are required', 400, []),
+            );
+        }
+
+        // Get user email if not provided
+        let email = userEmail;
+        if (!email) {
+            const userResult = await userRepository.findById(userId);
+            if (userResult.error || !userResult.data) {
+                return next(new ErrorResponse('User not found', 404, []));
+            }
+            email = (userResult.data as any).email;
+        }
+
+        // Validate the shareable link
+        const validateResult = await workspaceService.joinWorkspaceByLink({
+            token,
+            workspaceId,
+            userEmail: email,
+        });
+
+        if (validateResult.error) {
+            return next(
+                new ErrorResponse(
+                    validateResult.message,
+                    validateResult.code || 400,
+                    [],
+                ),
+            );
+        }
+
+        // Check if user is already a member
+        const workspaceResult = await workspaceRepository.findById(workspaceId);
+        if (workspaceResult.error || !workspaceResult.data) {
+            return next(new ErrorResponse('Workspace not found', 404, []));
+        }
+
+        const workspace = workspaceResult.data as any;
+        const isMember = workspace.members?.some(
+            (member: any) =>
+                String(member.user) === String(userId) ||
+                String(member.user?._id) === String(userId),
+        );
+
+        if (isMember) {
+            return res.status(200).json({
+                error: false,
+                errors: [],
+                data: {
+                    workspaceId: workspaceId,
+                    message: 'You are already a member of this workspace',
+                },
+                message: 'You are already a member of this workspace',
+                status: 200,
+            });
+        }
+
+        // Add user to workspace as a member
+        const addMemberData: AddMemberDTO = {
+            workspaceId: workspaceId,
+            userId: userId,
+            role: WorkspaceMemberRole.MANAGER, // Default role for shareable link joins
+            requestingUser: userId,
+        };
+
+        const addMemberResult = await workspaceService.addMember(addMemberData);
+
+        if (addMemberResult.error) {
+            return next(
+                new ErrorResponse(
+                    addMemberResult.message,
+                    addMemberResult.code || 500,
+                    [],
+                ),
+            );
+        }
+
+        // Invalidate cache
+        try {
+            await redisWrapper.deleteData(`workspace:${workspaceId}`);
+        } catch (cacheError) {
+            console.error('Cache invalidation failed:', cacheError);
+        }
+
+        res.status(200).json({
+            error: false,
+            errors: [],
+            data: {
+                workspaceId: workspaceId,
+                workspaceName: workspace.name,
+                ...addMemberResult.data,
+            },
+            message: 'Successfully joined workspace',
             status: 200,
         });
     },

@@ -78,14 +78,15 @@ pacepard/
 │   ├── api/          # Express API server (@pacepard/api)
 │   │   └── Dockerfile
 │   ├── app/          # Main application (@pacepard/app)
+│   ├── main/         # Main app entry point (@pacepard/app)
+│   │   └── Dockerfile
+│   ├── demo/         # Demo application (@pacepard/demo)
 │   ├── service/      # Service application (@pacepard/service)
 │   │   └── Dockerfile
-│   ├── docs/         # Documentation site (@pacepard/docs)
-│   └── main/         # Main app entry point
-│       └── Dockerfile
+│   └── docs/         # Documentation site (@pacepard/docs)
 ├── packages/          # Shared packages
 │   ├── ui/           # UI component library (@pacepard/ui)
-│   ├── core/         # Core package (@pacepard/core)
+│   ├── tiptap/       # Tiptap editor package (@pacepard/tiptap)
 │   └── sdk/          # SDK package (@pacepard/sdk)
 ├── configs/          # Shared configurations
 │   ├── eslint/       # ESLint configuration (@pacepard/configs/eslint)
@@ -109,14 +110,15 @@ All packages use the `@pacepard/*` namespace:
 - **Apps:**
   - `@pacepard/web` - Next.js web application (runs on port 3020)
   - `@pacepard/api` - Express API server
-  - `@pacepard/app` - Main application
+  - `@pacepard/app` - Main application (runs on port 5196)
+  - `@pacepard/demo` - Demo application showcasing Tiptap editors (runs on port 5186)
   - `@pacepard/service` - Service application
   - `@pacepard/docs` - Documentation site
   - `@pacepard/api-docs` - API documentation
 
 - **Packages:**
   - `@pacepard/ui` - Shared UI component library (shadcn/ui based)
-  - `@pacepard/core` - Core functionality
+  - `@pacepard/tiptap` - Tiptap editor functionality
   - `@pacepard/sdk` - SDK utilities and shared logic
 
 - **Configs:**
@@ -283,7 +285,7 @@ Turborepo automatically handles build order based on the `dependsOn: ["^build"]`
    - `@pacepard/configs/eslint` - ESLint configurations
 
 2. **Shared packages** build next (depend on configs):
-   - `@pacepard/core` - Core functionality (no build script, TypeScript source only)
+   - `@pacepard/tiptap` - Tiptap editor functionality (no build script, TypeScript source only)
    - `@pacepard/ui` - UI component library (no build script, TypeScript source only)
    - `@pacepard/sdk` - SDK utilities (no build script, TypeScript source only)
 
@@ -308,7 +310,7 @@ pnpm build --filter './configs/*'
 pnpm build --filter './packages/*' --filter './configs/*'
 ```
 
-**Note**: Most packages (`@pacepard/ui`, `@pacepard/sdk`, `@pacepard/core`) don't have build scripts as they're TypeScript source files consumed directly. However, if you need to verify TypeScript compilation, you can type-check them.
+**Note**: Most packages (`@pacepard/ui`, `@pacepard/sdk`, `@pacepard/tiptap`) don't have build scripts as they're TypeScript source files consumed directly. However, if you need to verify TypeScript compilation, you can type-check them.
 
 #### Step 5: Build Specific Application
 
@@ -354,7 +356,7 @@ Each package and application has specific build configurations. Here's what happ
 - **Package**: `apps/web/package.json`
 - **Build Script**: `next build`
 - **Output**: `.next/` directory (Next.js production build)
-- **Dependencies**: `@pacepard/ui`, `@pacepard/core`
+- **Dependencies**: `@pacepard/ui`, `@pacepard/tiptap`
 - **Build Details**:
   - Compiles Next.js application
   - Generates optimized production bundle
@@ -377,7 +379,7 @@ Each package and application has specific build configurations. Here's what happ
 - **Package**: `apps/main/package.json`
 - **Build Script**: `tsc -b && vite build`
 - **Output**: `dist/` directory (optimized production build)
-- **Dependencies**: `@pacepard/ui`, `@pacepard/sdk`, `@pacepard/core`, `@pacepard/configs/typescript`
+- **Dependencies**: `@pacepard/ui`, `@pacepard/sdk`, `@pacepard/tiptap`, `@pacepard/configs/typescript`
 - **Build Details**:
   1. Type-checks and compiles TypeScript (`tsc -b`)
   2. Builds production bundle with Vite
@@ -411,11 +413,33 @@ These packages don't have build scripts as they're TypeScript source files consu
 - **Entry Point**: `./src/index.ts`
 - **Usage**: Imported as `workspace:*` dependency in applications
 
-##### @pacepard/core
-- **Package**: `apps/packages/core/package.json`
+##### @pacepard/tiptap
+- **Package**: `packages/tiptap/package.json`
 - **Build Script**: None (TypeScript source consumed directly)
 - **Entry Point**: `src/index.ts`
 - **Usage**: Imported as `workspace:*` dependency in applications
+
+###### Adding Tiptap Resources
+
+To add new Tiptap components, extensions, or utilities to the `@pacepard/tiptap` package, use the Tiptap CLI:
+
+```bash
+# From the monorepo root
+cd packages/tiptap
+
+# Add a new Tiptap resource (example: heading-button)
+pnpm dlx @tiptap/cli@latest add heading-button
+
+# Or add multiple resources at once
+pnpm dlx @tiptap/cli@latest add heading-button list-button mark-button
+```
+
+The CLI will automatically:
+- Install necessary dependencies
+- Create component files in the appropriate directories
+- Update exports if needed
+
+**Note**: After adding resources, ensure they are properly exported from `packages/tiptap/src/index.ts` if they should be available to consuming applications.
 
 ##### @pacepard/configs/typescript
 - **Package**: `configs/typescript/package.json`

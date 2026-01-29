@@ -28,16 +28,17 @@ export interface ActivateDTO {
 
 export interface OnboardDTO {}
 
-export interface OnboardStep1DTO {
+// Onboarding DTOs matching the new user interface
+export interface OnboardUserTypeDTO {
     userType: UserType;
 }
 
-export interface OnboardStep2DTO {
+export interface OnboardBasicInfoDTO {
     firstName: string;
     lastName: string;
+    phoneCode?: string;
+    phoneNumber?: string;
     location: {
-        phoneCode?: string;
-        phoneNumber?: string;
         address?: string;
         city?: string;
         state?: string;
@@ -47,17 +48,23 @@ export interface OnboardStep2DTO {
     timeZone: string; // IANA timezone string
 }
 
-export interface OnboardStep3TalentDTO {
+export interface OnboardTalentInfoDTO {
     specialty: string; // What kind of work do you do?
     gender: GenderType; // MALE, FEMALE, OTHER
     dateOfBirth: string; // ISO Date format (e.g., "1990-05-15")
 }
 
-export interface OnboardStep3BusinessDTO {
+export interface OnboardBusinessInfoDTO {
     businessName: string;
     businessType: BusinessType; // COMPANY, NONPROFIT, GOVERNMENT, EDUCATION, PARTNER, OTHER
     industry: string;
     tags?: Array<string>; // Optional array of tags
+}
+
+export interface OnboardUserInfoDTO {
+    specialty: string; // What kind of work do you do?
+    role: string; // What is your role?
+    discovery: string; // How did you discover Pacepard?
 }
 
 export interface OnboardStatusResponse {

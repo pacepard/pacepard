@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@pacepard/ui/components/button';
 import { Input } from '@pacepard/ui/components/input';
-import { Copy, ArrowSquareOut } from '@phosphor-icons/react';
+import { Copy, ExternalLink } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 
 interface ShareLinkProps {
@@ -65,7 +65,7 @@ export function ShareLink({
                 onClick={onCustomDomainClick}
                 className="flex items-center gap-2 text-sm text-primary hover:underline"
             >
-                <ArrowSquareOut className="size-4" />
+                <ExternalLink className="size-4" />
                 <span>Use custom domain</span>
             </button>
         </div>

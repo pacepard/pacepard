@@ -119,7 +119,7 @@ class SquadService {
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message = createResult.message || 'Failed to create squad';
+            result.message = createResult.message;
             return result;
         }
 

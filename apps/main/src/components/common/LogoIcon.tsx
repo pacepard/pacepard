@@ -15,8 +15,8 @@ const PacepardIcon = (props: IPacepardIcon) => {
     return (
         
             <img
-                src={src || "/blocks/pacepard-icon.svg"}
-                alt={alt || "Pacepard Logo"}
+                src={src || "/pacepardd.svg"}
+                alt={alt || "Pacepard"}
                 width={width}
                 height={height}
                 className={`object-contain ${className}`}

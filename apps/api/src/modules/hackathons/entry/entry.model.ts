@@ -45,7 +45,7 @@ const EntrySchema = new Schema<IEntryDoc>(
         ],
 
         members: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
-        mentors: [{ type: Schema.Types.ObjectId, ref: DbModels.USER }],
+        mentors: [{ type: Schema.Types.ObjectId, ref: DbModels.GUEST }],
     },
     {
         timestamps: true,
