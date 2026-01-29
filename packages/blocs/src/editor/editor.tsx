@@ -42,6 +42,7 @@ import {
   NodeAlignment,
   TocNode,
   ImageUploadNode,
+  ShortAnswerNode,
   TableKit,
   TableHandleExtension,
   ListNormalizationExtension,
@@ -61,6 +62,7 @@ import "@pacepard/blocs/core/node/list-node/list-node.scss"
 import "@pacepard/blocs/core/node/image-node/image-node.scss"
 import "@pacepard/blocs/core/node/heading-node/heading-node.scss"
 import "@pacepard/blocs/core/node/paragraph-node/paragraph-node.scss"
+import "@pacepard/blocs/core/node/short-answer-node/short-answer-node.scss"
 
 // --- Tiptap UI ---
 import { EmojiDropdownMenu } from "@pacepard/blocs/ui/emoji-dropdown-menu"
@@ -252,6 +254,7 @@ export function EditorProvider(props: EditorProviderProps) {
           "tableCell",
           "tableHeader",
           "tocNode",
+          "shortAnswer",
         ],
       }),
       NodeAlignment,
@@ -280,6 +283,7 @@ export function EditorProvider(props: EditorProviderProps) {
         upload: handleImageUpload,
         onError: (error) => console.error("Upload failed:", error),
       }),
+      ShortAnswerNode,
       UniqueID.configure({
         types: [
           "table",
@@ -291,6 +295,7 @@ export function EditorProvider(props: EditorProviderProps) {
           "blockquote",
           "codeBlock",
           "tocNode",
+          "shortAnswer",
         ],
         filterTransaction: (transaction: Parameters<typeof isChangeOrigin>[0]) =>
           !isChangeOrigin(transaction),

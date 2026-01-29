@@ -16,6 +16,7 @@ import { HeadingButton } from "@/core/ui/heading-button"
 import { ListButton } from "@/core/ui/list-button"
 import { BlockquoteButton } from "@/core/ui/blockquote-button"
 import { CodeBlockButton } from "@/core/ui/code-block-button"
+import { ShortAnswerButton } from "@/core/ui/short-answer-button"
 
 // --- UI Primitives ---
 import type { ButtonProps } from "@/core/primitives/button"
@@ -132,6 +133,13 @@ function renderBlockTypeButton(
       return (
         <DropdownMenuItem key={key} asChild>
           <CodeBlockButton showTooltip={false} text={option.label} />
+        </DropdownMenuItem>
+      )
+
+    case "shortAnswer":
+      return (
+        <DropdownMenuItem key={key} asChild>
+          <ShortAnswerButton showTooltip={false} text={option.label} />
         </DropdownMenuItem>
       )
 

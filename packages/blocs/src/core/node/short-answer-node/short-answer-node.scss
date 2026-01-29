@@ -1,0 +1,92 @@
+.short-answer-node {
+  margin: 1rem 0;
+
+  .short-answer-node__title-wrap {
+    margin-bottom: 0.5rem;
+
+    // Heading 2 style (match heading-node)
+    h2 {
+      position: relative;
+      color: inherit;
+      font-style: inherit;
+      font-size: 1.25em;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  .short-answer-node__input-wrap {
+    display: block;
+    position: relative;
+
+    input {
+      width: 100%;
+      padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--tt-gray-light-a-300, #d1d5db);
+      background: #fff;
+      font-size: 1rem;
+      line-height: 1.5;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+      &::placeholder {
+        color: var(--tt-gray-light-a-400, #9ca3af);
+      }
+
+      &[aria-invalid="true"] {
+        border-color: var(--tt-red-500, #ef4444);
+      }
+    }
+
+    .short-answer-node__required-badge {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      background: var(--tt-gray-light-a-200, #e5e7eb);
+      color: var(--tt-gray-light-a-700, #374151);
+      font-size: 0.75rem;
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .short-answer-node__error {
+      margin-top: 0.25rem;
+      font-size: 0.875rem;
+      color: var(--tt-red-600, #dc2626);
+    }
+  }
+
+  &.short-answer-node--hidden {
+    .short-answer-node__input-wrap {
+      opacity: 0.6;
+    }
+    .short-answer-node__placeholder-hidden {
+      font-size: 0.875rem;
+      color: var(--tt-gray-light-a-500, #6b7280);
+    }
+  }
+}
+
+.dark .short-answer-node {
+  .short-answer-node__input-wrap input {
+    border-color: var(--tt-gray-dark-a-300);
+    &::placeholder {
+      color: var(--tt-gray-dark-a-400);
+    }
+    &[aria-invalid="true"] {
+      border-color: var(--tt-red-400);
+    }
+  }
+  .short-answer-node__error {
+    color: var(--tt-red-400);
+  }
+  &.short-answer-node--hidden .short-answer-node__placeholder-hidden {
+    color: var(--tt-gray-dark-a-500);
+  }
+}

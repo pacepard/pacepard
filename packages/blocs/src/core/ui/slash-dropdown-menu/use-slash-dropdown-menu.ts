@@ -180,6 +180,36 @@ const texts = {
     badge: ImageIcon,
     group: "Upload",
   },
+
+  // Short answer (form block)
+  short_answer: {
+    title: "Short answer",
+    subtext: "Single-line text question",
+    keywords: ["short answer", "text", "input", "question"],
+    badge: TypeIcon,
+    group: "Insert",
+  },
+  short_answer_email: {
+    title: "Email",
+    subtext: "Email address field",
+    keywords: ["email", "short answer"],
+    badge: TypeIcon,
+    group: "Insert",
+  },
+  short_answer_number: {
+    title: "Number",
+    subtext: "Numeric input field",
+    keywords: ["number", "numeric", "short answer"],
+    badge: TypeIcon,
+    group: "Insert",
+  },
+  short_answer_url: {
+    title: "URL",
+    subtext: "URL / link field",
+    keywords: ["url", "link", "short answer"],
+    badge: TypeIcon,
+    group: "Insert",
+  },
 }
 
 export type SlashMenuItemType = keyof typeof texts
@@ -352,6 +382,64 @@ const getItemImplementations = () => {
           .focus()
           .insertContent({
             type: "imageUpload",
+          })
+          .run()
+      },
+    },
+
+    // Short answer
+    short_answer: {
+      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor
+          .chain()
+          .focus()
+          .insertShortAnswer({
+            inputType: "text",
+            inputMode: "text",
+            placeholder: "Type your answer",
+          })
+          .run()
+      },
+    },
+    short_answer_email: {
+      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor
+          .chain()
+          .focus()
+          .insertShortAnswer({
+            inputType: "email",
+            inputMode: "email",
+            placeholder: "name@example.com",
+          })
+          .run()
+      },
+    },
+    short_answer_number: {
+      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor
+          .chain()
+          .focus()
+          .insertShortAnswer({
+            inputType: "number",
+            inputMode: "numeric",
+            placeholder: "0",
+          })
+          .run()
+      },
+    },
+    short_answer_url: {
+      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor
+          .chain()
+          .focus()
+          .insertShortAnswer({
+            inputType: "url",
+            inputMode: "text",
+            placeholder: "https://example.com",
           })
           .run()
       },

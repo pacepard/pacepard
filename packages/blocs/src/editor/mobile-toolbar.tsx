@@ -85,6 +85,8 @@ import {
 } from "@pacepard/blocs/primitives/toolbar"
 import { MoveNodeButton } from "@pacepard/blocs/ui/move-node-button"
 import { ImageNodeFloating } from "@pacepard/blocs/node/image-node/image-node-floating"
+import { NodeSelection } from "@tiptap/pm/state"
+import type { ShortAnswerAttrs, InputType } from "@pacepard/blocs"
 
 // =============================================================================
 // Types & Constants
@@ -403,6 +405,60 @@ interface DropdownMenuActionsProps {
   editor: Editor | null
 }
 
+const SHORT_ANSWER_INPUT_TYPES: { value: InputType; label: string }[] = [
+  { value: "text", label: "Text" },
+  { value: "email", label: "Email" },
+  { value: "number", label: "Number" },
+  { value: "url", label: "URL" },
+]
+
+function ShortAnswerMobileGroup({ editor }: DropdownMenuActionsProps) {
+  if (!editor) return null
+  const { selection } = editor.state
+  if (
+    !(selection instanceof NodeSelection) ||
+    selection.node.type.name !== "shortAnswer"
+  )
+    return null
+  const attrs = selection.node.attrs as ShortAnswerAttrs
+  const inputType = (attrs.inputType ?? "text") as InputType
+  const update = (next: Partial<ShortAnswerAttrs>) => {
+    editor.chain().focus().updateAttributes("shortAnswer", next).run()
+  }
+  return (
+    <>
+      <Separator orientation="horizontal" />
+      <CardItemGroup>
+        <CardGroupLabel>Short answer</CardGroupLabel>
+        <ButtonGroup>
+          {SHORT_ANSWER_INPUT_TYPES.map(({ value, label }) => (
+            <DropdownMenuItem key={value} asChild>
+              <Button
+                data-style="ghost"
+                data-active-state={inputType === value ? "on" : "off"}
+                onClick={() => update({ inputType: value })}
+              >
+                <span className="tiptap-button-text">{label}</span>
+              </Button>
+            </DropdownMenuItem>
+          ))}
+        </ButtonGroup>
+        <DropdownMenuItem asChild>
+          <Button
+            data-style="ghost"
+            data-active-state={attrs.required ? "on" : "off"}
+            onClick={() => update({ required: !attrs.required })}
+          >
+            <span className="tiptap-button-text">
+              {attrs.required ? "Required ✓" : "Required"}
+            </span>
+          </Button>
+        </DropdownMenuItem>
+      </CardItemGroup>
+    </>
+  )
+}
+
 function DropdownMenuActions({ editor }: DropdownMenuActionsProps) {
   const isMobile = useIsBreakpoint()
 
@@ -420,6 +476,8 @@ function DropdownMenuActions({ editor }: DropdownMenuActionsProps) {
             </DropdownMenuItem>
           </ButtonGroup>
         </CardItemGroup>
+
+        <ShortAnswerMobileGroup editor={editor} />
 
         <Separator orientation="horizontal" />
 

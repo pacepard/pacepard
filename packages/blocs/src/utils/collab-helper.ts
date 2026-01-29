@@ -16,6 +16,7 @@ const NODE_TYPE_LABELS: Record<string, string> = {
   codeBlock: "Code Block",
   table: "Table",
   tocNode: "Table of contents",
+  shortAnswer: "Short answer",
 }
 
 

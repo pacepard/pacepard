@@ -23,6 +23,7 @@ export const TURN_INTO_BLOCKS = [
   "taskList",
   "blockquote",
   "codeBlock",
+  "shortAnswer",
 ]
 
 /**
@@ -60,7 +61,8 @@ export const blockTypeOptions = [
       !editor.isActive("orderedList") &&
       !editor.isActive("taskList") &&
       !editor.isActive("blockquote") &&
-      !editor.isActive("codeBlock"),
+      !editor.isActive("codeBlock") &&
+      !editor.isActive("shortAnswer"),
   },
   {
     type: "heading",
@@ -104,6 +106,11 @@ export const blockTypeOptions = [
     type: "codeBlock",
     label: "Code block",
     isActive: (editor: Editor) => editor.isActive("codeBlock"),
+  },
+  {
+    type: "shortAnswer",
+    label: "Short answer",
+    isActive: (editor: Editor) => editor.isActive("shortAnswer"),
   },
 ]
 
