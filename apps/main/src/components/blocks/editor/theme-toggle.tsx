@@ -30,7 +30,7 @@ export function ThemeToggle() {
       size="sm"
       onClick={toggleDarkMode}
       aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="text-foreground hover:bg-muted rounded-md"
+      className="text-foreground hover:bg-muted rounded-md gap-1.5"
     >
       {isDarkMode ? (
         <Moon className="h-4 w-4" />
