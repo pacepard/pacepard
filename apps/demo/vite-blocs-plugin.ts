@@ -57,8 +57,9 @@ export function blocsPathAliasPlugin(): Plugin {
               : `./${normalizedPath}`;
 
             // Remove extension for import statement (Vite/TypeScript will resolve it)
+            // Keep .scss and .css so style imports resolve
             const importPathWithoutExt = importPathWithDot.replace(
-              /\.(ts|tsx|js|jsx|json|scss|css)$/,
+              /\.(ts|tsx|js|jsx|json)$/,
               ''
             );
 
@@ -91,9 +92,9 @@ export function blocsPathAliasPlugin(): Plugin {
               ? normalizedPath
               : `./${normalizedPath}`;
 
-            // Remove extension for import statement
+            // Remove extension for import statement (keep .scss/.css for styles)
             const importPathWithoutExt = importPathWithDot.replace(
-              /\.(ts|tsx|js|jsx|json|scss|css)$/,
+              /\.(ts|tsx|js|jsx|json)$/,
               ''
             );
 
@@ -145,8 +146,8 @@ export function blocsPathAliasPlugin(): Plugin {
       }
 
       // Also handle already-resolved paths that point to wrong location
-      // This catches cases where Vite's alias already resolved @/ to main app
-      if (importer && path.isAbsolute(id) && id.includes('apps/main/src')) {
+      // This catches cases where Vite's alias already resolved @/ to demo app
+      if (importer && path.isAbsolute(id) && id.includes('apps/demo/src')) {
         const normalizedImporter = path.isAbsolute(importer)
           ? importer
           : path.resolve(process.cwd(), importer);

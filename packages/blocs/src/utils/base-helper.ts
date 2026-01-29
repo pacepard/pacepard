@@ -43,6 +43,11 @@ import {
   borderWidth: 0,
 } as const
 
+/** Fetches AI token for Tiptap AI. Returns empty by default so demo works without env; apps can override for production. */
+async function fetchAiToken(): Promise<string> {
+  return ""
+}
+
  function cn(
   ...classes: (string | boolean | undefined | null)[]
 ): string {
@@ -637,6 +642,7 @@ export {
   MAX_FILE_SIZE,
   MAC_SYMBOLS,
   SR_ONLY,
+  fetchAiToken,
   cn,
   isMac,
   formatShortcutKey,

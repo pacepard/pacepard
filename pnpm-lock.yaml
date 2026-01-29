@@ -230,6 +230,184 @@ importers:
         specifier: ^4.21.0
         version: 4.21.0
 
+  apps/demo:
+    dependencies:
+      '@floating-ui/react':
+        specifier: ^0.27.16
+        version: 0.27.17(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@pacepard/blocs':
+        specifier: workspace:*
+        version: link:../../packages/blocs
+      '@radix-ui/react-dropdown-menu':
+        specifier: ^2.1.16
+        version: 2.1.16(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@radix-ui/react-popover':
+        specifier: ^1.1.15
+        version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@tiptap-pro/extension-ai':
+        specifier: ^3.3.0
+        version: 3.3.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/extension-image@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0)))(@tiptap/pm@3.18.0)
+      '@tiptap-pro/extension-comments':
+        specifier: ^3.3.0
+        version: 3.3.0(@hocuspocus/provider@3.4.4(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(@hocuspocus/transformer@3.4.4(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(y-prosemirror@1.3.7(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29))(@tiptap-pro/provider@3.3.0(@hocuspocus/provider@3.4.4(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(lib0@0.2.117)(yjs@13.6.29))(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap-pro/provider':
+        specifier: ^3.3.0
+        version: 3.3.0(@hocuspocus/provider@3.4.4(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(lib0@0.2.117)(yjs@13.6.29)
+      '@tiptap/core':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/pm@3.18.0)
+      '@tiptap/extension-collaboration':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29)
+      '@tiptap/extension-collaboration-caret':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))
+      '@tiptap/extension-color':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/extension-text-style@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0)))
+      '@tiptap/extension-drag-handle-react':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/extension-drag-handle@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/extension-collaboration@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29))(@tiptap/extension-node-range@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29)))(@tiptap/pm@3.18.0)(@tiptap/react@3.18.0(@floating-ui/dom@1.7.5)(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@tiptap/extension-emoji':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@tiptap/suggestion@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0))(emojibase@17.0.0)
+      '@tiptap/extension-highlight':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))
+      '@tiptap/extension-horizontal-rule':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/extension-image':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))
+      '@tiptap/extension-list':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/extension-mathematics':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(katex@0.16.28)
+      '@tiptap/extension-mention':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@tiptap/suggestion@3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0))
+      '@tiptap/extension-subscript':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/extension-superscript':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/extension-table':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/extension-table-of-contents':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/extension-text-align':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))
+      '@tiptap/extension-text-style':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))
+      '@tiptap/extension-typography':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))
+      '@tiptap/extension-unique-id':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/extensions':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      '@tiptap/pm':
+        specifier: ^3.16.0
+        version: 3.18.0
+      '@tiptap/react':
+        specifier: ^3.16.0
+        version: 3.18.0(@floating-ui/dom@1.7.5)(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@tiptap/suggestion':
+        specifier: ^3.16.0
+        version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      is-hotkey:
+        specifier: ^0.2.0
+        version: 0.2.0
+      lodash.throttle:
+        specifier: ^4.1.1
+        version: 4.1.1
+      react:
+        specifier: ^19.2.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.4(react@19.2.4)
+      react-hotkeys-hook:
+        specifier: ^5.2.3
+        version: 5.2.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-router-dom:
+        specifier: ^7.12.0
+        version: 7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react-textarea-autosize:
+        specifier: ^8.5.9
+        version: 8.5.9(@types/react@19.2.10)(react@19.2.4)
+      yjs:
+        specifier: ^13.6.29
+        version: 13.6.29
+    devDependencies:
+      '@ariakit/react':
+        specifier: ^0.4.21
+        version: 0.4.21(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.2
+      '@pacepard/configs/eslint':
+        specifier: workspace:*
+        version: link:../../configs/eslint
+      '@pacepard/configs/typescript':
+        specifier: workspace:*
+        version: link:../../configs/typescript
+      '@tiptap/starter-kit':
+        specifier: ^3.16.0
+        version: 3.18.0
+      '@types/is-hotkey':
+        specifier: ^0.1.10
+        version: 0.1.10
+      '@types/lodash.throttle':
+        specifier: ^4.1.9
+        version: 4.1.9
+      '@types/node':
+        specifier: ^24.10.9
+        version: 24.10.9
+      '@types/react':
+        specifier: ^19.2.5
+        version: 19.2.10
+      '@types/react-dom':
+        specifier: ^19.2.3
+        version: 19.2.3(@types/react@19.2.10)
+      '@vitejs/plugin-react':
+        specifier: ^5.1.1
+        version: 5.1.2(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(sass-embedded@1.97.3)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2))
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2(jiti@2.6.1)
+      eslint-plugin-react-hooks:
+        specifier: ^7.0.1
+        version: 7.0.1(eslint@9.39.2(jiti@2.6.1))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.24
+        version: 0.4.26(eslint@9.39.2(jiti@2.6.1))
+      globals:
+        specifier: ^16.5.0
+        version: 16.5.0
+      sass-embedded:
+        specifier: ^1.97.2
+        version: 1.97.3
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+      typescript-eslint:
+        specifier: ^8.46.4
+        version: 8.54.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+      vite:
+        specifier: ^7.2.4
+        version: 7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.30.2)(sass-embedded@1.97.3)(sass@1.97.3)(tsx@4.21.0)(yaml@2.8.2)
+
   apps/docs: {}
 
   apps/main:
@@ -456,6 +634,9 @@ importers:
       katex:
         specifier: ^0.16.11
         version: 0.16.28
+      linkifyjs:
+        specifier: ^4.3.2
+        version: 4.3.2
       lodash.throttle:
         specifier: ^4.1.1
         version: 4.1.1
@@ -1371,7 +1552,7 @@ importers:
         version: 2.3.8(@types/react@19.2.10)(react@19.2.4)
       react-resizable-panels:
         specifier: ^4.4.1
-        version: 4.5.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 4.5.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react-style-singleton:
         specifier: ^2.2.1
         version: 2.2.3(@types/react@19.2.10)(react@19.2.4)
@@ -10611,8 +10792,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-resizable-panels@4.5.3:
-    resolution: {integrity: sha512-N4Uc13yM1S9nfmwH25WIpxlp4/cwh2rqj9bDSxyZJ3S6gOJ9kFsZnPalfqIeBrbUv2SoGVLAbQUaTFceUY7A5Q==}
+  react-resizable-panels@4.5.4:
+    resolution: {integrity: sha512-zK+Tz+73MBZKDtBUUcKjezaq+in8K10TJ8+slH/LNza5IL2CRFMKm0GbKyMPAGDPKY1x8G7sWx3Wu9inFRZGFA==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -12634,7 +12815,7 @@ snapshots:
       ajv-errors: 3.0.0(ajv@8.17.1)
       ajv-formats: 2.1.1(ajv@8.17.1)
       avsc: 5.7.9
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
       jsonpath-plus: 10.3.0
       node-fetch: 2.6.7
     transitivePeerDependencies:
@@ -18319,7 +18500,7 @@ snapshots:
 
   '@types/es-aggregate-error@1.0.6':
     dependencies:
-      '@types/node': 25.1.0
+      '@types/node': 20.19.30
 
   '@types/estree-jsx@1.0.5':
     dependencies:
@@ -18449,7 +18630,7 @@ snapshots:
 
   '@types/minimatch@6.0.0':
     dependencies:
-      minimatch: 9.0.0
+      minimatch: 10.1.1
 
   '@types/minimist@1.2.5': {}
 
@@ -20188,7 +20369,7 @@ snapshots:
     dependencies:
       '@types/cookie': 0.4.1
       '@types/cors': 2.8.19
-      '@types/node': 25.1.0
+      '@types/node': 20.19.30
       accepts: 1.3.8
       base64id: 2.0.0
       cookie: 0.4.2
@@ -24860,7 +25041,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.10
 
-  react-resizable-panels@4.5.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  react-resizable-panels@4.5.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)

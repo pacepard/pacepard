@@ -289,6 +289,11 @@ const AppRoutes = () => {
             case 'notifications':
                 return <Notifications />;
 
+            // Editor (core/editor)
+            case 'editor':
+            case 'editor-room':
+                return <EditorPage />;
+
             // Common routes
             case 'home':
                 return <HomeComponent />;
@@ -577,30 +582,6 @@ const AppRoutes = () => {
                     )}
                 </Fragment>
             ))}
-
-            {/* Editor routes */}
-            <Route
-                path="/editor"
-                element={
-                    <DashboardLayout
-                        component={<EditorPage />}
-                        title="Editor"
-                        back={false}
-                        sidebar={{ collapsed: false }}
-                    />
-                }
-            />
-            <Route
-                path="/editor/:roomId"
-                element={
-                    <DashboardLayout
-                        component={<EditorPage />}
-                        title="Editor"
-                        back={false}
-                        sidebar={{ collapsed: false }}
-                    />
-                }
-            />
 
             {/* Fallback routes */}
             <Route

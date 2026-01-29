@@ -22,7 +22,7 @@ import {
 import type { ButtonProps } from "@/core/primitives/button"
 import { Button } from "@/core/primitives/button"
 import { Badge } from "@/core/primitives/badge"
-import { BaseHelpers } from "@/utils/base-helper"
+import { parseShortcutKeys } from "@/utils/base-helper"
 
 export interface UndoRedoButtonProps
   extends Omit<ButtonProps, "type">,
@@ -45,7 +45,7 @@ export function HistoryShortcutBadge({
   action: UndoRedoAction
   shortcutKeys?: string
 }) {
-  return <Badge>{BaseHelpers.parseShortcutKeys({ shortcutKeys })}</Badge>
+  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
 }
 
 /**

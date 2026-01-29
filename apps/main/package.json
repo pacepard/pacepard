@@ -100,7 +100,8 @@
     "@tiptap/extension-paragraph": "^3.16.0",
     "@tiptap/extension-strike": "^3.16.0",
     "@tiptap/extension-text": "^3.16.0",
-    "@tiptap/extension-underline": "^3.16.0"
+    "@tiptap/extension-underline": "^3.16.0",
+    "linkifyjs": "^4.3.2"
   },
   "devDependencies": {
     "@ariakit/react": "^0.4.21",

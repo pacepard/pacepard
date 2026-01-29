@@ -82,6 +82,24 @@ const appRoutes: Array<IRoute> = [
         content: {}
     },
 
+    {
+        name: 'editor',
+        url: '/editor',
+        isAuth: false,
+        params: [],
+        content: { backButton: false, collapsed: false },
+        subroutes: [
+            {
+                name: 'editor-room',
+                title: 'Editor',
+                url: ':roomId',
+                isAuth: false,
+                params: [],
+                content: { backButton: false, collapsed: false }
+            }
+        ]
+    },
+
 ]
 
 export default appRoutes;

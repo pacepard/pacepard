@@ -33,6 +33,8 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: PORT,
+      // Bind to 127.0.0.1 to avoid EPERM on ::1 in sandboxes/restricted environments
+      host: '127.0.0.1',
     },
     optimizeDeps: {
       include: [
