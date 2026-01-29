@@ -3,6 +3,7 @@ import LoginForm from "@/components/blocks/auth/login-form";
 import Trigger from "@/components/blocks/navigation/trigger";
 import MainLoader from "./main-loader";
 import { EmptyState } from "@pacepard/ui";
+import EditorLayout from "@/components/layouts/editor-layout";
 
 
 const Preview = () => {
@@ -12,12 +13,12 @@ const Preview = () => {
 
             
             
-            <div className="w-full max-w-md sm:w-full">
+            {/* <div className="w-full max-w-md sm:w-full"> */}
 
                 {/* <Trigger /> */}
 
                 {/* <LoginForm/> */}
-
+{/* 
                 <MainLoader/>
 
                 <LinkPreview/>
@@ -27,10 +28,12 @@ const Preview = () => {
                 <div className="mt-10"></div>
 
                 <ShareLink/>
-                <ShareTabs/>
+                <ShareTabs/> */}
+
+                <EditorLayout component={<div>Hello</div>} title="Preview" back={true} sidebar={{ collapsed: false }} />
 
 
-            </div>
+            {/* </div> */}
         </div>
     );
 };

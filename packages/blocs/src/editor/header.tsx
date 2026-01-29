@@ -13,7 +13,7 @@ import "./header.scss"
 
 import { CollaborationUsers } from "./collaboration-users"
 
-export function NotionEditorHeader() {
+export function PaceparditorHeader() {
   return (
     <header className="notion-like-editor-header">
       <Spacer />

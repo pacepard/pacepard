@@ -1,52 +1,42 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-body {
+/* Scoped to editor wrapper to avoid clashing with host app (e.g. main app body/#root/Tailwind) */
+.notion-like-editor-wrapper {
   --tt-toolbar-height: 44px;
   --tt-theme-text: var(--tt-gray-light-900);
 
   .dark & {
     --tt-theme-text: var(--tt-gray-dark-900);
   }
-}
 
-body {
   font-family: "Inter", sans-serif;
   color: var(--tt-theme-text);
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  padding: 0;
-  overscroll-behavior-y: none;
-}
-
-html,
-body {
-  overscroll-behavior-x: none;
-}
-
-html,
-body,
-#root,
-#app {
   background-color: var(--tt-bg-color);
-}
+  min-height: 100%;
+  overflow: auto;
+  overscroll-behavior: auto;
 
-::-webkit-scrollbar {
-  width: 0.25rem;
-}
+  /* Scrollbar styling only inside the editor (no global * or body override) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--tt-scrollbar-color) transparent;
+  }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--tt-scrollbar-color) transparent;
-}
+  ::-webkit-scrollbar {
+    width: 0.25rem;
+  }
 
-::-webkit-scrollbar-thumb {
-  background-color: var(--tt-scrollbar-color);
-  border-radius: 9999px;
-}
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--tt-scrollbar-color);
+    border-radius: 9999px;
+  }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 .tiptap.ProseMirror {

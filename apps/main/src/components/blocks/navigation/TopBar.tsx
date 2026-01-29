@@ -63,11 +63,10 @@ const TopBar = ({ pageTitle, showBack = false, sticky = true }: TopBarProps) => 
                             {pageTitle}
                         </h3>
                     )}
-                </div>
+               </div>
             </div>
         </div>
     );
 };
 
 export default TopBar;
-

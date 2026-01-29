@@ -91,7 +91,6 @@ import {
 import "./editor.scss"
 
 // --- Content ---
-import { NotionEditorHeader } from "./header"
 import { MobileToolbar } from "./mobile-toolbar"
 import { NotionToolbarFloating } from "./toolbar-floating"
 import {
@@ -331,7 +330,6 @@ export function EditorProvider(props: EditorProviderProps) {
   return (
     <div className="notion-like-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
-        <NotionEditorHeader />
         <div className="notion-like-editor-layout">
           <EditorContentArea />
           <TocSidebar topOffset={48} />
@@ -356,7 +354,7 @@ export function EditorProvider(props: EditorProviderProps) {
 /**
  * Full editor with all necessary providers, ready to use with just a room ID
  */
-export function NotionEditor({
+export function Paceparditor({
   room,
   placeholder = "Start writing...",
 }: NotionEditorProps) {
@@ -366,7 +364,7 @@ export function NotionEditor({
         <CollabProvider room={room}>
           <AiProvider>
             <TocProvider>
-              <NotionEditorContent placeholder={placeholder} />
+              <PaceparditorContent placeholder={placeholder} />
             </TocProvider>
           </AiProvider>
         </CollabProvider>
@@ -379,7 +377,7 @@ export function NotionEditor({
  * Internal component that handles the editor loading state.
  * Works without env: only ydoc is required; provider and aiToken can be null (local-only, no AI).
  */
-export function NotionEditorContent({ placeholder }: { placeholder?: string }) {
+export function PaceparditorContent({ placeholder }: { placeholder?: string }) {
   const { provider, ydoc } = useCollab()
   const { aiToken } = useAi()
 

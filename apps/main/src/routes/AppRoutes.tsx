@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import { routes, routil, type IRouteItem, type IInRoute } from '@pacepard/sdk';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
+import EditorLayout from '@/components/layouts/editor-layout';
 import { OnboardingLayout } from '@/components/layouts/onboarding-layout';
 
 // Lazy load components
@@ -291,7 +292,6 @@ const AppRoutes = () => {
 
             // Editor (editor)
             case 'editor':
-            case 'editor-room':
                 return <EditorPage />;
 
             // Common routes
@@ -328,6 +328,12 @@ const AppRoutes = () => {
                                         >
                                             {getAppPages(route.name)}
                                         </OnboardingLayout>
+                                    ) : route.name === 'editor' ? (
+                                        <EditorLayout
+                                            component={getAppPages(route.name)}
+                                            title={route.title || route.name}
+                                            back={true}
+                                        />
                                     ) : (
                                         route.subroutes && route.subroutes.length > 0 ? (
                                             <DashboardLayout
@@ -447,6 +453,12 @@ const AppRoutes = () => {
                                         >
                                             {getAppPages(route.name)}
                                         </OnboardingLayout>
+                                    ) : route.name === 'editor' ? (
+                                        <EditorLayout
+                                            component={getAppPages(route.name)}
+                                            title={route.title || route.name}
+                                            back={true}
+                                        />
                                     ) : (
                                         <DashboardLayout
                                             component={getAppPages(route.name)}
