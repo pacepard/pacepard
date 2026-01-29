@@ -9,7 +9,7 @@ import {
 import { Button, ButtonGroup } from "@pacepard/blocs/primitives/button"
 import {
   Card,
-  CardBody, 
+  CardBody,
   CardItemGroup,
 } from "@pacepard/blocs/primitives/card"
 import {

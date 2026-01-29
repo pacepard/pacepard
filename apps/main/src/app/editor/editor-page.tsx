@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { NotionEditor } from "@/core/editor/editor"
+import { NotionEditor } from "@pacepard/blocs/editor"
 
 /**
  * Editor page for /editor and /editor/:roomId.

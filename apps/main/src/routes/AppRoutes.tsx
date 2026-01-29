@@ -289,7 +289,7 @@ const AppRoutes = () => {
             case 'notifications':
                 return <Notifications />;
 
-            // Editor (core/editor)
+            // Editor (editor)
             case 'editor':
             case 'editor-room':
                 return <EditorPage />;
@@ -428,7 +428,8 @@ const AppRoutes = () => {
                                 element={
                                     route.action === 'open-secondary' &&
                                         route.subroutes &&
-                                        route.subroutes.length > 0 ? (
+                                        route.subroutes.length > 0 &&
+                                        route.subroutes[0] ? (
                                         <Navigate
                                             to={routil.computeSubPath(
                                                 route,
@@ -441,8 +442,8 @@ const AppRoutes = () => {
                                             title={route.title || route.name}
                                             logo=""
                                             description={route.content.description}
-                                            maxWidth={route.content.maxWidth || '4xl'}
-                                            onboardingType={route.content.onboardingType || 'talent'}
+                                            maxWidth={(route.content.maxWidth || 'sxl') as 'sm' | 'md' | 'lg' | 'xl' | 'txl' | 'fxl' | 'sxl' | 'full'}
+                                            onboardingType={(route.content.onboardingType || 'talent') as 'talent' | 'business' | 'education'}
                                         >
                                             {getAppPages(route.name)}
                                         </OnboardingLayout>

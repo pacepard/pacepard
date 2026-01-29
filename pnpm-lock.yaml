@@ -1080,9 +1080,15 @@ importers:
 
   packages/blocs:
     dependencies:
+      '@floating-ui/dom':
+        specifier: ^1.6.0
+        version: 1.7.5
       '@floating-ui/react':
         specifier: ^0.27.16
         version: 0.27.17(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@floating-ui/utils':
+        specifier: ^0.2.0
+        version: 0.2.10
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.16
         version: 2.1.16(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1209,12 +1215,27 @@ importers:
       '@tiptap/react':
         specifier: ^3.16.0
         version: 3.18.0(@floating-ui/dom@1.7.5)(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@tiptap/starter-kit':
+        specifier: ^3.16.0
+        version: 3.18.0
       '@tiptap/suggestion':
         specifier: ^3.16.0
         version: 3.18.0(@tiptap/core@3.18.0(@tiptap/pm@3.18.0))(@tiptap/pm@3.18.0)
+      emoji-regex:
+        specifier: ^10.3.0
+        version: 10.6.0
+      fast-equals:
+        specifier: ^6.0.0
+        version: 6.0.0
+      is-emoji-supported:
+        specifier: ^0.0.5
+        version: 0.0.5
       is-hotkey:
         specifier: ^0.2.0
         version: 0.2.0
+      katex:
+        specifier: ^0.16.11
+        version: 0.16.28
       lodash.throttle:
         specifier: ^4.1.1
         version: 4.1.1
@@ -1233,6 +1254,15 @@ importers:
       react-textarea-autosize:
         specifier: ^8.5.9
         version: 8.5.9(@types/react@19.2.10)(react@19.2.4)
+      tabbable:
+        specifier: ^6.0.0
+        version: 6.4.0
+      use-sync-external-store:
+        specifier: ^1.2.2
+        version: 1.6.0(react@19.2.4)
+      uuid:
+        specifier: ^11.0.0
+        version: 11.1.0
       yjs:
         specifier: ^13.6.29
         version: 13.6.29
@@ -1246,9 +1276,6 @@ importers:
       '@pacepard/configs/typescript':
         specifier: workspace:*
         version: link:../../configs/typescript
-      '@tiptap/starter-kit':
-        specifier: ^3.16.0
-        version: 3.18.0
       '@types/is-hotkey':
         specifier: ^0.1.10
         version: 0.1.10

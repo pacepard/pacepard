@@ -25,10 +25,11 @@ export default defineConfig(({ mode }) => {
         "@pacepard/blocs/ui": path.resolve(__dirname, "../../packages/blocs/src/core/ui"),
         "@pacepard/blocs/node": path.resolve(__dirname, "../../packages/blocs/src/core/node"),
         "@pacepard/blocs/icons": path.resolve(__dirname, "../../packages/blocs/src/core/icons"),
+        "@pacepard/blocs/editor": path.resolve(__dirname, "../../packages/blocs/src/editor"),
         "@pacepard/blocs": path.resolve(__dirname, "../../packages/blocs/src"),
       },
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-      preserveSymlinks: true,
+      preserveSymlinks: false,
       dedupe: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/query-core', '@tanstack/query-devtools'],
     },
     server: {

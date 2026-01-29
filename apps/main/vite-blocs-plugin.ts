@@ -57,8 +57,9 @@ export function blocsPathAliasPlugin(): Plugin {
               : `./${normalizedPath}`;
 
             // Remove extension for import statement (Vite/TypeScript will resolve it)
+            // Keep .scss and .css so style imports resolve (match demo)
             const importPathWithoutExt = importPathWithDot.replace(
-              /\.(ts|tsx|js|jsx|json|scss|css)$/,
+              /\.(ts|tsx|js|jsx|json)$/,
               ''
             );
 
@@ -91,9 +92,9 @@ export function blocsPathAliasPlugin(): Plugin {
               ? normalizedPath
               : `./${normalizedPath}`;
 
-            // Remove extension for import statement
+            // Remove extension for import statement (keep .scss/.css for styles)
             const importPathWithoutExt = importPathWithDot.replace(
-              /\.(ts|tsx|js|jsx|json|scss|css)$/,
+              /\.(ts|tsx|js|jsx|json)$/,
               ''
             );
 

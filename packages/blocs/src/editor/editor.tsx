@@ -26,23 +26,15 @@ import { Emoji, gitHubEmojis } from "@tiptap/extension-emoji"
 import {
   getHierarchicalIndexes,
   TableOfContents,
+  type TableOfContentData,
 } from "@tiptap/extension-table-of-contents"
 
 // --- Hooks ---
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/099c8c93-882d-4528-804b-cc5f7b8b355f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'editor.tsx:32',message:'importing from @pacepard/blocs',data:{import:'useUiEditorState'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H2'})}).catch(()=>{});
-// #endregion
 import { useUiEditorState } from "@pacepard/blocs"
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/099c8c93-882d-4528-804b-cc5f7b8b355f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'editor.tsx:33',message:'importing nested path',data:{import:'copy-anchor-link-button/use-scroll-to-hash'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H2'})}).catch(()=>{});
-// #endregion
 import { useScrollToHash } from "@pacepard/blocs/ui/copy-anchor-link-button/use-scroll-to-hash"
 
 // --- Custom Extensions ---
-// #region agent log
-fetch('http://127.0.0.1:7242/ingest/099c8c93-882d-4528-804b-cc5f7b8b355f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'editor.tsx:36',message:'importing extensions from index',data:{imports:['HorizontalRule','UiState','Image','NodeBackground','NodeAlignment','TocNode','ImageUploadNode','TableKit','TableHandleExtension','ListNormalizationExtension','TocSidebar']},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H3'})}).catch(()=>{});
-// #endregion
-import { 
+import {
   HorizontalRule,
   UiState,
   Image,
@@ -78,7 +70,7 @@ import { DragContextMenu } from "@pacepard/blocs/ui/drag-context-menu"
 import { AiMenu } from "@pacepard/blocs/ui/ai-menu"
 
 // --- Contexts ---
-import { 
+import {
   AppProvider,
   UserProvider,
   useUser,
@@ -89,24 +81,23 @@ import {
 } from "@pacepard/blocs"
 
 // --- Lib ---
-import { 
-  handleImageUpload, 
+import {
+  handleImageUpload,
   MAX_FILE_SIZE,
   TIPTAP_AI_APP_ID,
 } from "@pacepard/blocs"
 
 // --- Styles ---
-import "@/core/editor/editor.scss"
+import "./editor.scss"
 
 // --- Content ---
-import { NotionEditorHeader } from "@/core/editor/header"
+import { NotionEditorHeader } from "./header"
 import { MobileToolbar } from "./mobile-toolbar"
-import { NotionToolbarFloating } from "@/core/editor/toolbar-floating"
+import { NotionToolbarFloating } from "./toolbar-floating"
 import {
   TocProvider,
   useToc,
 } from "@pacepard/blocs/node/toc-node/context/toc-context"
-
 
 export interface NotionEditorProps {
   room: string
@@ -114,7 +105,7 @@ export interface NotionEditorProps {
 }
 
 export interface EditorProviderProps {
-  provider: TiptapCollabProvider
+  provider: TiptapCollabProvider | null
   ydoc: YDoc
   placeholder?: string
   aiToken: string | null
@@ -226,10 +217,14 @@ export function EditorProvider(props: EditorProviderProps) {
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Collaboration.configure({ document: ydoc }),
-      CollaborationCaret.configure({
-        provider,
-        user: { id: user.id, name: user.name, color: user.color },
-      }),
+      ...(provider
+        ? [
+            CollaborationCaret.configure({
+              provider,
+              user: { id: user.id, name: user.name, color: user.color },
+            }),
+          ]
+        : []),
       Placeholder.configure({
         placeholder,
         emptyNodeClass: "is-empty with-slash",
@@ -237,7 +232,7 @@ export function EditorProvider(props: EditorProviderProps) {
       Mention,
       Emoji.configure({
         emojis: gitHubEmojis.filter(
-          (emoji: any) => !emoji.name.includes("regional")
+          (emoji: { name: string }) => !emoji.name.includes("regional")
         ),
         forceFallbackImages: true,
       }),
@@ -273,7 +268,7 @@ export function EditorProvider(props: EditorProviderProps) {
       Image,
       TableOfContents.configure({
         getIndex: getHierarchicalIndexes,
-        onUpdate(content: any) {
+        onUpdate(content: TableOfContentData | null) {
           setTocContent(content)
         },
       }),
@@ -298,7 +293,8 @@ export function EditorProvider(props: EditorProviderProps) {
           "codeBlock",
           "tocNode",
         ],
-        filterTransaction: (transaction: any) => !isChangeOrigin(transaction),
+        filterTransaction: (transaction: Parameters<typeof isChangeOrigin>[0]) =>
+          !isChangeOrigin(transaction),
       }),
       Typography,
       UiState,
@@ -311,15 +307,15 @@ export function EditorProvider(props: EditorProviderProps) {
         autocompletion: false,
         showDecorations: true,
         hideDecorationsOnStreamEnd: false,
-        onLoading: (context: any) => {
+        onLoading: (context: { editor: { commands: { aiGenerationSetIsLoading: (v: boolean) => void; aiGenerationHasMessage: (v: boolean) => void } } }) => {
           context.editor.commands.aiGenerationSetIsLoading(true)
           context.editor.commands.aiGenerationHasMessage(false)
         },
-        onChunk: (context: any) => {
+        onChunk: (context: { editor: { commands: { aiGenerationSetIsLoading: (v: boolean) => void; aiGenerationHasMessage: (v: boolean) => void } } }) => {
           context.editor.commands.aiGenerationSetIsLoading(true)
           context.editor.commands.aiGenerationHasMessage(true)
         },
-        onSuccess: (context: any) => {
+        onSuccess: (context: { editor: { commands: { aiGenerationSetIsLoading: (v: boolean) => void; aiGenerationHasMessage: (v: boolean) => void } }; response?: unknown }) => {
           const hasMessage = !!context.response
           context.editor.commands.aiGenerationSetIsLoading(false)
           context.editor.commands.aiGenerationHasMessage(hasMessage)
@@ -345,16 +341,14 @@ export function EditorProvider(props: EditorProviderProps) {
         <TableHandle />
         <TableSelectionOverlay
           showResizeHandles={true}
-          cellMenu={(props) => (
+          cellMenu={({ editor: cellEditor, onResizeStart }: { editor?: import("@tiptap/react").Editor | null; onResizeStart?: (handle: "tl" | "tr" | "bl" | "br" | null) => (e: React.MouseEvent) => void }) => (
             <TableCellHandleMenu
-              editor={props.editor}
-              onMouseDown={(e) => props.onResizeStart?.("br")(e)}
+              editor={cellEditor}
+              onMouseDown={(e: React.MouseEvent) => onResizeStart?.("br")(e)}
             />
           )}
         />
       </EditorContext.Provider>
-
-      
     </div>
   )
 }
@@ -382,13 +376,14 @@ export function NotionEditor({
 }
 
 /**
- * Internal component that handles the editor loading state
+ * Internal component that handles the editor loading state.
+ * Works without env: only ydoc is required; provider and aiToken can be null (local-only, no AI).
  */
 export function NotionEditorContent({ placeholder }: { placeholder?: string }) {
   const { provider, ydoc } = useCollab()
   const { aiToken } = useAi()
 
-  if (!provider || !ydoc || !aiToken) {
+  if (!ydoc) {
     return <LoadingSpinner />
   }
 

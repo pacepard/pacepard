@@ -37,7 +37,8 @@
       "@pacepard/blocs/node/*": ["../../packages/blocs/src/core/node/*"],
       "@pacepard/blocs/icons/*": ["../../packages/blocs/src/core/icons/*"],
       "@pacepard/blocs/utils/*": ["../../packages/blocs/src/utils/*"],
-      "@pacepard/blocs/hooks/*": ["../../packages/blocs/src/hooks/*"]
+      "@pacepard/blocs/hooks/*": ["../../packages/blocs/src/hooks/*"],
+      "@pacepard/blocs/*": ["../../packages/blocs/src/*"]
     }
     // ...
   },

@@ -8,18 +8,10 @@ interface QueryProviderProps {
   enableDevtools?: boolean
 }
 
-// Helper to check if we're in a Vite environment
-interface ViteImportMeta extends ImportMeta {
-  env?: {
-    DEV?: boolean
-    MODE?: string
-  }
-}
-
 const isViteEnv = typeof import.meta !== 'undefined' && 'env' in import.meta
 const getIsDev = () => {
   if (isViteEnv) {
-    const env = (import.meta as ViteImportMeta).env
+    const env = (import.meta as { env?: { DEV?: boolean; MODE?: string } }).env
     return env?.DEV ?? env?.MODE === 'development'
   }
   return process.env.NODE_ENV === 'development'

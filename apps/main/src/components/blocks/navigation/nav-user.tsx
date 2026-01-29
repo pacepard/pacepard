@@ -92,7 +92,7 @@ export function NavUser({
                     >
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
-                                <Sparkle />
+                                <Sparkles />
                                 Upgrade to Pro
                             </DropdownMenuItem>
                         </DropdownMenuGroup>

@@ -1,20 +1,23 @@
 {
   "files": [],
   "extends": "@pacepard/configs/typescript/base.app",
-
   "include": ["src"],
+  "references": [{ "path": "../../packages/blocs" }, { "path": "../../packages/sdk" }],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@pacepard/ui/*": ["../../packages/ui/src/*"],
-      "@pacepard/blocs": ["../../packages/blocs/src/index.ts"],
-      "@pacepard/blocs/primitives/*": ["../../packages/blocs/src/core/primitives/*"],
-      "@pacepard/blocs/ui/*": ["../../packages/blocs/src/core/ui/*"],
-      "@pacepard/blocs/node/*": ["../../packages/blocs/src/core/node/*"],
-      "@pacepard/blocs/icons/*": ["../../packages/blocs/src/core/icons/*"],
-      "@pacepard/blocs/utils/*": ["../../packages/blocs/src/utils/*"],
-      "@pacepard/blocs/hooks/*": ["../../packages/blocs/src/hooks/*"]
+      "@pacepard/sdk": ["../../packages/sdk/dist/index.d.ts"],
+      "@pacepard/sdk/*": ["../../packages/sdk/dist/*"],
+      "@pacepard/blocs": ["../../packages/blocs/dist/index.d.ts"],
+      "@pacepard/blocs/primitives/*": ["../../packages/blocs/dist/core/primitives/*"],
+      "@pacepard/blocs/ui/*": ["../../packages/blocs/dist/core/ui/*"],
+      "@pacepard/blocs/node/*": ["../../packages/blocs/dist/core/node/*"],
+      "@pacepard/blocs/icons/*": ["../../packages/blocs/dist/core/icons/*"],
+      "@pacepard/blocs/utils/*": ["../../packages/blocs/dist/utils/*"],
+      "@pacepard/blocs/hooks/*": ["../../packages/blocs/dist/hooks/*"],
+      "@pacepard/blocs/*": ["../../packages/blocs/dist/*"]
     }
   }
 }

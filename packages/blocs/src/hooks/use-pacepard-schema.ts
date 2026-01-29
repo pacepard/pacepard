@@ -1,7 +1,3 @@
-import type { Editor } from "@tiptap/react"
-import { useCurrentEditor, useEditorState } from "@tiptap/react"
-import { useMemo } from "react"
-
 /**
  * Hook that provides access to a Pacepard schema.
  *

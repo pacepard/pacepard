@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { type Editor } from "@tiptap/react"
 
 // --- Hooks ---
-import { 
+import {
   useUiEditorState,
   useIsBreakpoint,
   useFloatingToolbarVisibility,

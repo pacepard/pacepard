@@ -43,8 +43,12 @@ import {
   borderWidth: 0,
 } as const
 
-/** Fetches AI token for Tiptap AI. Returns empty by default so demo works without env; apps can override for production. */
+/** Fetches AI token for Tiptap AI. In Vite apps uses VITE_TIPTAP_AI_TOKEN; otherwise empty so local-only works. */
 async function fetchAiToken(): Promise<string> {
+  if (typeof import.meta !== "undefined") {
+    const env = (import.meta as unknown as { env?: Record<string, string> }).env
+    if (env?.VITE_TIPTAP_AI_TOKEN) return env.VITE_TIPTAP_AI_TOKEN ?? ""
+  }
   return ""
 }
 

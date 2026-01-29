@@ -24,7 +24,11 @@
         "./node/*": "./src/core/node/*",
         "./schemas/*": "./src/core/schemas/*",
         "./primitives/*": "./src/core/primitives/*",
-        "./ui/*": "./src/core/ui/*"
+        "./ui/*": "./src/core/ui/*",
+        "./editor": {
+            "types": "./src/editor/index.ts",
+            "import": "./src/editor/index.ts"
+        }
     },
     "dependencies": {
         "@floating-ui/react": "^0.27.16",
@@ -78,7 +82,17 @@
         "react-hotkeys-hook": "^5.2.3",
         "react-router-dom": "^7.12.0",
         "react-textarea-autosize": "^8.5.9",
-        "yjs": "^13.6.29"
+        "yjs": "^13.6.29",
+        "@floating-ui/dom": "^1.6.0",
+        "@floating-ui/utils": "^0.2.0",
+        "@tiptap/starter-kit": "^3.16.0",
+        "tabbable": "^6.0.0",
+        "katex": "^0.16.11",
+        "uuid": "^11.0.0",
+        "emoji-regex": "^10.3.0",
+        "is-emoji-supported": "^0.0.5",
+        "fast-equals": "^6.0.0",
+        "use-sync-external-store": "^1.2.2"
     },
     "peerDependencies": {
         "react": "^19",
@@ -88,7 +102,6 @@
         "@ariakit/react": "^0.4.21",
         "@pacepard/configs/eslint": "workspace:*",
         "@pacepard/configs/typescript": "workspace:*",
-        "@tiptap/starter-kit": "^3.16.0",
         "@types/is-hotkey": "^0.1.10",
         "@types/lodash.throttle": "^4.1.9",
         "@types/node": "^24.10.9",

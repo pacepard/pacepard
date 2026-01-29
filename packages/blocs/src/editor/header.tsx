@@ -1,4 +1,4 @@
-import { ThemeToggle } from "@/core/editor/theme-toggle"
+import { ThemeToggle } from "./theme-toggle"
 
 // --- Tiptap UI ---
 import { UndoRedoButton } from "@pacepard/blocs/ui/undo-redo-button"
@@ -9,9 +9,9 @@ import { Separator } from "@pacepard/blocs/primitives/separator"
 import { ButtonGroup } from "@pacepard/blocs/primitives/button"
 
 // --- Styles ---
-import "@/core/editor/header.scss"
+import "./header.scss"
 
-import { CollaborationUsers } from "@/core/editor/collaboration-users"
+import { CollaborationUsers } from "./collaboration-users"
 
 export function NotionEditorHeader() {
   return (

@@ -62,6 +62,9 @@ export interface IRouteItem {
     content: {
         backButton?: boolean;
         collapsed?: boolean;
+        description?: string;
+        maxWidth?: string;
+        onboardingType?: string;
     };
     params?: Array<IRouteParam>;
 }

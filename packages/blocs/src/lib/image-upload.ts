@@ -8,7 +8,8 @@ export const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB in bytes
  * Replace with your actual Tiptap AI App ID
  * This will be replaced by Vite at build time
  */
-export const TIPTAP_AI_APP_ID = (import.meta.env?.VITE_TIPTAP_AI_APP_ID as string) || ""
+const _env = (typeof import.meta !== "undefined" && (import.meta as { env?: Record<string, string> }).env) || {}
+export const TIPTAP_AI_APP_ID = (_env.VITE_TIPTAP_AI_APP_ID as string) || ""
 
 /**
  * Handles image upload
@@ -38,7 +39,7 @@ export async function handleImageUpload(
 
   // Upload to your API endpoint
   // Replace with your actual upload endpoint
-  const apiUrl = (import.meta.env?.VITE_APP_API_URL as string) || ""
+  const apiUrl = (_env.VITE_APP_API_URL as string) || ""
   const uploadUrl = apiUrl
     ? `${apiUrl}/api/upload/image`
     : "/api/upload/image"
