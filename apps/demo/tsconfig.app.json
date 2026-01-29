@@ -40,6 +40,36 @@
       "@pacepard/blocs": [
         "../../packages/blocs/src"
       ],
+      "@pacepard/blocs/icons/*": [
+        "../../packages/blocs/src/core/icons/*"
+      ],
+      "@pacepard/blocs/ui/*": [
+        "../../packages/blocs/src/core/ui/*"
+      ],
+      "@pacepard/blocs/node/*": [
+        "../../packages/blocs/src/core/node/*"
+      ],
+      "@pacepard/blocs/primitives/*": [
+        "../../packages/blocs/src/core/primitives/*"
+      ],
+      "@pacepard/blocs/utils/*": [
+        "../../packages/blocs/src/utils/*"
+      ],
+      "@pacepard/blocs/styles/*": [
+        "../../packages/blocs/src/styles/*"
+      ],
+      "@pacepard/blocs/core/*": [
+        "../../packages/blocs/src/core/*"
+      ],
+      "@pacepard/blocs/lib/*": [
+        "../../packages/blocs/src/lib/*"
+      ],
+      "@pacepard/blocs/contexts/*": [
+        "../../packages/blocs/src/contexts/*"
+      ],
+      "@pacepard/blocs/hooks/*": [
+        "../../packages/blocs/src/hooks/*"
+      ],
       "@pacepard/blocs/*": [
         "../../packages/blocs/src/*"
       ]
