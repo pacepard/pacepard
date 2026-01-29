@@ -92,13 +92,13 @@ import "./editor.scss"
 
 // --- Content ---
 import { MobileToolbar } from "./mobile-toolbar"
-import { NotionToolbarFloating } from "./toolbar-floating"
+import { PacepardToolbarFloating } from "./toolbar-floating"
 import {
   TocProvider,
   useToc,
 } from "@pacepard/blocs/node/toc-node/context/toc-context"
 
-export interface NotionEditorProps {
+export interface PacepardEditorProps {
   room: string
   placeholder?: string
 }
@@ -111,7 +111,7 @@ export interface EditorProviderProps {
 }
 
 /**
- * Loading spinner component shown while connecting to the notion server
+ * Loading spinner component shown while connecting to the pacepard server
  */
 export function LoadingSpinner({ text = "Connecting..." }: { text?: string }) {
   return (
@@ -172,7 +172,7 @@ export function EditorContentArea() {
     <EditorContent
       editor={editor}
       role="presentation"
-      className="notion-like-editor-content"
+      className="pacepard-like-editor-content"
       style={{
         cursor: isDragging ? "grabbing" : "auto",
       }}
@@ -182,7 +182,7 @@ export function EditorContentArea() {
       <EmojiDropdownMenu />
       <MentionDropdownMenu />
       <SlashDropdownMenu />
-      <NotionToolbarFloating />
+      <PacepardToolbarFloating />
       {createPortal(<MobileToolbar />, document.body)}
     </EditorContent>
   )
@@ -201,7 +201,7 @@ export function EditorProvider(props: EditorProviderProps) {
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: "notion-like-editor",
+        class: "pacepard-like-editor",
       },
     },
     extensions: [
@@ -328,9 +328,9 @@ export function EditorProvider(props: EditorProviderProps) {
   }
 
   return (
-    <div className="notion-like-editor-wrapper">
+    <div className="pacepard-like-editor-wrapper">
       <EditorContext.Provider value={{ editor }}>
-        <div className="notion-like-editor-layout">
+        <div className="pacepard-like-editor-layout">
           <EditorContentArea />
           <TocSidebar topOffset={48} />
         </div>
@@ -354,17 +354,17 @@ export function EditorProvider(props: EditorProviderProps) {
 /**
  * Full editor with all necessary providers, ready to use with just a room ID
  */
-export function Paceparditor({
+export function PacepardEditor({
   room,
   placeholder = "Start writing...",
-}: NotionEditorProps) {
+}: PacepardEditorProps) {
   return (
     <UserProvider>
       <AppProvider>
         <CollabProvider room={room}>
           <AiProvider>
             <TocProvider>
-              <PaceparditorContent placeholder={placeholder} />
+              <PacepardEditorContent placeholder={placeholder} />
             </TocProvider>
           </AiProvider>
         </CollabProvider>
@@ -377,7 +377,7 @@ export function Paceparditor({
  * Internal component that handles the editor loading state.
  * Works without env: only ydoc is required; provider and aiToken can be null (local-only, no AI).
  */
-export function PaceparditorContent({ placeholder }: { placeholder?: string }) {
+export function PacepardEditorContent({ placeholder }: { placeholder?: string }) {
   const { provider, ydoc } = useCollab()
   const { aiToken } = useAi()
 

@@ -1,11 +1,11 @@
 export {
-  NotionEditor,
-  NotionEditorContent,
+  PacepardEditor,
+  PacepardEditorContent,
   EditorProvider,
   EditorContentArea,
   LoadingSpinner,
 } from "./editor"
 export type {
-  NotionEditorProps,
+  PacepardEditorProps,
   EditorProviderProps,
 } from "./editor"

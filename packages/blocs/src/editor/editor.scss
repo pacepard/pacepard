@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 /* Scoped to editor wrapper to avoid clashing with host app (e.g. main app body/#root/Tailwind) */
-.notion-like-editor-wrapper {
+.pacepard-like-editor-wrapper {
   --tt-toolbar-height: 44px;
   --tt-theme-text: var(--tt-gray-light-900);
 
@@ -45,14 +45,14 @@
 
 // Important so the this does not override the editor behaviour
 @media screen and (max-width: 480px) {
-  .notion-like-editor-wrapper {
+  .pacepard-like-editor-wrapper {
     width: 100vw;
     height: 100vh;
     overflow: auto;
   }
 }
 
-.notion-like-editor-layout {
+.pacepard-like-editor-layout {
   --content-width: minmax(auto, 708px);
   --margin-width: minmax(96px, 1fr);
 
@@ -68,18 +68,18 @@
 
 // Mobile: single column layout
 @media screen and (max-width: 1024px) {
-  .notion-like-editor-layout {
+  .pacepard-like-editor-layout {
     --margin-width: minmax(1rem, 1fr);
   }
 }
 
 @media screen and (max-width: 768px) {
-  .notion-like-editor-layout {
+  .pacepard-like-editor-layout {
     display: block;
   }
 }
 
-.notion-like-editor-content {
+.pacepard-like-editor-content {
   grid-column: content-start / content-end;
   width: 100%;
   height: 100%;
@@ -90,19 +90,19 @@
 
 // Mobile fallback
 @media screen and (max-width: 768px) {
-  .notion-like-editor-content {
+  .pacepard-like-editor-content {
     max-width: 768px;
     margin: 0 auto;
   }
 }
 
-.notion-like-editor-content .tiptap.ProseMirror.notion-like-editor {
+.pacepard-like-editor-content .tiptap.ProseMirror.pacepard-like-editor {
   flex: 1;
   padding: 3rem 3rem 30vh;
 }
 
 @media screen and (max-width: 480px) {
-  .notion-like-editor-content .tiptap.ProseMirror.notion-like-editor {
+  .pacepard-like-editor-content .tiptap.ProseMirror.pacepard-like-editor {
     padding: 1.5rem 1.5rem 30vh;
   }
 }

@@ -48,7 +48,7 @@ import {
 // --- UI Utils ---
 import { FloatingElement } from "@pacepard/blocs/utils/floating-element"
 
-export function NotionToolbarFloating() {
+export function PacepardToolbarFloating() {
   const { editor } = usePacepardEditor()
   const isMobile = useIsBreakpoint("max", 480)
   const { lockDragHandle, aiGenerationActive, commentInputVisible } =

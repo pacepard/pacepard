@@ -15,9 +15,9 @@ import { CollaborationUsers } from "./collaboration-users"
 
 export function PaceparditorHeader() {
   return (
-    <header className="notion-like-editor-header">
+    <header className="pacepard-like-editor-header">
       <Spacer />
-      <div className="notion-like-editor-header-actions">
+      <div className="pacepard-like-editor-header-actions">
         <ButtonGroup orientation="horizontal">
           <UndoRedoButton action="undo" />
           <UndoRedoButton action="redo" />

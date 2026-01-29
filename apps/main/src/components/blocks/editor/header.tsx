@@ -62,7 +62,7 @@ const EditorHeader = ({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="text-foreground hover:bg-muted rounded-md gap-1.5"
+                        className="text-foreground hover:bg-muted rounded-md "
                     >
                         <Settings className="h-4 w-4" />
                     </Button>

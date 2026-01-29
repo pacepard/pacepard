@@ -110,7 +110,7 @@ export function canCopyAnchorLink(editor: Editor | null): boolean {
 }
 
 /**
- * Extracts and copies the node ID to clipboard with full URL like Notion
+ * Extracts and copies the node ID to clipboard with full URL like Pacepard
  */
 export async function copyNodeId(
   editor: Editor | null,
