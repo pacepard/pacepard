@@ -1,24 +1,48 @@
 .short-answer-node {
   margin: 1rem 0;
 
-  .short-answer-node__title-wrap {
+  // --- Strict UI: Label / Title (first child heading) ---
+  // Without required: text only. With required: text + inline black asterisk (no space).
+  // Placeholder = light grey; filled = dark grey/black.
+  // First child is the heading (label/title); strict UI for text and required.
+  .short-answer-node__content > *:first-child {
+    position: relative;
     margin-bottom: 0.5rem;
+    margin-top: 0;
+    font-size: 1.25em;
+    font-weight: 700;
+    display: block;
+    color: var(--tt-gray-light-a-800, #1f2937);
+    font-style: inherit;
 
-    // Heading 2 style (match heading-node)
-    h2 {
-      position: relative;
-      color: inherit;
-      font-style: inherit;
-      font-size: 1.25em;
-      font-weight: 700;
-      margin: 0;
+    // Placeholder when empty: light grey "label"
+    &.is-empty::before {
+      content: "label";
+      color: var(--tt-gray-light-a-400, #9ca3af);
     }
+
+    // Required: inline black asterisk immediately after label (no space)
+    &::after {
+      display: none;
+    }
+  }
+
+  &[data-required="true"] .short-answer-node__content > *:first-child::after {
+    display: inline;
+    content: "*";
+    color: #000;
+    margin-left: 0;
   }
 
   .short-answer-node__input-wrap {
     display: block;
     position: relative;
 
+    .short-answer-node__input-inner {
+      position: relative;
+    }
+
+    .short-answer-node__input--with-icon,
     input {
       width: 100%;
       padding: 0.5rem 2.5rem 0.5rem 0.75rem;
@@ -38,21 +62,30 @@
       }
     }
 
-    .short-answer-node__required-badge {
+    /* Required badge: top-right of input, slightly outside the border (per plan) */
+    .short-answer-node__required-badge,
+    .required-badge {
       position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      display: inline-flex;
+      top: -0.25rem;
+      right: -0.25rem;
+      z-index: 1;
+    }
+
+    /* End-of-input icon: inside input at far right, vertically centered (per plan 1b) */
+    .short-answer-node__input-end-icon {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
       align-items: center;
       justify-content: center;
-      width: 1.25rem;
-      height: 1.25rem;
-      border-radius: 50%;
-      background: var(--tt-gray-light-a-200, #e5e7eb);
-      color: var(--tt-gray-light-a-700, #374151);
-      font-size: 0.75rem;
-      font-weight: 600;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      pointer-events: none;
+    }
+    .short-answer-node__input-end-icon-svg {
+      width: 1rem;
+      height: 1rem;
+      color: var(--tt-gray-light-a-400, #9ca3af);
     }
 
     .short-answer-node__error {
@@ -74,15 +107,34 @@
 }
 
 .dark .short-answer-node {
-  .short-answer-node__input-wrap input {
-    border-color: var(--tt-gray-dark-a-300);
-    &::placeholder {
-      color: var(--tt-gray-dark-a-400);
-    }
-    &[aria-invalid="true"] {
-      border-color: var(--tt-red-400);
+  // Label: filled = dark theme text; placeholder = lighter
+  .short-answer-node__content > *:first-child {
+    color: var(--tt-gray-dark-a-200, #e5e7eb);
+    &.is-empty::before {
+      color: var(--tt-gray-dark-a-500, #6b7280);
     }
   }
+  &[data-required="true"] .short-answer-node__content > *:first-child::after {
+    color: var(--tt-gray-dark-a-100, #f3f4f6);
+  }
+
+  .short-answer-node__input-wrap {
+    input {
+      background: var(--tt-gray-dark-a-800, #1f2937);
+      color: var(--tt-gray-dark-a-100, #f3f4f6);
+      border-color: var(--tt-gray-dark-a-300);
+      &::placeholder {
+        color: var(--tt-gray-dark-a-400);
+      }
+      &[aria-invalid="true"] {
+        border-color: var(--tt-red-400);
+      }
+    }
+    .short-answer-node__input-end-icon-svg {
+      color: var(--tt-gray-dark-a-500, #6b7280);
+    }
+  }
+
   .short-answer-node__error {
     color: var(--tt-red-400);
   }

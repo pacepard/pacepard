@@ -47,6 +47,6 @@
       "@pacepard/blocs/lib/*": ["./src/lib/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/_data/countries.json"],
   "exclude": ["node_modules", "dist"]
 }

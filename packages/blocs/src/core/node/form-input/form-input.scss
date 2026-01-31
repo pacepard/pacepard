@@ -1,0 +1,81 @@
+/* Standalone form input nodes: required badge slightly outside top-right; end icon inside right. */
+
+.form-input-wrap {
+  margin: 0.5rem 0;
+  display: block;
+  position: relative;
+
+  .form-input-inner {
+    position: relative;
+  }
+
+  .form-input-field {
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--tt-gray-light-a-300, #d1d5db);
+    background: #fff;
+    font-size: 1rem;
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    &::placeholder {
+      color: var(--tt-gray-light-a-400, #9ca3af);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: var(--tt-red-500, #ef4444);
+    }
+  }
+
+  /* Required badge: top-right of input, slightly outside the border (same as short-answer) */
+  .form-input-required-badge,
+  .required-badge {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    z-index: 1;
+  }
+
+  .form-input-suffix-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .form-input-suffix-icon-svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--tt-gray-light-a-400, #9ca3af);
+  }
+
+  .form-input-error {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--tt-red-600, #dc2626);
+  }
+}
+
+.dark .form-input-wrap {
+  .form-input-field {
+    background: var(--tt-gray-dark-a-800, #1f2937);
+    color: var(--tt-gray-dark-a-100, #f3f4f6);
+    border-color: var(--tt-gray-dark-a-300);
+    &::placeholder {
+      color: var(--tt-gray-dark-a-400);
+    }
+    &[aria-invalid="true"] {
+      border-color: var(--tt-red-400);
+    }
+  }
+  .form-input-suffix-icon-svg {
+    color: var(--tt-gray-dark-a-500, #6b7280);
+  }
+  .form-input-error {
+    color: var(--tt-red-400);
+  }
+}

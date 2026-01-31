@@ -1,0 +1,50 @@
+/* Title node: form section title (H2). Placeholder "Type a question", required badge always. */
+
+.input-title-node-wrap {
+  margin: 1rem 0;
+}
+
+.input-title-node__heading {
+  margin: 0 0 0.5rem;
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--tt-gray-light-a-800, #1f2937);
+  font-style: inherit;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.input-title-node__content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Required badge: inline at end of placeholder/text, scales with title size (1.25em) */
+.input-title-node__required-badge,
+.input-title-node-wrap .required-badge {
+  flex-shrink: 0;
+  margin-left: 0.125rem;
+  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  font-size: 0.6em;
+}
+
+/* Placeholder when empty (data-empty set by NodeView when node.content.size === 0) */
+.input-title-node__heading[data-empty="true"]::before {
+  content: attr(data-placeholder);
+  color: var(--tt-gray-light-a-400, #9ca3af);
+  pointer-events: none;
+  position: relative;
+  left: 0;
+}
+
+.dark .input-title-node__heading {
+  color: var(--tt-gray-dark-a-200, #e5e7eb);
+}
+
+.dark .input-title-node__heading[data-empty="true"]::before {
+  color: var(--tt-gray-dark-a-500, #6b7280);
+}

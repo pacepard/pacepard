@@ -229,13 +229,18 @@
 /* =====================
      PLACEHOLDER
      ===================== */
+/* Default empty block: show placeholder text from data-placeholder if set */
 .is-empty:not(.with-slash)[data-placeholder]:has(
     > .ProseMirror-trailingBreak:only-child
   )::before {
   content: attr(data-placeholder);
 }
 
+/* Slash hint: show "Write, type '/' for commands…" when empty (with or without data-placeholder) */
 .is-empty.with-slash[data-placeholder]:has(
+    > .ProseMirror-trailingBreak:only-child
+  )::before,
+.is-empty.with-slash:has(
     > .ProseMirror-trailingBreak:only-child
   )::before {
   content: "Write, type '/' for commands…";
@@ -244,7 +249,10 @@
 
 .is-empty[data-placeholder]:has(
     > .ProseMirror-trailingBreak:only-child
-  ):before {
+  ):before,
+.is-empty.with-slash:has(
+    > .ProseMirror-trailingBreak:only-child
+  )::before {
   pointer-events: none;
   height: 0;
   position: absolute;
@@ -254,7 +262,8 @@
   right: 0;
 }
 
-.is-empty[data-placeholder]:has(> .ProseMirror-trailingBreak):before {
+.is-empty[data-placeholder]:has(> .ProseMirror-trailingBreak):before,
+.is-empty.with-slash:has(> .ProseMirror-trailingBreak):before {
   color: var(--placeholder-color);
 }
 

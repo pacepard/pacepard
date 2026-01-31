@@ -4,10 +4,10 @@
  */
 
 /** HTML input type for the short-answer field */
-export type InputType = "text" | "email" | "number" | "url"
+export type InputType = "text" | "email" | "number" | "url" | "tel"
 
 /** HTML inputmode for mobile keyboard */
-export type InputMode = "text" | "email" | "numeric"
+export type InputMode = "text" | "email" | "numeric" | "tel"
 
 /** Conditional logic stored as JSON-serializable shape (minimal; no backend evaluation in this phase) */
 export type ConditionalLogic = string | Record<string, unknown> | null
@@ -38,6 +38,8 @@ export function deriveInputMode(
       return "numeric"
     case "email":
       return "email"
+    case "tel":
+      return "tel"
     case "text":
     case "url":
     default:

@@ -46,11 +46,38 @@ export { NodeBackground } from "./core/extenstions/node-background-extension"
 export { NodeAlignment } from "./core/extenstions/node-alignment-extension"
 export { TocNode } from "./core/node/toc-node/extensions/toc-node-extension"
 export { ImageUploadNode } from "./core/node/image-upload-node/image-upload-node-extension"
+export { ShortAnswerInputNode } from "./core/node/short-answer-node/short-answer-input-node-extension"
 export { ShortAnswerNode } from "./core/node/short-answer-node/short-answer-node-extension"
+export {
+  ShortAnswerTextNode,
+  ShortAnswerEmailNode,
+  ShortAnswerNumberNode,
+  ShortAnswerUrlNode,
+  ShortAnswerTelNode,
+} from "./core/node/short-answer-node/short-answer-typed-node-extension"
+export { InputTitleNode } from "./core/node/input-title-node/input-title-node-extension"
+export { InputLabelNode } from "./core/node/input-label-node/input-label-node-extension"
+export {
+  FormInputTextNode,
+  FormInputEmailNode,
+  FormInputNumberNode,
+  FormInputUrlNode,
+  FormInputTelNode,
+} from "./core/node/form-input/form-input-extension"
+export type { FormInputAttrs } from "./core/node/form-input/form-input-types"
 export type { ShortAnswerAttrs, InputType, InputMode } from "./core/node/short-answer-node/short-answer-types"
 export { TableKit } from "./core/node/table-node/extensions/table-node-extension"
 export { TableHandleExtension } from "./core/node/table-node/extensions/table-handle/table-handle"
 export { ListNormalizationExtension } from "./core/extenstions/list-normalization-extension"
+export {
+  CodeBlockShiki,
+  type CodeBlockShikiOptions,
+} from "./core/node/code-block-node"
+export {
+  supportedLanguages,
+  getLanguageId,
+  type SupportedLanguage,
+} from "./core/node/code-block-node"
 
 // ============================================================================
 // Components
@@ -88,6 +115,13 @@ export type { CollabContextValue } from "./contexts/collab-context"
 export { useCollaboration } from "./contexts/collab-context"
 export { AiProvider, useAi, useAiToken } from "./contexts/ai-context"
 export type { AiContextValue } from "./contexts/ai-context"
+
+// ============================================================================
+// Data (flags and country codes)
+// ============================================================================
+
+export type { Country } from "./_data/countries"
+export { readCountries, getCountry, listCountries } from "./_data/countries"
 
 // ============================================================================
 // Lib

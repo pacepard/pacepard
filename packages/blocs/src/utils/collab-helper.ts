@@ -17,6 +17,18 @@ const NODE_TYPE_LABELS: Record<string, string> = {
   table: "Table",
   tocNode: "Table of contents",
   shortAnswer: "Short answer",
+  shortAnswerText: "Short answer (text)",
+  shortAnswerEmail: "Short answer (email)",
+  shortAnswerNumber: "Short answer (number)",
+  shortAnswerUrl: "Short answer (URL)",
+  shortAnswerTel: "Short answer (phone)",
+  formInputText: "Input text",
+  formInputEmail: "Input email",
+  formInputNumber: "Input number",
+  formInputUrl: "Input URL",
+  formInputTel: "Input phone",
+  inputTitle: "Title",
+  inputLabel: "Label",
 }
 
 

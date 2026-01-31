@@ -18,7 +18,7 @@ export interface NodeChangeData {
 export interface MenuItemProps {
   icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>
   label: string
-  onClick: () => void
+  onClick?: (e?: React.MouseEvent<HTMLElement>) => void
   disabled?: boolean
   isActive?: boolean
   shortcutBadge?: React.ReactNode

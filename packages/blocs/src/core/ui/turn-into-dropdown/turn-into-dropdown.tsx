@@ -143,9 +143,49 @@ function renderBlockTypeButton(
         </DropdownMenuItem>
       )
 
+    case "inputTitle":
+      return (
+        <DropdownMenuItem key={key} asChild>
+          <InputTitleTurnIntoButton text={option.label} />
+        </DropdownMenuItem>
+      )
+
+    case "inputLabel":
+      return (
+        <DropdownMenuItem key={key} asChild>
+          <InputLabelTurnIntoButton text={option.label} />
+        </DropdownMenuItem>
+      )
+
     default:
       return null
   }
+}
+
+function InputTitleTurnIntoButton({ text }: { text: string }) {
+  const { editor } = usePacepardEditor()
+  return (
+    <Button
+      type="button"
+      data-style="ghost"
+      onClick={() => editor?.chain().focus().setInputTitle({ level: 2 }).run()}
+    >
+      <span className="tiptap-button-text">{text}</span>
+    </Button>
+  )
+}
+
+function InputLabelTurnIntoButton({ text }: { text: string }) {
+  const { editor } = usePacepardEditor()
+  return (
+    <Button
+      type="button"
+      data-style="ghost"
+      onClick={() => editor?.chain().focus().setInputLabel({ level: 4 }).run()}
+    >
+      <span className="tiptap-button-text">{text}</span>
+    </Button>
+  )
 }
 
 export interface TurnIntoDropdownProps

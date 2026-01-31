@@ -17,6 +17,11 @@ import { AiSparklesIcon } from "@/core/icons/ai-sparkles-icon"
 import { MinusIcon } from "@/core/icons/minus-icon"
 import { TypeIcon } from "@/core/icons/type-icon"
 import { AtSignIcon } from "@/core/icons/at-sign-icon"
+import { LinkIcon } from "@/core/icons/link-icon"
+import { HashIcon } from "@/core/icons/hash-icon"
+import { PhoneIcon } from "@/core/icons/phone-icon"
+import { TagIcon } from "@/core/icons/tag-icon"
+import { HeadingIcon } from "@/core/icons/heading-icon"
 import { SmilePlusIcon } from "@/core/icons/smile-plus-icon"
 import { TableIcon } from "@/core/icons/table-icon"
 import { ListIndentedIcon } from "@/core/icons/list-indented-icon"
@@ -193,21 +198,81 @@ const texts = {
     title: "Email",
     subtext: "Email address field",
     keywords: ["email", "short answer"],
-    badge: TypeIcon,
+    badge: AtSignIcon,
     group: "Insert",
   },
   short_answer_number: {
     title: "Number",
     subtext: "Numeric input field",
     keywords: ["number", "numeric", "short answer"],
-    badge: TypeIcon,
+    badge: HashIcon,
     group: "Insert",
   },
   short_answer_url: {
     title: "URL",
     subtext: "URL / link field",
     keywords: ["url", "link", "short answer"],
+    badge: LinkIcon,
+    group: "Insert",
+  },
+  short_answer_phone: {
+    title: "Phone",
+    subtext: "Phone number field",
+    keywords: ["phone", "tel", "short answer"],
+    badge: PhoneIcon,
+    group: "Insert",
+  },
+
+  // Standalone form input (input box only, separate node)
+  form_input_text: {
+    title: "Input text",
+    subtext: "Standalone text input field",
+    keywords: ["input", "text", "form", "field"],
     badge: TypeIcon,
+    group: "Insert",
+  },
+  form_input_email: {
+    title: "Input email",
+    subtext: "Standalone email input field",
+    keywords: ["input", "email", "form", "field"],
+    badge: AtSignIcon,
+    group: "Insert",
+  },
+  form_input_number: {
+    title: "Input number",
+    subtext: "Standalone number input field",
+    keywords: ["input", "number", "form", "field"],
+    badge: HashIcon,
+    group: "Insert",
+  },
+  form_input_url: {
+    title: "Input URL",
+    subtext: "Standalone URL input field",
+    keywords: ["input", "url", "link", "form", "field"],
+    badge: LinkIcon,
+    group: "Insert",
+  },
+  form_input_phone: {
+    title: "Input phone",
+    subtext: "Standalone phone input field",
+    keywords: ["input", "phone", "tel", "form", "field"],
+    badge: PhoneIcon,
+    group: "Insert",
+  },
+
+  // Form labels (heading-like)
+  input_title: {
+    title: "Title",
+    subtext: "Form section title (heading 2)",
+    keywords: ["title", "form", "heading", "section"],
+    badge: HeadingIcon,
+    group: "Insert",
+  },
+  input_label: {
+    title: "Label",
+    subtext: "Form field label (heading 4)",
+    keywords: ["label", "form", "heading", "field"],
+    badge: TagIcon,
     group: "Insert",
   },
 }
@@ -387,61 +452,89 @@ const getItemImplementations = () => {
       },
     },
 
-    // Short answer
+    // Short answer (typed nodes: one node per input type)
     short_answer: {
-      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      check: (editor: Editor) => isNodeInSchema("shortAnswerText", editor),
       action: ({ editor }: { editor: Editor }) => {
-        editor
-          .chain()
-          .focus()
-          .insertShortAnswer({
-            inputType: "text",
-            inputMode: "text",
-            placeholder: "Type your answer",
-          })
-          .run()
+        editor.chain().focus().insertShortAnswerText({ placeholder: "Type a question" }).run()
       },
     },
     short_answer_email: {
-      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      check: (editor: Editor) => isNodeInSchema("shortAnswerEmail", editor),
       action: ({ editor }: { editor: Editor }) => {
-        editor
-          .chain()
-          .focus()
-          .insertShortAnswer({
-            inputType: "email",
-            inputMode: "email",
-            placeholder: "name@example.com",
-          })
-          .run()
+        editor.chain().focus().insertShortAnswerEmail({ placeholder: "name@example.com" }).run()
       },
     },
     short_answer_number: {
-      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      check: (editor: Editor) => isNodeInSchema("shortAnswerNumber", editor),
       action: ({ editor }: { editor: Editor }) => {
-        editor
-          .chain()
-          .focus()
-          .insertShortAnswer({
-            inputType: "number",
-            inputMode: "numeric",
-            placeholder: "0",
-          })
-          .run()
+        editor.chain().focus().insertShortAnswerNumber({ placeholder: "0" }).run()
       },
     },
     short_answer_url: {
-      check: (editor: Editor) => isNodeInSchema("shortAnswer", editor),
+      check: (editor: Editor) => isNodeInSchema("shortAnswerUrl", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().insertShortAnswerUrl({ placeholder: "https://example.com" }).run()
+      },
+    },
+    short_answer_phone: {
+      check: (editor: Editor) => isNodeInSchema("shortAnswerTel", editor),
       action: ({ editor }: { editor: Editor }) => {
         editor
           .chain()
           .focus()
-          .insertShortAnswer({
-            inputType: "url",
-            inputMode: "text",
-            placeholder: "https://example.com",
-          })
+          .insertShortAnswerTel({ placeholder: "+1 (555) 000-0000" })
           .run()
+      },
+    },
+
+    // Standalone form input nodes (input box only)
+    form_input_text: {
+      check: (editor: Editor) => isNodeInSchema("formInputText", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().insertFormInputText({ placeholder: "Type a question" }).run()
+      },
+    },
+    form_input_email: {
+      check: (editor: Editor) => isNodeInSchema("formInputEmail", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().insertFormInputEmail({ placeholder: "name@example.com" }).run()
+      },
+    },
+    form_input_number: {
+      check: (editor: Editor) => isNodeInSchema("formInputNumber", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().insertFormInputNumber({ placeholder: "0" }).run()
+      },
+    },
+    form_input_url: {
+      check: (editor: Editor) => isNodeInSchema("formInputUrl", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().insertFormInputUrl({ placeholder: "https://example.com" }).run()
+      },
+    },
+    form_input_phone: {
+      check: (editor: Editor) => isNodeInSchema("formInputTel", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor
+          .chain()
+          .focus()
+          .insertFormInputTel({ placeholder: "+1 (555) 000-0000" })
+          .run()
+      },
+    },
+
+    // Form labels (Title, Label)
+    input_title: {
+      check: (editor: Editor) => isNodeInSchema("inputTitle", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().setInputTitle({ level: 2 }).run()
+      },
+    },
+    input_label: {
+      check: (editor: Editor) => isNodeInSchema("inputLabel", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().setInputLabel({ level: 4 }).run()
       },
     },
   }

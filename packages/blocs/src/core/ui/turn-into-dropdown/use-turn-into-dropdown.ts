@@ -24,6 +24,8 @@ export const TURN_INTO_BLOCKS = [
   "blockquote",
   "codeBlock",
   "shortAnswer",
+  "inputTitle",
+  "inputLabel",
 ]
 
 /**
@@ -111,6 +113,16 @@ export const blockTypeOptions = [
     type: "shortAnswer",
     label: "Short answer",
     isActive: (editor: Editor) => editor.isActive("shortAnswer"),
+  },
+  {
+    type: "inputTitle",
+    label: "Title",
+    isActive: (editor: Editor) => editor.isActive("inputTitle"),
+  },
+  {
+    type: "inputLabel",
+    label: "Label",
+    isActive: (editor: Editor) => editor.isActive("inputLabel"),
   },
 ]
 

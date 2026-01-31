@@ -410,21 +410,60 @@ const SHORT_ANSWER_INPUT_TYPES: { value: InputType; label: string }[] = [
   { value: "email", label: "Email" },
   { value: "number", label: "Number" },
   { value: "url", label: "URL" },
+  { value: "tel", label: "Phone" },
 ]
+
+const SHORT_ANSWER_NODE_NAMES = [
+  "shortAnswer",
+  "shortAnswerText",
+  "shortAnswerEmail",
+  "shortAnswerNumber",
+  "shortAnswerUrl",
+  "shortAnswerTel",
+] as const
+
+const TYPED_NODE_TO_INPUT_TYPE: Record<string, InputType> = {
+  shortAnswerText: "text",
+  shortAnswerEmail: "email",
+  shortAnswerNumber: "number",
+  shortAnswerUrl: "url",
+  shortAnswerTel: "tel",
+}
 
 function ShortAnswerMobileGroup({ editor }: DropdownMenuActionsProps) {
   if (!editor) return null
   const { selection } = editor.state
-  if (
-    !(selection instanceof NodeSelection) ||
-    selection.node.type.name !== "shortAnswer"
-  )
-    return null
+  if (!(selection instanceof NodeSelection)) return null
+  const nodeName = selection.node.type.name
+  if (!(SHORT_ANSWER_NODE_NAMES as readonly string[]).includes(nodeName)) return null
   const attrs = selection.node.attrs as ShortAnswerAttrs
-  const inputType = (attrs.inputType ?? "text") as InputType
+  const inputType =
+    nodeName === "shortAnswer"
+      ? (attrs.inputType ?? "text") as InputType
+      : TYPED_NODE_TO_INPUT_TYPE[nodeName] ?? "text"
   const update = (next: Partial<ShortAnswerAttrs>) => {
-    editor.chain().focus().updateAttributes("shortAnswer", next).run()
+    editor.chain().focus().updateAttributes(nodeName, next).run()
   }
+  const convertTo = (targetType: InputType) => {
+    const targetNodeName =
+      targetType === "text"
+        ? "shortAnswerText"
+        : "shortAnswer" + targetType.charAt(0).toUpperCase() + targetType.slice(1)
+    const { state } = editor
+    const schema = state.schema
+    const targetNodeType = schema.nodes[targetNodeName]
+    if (!targetNodeType) return
+    const node = selection.node
+    const from = selection.from
+    const to = selection.to
+    const newNode = targetNodeType.create(
+      { ...node.attrs, inputType: targetType },
+      node.content
+    )
+    const tr = state.tr.replaceWith(from, to, newNode)
+    editor.view.dispatch(tr)
+  }
+  const isTypedNode = nodeName !== "shortAnswer"
   return (
     <>
       <Separator orientation="horizontal" />
@@ -436,7 +475,10 @@ function ShortAnswerMobileGroup({ editor }: DropdownMenuActionsProps) {
               <Button
                 data-style="ghost"
                 data-active-state={inputType === value ? "on" : "off"}
-                onClick={() => update({ inputType: value })}
+                onClick={() => {
+                  if (isTypedNode) convertTo(value)
+                  else update({ inputType: value })
+                }}
               >
                 <span className="tiptap-button-text">{label}</span>
               </Button>

@@ -3,9 +3,9 @@ import { memo } from "react"
 type SvgProps = React.ComponentPropsWithoutRef<"svg">
 
 /**
- * Heading/title icon (Lucide "heading" style): for Title block.
+ * Tag/label icon (Lucide "tag" style): for Label block.
  */
-export const HeadingIcon = memo(({ className, ...props }: SvgProps) => {
+export const TagIcon = memo(({ className, ...props }: SvgProps) => {
   return (
     <svg
       width="24"
@@ -20,11 +20,10 @@ export const HeadingIcon = memo(({ className, ...props }: SvgProps) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <path d="M6 4v16" />
-      <path d="M18 4v16" />
-      <path d="M6 12h12" />
+      <path d="M12 2H2v10l9.244 9.244a1.5 1.5 0 0 0 2.122 0L22 12.244V2H12Z" />
+      <path d="M7 7h.01" />
     </svg>
   )
 })
 
-HeadingIcon.displayName = "HeadingIcon"
+TagIcon.displayName = "TagIcon"

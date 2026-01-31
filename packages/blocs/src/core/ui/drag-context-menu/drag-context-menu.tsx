@@ -77,7 +77,6 @@ import { ChevronRightIcon } from "@/core/icons/chevron-right-icon"
 import { Repeat2Icon } from "@/core/icons/repeat-2-icon"
 import { TrashIcon } from "@/core/icons/trash-icon"
 import { TypeIcon } from "@/core/icons/type-icon"
-import { CheckIcon } from "@/core/icons/check-icon"
 import "./drag-context-menu.scss"
 import { Label } from "@/core/primitives/label"
 import { useTocShowTitle } from "@/core/node/toc-node/ui/toc-show-title-button"
@@ -85,7 +84,18 @@ import { useShortAnswer } from "@/core/ui/short-answer-button/use-short-answer"
 import { isNodeTypeSelected } from "@/utils/base-helper"
 import { NodeSelection } from "@tiptap/pm/state"
 import type { ShortAnswerAttrs, InputType } from "@/core/node/short-answer-node/short-answer-types"
+import type { FormInputAttrs } from "@/core/node/form-input/form-input-types"
 import { Input } from "@/core/primitives/input"
+import { Switch } from "@/core/primitives/switch"
+import "@/core/primitives/switch/switch.scss"
+
+const FORM_INPUT_NODE_NAMES = [
+  "formInputText",
+  "formInputEmail",
+  "formInputNumber",
+  "formInputUrl",
+  "formInputTel",
+] as const
 
 const useNodeTransformActions = () => {
   const text = useText()
@@ -142,7 +152,11 @@ const BaseMenuItem: React.FC<MenuItemProps> = ({
 }) => (
   <MenuItem
     render={
-      <Button data-style="ghost" data-active-state={isActive ? "on" : "off"} />
+      <Button
+        type="button"
+        data-style="ghost"
+        data-active-state={isActive ? "on" : "off"}
+      />
     }
     onClick={onClick}
     disabled={disabled}
@@ -269,234 +283,406 @@ const INPUT_TYPE_OPTIONS: { value: InputType; label: string }[] = [
   { value: "email", label: "Email" },
   { value: "number", label: "Number" },
   { value: "url", label: "URL" },
+  { value: "tel", label: "Phone" },
 ]
+
+const TYPED_NODE_TO_INPUT_TYPE: Record<string, InputType> = {
+  shortAnswerText: "text",
+  shortAnswerEmail: "email",
+  shortAnswerNumber: "number",
+  shortAnswerUrl: "url",
+  shortAnswerTel: "tel",
+}
+
+const SHORT_ANSWER_NODE_NAMES = [
+  "shortAnswer",
+  "shortAnswerText",
+  "shortAnswerEmail",
+  "shortAnswerNumber",
+  "shortAnswerUrl",
+  "shortAnswerTel",
+] as const
+
+function getInputTypeFromNodeName(nodeName: string): InputType {
+  return TYPED_NODE_TO_INPUT_TYPE[nodeName] ?? (nodeName === "shortAnswer" ? "text" : "text")
+}
 
 const ShortAnswerPropertyGroup: React.FC = () => {
   const { editor } = usePacepardEditor()
 
-  if (!editor || !isNodeTypeSelected(editor, ["shortAnswer"])) return null
+  if (!editor || !isNodeTypeSelected(editor, [...SHORT_ANSWER_NODE_NAMES])) return null
 
   const { selection } = editor.state
-  const attrs: ShortAnswerAttrs =
-    selection instanceof NodeSelection && selection.node.type.name === "shortAnswer"
-      ? (selection.node.attrs as ShortAnswerAttrs)
-      : {}
+  if (!(selection instanceof NodeSelection)) return null
+
+  const nodeName = selection.node.type.name
+  const attrs = (selection.node.attrs ?? {}) as ShortAnswerAttrs
+  const inputType =
+    nodeName === "shortAnswer"
+      ? (attrs.inputType ?? "text") as InputType
+      : getInputTypeFromNodeName(nodeName)
 
   const update = useCallback(
     (next: Partial<ShortAnswerAttrs>) => {
-      editor.chain().focus().updateAttributes("shortAnswer", next).run()
+      editor.chain().focus().updateAttributes(nodeName, next).run()
     },
-    [editor]
+    [editor, nodeName]
   )
 
-  const inputType = (attrs.inputType ?? "text") as InputType
+  const convertTo = useCallback(
+    (targetType: InputType) => {
+      const targetNodeName =
+        targetType === "text"
+          ? "shortAnswerText"
+          : "shortAnswer" + targetType.charAt(0).toUpperCase() + targetType.slice(1)
+      const { state } = editor
+      const schema = state.schema
+      const targetNodeType = schema.nodes[targetNodeName]
+      if (!targetNodeType) return
+      const node = selection.node
+      const from = selection.from
+      const to = selection.to
+      const newNode = targetNodeType.create(
+        { ...node.attrs, inputType: targetType },
+        node.content
+      )
+      const tr = state.tr.replaceWith(from, to, newNode)
+      editor.view.dispatch(tr)
+    },
+    [editor, selection]
+  )
+
+  const isTypedNode = nodeName !== "shortAnswer"
   const isNumber = inputType === "number"
-  const hasMinChars = attrs.minChars != null
-  const hasMaxChars = attrs.maxChars != null
-  const hasDefaultAnswer = attrs.defaultAnswer != null
+  const currentInputTypeLabel = INPUT_TYPE_OPTIONS.find((opt) => opt.value === inputType)?.label ?? "Short answer"
 
   return (
-    <MenuGroup>
-      <div className="short-answer-property-group">
-        <div className="short-answer-property-row">
-          <span className="short-answer-property-label">Required</span>
-          <button
-            type="button"
-            className="short-answer-property-toggle"
-            data-state={attrs.required ? "on" : "off"}
-            onClick={() => update({ required: !attrs.required })}
-            aria-label={attrs.required ? "Required (on)" : "Required (off)"}
-          />
-        </div>
+    <MenuGroup className="short-answer-property-group">
+      <MenuGroupLabel>Short answer</MenuGroupLabel>
 
-        <div className="short-answer-property-row">
-          <span className="short-answer-property-label">Default answer</span>
-          <button
-            type="button"
-            className="short-answer-property-toggle"
-            data-state={hasDefaultAnswer ? "on" : "off"}
-            onClick={() =>
-              update({
-                defaultAnswer: hasDefaultAnswer ? null : "",
-              })
+      {/* Input type dropdown (legacy shortAnswer) or Convert to (typed nodes) */}
+      <Menu
+        placement="right"
+        trigger={
+          <MenuItem
+            render={
+              <MenuButton
+                render={
+                  <Button data-style="ghost" className="property-row">
+                    <span className="property-label">
+                      {isTypedNode ? "Convert to" : "Input type"}
+                    </span>
+                    <Spacer />
+                    <span className="property-value">{currentInputTypeLabel}</span>
+                    <ChevronRightIcon className="tiptap-button-icon" />
+                  </Button>
+                }
+              />
             }
-            aria-label={hasDefaultAnswer ? "Default answer (on)" : "Default answer (off)"}
           />
-        </div>
-        {hasDefaultAnswer && (
-          <div className="short-answer-property-input-wrap">
-            <Input
-              type="text"
-              value={attrs.defaultAnswer ?? ""}
-              placeholder="Optional"
-              onChange={(e) => update({ defaultAnswer: e.target.value || null })}
-            />
-          </div>
-        )}
-
-        {!isNumber && (
-          <>
-            <div className="short-answer-property-row">
-              <span className="short-answer-property-label">Min characters</span>
-              <button
-                type="button"
-                className="short-answer-property-toggle"
-                data-state={hasMinChars ? "on" : "off"}
-                onClick={() =>
-                  update({
-                    minChars: hasMinChars ? null : 0,
-                  })
-                }
-                aria-label={hasMinChars ? "Min characters (on)" : "Min characters (off)"}
+        }
+      >
+        <MenuContent portal>
+          <ComboboxList>
+            {(isTypedNode
+              ? INPUT_TYPE_OPTIONS.filter((opt) => opt.value !== inputType)
+              : INPUT_TYPE_OPTIONS
+            ).map(({ value, label }) => (
+              <BaseMenuItem
+                key={value}
+                icon={TypeIcon}
+                label={label}
+                isActive={!isTypedNode && inputType === value}
+                disabled={false}
+                onClick={(e?: React.MouseEvent) => {
+                  e?.preventDefault()
+                  e?.stopPropagation()
+                  if (isTypedNode) {
+                    convertTo(value)
+                  } else {
+                    update({ inputType: value })
+                  }
+                }}
               />
-            </div>
-            {hasMinChars && (
-              <div className="short-answer-property-input-wrap">
-                <Input
-                  type="number"
-                  min={0}
-                  value={attrs.minChars ?? ""}
-                  placeholder="—"
-                  onChange={(e) => {
-                    const v = e.target.value
-                    update({ minChars: v === "" ? null : Number(v) })
-                  }}
-                />
-              </div>
-            )}
-            <div className="short-answer-property-row">
-              <span className="short-answer-property-label">Max characters</span>
-              <button
-                type="button"
-                className="short-answer-property-toggle"
-                data-state={hasMaxChars ? "on" : "off"}
-                onClick={() =>
-                  update({
-                    maxChars: hasMaxChars ? null : 100,
-                  })
-                }
-                aria-label={hasMaxChars ? "Max characters (on)" : "Max characters (off)"}
-              />
-            </div>
-            {hasMaxChars && (
-              <div className="short-answer-property-input-wrap">
-                <Input
-                  type="number"
-                  min={0}
-                  value={attrs.maxChars ?? ""}
-                  placeholder="—"
-                  onChange={(e) => {
-                    const v = e.target.value
-                    update({ maxChars: v === "" ? null : Number(v) })
-                  }}
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        {isNumber && (
-          <>
-            <div className="short-answer-property-row">
-              <span className="short-answer-property-label">Min value</span>
-              <button
-                type="button"
-                className="short-answer-property-toggle"
-                data-state={attrs.minValue != null ? "on" : "off"}
-                onClick={() =>
-                  update({
-                    minValue: attrs.minValue != null ? null : 0,
-                  })
-                }
-              />
-            </div>
-            {attrs.minValue != null && (
-              <div className="short-answer-property-input-wrap">
-                <Input
-                  type="number"
-                  value={attrs.minValue ?? ""}
-                  placeholder="—"
-                  onChange={(e) => {
-                    const v = e.target.value
-                    update({ minValue: v === "" ? null : Number(v) })
-                  }}
-                />
-              </div>
-            )}
-            <div className="short-answer-property-row">
-              <span className="short-answer-property-label">Max value</span>
-              <button
-                type="button"
-                className="short-answer-property-toggle"
-                data-state={attrs.maxValue != null ? "on" : "off"}
-                onClick={() =>
-                  update({
-                    maxValue: attrs.maxValue != null ? null : 100,
-                  })
-                }
-              />
-            </div>
-            {attrs.maxValue != null && (
-              <div className="short-answer-property-input-wrap">
-                <Input
-                  type="number"
-                  value={attrs.maxValue ?? ""}
-                  placeholder="—"
-                  onChange={(e) => {
-                    const v = e.target.value
-                    update({ maxValue: v === "" ? null : Number(v) })
-                  }}
-                />
-              </div>
-            )}
-          </>
-        )}
-
-        <div className="short-answer-property-row">
-          <span className="short-answer-property-label">Hide</span>
-          <button
-            type="button"
-            className="short-answer-property-toggle"
-            data-state={attrs.hidden ? "on" : "off"}
-            onClick={() => update({ hidden: !attrs.hidden })}
-            aria-label={attrs.hidden ? "Hidden (on)" : "Hidden (off)"}
-          />
-        </div>
-      </div>
+            ))}
+          </ComboboxList>
+        </MenuContent>
+      </Menu>
 
       <Separator orientation="horizontal" />
 
+      {/* Required toggle */}
+      <div
+        className="property-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Required</Label>
+        <Switch
+          checked={!!attrs.required}
+          onCheckedChange={(checked: boolean) => update({ required: checked })}
+        />
+      </div>
+
+      {/* Default answer toggle and input */}
+      <div
+        className="property-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Default answer</Label>
+        <Switch
+          checked={attrs.defaultAnswer != null}
+          onCheckedChange={(checked: boolean) => {
+            if (!checked) {
+              update({ defaultAnswer: null })
+            } else if (attrs.defaultAnswer == null) {
+              update({ defaultAnswer: "" })
+            }
+          }}
+        />
+      </div>
+      {attrs.defaultAnswer != null && (
+        <div className="property-input-row">
+          <Input
+            type="text"
+            value={attrs.defaultAnswer ?? ""}
+            placeholder="Optional"
+            onChange={(e) => update({ defaultAnswer: e.target.value || null })}
+            className="short-answer-property-input"
+          />
+        </div>
+      )}
+
+      {/* Min/Max characters (for text/email/url) */}
+      {!isNumber && (
+        <>
+          <div
+            className="property-row"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Label className="property-label">Min characters</Label>
+            <Switch
+              checked={attrs.minChars != null}
+              onCheckedChange={(checked: boolean) => {
+                if (!checked) {
+                  update({ minChars: null })
+                }
+              }}
+            />
+          </div>
+          {attrs.minChars != null && (
+            <div className="property-input-row">
+              <Input
+                type="number"
+                min={0}
+                value={attrs.minChars ?? ""}
+                placeholder="—"
+                onChange={(e) => {
+                  const v = e.target.value
+                  update({ minChars: v === "" ? null : Number(v) })
+                }}
+                className="short-answer-property-input"
+                onBlur={(e) => {
+                  if (e.target.value === "") {
+                    update({ minChars: null })
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          <div
+            className="property-row"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Label className="property-label">Max characters</Label>
+            <Switch
+              checked={attrs.maxChars != null}
+              onCheckedChange={(checked: boolean) => {
+                if (!checked) {
+                  update({ maxChars: null })
+                }
+              }}
+            />
+          </div>
+          {attrs.maxChars != null && (
+            <div className="property-input-row">
+              <Input
+                type="number"
+                min={0}
+                value={attrs.maxChars ?? ""}
+                placeholder="—"
+                onChange={(e) => {
+                  const v = e.target.value
+                  update({ maxChars: v === "" ? null : Number(v) })
+                }}
+                className="short-answer-property-input"
+                onBlur={(e) => {
+                  if (e.target.value === "") {
+                    update({ maxChars: null })
+                  }
+                }}
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Min/Max value (for number) */}
+      {isNumber && (
+        <>
+          <div
+            className="property-row"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Label className="property-label">Min value</Label>
+            <Switch
+              checked={attrs.minValue != null}
+              onCheckedChange={(checked: boolean) => {
+                if (!checked) {
+                  update({ minValue: null })
+                }
+              }}
+            />
+          </div>
+          {attrs.minValue != null && (
+            <div className="property-input-row">
+              <Input
+                type="number"
+                value={attrs.minValue ?? ""}
+                placeholder="—"
+                onChange={(e) => {
+                  const v = e.target.value
+                  update({ minValue: v === "" ? null : Number(v) })
+                }}
+                className="short-answer-property-input"
+                onBlur={(e) => {
+                  if (e.target.value === "") {
+                    update({ minValue: null })
+                  }
+                }}
+              />
+            </div>
+          )}
+
+          <div
+            className="property-row"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Label className="property-label">Max value</Label>
+            <Switch
+              checked={attrs.maxValue != null}
+              onCheckedChange={(checked: boolean) => {
+                if (!checked) {
+                  update({ maxValue: null })
+                }
+              }}
+            />
+          </div>
+          {attrs.maxValue != null && (
+            <div className="property-input-row">
+              <Input
+                type="number"
+                value={attrs.maxValue ?? ""}
+                placeholder="—"
+                onChange={(e) => {
+                  const v = e.target.value
+                  update({ maxValue: v === "" ? null : Number(v) })
+                }}
+                className="short-answer-property-input"
+                onBlur={(e) => {
+                  if (e.target.value === "") {
+                    update({ maxValue: null })
+                  }
+                }}
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      <Separator orientation="horizontal" />
+
+      {/* Hide toggle */}
+      <div
+        className="property-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Hide</Label>
+        <Switch
+          checked={!!attrs.hidden}
+          onCheckedChange={(checked: boolean) => update({ hidden: checked })}
+        />
+      </div>
+
+      {/* Add conditional logic */}
       <BaseMenuItem
         icon={TypeIcon}
         label="Add conditional logic"
         disabled={false}
-        onClick={() => update({ conditionalLogic: attrs.conditionalLogic ?? {} })}
+        onClick={(e?: React.MouseEvent<HTMLElement>) => {
+          e?.preventDefault()
+          e?.stopPropagation()
+          update({ conditionalLogic: attrs.conditionalLogic ?? {} })
+        }}
       />
+    </MenuGroup>
+  )
+}
 
-      <SubMenuTrigger icon={Repeat2Icon} label="Turn into">
-        <MenuGroup>
-          <MenuGroupLabel>Turn into</MenuGroupLabel>
-          {INPUT_TYPE_OPTIONS.map(({ value, label }) => (
-            <MenuItem
-              key={value}
-              render={
-                <Button
-                  data-style="ghost"
-                  data-active-state={inputType === value ? "on" : "off"}
-                />
-              }
-              onClick={() => update({ inputType: value })}
-            >
-              {inputType === value ? (
-                <CheckIcon className="tiptap-button-icon" />
-              ) : (
-                <span className="tiptap-button-icon" style={{ width: "1rem", height: "1rem", display: "inline-block" }} aria-hidden="true" />
-              )}
-              <span className="tiptap-button-text">{label}</span>
-            </MenuItem>
-          ))}
-        </MenuGroup>
-      </SubMenuTrigger>
+/** Property group for standalone form input nodes (formInputText, formInputEmail, etc.). Required switch adds the required badge. */
+const FormInputPropertyGroup: React.FC = () => {
+  const { editor } = usePacepardEditor()
+
+  if (!editor || !isNodeTypeSelected(editor, [...FORM_INPUT_NODE_NAMES])) return null
+
+  const { selection } = editor.state
+  if (!(selection instanceof NodeSelection)) return null
+
+  const nodeName = selection.node.type.name
+  const attrs = (selection.node.attrs ?? {}) as FormInputAttrs
+
+  const update = useCallback(
+    (next: Partial<FormInputAttrs>) => {
+      editor.chain().focus().updateAttributes(nodeName, next).run()
+    },
+    [editor, nodeName]
+  )
+
+  return (
+    <MenuGroup className="form-input-property-group">
+      <MenuGroupLabel>Form input</MenuGroupLabel>
+      <div
+        className="property-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Required</Label>
+        <Switch
+          checked={!!attrs.required}
+          onCheckedChange={(checked: boolean) => update({ required: checked })}
+        />
+      </div>
+      <div
+        className="property-row property-input-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Placeholder</Label>
+        <Input
+          type="text"
+          value={attrs.placeholder ?? ""}
+          placeholder="Optional"
+          onChange={(e) => update({ placeholder: e.target.value || null })}
+          className="short-answer-property-input"
+        />
+      </div>
     </MenuGroup>
   )
 }
@@ -546,21 +732,33 @@ const CoreActionGroup: React.FC = () => {
         <BaseMenuItem
           icon={DuplicateIcon}
           label={label}
-          onClick={handleDuplicate}
+          onClick={(e?: React.MouseEvent<HTMLElement>) => {
+            e?.preventDefault()
+            e?.stopPropagation()
+            handleDuplicate()
+          }}
           disabled={!canDuplicate}
           shortcutBadge={<DuplicateShortcutBadge />}
         />
         <BaseMenuItem
           icon={CopyIcon}
           label={copyLabel}
-          onClick={handleCopyToClipboard}
+          onClick={(e?: React.MouseEvent<HTMLElement>) => {
+            e?.preventDefault()
+            e?.stopPropagation()
+            handleCopyToClipboard()
+          }}
           disabled={!canCopyToClipboard}
           shortcutBadge={<CopyToClipboardShortcutBadge />}
         />
         <BaseMenuItem
           icon={CopyAnchorLinkIcon}
           label={copyAnchorLinkLabel}
-          onClick={handleCopyAnchorLink}
+          onClick={(e?: React.MouseEvent<HTMLElement>) => {
+            e?.preventDefault()
+            e?.stopPropagation()
+            handleCopyAnchorLink()
+          }}
           disabled={!canCopyAnchorLink}
           shortcutBadge={<CopyAnchorLinkShortcutBadge />}
         />
@@ -602,7 +800,11 @@ const DeleteActionGroup: React.FC = () => {
       <BaseMenuItem
         icon={Icon}
         label={label}
-        onClick={handleDeleteNode}
+        onClick={(e?: React.MouseEvent<HTMLElement>) => {
+          e?.preventDefault()
+          e?.stopPropagation()
+          handleDeleteNode()
+        }}
         disabled={!canDeleteNode}
         shortcutBadge={<DeleteNodeShortcutBadge />}
       />
@@ -778,6 +980,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
                 <MenuGroup>
                   <TocShowTitle />
                   <ShortAnswerPropertyGroup />
+                  <FormInputPropertyGroup />
                   <ColorMenu />
                   <TableAlignMenu />
                   <TableFitToWidth />

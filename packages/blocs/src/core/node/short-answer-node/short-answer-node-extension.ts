@@ -4,11 +4,8 @@ import { Plugin, PluginKey, NodeSelection, TextSelection } from "@tiptap/pm/stat
 import { keymap } from "@tiptap/pm/keymap"
 import type { Node as PMNode } from "@tiptap/pm/model"
 import { ShortAnswerNodeComponent } from "./short-answer-node.tsx"
-import type {
-  ShortAnswerAttrs,
-  InputType,
-  InputMode,
-} from "./short-answer-types"
+import type { ShortAnswerAttrs } from "./short-answer-types.ts"
+import { shortAnswerAttributes } from "@/lib/attribute-config.ts"
 
 export type { ShortAnswerAttrs, InputType, InputMode } from "./short-answer-types"
 
@@ -29,27 +26,10 @@ declare module "@tiptap/core" {
 }
 
 const SHORT_ANSWER_NODE_NAME = "shortAnswer"
-
-function parseNumberAttr(
-  element: HTMLElement,
-  name: string
-): number | null {
-  const val = element.getAttribute(name)
-  if (val == null || val === "") return null
-  const num = Number(val)
-  return Number.isFinite(num) ? num : null
-}
-
-function parseOptionalBool(element: HTMLElement, name: string): boolean | null {
-  const val = element.getAttribute(name)
-  if (val == null || val === "") return null
-  if (val === "true") return true
-  if (val === "false") return false
-  return null
-}
+const SHORT_ANSWER_INPUT_NODE_NAME = "shortAnswerInput"
 
 /**
- * Normalize short-answer content to exactly one heading (level 2).
+ * Normalize short-answer content to exactly one heading (level 2) and one shortAnswerInput.
  * Used on paste and when content is invalid.
  */
 function normalizeShortAnswerContent(
@@ -59,30 +39,29 @@ function normalizeShortAnswerContent(
   if (node.type.name !== shortAnswerTypeName) return null
   const schema = node.type.schema
   const headingType = schema.nodes.heading
-  if (!headingType) return null
+  const inputType = schema.nodes[SHORT_ANSWER_INPUT_NODE_NAME]
+  if (!headingType || !inputType) return null
 
   const childCount = node.childCount
-  if (childCount === 1 && node.firstChild) {
-    const first = node.firstChild
-    if (first.type === headingType) {
-      const level = first.attrs.level != null ? first.attrs.level : 2
-      if (level >= 1 && level <= 6) return null
-    }
-  }
+  const first = node.firstChild
+  const second = node.childCount > 1 ? node.child(1) : null
+  const hasValidHeading =
+    first && first.type === headingType && first.attrs.level >= 1 && first.attrs.level <= 6
+  const hasValidInput = second && second.type === inputType
+  if (childCount === 2 && hasValidHeading && hasValidInput) return null
 
   let text = "Question"
-  if (node.childCount > 0 && node.firstChild) {
-    const first = node.firstChild
-    if (first.isTextblock) {
-      text = first.textContent.trim() || "Question"
-    }
+  if (first && first.isTextblock) {
+    text = first.textContent.trim() || "Question"
   }
-
   const heading = headingType.create(
     { level: 2 },
     schema.text(text)
   )
-  return node.type.create(node.attrs, heading)
+  const inputNode = inputType.create(
+    { value: second && second.type === inputType ? second.attrs.value ?? "" : "" }
+  )
+  return node.type.create(node.attrs, [heading, inputNode])
 }
 
 export const ShortAnswerNode = Node.create<ShortAnswerNodeOptions>({
@@ -90,7 +69,7 @@ export const ShortAnswerNode = Node.create<ShortAnswerNodeOptions>({
 
   group: "block customNode",
 
-  content: "heading",
+  content: "heading shortAnswerInput?",
 
   draggable: true,
 
@@ -103,145 +82,19 @@ export const ShortAnswerNode = Node.create<ShortAnswerNodeOptions>({
   },
 
   addAttributes() {
-    return {
-      inputType: {
-        default: "text" as InputType,
-        parseHTML: (el: HTMLElement) =>
-          (el.getAttribute("data-input-type") as InputType) || "text",
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.inputType
-            ? { "data-input-type": attrs.inputType }
-            : {},
-      },
-      inputMode: {
-        default: null as InputMode | null,
-        parseHTML: (el: HTMLElement) =>
-          (el.getAttribute("data-input-mode") as InputMode) || null,
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.inputMode
-            ? { "data-input-mode": attrs.inputMode }
-            : {},
-      },
-      placeholder: {
-        default: null as string | null,
-        parseHTML: (el: HTMLElement) =>
-          el.getAttribute("data-placeholder") ?? null,
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.placeholder != null
-            ? { "data-placeholder": attrs.placeholder }
-            : {},
-      },
-      defaultAnswer: {
-        default: null as string | null,
-        parseHTML: (el: HTMLElement) =>
-          el.getAttribute("data-default-answer") ?? null,
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.defaultAnswer != null
-            ? { "data-default-answer": attrs.defaultAnswer }
-            : {},
-      },
-      required: {
-        default: false,
-        parseHTML: (el: HTMLElement) =>
-          parseOptionalBool(el, "data-required") ?? false,
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.required ? { "data-required": "true" } : {},
-      },
-      minChars: {
-        default: null as number | null,
-        parseHTML: (el: HTMLElement) =>
-          parseNumberAttr(el, "data-min-chars"),
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.minChars != null ? { "data-min-chars": String(attrs.minChars) } : {},
-      },
-      maxChars: {
-        default: null as number | null,
-        parseHTML: (el: HTMLElement) =>
-          parseNumberAttr(el, "data-max-chars"),
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.maxChars != null ? { "data-max-chars": String(attrs.maxChars) } : {},
-      },
-      minValue: {
-        default: null as number | null,
-        parseHTML: (el: HTMLElement) =>
-          parseNumberAttr(el, "data-min-value"),
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.minValue != null ? { "data-min-value": String(attrs.minValue) } : {},
-      },
-      maxValue: {
-        default: null as number | null,
-        parseHTML: (el: HTMLElement) =>
-          parseNumberAttr(el, "data-max-value"),
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.maxValue != null ? { "data-max-value": String(attrs.maxValue) } : {},
-      },
-      pattern: {
-        default: null as string | null,
-        parseHTML: (el: HTMLElement) =>
-          el.getAttribute("data-pattern") ?? null,
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.pattern != null ? { "data-pattern": attrs.pattern } : {},
-      },
-      hidden: {
-        default: false,
-        parseHTML: (el: HTMLElement) =>
-          parseOptionalBool(el, "data-hidden") ?? false,
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.hidden ? { "data-hidden": "true" } : {},
-      },
-      conditionalLogic: {
-        default: null,
-        parseHTML: (el: HTMLElement) => {
-          const raw = el.getAttribute("data-conditional-logic")
-          if (raw == null || raw === "") return null
-          try {
-            return JSON.parse(raw) as ShortAnswerAttrs["conditionalLogic"]
-          } catch {
-            return raw
-          }
-        },
-        renderHTML: (attrs: ShortAnswerAttrs) =>
-          attrs.conditionalLogic != null
-            ? {
-                "data-conditional-logic":
-                  typeof attrs.conditionalLogic === "string"
-                    ? attrs.conditionalLogic
-                    : JSON.stringify(attrs.conditionalLogic),
-              }
-            : {},
-      },
-    }
+    return { ...shortAnswerAttributes }
   },
 
   parseHTML() {
     return [{ tag: 'div[data-type="short-answer-node"]' }]
   },
 
-  renderHTML({ node, HTMLAttributes }) {
-    const dataAttrs: Record<string, string> = {
-      "data-type": "short-answer-node",
-    }
-    const attrs = node.attrs as ShortAnswerAttrs
-    if (attrs.inputType) dataAttrs["data-input-type"] = attrs.inputType
-    if (attrs.inputMode) dataAttrs["data-input-mode"] = attrs.inputMode
-    if (attrs.placeholder != null) dataAttrs["data-placeholder"] = attrs.placeholder
-    if (attrs.defaultAnswer != null) dataAttrs["data-default-answer"] = attrs.defaultAnswer
-    if (attrs.required) dataAttrs["data-required"] = "true"
-    if (attrs.minChars != null) dataAttrs["data-min-chars"] = String(attrs.minChars)
-    if (attrs.maxChars != null) dataAttrs["data-max-chars"] = String(attrs.maxChars)
-    if (attrs.minValue != null) dataAttrs["data-min-value"] = String(attrs.minValue)
-    if (attrs.maxValue != null) dataAttrs["data-max-value"] = String(attrs.maxValue)
-    if (attrs.pattern != null) dataAttrs["data-pattern"] = attrs.pattern
-    if (attrs.hidden) dataAttrs["data-hidden"] = "true"
-    if (attrs.conditionalLogic != null) {
-      dataAttrs["data-conditional-logic"] =
-        typeof attrs.conditionalLogic === "string"
-          ? attrs.conditionalLogic
-          : JSON.stringify(attrs.conditionalLogic)
-    }
+  renderHTML({ HTMLAttributes }) {
     return [
       "div",
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, dataAttrs),
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+        "data-type": "short-answer-node",
+      }),
       0,
     ]
   },
@@ -341,6 +194,10 @@ export const ShortAnswerNode = Node.create<ShortAnswerNodeOptions>({
           if (!schema.nodes.heading) return false
           const { title: _title, ...restAttrs } = attrs as Partial<ShortAnswerAttrs> & { title?: string }
           const titleText = _title ?? "Question"
+          const inputTypeName = state.schema.nodes[SHORT_ANSWER_INPUT_NODE_NAME]
+            ? SHORT_ANSWER_INPUT_NODE_NAME
+            : null
+          if (!inputTypeName) return false
           return chain()
             .insertContent({
               type: this.name,
@@ -365,6 +222,7 @@ export const ShortAnswerNode = Node.create<ShortAnswerNodeOptions>({
                   attrs: { level: 2 },
                   content: [{ type: "text", text: titleText }],
                 },
+                { type: inputTypeName, attrs: { value: "" } },
               ],
             })
             .run()
