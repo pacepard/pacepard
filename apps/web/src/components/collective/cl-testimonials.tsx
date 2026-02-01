@@ -1,0 +1,156 @@
+'use client';
+
+import React from 'react';
+import Image from 'next/image';
+import { Marquee } from '@pacepard/ui/components/marquee';
+import { cn } from '@pacepard/ui/lib/utils';
+
+const testimonials = [
+    {
+        quote: 'Pacepard cut out all the messy parts on how to attempt real user problems.',
+        author: 'Ruhamah Ifere',
+        role: 'Founder/E.D',
+        company: 'Trully Verify Africa',
+        image: '/pacepard/ruhamah.png',
+    },
+    {
+        quote: "The best hands-on learning experience I've ever had, the results show up fast.",
+        author: 'Adetomiwa Odunlade',
+        role: 'Founder',
+        company: 'Mercury Finance',
+        image: '/pacepard/zoe.png',
+    },
+    {
+        quote: "It's the closest thing to working inside a top product team.",
+        author: 'Peter Odejobi',
+        role: 'Mobile Engineer',
+        company: 'First Bank',
+        image: '/pacepard/peter.png',
+    },
+    {
+        quote: 'With respect to the format. This is the best I have ever participated in.',
+        author: 'Aduragbemi Afe',
+        role: 'PM',
+        company: 'Learnpally',
+        image: '/pacepard/adura.png',
+    },
+    {
+        quote: 'Since I started, I saw myself have a real behavior change to coding.',
+        author: 'Favour Brodrick',
+        role: 'Technical PM',
+        company: 'Pacepard',
+        image: '/pacepard/favour.png',
+    },
+    {
+        quote: "I stopped overthinking and started building. Now I'm confident and I've consistent habits.",
+        author: 'Harry',
+        role: 'Nodejs Engineer',
+        company: 'Troott',
+        image: '/pacepard/harry.png',
+    },
+] as const;
+
+function TestimonialCard({
+    quote,
+    author,
+    role,
+    company,
+    image,
+}: {
+    quote: string;
+    author: string;
+    role: string;
+    company: string;
+    image: string;
+}) {
+    return (
+        <div
+            className={cn(
+                'flex w-[300px] shrink-0 flex-col gap-4 rounded-xl border border-border',
+                'bg-card p-5 shadow-sm',
+                'transition-shadow hover:shadow-md',
+            )}
+        >
+            <div className="flex items-start gap-3">
+                <div className="relative size-12 shrink-0 overflow-hidden rounded-full bg-muted">
+                    <Image
+                        src={image}
+                        alt={author}
+                        width={48}
+                        height={48}
+                        className="object-cover"
+                    />
+                </div>
+                <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-foreground">{author}</p>
+                    <p className="text-sm text-muted-foreground">
+                        {role}
+                        {company && ` · ${company}`}
+                    </p>
+                </div>
+            </div>
+            <p className="flex-1 text-sm leading-relaxed text-foreground">
+                {quote}
+            </p>
+        </div>
+    );
+}
+
+export default function ClTestimonials() {
+    return (
+        <section className="w-full py-16 md:py-24 bg-background">
+            <div className="mx-auto  px-4 md:px-6">
+                {/* Title: "The people." / "They love us." */}
+                <div className="mb-12 text-center md:mb-16">
+                    <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+                        The people.
+                    </h2>
+                    <h2 className="mt-1 text-4xl font-bold tracking-tight text-muted-foreground sm:text-5xl md:text-6xl">
+                        They love us.
+                    </h2>
+                </div>
+
+                {/* Moving marquee: 2 rows of horizontally scrolling cards */}
+                <div className="relative -mx-4 overflow-hidden md:-mx-6">
+                    <div className="flex flex-col gap-4 [--gap:1rem] md:gap-6 md:[--gap:1.5rem]">
+                        {/* Top row — scrolls left */}
+                        <Marquee
+                            pauseOnHover
+                            className="[--duration:50s] [--gap:1rem] md:[--gap:1.5rem] md:[--duration:45s]"
+                            repeat={4}
+                        >
+                            {testimonials.slice(0, 3).map(({ quote, author, role, company, image }) => (
+                                <TestimonialCard
+                                    key={author}
+                                    quote={quote}
+                                    author={author}
+                                    role={role}
+                                    company={company}
+                                    image={image}
+                                />
+                            ))}
+                        </Marquee>
+                        {/* Bottom row — scrolls right (reverse) */}
+                        <Marquee
+                            pauseOnHover
+                            reverse
+                            className="[--duration:55s] [--gap:1rem] md:[--gap:1.5rem] md:[--duration:50s]"
+                            repeat={4}
+                        >
+                            {testimonials.slice(3, 6).map(({ quote, author, role, company, image }) => (
+                                <TestimonialCard
+                                    key={author}
+                                    quote={quote}
+                                    author={author}
+                                    role={role}
+                                    company={company}
+                                    image={image}
+                                />
+                            ))}
+                        </Marquee>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}

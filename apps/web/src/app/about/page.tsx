@@ -1,8 +1,8 @@
 import { Background } from "@/components/background";
 import { DashedLine } from "@/components/dashed-line";
-import MentorSection from "@/components/hack/sections/mentors";
-import About from "@/components/pacepard/containers/about";
-import { AboutHero } from "@/components/pacepard/containers/about-hero";
+import MentorSection from "@/components/z-hack/sections/mentors";
+import About from "@/components/shared/containers/about";
+import { AboutHero } from "@/components/shared/containers/about-hero";
 
 export default function AboutPage() {
   return (

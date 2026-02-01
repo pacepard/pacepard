@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import VenueDateTime from "@/components/hack/containers/venue"
+import VenueDateTime from "@/components/z-hack/containers/venue"
 import { Button } from "@/components/ui/button"
 import { TextEffect } from "@/components/ui/text-effect"
 

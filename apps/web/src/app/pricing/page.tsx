@@ -1,8 +1,8 @@
 import React from "react";
 
 import { Background } from "@/components/background";
-import  Pricing  from "@/components/pacepard/sections/pricing";
-import { PricingTable } from "@/components/pacepard/sections/pricing-table";
+import  Pricing  from "@/components/shared/sections/pricing";
+import { PricingTable } from "@/components/shared/sections/pricing-table";
 // import { Pricing } from "@/components/blocks/pricing";
 // import { PricingTable } from "@/components/blocks/pricing-table";
 

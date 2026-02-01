@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Background } from "@/components/background";
-import JoinPacepard from "@/components/pacepard/sections/join-pacepard";
+import JoinPacepard from "@/components/shared/sections/join-pacepard";
 
 
 const Page = () => {

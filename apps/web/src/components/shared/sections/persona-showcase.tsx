@@ -3,7 +3,7 @@
 import { motion, Variants } from 'motion/react'
 import { Smile, Wrench, Trophy } from 'lucide-react'
 
-import PersonaCard from '../containers/persona-card'
+import PersonaCard from '../persona-card'
 
 const personas = [
   {

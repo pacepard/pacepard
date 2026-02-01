@@ -1,5 +1,5 @@
-import ChallengeAreas from "@/components/hack/containers/challenge-areas"
-import EntryRequirements from "@/components/hack/containers/entry-req"
+import ChallengeAreas from "@/components/z-hack/containers/challenge-areas"
+import EntryRequirements from "@/components/z-hack/containers/entry-req"
 
 const Requirements = () => {
   return (
