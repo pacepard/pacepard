@@ -14,7 +14,7 @@ const Collective = () => {
             <ClHero />
 
             <Background>
-                <Separator />
+                {/* <Separator /> */}
                 <ClFeatures />
                 <ClUsecase />
                 <ClCta />

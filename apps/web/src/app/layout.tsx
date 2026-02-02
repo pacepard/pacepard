@@ -69,7 +69,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body
-                className={`${useFont.variable} antialiased`}
+                className={`${useFont.variable} antialiased overflow-x-hidden`}
                 suppressHydrationWarning
             >
                 <ThemeProvider>

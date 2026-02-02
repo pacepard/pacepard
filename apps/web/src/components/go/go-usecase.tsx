@@ -121,14 +121,14 @@ const bottomItems = [
     },
 ];
 
-export const ResourceAllocation = () => {
+const  GoUsecase = () => {
     return (
         <section
             id="resource-allocation"
             className="overflow-hidden pb-28 lg:pb-32"
         >
             <div className="">
-                <h2 className="container text-center text-3xl tracking-tight text-balance sm:text-4xl md:text-5xl lg:text-6xl">
+                <h2 className="container text-center text-4xl font-bold tracking-tight text-balance text-foreground md:text-5xl lg:text-6xl">
                     Everything you need <br className="hidden lg:block" /> to
                     run the best hackathons.
                 </h2>
@@ -191,15 +191,15 @@ const Item = ({ item, isLast, className }: ItemProps) => {
             )}
         >
             <div className="title-container text-balance">
-                <h3 className="inline font-regular">{item.title} </h3>
-                <span className="text-muted-foreground">
+                <h3 className="inline font-semibold text-foreground">{item.title} </h3>
+                <span className="text-lg leading-relaxed text-muted-foreground">
                     {' '}
                     {item.description}
                 </span>
             </div>
 
             {item.fade.includes('bottom') && (
-                <div className="from-muted/80 absolute inset-0 z-10 bg-linear-to-t via-transparent to-transparent md:hidden" />
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-muted/80 via-transparent to-transparent md:hidden" />
             )}
             {item.images.length > 4 ? (
                 <div className="relative overflow-hidden">
@@ -218,7 +218,7 @@ const Item = ({ item, isLast, className }: ItemProps) => {
                                         height={image.height}
                                         className="object-contain object-left-top"
                                     />
-                                    <div className="from-muted/80 absolute inset-y-0 right-0 z-10 w-16 bg-linear-to-l to-transparent" />
+                                    <div className="absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-muted/80 to-transparent" />
                                 </div>
                             ))}
                         </div>
@@ -236,7 +236,7 @@ const Item = ({ item, isLast, className }: ItemProps) => {
                                         height={image.height}
                                         className="object-contain object-left-top"
                                     />
-                                    <div className="from-muted absolute inset-y-0 bottom-0 left-0 z-10 w-14 bg-linear-to-r to-transparent" />
+                                    <div className="absolute inset-y-0 bottom-0 left-0 z-10 w-14 bg-gradient-to-r from-muted to-transparent" />
                                 </div>
                             ))}
                         </div>
@@ -272,3 +272,5 @@ const Item = ({ item, isLast, className }: ItemProps) => {
         </div>
     );
 };
+
+export default GoUsecase

@@ -6,12 +6,14 @@ import { PPTestimonials } from '@/components/pacepard/pp-testimonials';
 import PPGo from '@/components/pacepard/pp-go';
 import PPCollective from '@/components/pacepard/pp-collective';
 import PPCTA from '@/components/pacepard/pp-cta';
+import CCHeroSection from '@/components/pacepard/center';
 
 export default function Home() {
     return (
         <>
             <PPHeroSection />
-            <PPLovedBy />
+            {/* <CCHeroSection/> */}
+            {/* <PPLovedBy /> */}
 
             <Background>
                 <PPPersona />
@@ -20,7 +22,7 @@ export default function Home() {
                 <PPCTA />
                 <PPGo />
 
-                <PPTestimonials />
+                {/* <PPTestimonials /> */}
             </Background>
 
            

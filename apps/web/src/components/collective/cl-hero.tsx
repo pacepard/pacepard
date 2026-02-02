@@ -3,27 +3,24 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowRightToLineIcon } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
 
 /** Hero illustration: screenshot at public/blocks/cl-hero.png, fallback to learners.svg from /blocks */
-const HERO_IMAGE = '/blocks/dev.png';
-const HERO_SVG_FALLBACK = '/blocks/learners.svg';
+const HERO_IMAGE = '/blocks/collective.png';
 
 export default function ClHero() {
     const [imageError, setImageError] = useState(false);
 
     return (
-        <section className="w-full py-16 md:py-24 lg:py-28 bg-background">
+        <section className="w-full  bg-background">
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
-                <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+                <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
                     {/* Left: headline, description, CTAs */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">
-                        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-                            Where teams work{' '}
-                            <br className="hidden sm:block" />
-                            better, together
+                        <h1 className="text-4xl font-bold tracking-tight text-foreground text-3xl md:text-5xl">
+                            Where teams work better, and together
                         </h1>
                         <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
                             Your projects, wikis and docs, all side by side. For
@@ -43,8 +40,8 @@ export default function ClHero() {
                                     href="#"
                                     className="inline-flex items-center gap-2"
                                 >
-                                    Get Notion free
-                                    <ArrowRight
+                                    Get Pacepard free
+                                    <ArrowRightToLineIcon
                                         className="size-4"
                                         strokeWidth={2.5}
                                         aria-hidden
@@ -92,7 +89,7 @@ export default function ClHero() {
                             />
                         ) : (
                             <Image
-                                src={HERO_SVG_FALLBACK}
+                                src={HERO_IMAGE}
                                 alt="Teams collaborating"
                                 width={400}
                                 height={400}

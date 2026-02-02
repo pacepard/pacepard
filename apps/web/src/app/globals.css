@@ -12,8 +12,8 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.92 0.04 86.47);
-  --primary-foreground: oklch(0.31 0.02 86.64);
+  --primary: oklch(0.1 0 0); /* notion black */
+  --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -41,6 +41,12 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   --radius: 8px;
+
+  /* Decorative colors */
+  --decorative-pink: oklch(0.65 0.25 330);
+  --decorative-blue: oklch(0.55 0.22 260);
+  --decorative-orange: oklch(0.70 0.18 50);
+  --decorative-green: oklch(0.70 0.20 145);
 
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
@@ -72,8 +78,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.1 0 0); /* notion black */
+  --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -121,6 +127,11 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-decorative-pink: var(--decorative-pink);
+  --color-decorative-blue: var(--decorative-blue);
+  --color-decorative-orange: var(--decorative-orange);
+  --color-decorative-green: var(--decorative-green);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);

@@ -18,10 +18,6 @@ export const Navigation = [
         ],
     },
     {
-        label: 'Pricing',
-        href: '/pricing',
-    },
-    {
         label: 'About us',
         href: '/about',
     },
@@ -37,7 +33,7 @@ export const Navigation = [
 
 export const NavigationItems = [
     {
-        label: 'Products',
+        label: 'Solutions',
         href: '#features',
         dropdownItems: [
             {
@@ -54,10 +50,11 @@ export const NavigationItems = [
             },
         ],
     },
-    // { label: "About Us", href: "/about" },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'FAQ', href: '/faq' },
-    { label: 'Contact', href: '/contact' },
+    
+    { label: 'Research', href: '/research' },
+    { label: 'Open source', href: '/open-source' },
+    { label: "About us", href: "/about" },
+    // { label: 'Contact', href: '/contact' },
 ];
 
 // the best way to be a superhuman talent

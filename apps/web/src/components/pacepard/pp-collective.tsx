@@ -83,7 +83,7 @@ export default function PPCollective() {
                 </div>
 
                 {/* Two columns: feature cards left, pricing card right — always on same line */}
-                <div className="flex flex-nowrap items-start gap-8 md:gap-12">
+                <div className="flex flex-col lg:flex-row lg:flex-nowrap items-start gap-8 md:gap-12">
                     {/* Left: stacked feature cards with vertical gap */}
                     <div className="min-w-0 flex-1 flex flex-col gap-4">
                         {featureCards.map((card) => (
@@ -119,7 +119,7 @@ export default function PPCollective() {
                     </div>
 
                     {/* Right: dark pricing card */}
-                    <div className="w-[380px] shrink-0 flex flex-col sticky top-8 self-start">
+                    <div className="w-full lg:w-[380px] shrink-0 flex flex-col lg:sticky lg:top-8 self-start">
                         <div
                             className={cn(
                                 'flex flex-col rounded-2xl border border-border p-6 shadow-lg',

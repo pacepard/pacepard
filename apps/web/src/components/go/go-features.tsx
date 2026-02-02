@@ -28,17 +28,17 @@ export default function GoFeatures() {
                 {/* Top dashed line with text */}
                 <div className="relative flex items-center justify-center">
                     <DashedLine className="text-muted-foreground" />
-                    <span className="bg-muted text-muted-foreground absolute px-3 font-mono text-sm font-medium tracking-wide max-md:hidden">
-                        PACEPARD HACK. PACEPARD HACK.
+                    <span className="bg-yellow-50 text-muted-foreground absolute px-3 font-mono text-sm font-medium tracking-wide max-md:hidden">
+                        PACEPARD GO. PACEPARD GO.
                     </span>
                 </div>
 
                 {/* Content */}
-                <div className="mx-auto mt-10 grid max-w-4xl items-center gap-3 md:gap-0 lg:mt-24 lg:grid-cols-2">
-                    <h2 className="text-2xl tracking-tight md:text-4xl lg:text-5xl">
+                <div className="mx-auto mt-10 grid max-w-4xl items-center gap- md:gap-6 lg:mt-24 lg:grid-cols-2">
+                    <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
                         Built for world-class hackathons
                     </h2>
-                    <p className="text-muted-foreground leading-snug">
+                    <p className="text-lg leading-relaxed text-muted-foreground">
                         Pacepard is built on the habits that make the best
                         hackathons successful: knowledgeable participants, fast
                         engagement, and launching high-quality initiatives
@@ -62,7 +62,7 @@ export default function GoFeatures() {
                                             fill
                                             className="object-cover object-left-top ps-4 pt-2"
                                         />
-                                        <div className="from-background absolute inset-0 z-10 bg-linear-to-t via-transparent to-transparent" />
+                                        <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-50 via-transparent to-transparent" />
                                     </div>
 
                                     <Link
@@ -71,7 +71,7 @@ export default function GoFeatures() {
                                             'group flex items-center justify-between gap-4 pe-4 pt-4 md:pe-6 md:pt-6'
                                         }
                                     >
-                                        <h3 className="font-display max-w-60 text-2xl leading-tight font-regular tracking-tight">
+                                        <h3 className="max-w-60 text-xl font-semibold tracking-tight text-foreground">
                                             {item.title}
                                         </h3>
                                         <div className="rounded-full border p-2">

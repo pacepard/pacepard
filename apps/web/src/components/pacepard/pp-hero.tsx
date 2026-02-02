@@ -2,16 +2,16 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { ArrowRight, CalendarDaysIcon, ChevronRight, PlusIcon, PlusSquare, Sparkle } from 'lucide-react';
+import { ArrowRight, ArrowRightToLineIcon, CalendarDaysIcon, ChevronRight, CornerDownRight, PlusIcon, PlusSquare, Sparkle } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { siteConfig } from '@/_data/site-config';
 
-export default function HeroSection() {
+export default function PPHeroSection() {
     return (
         <>
             <main>
                 <section className="before:bg-muted border-e-foreground relative overflow-hidden before:absolute before:inset-1 before:h-[calc(100%-8rem)] before:rounded-2xl sm:before:inset-2 md:before:rounded-[2rem] lg:before:h-[calc(100%-14rem)]">
-                    <div className="py-20 md:py-36">
+                    <div className="py-20 md:py-40 mb-56">
                         <div className="relative z-10 mx-auto max-w-5xl px-6 text-center">
                             <div>
                                 <Link
@@ -67,7 +67,7 @@ export default function HeroSection() {
                                             <span className="text-nowrap">
                                                 Get Started
                                             </span>
-                                            <ArrowRight className="opacity-60" />
+                                            <ArrowRightToLineIcon className="opacity-60" />
                                         </Link>
                                     </Button>
                                     <Button
@@ -87,12 +87,12 @@ export default function HeroSection() {
                                 </div>
                             </div>
                         </div>
-                        <div className="relative">
+                        {/* <div className="relative">
                             <div className="relative z-10 mx-auto max-w-5xl px-6">
                                 <div className="mt-12 md:mt-16">
                                     <div className="bg-background rounded-(--radius) relative mx-auto overflow-hidden border border-transparent shadow-lg shadow-black/10 ring-1 ring-black/10">
                                         <Image
-                                            src="/blocks/bg.png"
+                                            src="/blocks/bg-2.png"
                                             alt="app screen"
                                             width="2880"
                                             height="1842"
@@ -100,7 +100,7 @@ export default function HeroSection() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </section>
             </main>

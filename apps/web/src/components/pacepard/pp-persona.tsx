@@ -78,7 +78,7 @@ const personas = [
     {
         id: 'learners', // Note: Duplicate ID, changed to avoid React warnings if this were production
         title: 'Learners',
-        image: '/blocks/learners.svg',
+        image: '/blocks/pp-1.svg',
         description:
             'Projects that go beyond basics and make you understand the underlying complexity.',
         bgColor: 'from-blue-400 to-blue-200',
@@ -113,11 +113,11 @@ const cardVariants: Variants = {
 export function PPPersona() {
     return (
         // Adjusted horizontal padding for small screens
-        <section className="py-16 px-4 sm:px-8 bg-white overflow-hidden mt-16">
+        <section className="py-16 px-4 sm:px-8 bg-white overflow-hidden">
             <div className="max-w-6xl mx-auto ">
-                <div className="flex flex-wrap items-center justify-center gap-4 pb-16">
+                <div className="flex flex-wrap items-start justify-start gap-4 pb-16">
                     <motion.h1
-                        className="text-2xl tracking-tight md:text-4xl"
+                        className="max-w-2xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl"
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.5 }}
@@ -125,20 +125,6 @@ export function PPPersona() {
                     >
                         Who&apos;s on Pacepard?
                     </motion.h1>
-
-                    <Button
-                        asChild
-                        size="lg"
-                         variant="outline"
-                        className="pr-4.5"
-                    >
-                        <Link href="#link">
-                            <span className="text-nowrap">
-                            Read our sucess Stories{' '}
-                            </span>
-                            <ArrowRight className="opacity-60" />
-                        </Link>
-                    </Button>
 
                 </div>
 

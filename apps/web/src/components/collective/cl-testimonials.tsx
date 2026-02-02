@@ -111,8 +111,8 @@ export default function ClTestimonials() {
                 </div>
 
                 {/* Moving marquee: 2 rows of horizontally scrolling cards */}
-                <div className="relative -mx-4 overflow-hidden md:-mx-6">
-                    <div className="flex flex-col gap-4 [--gap:1rem] md:gap-6 md:[--gap:1.5rem]">
+                <div className="relative overflow-hidden">
+                    <div className="flex flex-col gap-4 [--gap:1rem] md:gap-6 md:[--gap:1.5rem] px-4 md:px-6">
                         {/* Top row — scrolls left */}
                         <Marquee
                             pauseOnHover

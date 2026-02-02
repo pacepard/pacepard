@@ -66,7 +66,7 @@ export function SocialProofTestimonials({
                                 vertical
                                 key={i}
                                 className={cn(
-                                    'h-[700px] min-h-[500px] [--gap:1.25rem]',
+                                    'h-[420px] min-h-[320px] [--gap:0.75rem]',
                                     {
                                         '[--duration:60s]': i === 0,
                                         '[--duration:35s]': i === 1,
@@ -89,7 +89,7 @@ export function SocialProofTestimonials({
     );
 }
 
-export function PPTestimonials() {
+export function TestimonialsSection() {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true });
 

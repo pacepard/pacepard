@@ -1,130 +1,74 @@
-import Link from 'next/link';
+'use client'
 
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@/components/ui/accordion';
-import { cn } from '@pacepard/ui/lib/utils';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import Link from 'next/link'
 
-const categories = [
-    {
-        title: 'Support',
-        questions: [
-            {
-                question:
-                    'How do I update my account without breaking my laptop?',
-                answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptates deserunt officia temporibus dignissimos.',
-            },
-            {
-                question: 'Is support free, or do I need to Google everything?',
-                answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptates deserunt officia temporibus dignissimos.',
-            },
-            {
-                question: 'Are you going to be subsumed by AI?',
-                answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptates deserunt officia temporibus dignissimos.',
-            },
-        ],
-    },
-    {
-        title: 'Your account',
-        questions: [
-            {
-                question: 'Is support free, or do I need to Google everything?',
-                answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptates deserunt officia temporibus dignissimos.',
-            },
-            {
-                question: 'Are you going to be subsumed by AI?',
-                answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptates deserunt officia temporibus dignissimos.',
-            },
-        ],
-    },
-    {
-        title: 'Other questions',
-        questions: [
-            {
-                question: 'Is support free, or do I need to Google everything?',
-                answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptates deserunt officia temporibus dignissimos.',
-            },
-            {
-                question: 'Are you going to be subsumed by AI?',
-                answer: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus voluptates deserunt officia temporibus dignissimos.',
-            },
-        ],
-    },
-];
+export default function GoFAQ() {
+    const faqItems = [
+        {
+            id: 'item-1',
+            question: 'How long does shipping take?',
+            answer: 'Standard shipping takes 3-5 business days, depending on your location. Express shipping options are available at checkout for 1-2 business day delivery.',
+        },
+        {
+            id: 'item-2',
+            question: 'What payment methods do you accept?',
+            answer: 'We accept all major credit cards (Visa, Mastercard, American Express), PayPal, Apple Pay, and Google Pay. For enterprise customers, we also offer invoicing options.',
+        },
+        {
+            id: 'item-3',
+            question: 'Can I change or cancel my order?',
+            answer: 'You can modify or cancel your order within 1 hour of placing it. After this window, please contact our customer support team who will assist you with any changes.',
+        },
+        {
+            id: 'item-4',
+            question: 'Do you ship internationally?',
+            answer: "Yes, we ship to over 50 countries worldwide. International shipping typically takes 7-14 business days. Additional customs fees may apply depending on your country's import regulations.",
+        },
+        {
+            id: 'item-5',
+            question: 'What is your return policy?',
+            answer: 'We offer a 30-day return policy for most items. Products must be in original condition with tags attached. Some specialty items may have different return terms, which will be noted on the product page.',
+        },
+    ]
 
-export const GoFAQ = ({
-    headerTag = 'h2',
-    className,
-    className2,
-}: {
-    headerTag?: 'h1' | 'h2';
-    className?: string;
-    className2?: string;
-}) => {
     return (
-        <section className={cn('py-28 lg:py-32', className)}>
-            <div className="container max-w-5xl">
-                <div
-                    className={cn(
-                        'mx-auto grid gap-16 lg:grid-cols-2',
-                        className2,
-                    )}
-                >
-                    <div className="space-y-4">
-                        {headerTag === 'h1' ? (
-                            <h1 className="text-2xl tracking-tight md:text-4xl lg:text-5xl">
-                                Got Questions?
-                            </h1>
-                        ) : (
-                            <h2 className="text-2xl tracking-tight md:text-4xl lg:text-5xl">
-                                Got Questions?
-                            </h2>
-                        )}
-                        <p className="text-muted-foreground max-w-md leading-snug lg:mx-auto">
-                            If you can't find what you're looking for,{' '}
-                            <Link
-                                href="/contact"
-                                className="underline underline-offset-4"
-                            >
-                                get in touch
-                            </Link>
-                            .
-                        </p>
-                    </div>
+        <section className="py-16 md:py-24">
+            <div className="mx-auto max-w-2xl px-6">
+                <div className="space-y-12">
+                    <h2 className="text-center text-4xl font-bold tracking-tight text-foreground">Your questions answered</h2>
 
-                    <div className="grid gap-6 text-start">
-                        {categories.map((category, categoryIndex) => (
-                            <div key={category.title} className="">
-                                <h3 className="text-muted-foreground border-b py-4">
-                                    {category.title}
-                                </h3>
-                                <Accordion
-                                    type="single"
-                                    collapsible
-                                    className="w-full"
-                                >
-                                    {category.questions.map((item, i) => (
-                                        <AccordionItem
-                                            key={i}
-                                            value={`${categoryIndex}-${i}`}
-                                        >
-                                            <AccordionTrigger>
-                                                {item.question}
-                                            </AccordionTrigger>
-                                            <AccordionContent className="text-muted-foreground">
-                                                {item.answer}
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                    ))}
-                                </Accordion>
+                    <Accordion
+                        type="single"
+                        collapsible
+                        className="-mx-2 sm:mx-0">
+                        {faqItems.map((item) => (
+                            <div
+                                className="group"
+                                key={item.id}>
+                                <AccordionItem
+                                    value={item.id}
+                                    className="data-[state=open]:bg-muted peer rounded-xl border-none px-5 py-1 data-[state=open]:border-none md:px-7">
+                                    <AccordionTrigger className="cursor-pointer text-lg font-medium text-foreground hover:no-underline">{item.question}</AccordionTrigger>
+                                    <AccordionContent>
+                                        <p className="text-lg leading-relaxed text-muted-foreground">{item.answer}</p>
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <hr className="mx-5 -mb-px group-last:hidden peer-data-[state=open]:opacity-0 md:mx-7" />
                             </div>
                         ))}
-                    </div>
+                    </Accordion>
+
+                    <p className="text-muted-foreground text-center">
+                        Can't find what you're looking for? Contact our{' '}
+                        <Link
+                            href="#"
+                            className="text-primary font-medium hover:underline">
+                            customer support team
+                        </Link>
+                    </p>
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}

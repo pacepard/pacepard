@@ -84,13 +84,13 @@ export default function PPGo() {
 
                     
                     </div>
-                    <div className="relative flex shrink-0 items-center justify-center min-w-[280px] sm:min-w-[360px] lg:min-w-[440px]">
+                    <div className="relative flex shrink-0 items-center justify-center w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[440px]">
                         <Image
                             src="/blocks/damola-dark.svg"
                             alt="Illustration of use cases and workflows"
                             width={520}
                             height={130}
-                            className="h-auto w-[280px] sm:w-[360px] lg:w-[540px]"
+                            className="h-auto w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[540px]"
                             priority={false}
                         />
                     </div>

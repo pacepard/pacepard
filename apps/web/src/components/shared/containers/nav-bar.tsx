@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { ChevronRight, X, Linkedin } from 'lucide-react';
+import { ChevronRight, X, Linkedin, ArrowRightToLineIcon } from 'lucide-react';
 
 import { NavigationItems } from '@/_data/pacepard/navigation';
 import { Background } from '@/components/background';
@@ -164,11 +164,12 @@ export const Navbar = () => {
                                             </span>
                                         </Link>
                                     </Button> */}
-                                    <Button size="lg" className="text-sm md:text-base">
+                                    <Button asChild size="lg" className="text-sm md:text-base">
                                         <Link href="/login">
-                                            <span className="text-foreground hover:text-accent-foreground relative z-10">
+                                            <span className="">
                                                 Get Started
                                             </span>
+                                            <ArrowRightToLineIcon />
                                         </Link>
                                     </Button>
                                 </>
@@ -177,7 +178,8 @@ export const Navbar = () => {
                             {scrolled && (
                                 <Button asChild size="lg" className="text-sm md:text-base">
                                     <Link href="#">
-                                        <span>Contact Sales</span>
+                                        <span>Contact sales</span>
+                                        <ArrowRightToLineIcon />
                                     </Link>
                                 </Button>
                             )}

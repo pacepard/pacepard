@@ -3,7 +3,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import Link from 'next/link'
 
-export default function ClFAQ() {
+export default function FAQs() {
     const faqItems = [
         {
             id: 'item-1',
