@@ -56,8 +56,54 @@ export const metadata: Metadata = {
         creator: siteConfig.links.creator,
     },
     icons: {
-        icon: `${siteConfig.url}/blocks/pacepard.png`,
-        apple: '/apple-touch-icon.png',
+        icon: [
+            {
+                url: '/blocks/pacepard-icon.svg',
+                type: 'image/svg+xml',
+            },
+            {
+                url: '/blocks/favicon.ico',
+                sizes: 'any',
+            },
+            {
+                url: '/blocks/pacepard-icon.png',
+                sizes: '32x32',
+                type: 'image/png',
+            },
+            {
+                url: '/blocks/pacepard-icon.png',
+                sizes: '16x16',
+                type: 'image/png',
+            },
+        ],
+        apple: [
+            {
+                url: '/blocks/apple-touch-icon.png',
+                sizes: '180x180',
+                type: 'image/png',
+            },
+        ],
+        other: [
+            {
+                rel: 'mask-icon',
+                url: '/blocks/pacepard-icon.svg',
+                color: '#000000',
+            },
+            {
+                rel: 'apple-touch-icon-precomposed',
+                url: '/blocks/apple-touch-icon.png',
+            },
+        ],
+    },
+    manifest: '/manifest.json',
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: 'default',
+        title: siteConfig.title,
+    },
+    other: {
+        'msapplication-TileColor': '#000000',
+        'msapplication-config': '/browserconfig.xml',
     },
 };
 

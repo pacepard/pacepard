@@ -84,12 +84,12 @@
   <text x="219" y="255" font-family="Inter, system-ui, -apple-system, sans-serif" font-size="10" fill="#9CA3AF" text-anchor="middle">image editing</text>
   
   <!-- Icons Section - More detailed sparkle with gradient -->
-  <defs>
+<defs>
     <linearGradient id="sparkle_grad_1" x1="28" y1="256" x2="48" y2="276" gradientUnits="userSpaceOnUse">
       <stop stop-color="#6366F1"/>
       <stop offset="1" stop-color="#EC4899"/>
     </linearGradient>
-  </defs>
+</defs>
   
   <!-- Multi-colored sparkle/diamond icon -->
   <path d="M 32 256 L 34 258 L 32 260 L 34 258 M 30 258 L 36 258 M 34 256 L 34 260" fill="url(#sparkle_grad_1)" opacity="0.8"/>

@@ -43,9 +43,9 @@ export default function PPFunnel() {
                         <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                             Stay in the loop
                         </h2>
-                        <p className="max-w-md text-base leading-relaxed text-zinc-400 sm:text-lg">
-                            Get the latest on empathic AI research, product
-                            updates, and company news.
+                        <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+                            Get the latest on hackathons, product updates,
+                            and community news.
                         </p>
                         <form
                             onSubmit={handleSubmit}
@@ -54,8 +54,8 @@ export default function PPFunnel() {
                             <div
                                 className={cn(
                                     'flex w-full items-center gap-0 overflow-hidden rounded-md',
-                                    'border border-zinc-600/80 bg-zinc-800/80 shadow-sm',
-                                    'focus-within:border-zinc-500 focus-within:ring-2 focus-within:ring-zinc-500/20',
+                                    'border border-border bg-background shadow-sm',
+                                    'focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/20',
                                 )}
                             >
                                 <Input
@@ -64,8 +64,8 @@ export default function PPFunnel() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className={cn(
-                                        'h-12 flex-1 rounded-md border-0 bg-muted px-5 text-foreground',
-                                        'placeholder:text-zinc-500',
+                                        'h-12 flex-1 rounded-md border-0 bg-background px-5 text-foreground',
+                                        'placeholder:text-muted-foreground',
                                         'focus-visible:ring-0 focus-visible:ring-offset-0',
                                     )}
                                     aria-label="Email address"
@@ -76,7 +76,6 @@ export default function PPFunnel() {
                                     className={cn(
                                         'size-12 shrink-0 rounded-md',
                                         'bg-foreground text-background hover:bg-foreground/80',
-                                        'mr-1.5',
                                     )}
                                     aria-label="Subscribe"
                                 >
@@ -95,18 +94,17 @@ export default function PPFunnel() {
                         <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                             Join the community
                         </h2>
-                        <p className="max-w-md text-base leading-relaxed text-zinc-400 sm:text-lg">
-                            Connect with other developers, share projects, and
+                        <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+                            Connect with other participants, share projects, and
                             get help from the team.
                         </p>
                         <Button
                             asChild
-        
                             size="lg"
                             className={cn(
                                 'mt-6 h-12 rounded-md px-6',
-                                'bg-[#0075DE]/70 text-white hover:bg-neutral-600',
-                                'border border-neutral-200/80',
+                                'bg-foreground text-background hover:bg-foreground/90',
+                                'border border-border',
                             )}
                         >
                             <a

@@ -125,7 +125,7 @@ export default function ClCta() {
                     {/* Right: headline, description, CTA */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">
                         <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-                            Become a creator
+                            Become a superhuman
                         </h2>
                         <p className="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
                             Submit your template to the Notion template gallery,

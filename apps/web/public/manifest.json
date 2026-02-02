@@ -1,0 +1,36 @@
+{
+  "name": "Pacepard - unlocking the superhuman potential of all learners",
+  "short_name": "Pacepard",
+  "description": "Pacepard helps African tech talents unlock their superhuman potential. We support the development of Open Source Software that solves problems faced daily by Africans, and we are creating points of entry into machine learning research.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/blocks/pacepard-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/blocks/pacepard-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/blocks/pacepard-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/blocks/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

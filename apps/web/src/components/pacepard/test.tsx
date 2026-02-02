@@ -7,47 +7,49 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@pacepard/ui/lib/utils';
 
 const guarantees = [
-    '30-day money-back guarantee',
-    'Lifetime access',
-    'Commercial use included',
+    'Get roadmaps',
+    '3 month free trial',
+    'Join teams & products',
 ] as const;
 
 const featureCards = [
     {
-        value: '10',
+        value: '68%',
         type: 'number' as const,
-        title: 'Next.js Templates',
+        title: 'Increased Skill Mastery',
         description:
-            'Production-ready SaaS starters — auth, billing, and AI patterns. Free-tier friendly.',
+            'Working on a production application increased skill mastery and problem solving by over 68% in 6 months.',
     },
     {
-        value: '39',
+        value: '4',
         type: 'number' as const,
-        title: 'Full-stack Blocks',
+        title: 'Supported Languages',
         description:
-            'Pre-wired Stripe + Supabase + AI blocks — copy, paste, customize, ship.',
-    },
-    {
-        value: '38',
-        type: 'number' as const,
-        title: 'Marketing Components',
-        description:
-            'Conversion-ready heroes, features, and CTAs built with Shadcn + Framer Motion.',
+            'JavaScript, TypeScript, Go, and Rust. We are working on additional programming languages and frameworks.',
     },
     {
         value: null,
         type: 'icon' as const,
-        title: 'Community (Coming Soon)',
+        title: 'AI-Assisted Learning',
         description:
-            'Private Discord for support, office hours, showcases, and early drops.',
+            'Personal challenges with skill stages and levels, mastery trees, personalized roadmaps, and AI-assisted learning.',
+    },
+    {
+        value: null,
+        type: 'icon' as const,
+        title: 'Team OS Products',
+        description:
+            'Work side-by-side with teams on open source products: ML products, browsers, dev-tools, web frameworks, and more.',
     },
 ] as const;
 
 const pricingIncludes = [
-    'All current & future templates, blocks, and components',
-    'Commercial projects included',
-    'Ongoing updates — no renewal ever',
-    '30-day money-back guarantee',
+    'Everything in Free tier',
+    'Intermediate tasks & AI-assisted learning',
+    'Work side-by-side with teams',
+    'Starter templates and packs',
+    'Weekly live sessions',
+    'Certifications & Badges',
 ] as const;
 
 export default function PPCollective() {
@@ -60,15 +62,15 @@ export default function PPCollective() {
                         variant="default"
                         className="bg-primary/5 text-primary rounded-md border-primary/30 px-3 py-1 text-sm font-medium"
                     >
-                        $100 off for a limited time
+                        Join waitlist — 3 month free trial
                     </Badge>
                     <h2 className="max-w-2xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-                        Join the Pacepard Collective.
+                        Why and how Pacepard Collective
                     </h2>
                     <p className="max-w-2xl text-lg text-muted-foreground">
-                        Unlock lifetime access to all blocks, components, and
-                        templates. Includes all future updates — yours forever
-                        with a single payment.
+                        Over the past 6 months, my team and I at Pacepard have successfully ran an experiment. 
+                        Working on a production application increased skill mastery and problem solving by over 68%. 
+                        We are democratizing this process and we invite you to join us.
                     </p>
                     <ul className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                         {guarantees.map((item) => (
@@ -140,31 +142,28 @@ export default function PPCollective() {
                             )}
                         >
                             <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                                Lifetime License
+                                Join Waitlist
                             </p>
                             <p className="mt-1 text-sm text-background/80">
-                                One-time payment, lifetime access
+                                Get roadmaps, 3 month free trial, and join teams & products
                             </p>
                             <div className="mt-6 flex flex-wrap items-baseline gap-2">
                                 <span className="text-4xl font-bold tracking-tight sm:text-5xl">
-                                    $179
-                                </span>
-                                <span className="text-lg text-background/60 line-through">
-                                    $279
+                                    FREE
                                 </span>
                                 <Badge
                                     variant="default"
-                                    className="bg-red-400 text-primary-foreground border-0 h-8"
+                                    className="bg-primary text-primary-foreground border-0"
                                 >
-                                    Save $100
+                                    Start Now
                                 </Badge>
                             </div>
                             <Button
                                 size="lg"
-                                className="mt-6 w-full bg-blue-500 text-primary-foreground hover:bg-primary/90"
+                                className="mt-6 w-full bg-primary text-primary-foreground hover:bg-primary/90"
                                 asChild
                             >
-                                <a href="#">Join the cult for life</a>
+                                <a href="#">Book your spot</a>
                             </Button>
                             <ul className="mt-6 space-y-3 border-t border-background/20 pt-6">
                                 {pricingIncludes.map((item) => (
@@ -172,7 +171,7 @@ export default function PPCollective() {
                                         key={item}
                                         className="flex items-start gap-3 text-sm"
                                     >
-                                        <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-white text-primary">
+                                        <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/20 text-primary">
                                             <Check
                                                 className="size-3"
                                                 aria-hidden

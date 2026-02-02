@@ -21,42 +21,42 @@ const useCases = [
     {
         href: '#',
         icon: HelpCircle,
-        label: 'Go from brainstorm to roadmap',
+        label: 'Simple, customisable setup',
     },
     {
         href: '#',
         icon: List,
-        label: 'Turn meetings into social posts',
+        label: 'Reusable event templates',
     },
     {
         href: '#',
         icon: FolderOpen,
-        label: 'Organize your workspace',
+        label: 'Track progress at every stage',
     },
     {
         href: '#',
         icon: User,
-        label: 'Onboard a new hire',
+        label: 'Knowledgebase for participants',
     },
     {
         href: '#',
         icon: Globe,
-        label: 'Revise a landing page',
+        label: 'Organise online, in-person, or hybrid',
     },
     {
         href: '#',
         icon: Map,
-        label: 'Plan an offsite',
+        label: 'Friendly feedback channels',
     },
     {
         href: '#',
         icon: UtensilsCrossed,
-        label: 'Track favorite restaurants',
+        label: 'Drive engagement and adoption',
     },
     {
         href: '#',
         icon: Target,
-        label: 'Transform notes into tasks',
+        label: 'Build lasting loyalty',
     },
 ] as const;
 
@@ -68,21 +68,19 @@ export default function PPGo() {
                 <div className="flex flex-row flex-wrap items-center justify-between gap-8 lg:gap-16">
                     <div className="min-w-0 flex-1 space-y-4">
                         <h2 className="max-w-xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-                            Let Pacepard Go handle the busywork.
+                            Run memorable and rewarding hackathons
                         </h2>
                         <p className="max-w-lg text-lg text-muted-foreground">
-                            Pick a use case to see how Pacepard does the work
-                            for you.
+                            Design events that drive real engagement, adoption, and lasting loyalty. 
+                            Built for small teams and large organizations.
                         </p>
                         <Link
-                            href="#"
+                            href="/go"
                             className="inline-flex w-fit items-center gap-1.5 text-blue-600 font-medium transition-colors hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         >
-                            Explore more
+                            Explore Pacepard Go
                             <ArrowRight className="size-4" aria-hidden />
                         </Link>
-
-                    
                     </div>
                     <div className="relative flex shrink-0 items-center justify-center w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[440px]">
                         <Image
@@ -98,26 +96,21 @@ export default function PPGo() {
 
                 {/* Use case cards grid: 2 rows × 4 columns */}
                 <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-10 lg:grid-cols-4">
-                    {useCases.map(({ href, icon: Icon, label }) => (
-                        <Link
+                    {useCases.map(({ icon: Icon, label }) => (
+                        <div
                             key={label}
-                            href={href}
                             className={cn(
                                 'group flex flex-col rounded-lg border border-border bg-card p-5 text-left shadow-sm transition-colors',
-                                'hover:border-primary/30 hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                                'hover:border-primary/30 hover:bg-muted/50',
                             )}
                         >
                             <span className="mb-3 inline-flex size-9 items-center justify-center rounded-md bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">
                                 <Icon className="size-5" aria-hidden />
                             </span>
-                            <span className="flex items-center gap-1.5 font-medium text-foreground">
+                            <span className="font-medium text-foreground">
                                 {label}
-                                <ArrowRight
-                                    className="size-4 shrink-0 opacity-60 transition-transform group-hover:translate-x-0.5"
-                                    aria-hidden
-                                />
                             </span>
-                        </Link>
+                        </div>
                     ))}
                 </div>
             </div>
