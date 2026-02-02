@@ -40,16 +40,14 @@ const PersonaCard: FC<IPersonaCard> = (data) => {
                 </div>
 
 
-                <div
-                >
-                    {/* Use standard <img> tag for the image */}
+                <div className="w-20 h-20 flex-shrink-0">
                     {image && (
                         <Image
                             src={image}
                             alt={`${title} illustration`}
-                            width={20}
-                            height={20}
-                            className="w-full h-full object-cover transition-opacity duration-500 opacity-90 group-hover:opacity-100"
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-contain transition-opacity duration-500 opacity-90 group-hover:opacity-100"
                         />
                     )}
                 </div>

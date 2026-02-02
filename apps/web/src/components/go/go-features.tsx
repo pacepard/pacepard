@@ -62,7 +62,7 @@ export default function GoFeatures() {
                                             fill
                                             className="object-cover object-left-top ps-4 pt-2"
                                         />
-                                        <div className="absolute inset-0 z-10 bg-gradient-to-t from-background-50 via-transparent to-transparent" />
+                                        <div className="absolute inset-0 z-10 bg-gradient-to-t from-neutral-100 via-transparent to-transparent" />
                                     </div>
 
                                     <Link

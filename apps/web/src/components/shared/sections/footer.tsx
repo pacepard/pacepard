@@ -116,7 +116,7 @@ export default function Footer() {
 
                     {/* Pacepard Text */}
                     <div className="mt-24 flex justify-center ">
-                        <span className="text-[4.5rem] md:text-[12rem] lg:text-[17.6rem] font-bold select-none leading-none bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 dark:from-neutral-950 to-neutral-200 dark:to-neutral-800 inset-x-0">
+                        <span className="text-[4.5rem] md:text-[12rem] lg:text-[15rem] lg:text-[17.6rem] font-bold select-none leading-none bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 dark:from-neutral-950 to-neutral-200 dark:to-neutral-800 inset-x-0">
                             {BRAND_INFO.name}
                         </span>
                     </div>

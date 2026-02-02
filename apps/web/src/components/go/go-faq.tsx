@@ -7,28 +7,53 @@ export default function GoFAQ() {
     const faqItems = [
         {
             id: 'item-1',
-            question: 'How long does shipping take?',
-            answer: 'Standard shipping takes 3-5 business days, depending on your location. Express shipping options are available at checkout for 1-2 business day delivery.',
+            question: 'How quickly can I set up a hackathon?',
+            answer: 'You can create challenges, register participants, and set timelines in minutes with our simple, customizable setup. No complicated tools needed. Our reusable event templates help you draft challenges and hackathons with smart instructions, so you don\'t need to start from scratch each time.',
         },
         {
             id: 'item-2',
-            question: 'What payment methods do you accept?',
-            answer: 'We accept all major credit cards (Visa, Mastercard, American Express), PayPal, Apple Pay, and Google Pay. For enterprise customers, we also offer invoicing options.',
+            question: 'Can I run online, in-person, or hybrid hackathons?',
+            answer: 'Yes! Pacepard Go supports all hackathon formats. You can organize online, in-person, or hybrid hackathons all in one place. Our platform adapts to your event format and helps you manage participants regardless of how they\'re participating.',
         },
         {
             id: 'item-3',
-            question: 'Can I change or cancel my order?',
-            answer: 'You can modify or cancel your order within 1 hour of placing it. After this window, please contact our customer support team who will assist you with any changes.',
+            question: 'How do I track participant progress and project status?',
+            answer: 'Our platform provides real-time tracking from start to finish. You can see who\'s participating, what they\'re building, and how projects are progressing at every stage. The project status overview gives you complete visibility into all active projects, reviews, and completed work.',
         },
         {
             id: 'item-4',
-            question: 'Do you ship internationally?',
-            answer: "Yes, we ship to over 50 countries worldwide. International shipping typically takes 7-14 business days. Additional customs fees may apply depending on your country's import regulations.",
+            question: 'How do I help participants get up to speed quickly?',
+            answer: 'Our knowledge base feature helps participants get up to speed quickly so they can create better projects and add real value to your product. You can provide getting started guides, API documentation, and other resources that participants can access throughout the hackathon.',
         },
         {
             id: 'item-5',
-            question: 'What is your return policy?',
-            answer: 'We offer a 30-day return policy for most items. Products must be in original condition with tags attached. Some specialty items may have different return terms, which will be noted on the product page.',
+            question: 'How can I collect feedback from participants?',
+            answer: 'Pacepard Go includes friendly feedback channels that integrate seamlessly into your hackathon. You\'ll receive continuous feedback and insights from participants through notifications, project updates, and direct communication channels. This helps you build consistent usage momentum and maintain a healthy feedback loop.',
+        },
+        {
+            id: 'item-6',
+            question: 'Is Pacepard Go suitable for small teams and large organizations?',
+            answer: 'Absolutely! Pacepard Go is built for both small teams and large organizations. Whether you\'re running an internal hackathon for your startup or organizing a large-scale event with thousands of participants, our platform scales to meet your needs.',
+        },
+        {
+            id: 'item-7',
+            question: 'What makes Pacepard Go different from other hackathon platforms?',
+            answer: 'Pacepard Go is built on the habits that make the best hackathons successful: knowledgeable participants, fast engagement, and launching high-quality initiatives without the usual headaches. We focus on helping you get thousands to stick around your product and technology, building lasting engagement and loyalty.',
+        },
+        {
+            id: 'item-8',
+            question: 'Can I reuse templates for multiple hackathons?',
+            answer: 'Yes! Our reusable event templates allow you to draft challenges and hackathons with smart instructions and templates. Once you create a template, you can use it for future events, saving you time and ensuring consistency across your hackathons.',
+        },
+        {
+            id: 'item-9',
+            question: 'How do I ensure participants stay engaged after the hackathon?',
+            answer: 'Pacepard Go helps you build consistent usage momentum and a healthy feedback loop. By providing knowledge resources, tracking progress, and maintaining open communication channels, participants stay engaged with your product and technology long after the hackathon ends.',
+        },
+        {
+            id: 'item-10',
+            question: 'What kind of support do you offer for hackathon organizers?',
+            answer: 'We provide comprehensive support to help you run memorable and rewarding hackathons. From setup assistance to tracking tools and feedback channels, our platform includes everything you need. If you need additional help, our support team is available to assist you.',
         },
     ]
 
@@ -62,9 +87,9 @@ export default function GoFAQ() {
                     <p className="text-muted-foreground text-center">
                         Can't find what you're looking for? Contact our{' '}
                         <Link
-                            href="#"
+                            href="mailto:support@pacepard.com"
                             className="text-primary font-medium hover:underline">
-                            customer support team
+                            Support team
                         </Link>
                     </p>
                 </div>

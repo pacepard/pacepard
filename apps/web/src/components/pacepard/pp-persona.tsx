@@ -13,7 +13,7 @@ const personas = [
         title: 'Product & Design folks',
         description:
             'Become the person others trust with the hardest customer  and user problems.',
-        image: '/blocks/learners.svg',
+        image: '/blocks/product.svg',
         bgColor: 'from-blue-300 to-cyan-200',
         features: [
             { icon: Trophy, label: 'ML competition hosting' },
@@ -26,7 +26,7 @@ const personas = [
         title: 'Engineers',
         description:
             'Be part of recreating advanced tools like Git, S3 bucket, Redis and SQLite from scratch.',
-        image: '/blocks/learners.svg',
+        image: '/blocks/eng.svg',
         bgColor: 'from-yellow-400 to-yellow-200',
         features: [
             { icon: Wrench, label: 'Open-sourced models' },
@@ -39,7 +39,7 @@ const personas = [
         title: 'Data & AI Professionals',
         description:
             'Be part of building ML Models and pipelines for the toughest data challenges.',
-        image: '/blocks/learners.svg',
+        image: '/blocks/ai.svg',
         bgColor: 'from-yellow-400 to-yellow-200',
         features: [
             { icon: Wrench, label: 'Open-sourced models' },
@@ -51,7 +51,7 @@ const personas = [
     {
         id: 'security-and-testing-folks',
         title: 'Security & testing folks',
-        image: '/blocks/learners.svg',
+        image: '/blocks/security.svg',
         description:
             'Become the safeguard we rely on to uncover hidden failures and security flaws.',
         bgColor: 'from-blue-400 to-blue-200',
@@ -66,7 +66,7 @@ const personas = [
         title: 'Marketing & sales',
         description:
             'Become the pillar that generates leads and drives product usage with effective strategies.',
-        image: '/blocks/learners.svg',
+        image: '/blocks/market.svg',
         bgColor: 'from-blue-300 to-cyan-200',
         features: [
             { icon: Trophy, label: 'ML competition hosting' },
@@ -78,7 +78,7 @@ const personas = [
     {
         id: 'learners', // Note: Duplicate ID, changed to avoid React warnings if this were production
         title: 'Learners',
-        image: '/blocks/pp-1.svg',
+        image: '/blocks/learners.svg',
         description:
             'Projects that go beyond basics and make you understand the underlying complexity.',
         bgColor: 'from-blue-400 to-blue-200',
