@@ -2,7 +2,7 @@
 export { default as cookieService } from './services/cookies';
 
 // Storage Service
-export { default as storage } from './storage/local-storage';
+export { default as storage, persistAuthFromResponse } from './storage/local-storage';
 
 // Idempotent Service
 export { default as idempotentService } from './services/idempotent';

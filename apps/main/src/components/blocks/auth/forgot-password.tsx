@@ -91,12 +91,17 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                 setTimeout(() => otpRefs.current[0]?.focus(), 100);
                 toast.success('OTP sent to your email address');
             }
-        } catch (error) {
+        } catch (error: any) {
+            console.error('Forgot password error:', error);
+            // Handle different error types
+            const errorMessage = error?.response?.data?.message 
+                || error?.message 
+                || 'An unexpected error occurred. Please try again.';
+            
             emailForm.setError('root', {
                 type: 'server',
-                message: 'An unexpected error occurred. Please try again.',
+                message: errorMessage,
             });
-            console.error('Forgot password error:', error);
         }
     };
 

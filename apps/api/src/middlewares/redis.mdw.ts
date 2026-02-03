@@ -66,21 +66,25 @@ class redisHandler {
     }
 
     public async keepData(data: IData, exp: number) {
+        if (!this.client) return;
         const value = JSON.stringify(data.value);
-        return await this.client!.set(data.key, value, { EX: exp });
+        return await this.client.set(data.key, value, { EX: exp });
     }
 
     public async fetchData<T = any>(key: string): Promise<T | null> {
-        const data = await this.client!.get(key);
+        if (!this.client) return null;
+        const data = await this.client.get(key);
         return data ? JSON.parse(data) : null;
     }
 
     public async deleteData(key: string) {
-        await this.client!.del(key);
+        if (!this.client) return;
+        await this.client.del(key);
     }
 
     public async exists(key: string): Promise<boolean> {
-        const exists = await this.client!.exists(key);
+        if (!this.client) return false;
+        const exists = await this.client.exists(key);
         return exists === 1;
     }
 

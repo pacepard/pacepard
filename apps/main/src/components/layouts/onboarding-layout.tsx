@@ -1,6 +1,7 @@
 // src/components/layouts/onboarding-layout.tsx
 import React, { ReactNode } from 'react';
 import PacepardLogo from '../common/Logo';
+import { Toaster } from '@pacepard/ui/components/sonner';
 
 interface IOnboardingLayout {
     title: string;
@@ -27,16 +28,19 @@ export const OnboardingLayout = ({
     }[maxWidth];
 
     return (
-        <div className="min-h-screen w-full relative">
-            <div className="absolute top-4 left-4 z-10">
-                <PacepardLogo />
-            </div>
+        <>
+            <div className="min-h-screen w-full relative">
+                <div className="absolute top-4 left-4 z-10">
+                    <PacepardLogo />
+                </div>
 
-            <div className="w-full min-h-screen flex items-center justify-center px-6 md:px-10 pt-20 pb-12">
-                <div className={`${maxWidthClass} w-full`}>
-                    {children}
+                <div className="w-full min-h-screen flex items-center justify-center px-6 md:px-10 pt-20 pb-12">
+                    <div className={`${maxWidthClass} w-full`}>
+                        {children}
+                    </div>
                 </div>
             </div>
-        </div>
+            <Toaster />
+        </>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +15,9 @@ import {
 } from '@pacepard/ui/components/select';
 import { cn } from '@pacepard/ui/lib/utils';
 import { PacepardAPI } from '@/config/pacepard';
+import { storage, UserType } from '@pacepard/sdk';
+import { toast } from '@pacepard/ui';
+import { getOnboardingRoute } from '@/utils/onboarding';
 
 const businessInfoSchema = z.object({
     businessName: z.string().min(1, 'Business name is required').trim(),
@@ -53,6 +56,45 @@ const BusinessInfo: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
+    // Guard: Check onboarding status and redirect if user hasn't completed step 2, has already completed step 3, or is not a business user
+    useEffect(() => {
+        const checkOnboardingStatus = async () => {
+            // Only check if user is authenticated
+            if (!storage.checkToken()) {
+                return;
+            }
+
+            try {
+                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
+                
+                if (statusResponse.error === false && statusResponse.data) {
+                    const statusData = statusResponse.data as any;
+                    const step = statusData.step || 0;
+                    const status = statusData.status || 'not-started';
+                    const userTypeFromStatus = statusData.userType;
+
+                    // Allow only if step >= 2 and step < 3 and userType === 'business'
+                    if (step < 2) {
+                        // User hasn't completed basic info yet, redirect to basic-info
+                        navigate('/onboarding/basic-info');
+                    } else if (step >= 3) {
+                        // User has already completed this step, redirect to next appropriate step
+                        const route = getOnboardingRoute(step, status, userTypeFromStatus);
+                        navigate(route);
+                    } else if (userTypeFromStatus !== 'business' && userTypeFromStatus !== UserType.BUSINESS) {
+                        // Not a business user, redirect to appropriate route (should be user-info for talent/user types)
+                        navigate('/onboarding/user-info');
+                    }
+                }
+            } catch (error) {
+                // Silently fail - allow user to proceed if check fails
+                console.error('Error checking onboarding status:', error);
+            }
+        };
+
+        checkOnboardingStatus();
+    }, [navigate]);
+
     const {
         register,
         handleSubmit,
@@ -82,7 +124,11 @@ const BusinessInfo: React.FC = () => {
             });
 
             if (response.error === false && (response.status === 200 || response.status === 201)) {
-                navigate('/onboarding/complete');
+                // Persist business name for workspace creation
+                storage.keepLegacy('businessName', data.businessName);
+                // Navigate first, then show success toast
+                navigate('/onboarding/create-workspace');
+                toast.success('Business information saved');
             } else {
                 setError('root', {
                     type: 'server',
@@ -101,7 +147,9 @@ const BusinessInfo: React.FC = () => {
     };
 
     const handleBack = () => {
-        navigate('/onboarding/step2-basic-info');
+        // Only allow going back to basic-info (step 1) if current step is 2
+        // Guards will prevent going back if step 1 is already completed
+        navigate('/onboarding/basic-info');
     };
 
     return (

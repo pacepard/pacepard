@@ -30,6 +30,8 @@ import Members from '@/app/dashboard/partials/members/members';
 import Settings from '@/app/dashboard/partials/settings/settings';
 import Security from '@/app/dashboard/partials/settings/security';
 import Notifications from '@/app/dashboard/partials/settings/notifications';
+import TeamSettings from '@/app/dashboard/partials/settings/team-settings';
+import TeamMembers from '@/app/dashboard/partials/settings/team-members';
 import UpgradePlan from '@/app/dashboard/partials/upgrade/upgrade-plan';
 
 import Workshops from '@/app/dashboard/talent/workshops';
@@ -165,6 +167,10 @@ const AppRoutes = () => {
                 return <Members />;
             case 'settings':
                 return <Settings />;
+            case 'team-settings':
+                return <TeamSettings />;
+            case 'team-members':
+                return <TeamMembers />;
             case 'upgrade-plan':
                 return <UpgradePlan />;
 

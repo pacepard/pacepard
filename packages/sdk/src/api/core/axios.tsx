@@ -23,6 +23,11 @@ class AxiosService {
         const { isAuth = false, method, path, type, payload } = params;
 
         let urlpath = `${this.baseUrl}${path}`;
+        
+        // Debug logging in development
+        if (process.env.NODE_ENV === 'development') {
+            console.log(`[API] ${method} ${urlpath}`, { isAuth, payload: payload instanceof FormData ? 'FormData' : payload });
+        }
 
         // Check if payload is FormData - if so, don't set Content-Type (let browser set it with boundary)
         const isFormData = payload instanceof FormData;
@@ -50,50 +55,60 @@ class AxiosService {
             })
             .catch((err) => {
                 if (err.response) {
-                    if (err.response.status === 404) {
-                        result.error = true;
-
-                        if (err.response.data.errors) {
-                            result.errors = err.response.data.errors;
-                        } else if (err.response.data.message) {
-                            result.message = err.response.data.message;
-                        } else {
-                            result.message = 'unable to get requested resource';
-                        }
-
-                        result.data = null;
-                    } else if (err.response.status === 502) {
-                        result.error = true;
-
-                        if (err.response.data.errors) {
-                            result.errors = err.response.data.errors;
-                        } else if (err.response.data.message) {
-                            result.message = err.response.data.message;
-                        } else {
-                            result.message = 'unable to get requested resource';
-                        }
-
-                        result.data = null;
+                    // For all error responses, use the response data if available
+                    if (err.response.data) {
+                        result = {
+                            ...err.response.data,
+                            status: err.response.status,
+                            // Ensure error flag is set for non-2xx status codes
+                            error: err.response.status >= 400 ? true : (err.response.data.error ?? false),
+                        };
                     } else {
-                        if (err.response.data) {
-                            result = err.response.data;
-                        } else {
-                            result.error = true;
-                            result.errors = ['an error occured'];
-                            result.message = 'An error occured';
-                            result.data = null;
-                        }
+                        // Fallback if no response data
+                        result = {
+                            error: true,
+                            status: err.response.status,
+                            errors: ['an error occurred'],
+                            message: `Request failed with status ${err.response.status}`,
+                            data: null,
+                        };
                     }
+                } else if (err.request) {
+                    // Request was made but no response received (network error)
+                    const isConnectionRefused = err.code === 'ERR_CONNECTION_REFUSED' || err.message?.includes('ERR_CONNECTION_REFUSED');
+                    result = {
+                        error: true,
+                        status: 0,
+                        errors: ['Network error'],
+                        message: isConnectionRefused 
+                            ? `Unable to connect to the API server at ${urlpath}. Please ensure the API server is running.`
+                            : 'Unable to connect to the server. Please check your internet connection.',
+                        data: null,
+                    };
                 } else if (typeof err === 'object') {
-                    result.error = true;
-                    result.errors = ['an error occurred. please try again'];
-                    result.message = 'Error';
-                    result.data = err;
+                    result = {
+                        error: true,
+                        status: undefined,
+                        errors: ['an error occurred. please try again'],
+                        message: err.message || 'Error',
+                        data: err,
+                    };
                 } else if (typeof err === 'string') {
-                    result.error = true;
-                    result.errors = [err.toString()];
-                    result.message = err.toString();
-                    result.data = err.toString();
+                    result = {
+                        error: true,
+                        status: undefined,
+                        errors: [err.toString()],
+                        message: err.toString(),
+                        data: err.toString(),
+                    };
+                } else {
+                    result = {
+                        error: true,
+                        status: undefined,
+                        errors: ['an unknown error occurred'],
+                        message: 'An unknown error occurred',
+                        data: null,
+                    };
                 }
             });
 

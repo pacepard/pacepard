@@ -1,6 +1,6 @@
 export const URL_LOGIN = '/auth/login'
 export const URL_REGISTER = '/auth/register'
-export const URL_ACTIVATE = '/auth/activate-account'
+export const URL_ACTIVATE = '/auth/activate'
 export const URL_VERIFY_OTP = '/auth/verify-otp'
 export const URL_FORGOT_PASSWORD = '/auth/forgot-password'
 export const URL_RESET_PASSWORD = '/auth/reset-password'
@@ -27,6 +27,8 @@ export const URL_INVITE = '/invite'
 
 export const URL_WORKSPACES = '/workspaces'
 export const URL_WORKSPACE = '/workspace'
+
+export const URL_STORAGE_UPLOAD = '/storage/upload'
 
 
 

@@ -19,6 +19,8 @@ import { OAuthButtons } from './oauth-buttons';
 import { PacepardAPI } from '@/config/pacepard';
 import { toast } from '@pacepard/ui';
 import { useNavigate } from 'react-router';
+import { persistAuthFromResponse } from '@pacepard/sdk';
+import { getOnboardingRoute } from '@/utils/onboarding';
 
 
 const LoginForm = () => {
@@ -66,10 +68,39 @@ const LoginForm = () => {
                     message: response.message || response.data?.message || 'Invalid email or password',
                 });
             } else {
-                // Navigate first, then show optional success toast
-                navigate('/dashboard');
-                // Optional: Show success toast after navigation (non-blocking, informational)
-                toast.success('Login successful!');
+                if (response.data?.token) {
+                    persistAuthFromResponse(response);
+                }
+                
+                // Check onboarding status and route accordingly
+                try {
+                    const onboardingStatus = await PacepardAPI.user.getOnboardingStatus();
+                    
+                    if (onboardingStatus.error === false && onboardingStatus.data) {
+                        const statusData = onboardingStatus.data as any;
+                        const step = statusData.step || 0;
+                        const status = statusData.status || 'not-started';
+                        const userType = statusData.userType;
+                        
+                        // Get the appropriate route based on onboarding status
+                        const route = getOnboardingRoute(step, status, userType);
+                        navigate(route);
+                        
+                        // Only show success toast if going to dashboard (onboarding completed)
+                        if (status === 'completed') {
+                            toast.success('Login successful!');
+                        }
+                    } else {
+                        // Fallback to dashboard if status check fails
+                        navigate('/dashboard');
+                        toast.success('Login successful!');
+                    }
+                } catch (error) {
+                    // Fallback to dashboard if status check fails
+                    console.error('Error checking onboarding status:', error);
+                    navigate('/dashboard');
+                    toast.success('Login successful!');
+                }
             }
         } catch (error) {
             // Use React Hook Form's setError for unexpected errors

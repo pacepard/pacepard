@@ -47,6 +47,8 @@ export default defineConfig(({ mode }) => {
         '@pacepard/sdk',
         '@pacepard/blocs',
       ],
+      // Avoid stale chunk refs after config/deps change (chunk-*.js not found)
+      force: true,
       esbuildOptions: {
         resolveExtensions: ['.tsx', '.ts', '.jsx', '.js', '.mjs'],
       },

@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { VerifyOtpFormValues, verifyOtpSchema } from './validation';
 import { Loader2 } from 'lucide-react';
 import { OAuthButtons } from './oauth-buttons';
-import { OtpType, storage } from '@pacepard/sdk';
+import { OtpType, persistAuthFromResponse, storage } from '@pacepard/sdk';
 import { PacepardAPI } from '@/config/pacepard';
 
 export interface IForm extends React.ComponentProps<'form'> {
@@ -47,13 +47,26 @@ const ActivateUserForm = (data: IForm) => {
         return () => clearInterval(timer);
     }, [resendCountdown]);
 
-    const maskEmail = (value?: string) => {
-        if (!value) return '';
-        const parts = value.split('@');
-        if (parts.length !== 2) return value;
-        const [local, domain] = parts;
-        if (!local || local.length <= 2) return value;
-        return `${local[0]}${'*'.repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
+    const cleanEmail = (): string => {
+        let e = storage.getUserEmail() as string;
+        if (!e) return email || "";
+        if (e.startsWith('"') && e.endsWith('"')) {
+            try {
+                e = JSON.parse(e);
+            } catch {
+                e = e.replace(/^"(.*)"$/, "$1");
+            }
+        }
+        return e || email || "";
+    };
+
+    const maskEmail = (value: string): string => {
+        const at = value.indexOf("@");
+        if (at < 1) return value;
+        const local = value.slice(0, at);
+        const domain = value.slice(at + 1);
+        if (local.length <= 2) return value;
+        return `${local[0]}${"*".repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
     };
 
     const handleOtpChange = (index: number, value: string) => {
@@ -87,21 +100,16 @@ const ActivateUserForm = (data: IForm) => {
     };
 
     const onSubmit = async ({ otp }: VerifyOtpFormValues) => {
-        let cleanEmail = storage.getUserEmail() as string;
+        const cleanedEmail = cleanEmail();
 
-        if (cleanEmail?.startsWith('"')) {
-            try {
-                cleanEmail = JSON.parse(cleanEmail);
-            } catch {
-                cleanEmail = cleanEmail.replace(/^"(.*)"$/, '$1');
-            }
-        }
-
-        await PacepardAPI.auth.activateUser({
-            email: cleanEmail,
+        const response = await PacepardAPI.auth.activateUser({
+            email: cleanedEmail,
             otp: Number(otp),
             otpType: OtpType.ACTIVATEACCOUNT,
         });
+        if (!response.error && response.data?.token) {
+            persistAuthFromResponse(response);
+        }
     };
 
     const handleResend = () => {
@@ -114,11 +122,10 @@ const ActivateUserForm = (data: IForm) => {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
             <div className="space-y-4">
-                {email && (
+                {(email || cleanEmail()) && (
                     <div className="text-center text-sm text-muted-foreground">
-                        <p>We sent a verification code to</p>
-                        <p className="font-medium text-foreground">
-                            {maskEmail(email)}
+                        <p className="font-medium text-lg text-foreground">
+                            {maskEmail((email || cleanEmail()).trim())}
                         </p>
                     </div>
                 )}

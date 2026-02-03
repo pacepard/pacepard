@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@pacepard/ui/components/button';
 import { Card, CardContent } from '@pacepard/ui/components/card';
@@ -7,9 +7,10 @@ import {
     Circle,
 } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
-import { UserType, UserContext } from '@pacepard/sdk';
+import { UserType, UserContext, storage } from '@pacepard/sdk';
 import { PacepardAPI } from '@/config/pacepard';
 import { toast } from '@pacepard/ui';
+import { getOnboardingRoute } from '@/utils/onboarding';
 
 interface UserTypeOption {
     id: UserType;
@@ -46,12 +47,47 @@ const userTypeOptions: UserTypeOption[] = [
 const Onboard: React.FC = () => {
     const [selectedType, setSelectedType] = useState<UserType | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string>('');
     const navigate = useNavigate();
     const { setUserType } = useContext(UserContext) || {};
+
+    // Guard: Check onboarding status and redirect if user has already started onboarding
+    useEffect(() => {
+        const checkOnboardingStatus = async () => {
+            // Only check if user is authenticated
+            if (!storage.checkToken()) {
+                return;
+            }
+
+            try {
+                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
+                
+                if (statusResponse.error === false && statusResponse.data) {
+                    const statusData = statusResponse.data as any;
+                    const step = statusData.step || 0;
+                    const status = statusData.status || 'not-started';
+                    const userType = statusData.userType;
+
+                    // Allow only if step === 0 or status === 'not-started'
+                    if (step > 0 || status !== 'not-started') {
+                        // User has already started onboarding, redirect to appropriate step
+                        const route = getOnboardingRoute(step, status, userType);
+                        navigate(route);
+                    }
+                }
+            } catch (error) {
+                // Silently fail - allow user to proceed if check fails
+                console.error('Error checking onboarding status:', error);
+            }
+        };
+
+        checkOnboardingStatus();
+    }, [navigate]);
 
     const handleContinue = async () => {
         if (selectedType && setUserType) {
             setIsLoading(true);
+            setError(''); // Clear any previous errors
             try {
 
                 const response = await PacepardAPI.user.setUserType({
@@ -62,15 +98,19 @@ const Onboard: React.FC = () => {
                     // Store the selected user type in context
                     setUserType(selectedType);
 
+                    // Navigate first, then show success toast
                     navigate('/onboarding/basic-info');
+                    toast.success('User type selected');
 
                 } else {
-                    toast.error(response.message);
+                    // Use inline error instead of toast
+                    setError(response.message || 'Failed to set user type. Please try again.');
                 }
 
             } catch (error) {
                 console.error('Error setting user type:', error);
-                toast.error('An error occurred. Please try again.');
+                // Use inline error instead of toast
+                setError('An error occurred. Please try again.');
             } finally {
                 setIsLoading(false);
             }
@@ -167,6 +207,15 @@ const Onboard: React.FC = () => {
                     );
                 })}
             </div>
+
+            {/* Error Message */}
+            {error && (
+                <div className="w-full flex justify-center pt-2">
+                    <p className="text-sm text-destructive text-center">
+                        {error}
+                    </p>
+                </div>
+            )}
 
             {/* Continue Button */}
             <div className="w-full flex justify-center pt-4">

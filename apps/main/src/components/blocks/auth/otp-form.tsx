@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { verifyOtpSchema, VerifyOtpFormValues } from "./validation";
 import { toast } from "@pacepard/ui";
 import { useNavigate } from "react-router";
-import { OtpType, storage } from "@pacepard/sdk";
+import { OtpType, persistAuthFromResponse, storage } from "@pacepard/sdk";
 import { PacepardAPI } from "@/config/pacepard";
 import { Loader2 } from "lucide-react";
 
@@ -40,6 +40,7 @@ const OtpForm = ({
         setValue,
         watch,
         setError,
+        clearErrors,
         formState: { errors, isSubmitting },
     } = useForm<VerifyOtpFormValues>({
         resolver: zodResolver(verifyOtpSchema),
@@ -69,6 +70,15 @@ const OtpForm = ({
             }
         }
         return e || email || "";
+    };
+
+    const maskEmail = (value: string): string => {
+        const at = value.indexOf("@");
+        if (at < 1) return value;
+        const local = value.slice(0, at);
+        const domain = value.slice(at + 1);
+        if (local.length <= 2) return value;
+        return `${local[0]}${"*".repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
     };
 
     const handleOtpChange = (index: number, value: string) => {
@@ -130,12 +140,13 @@ const OtpForm = ({
                     message: response.message || response.data || "Invalid OTP. Please try again.",
                 });
             } else {
-                // Navigate first, then show optional success toast
+                if (response.data?.token) {
+                    persistAuthFromResponse(response);
+                }
                 onSuccess?.();
                 if (redirectTo) {
                     navigate(redirectTo);
                 }
-                // Optional: Show success toast after navigation (non-blocking, informational)
                 toast.success(successMessage);
             }
         } catch (error) {
@@ -149,30 +160,40 @@ const OtpForm = ({
     };
 
     const handleResend = async () => {
+        const resendEmail = (email ?? cleanEmail() ?? "").toString().trim();
+        if (!resendEmail) {
+            setError("root", {
+                type: "server",
+                message: "Email is required to resend the code. Please go back and enter your email.",
+            });
+            return;
+        }
+
         setValue("otp", "");
         setResendCountdown(60);
         otpRefs.current[0]?.focus();
 
         try {
             const response = await PacepardAPI.auth.resendOTP({
-                email: cleanEmail(),
+                email: resendEmail,
                 otpType,
             });
 
             if (response.error) {
-                // Use React Hook Form's setError for resend failures (inline, not toast)
-                setError('root', {
-                    type: 'server',
-                    message: response.message || response.data || "Failed to resend OTP. Please try again.",
+                setError("root", {
+                    type: "server",
+                    message:
+                        response.message ||
+                        response.data ||
+                        "Failed to resend OTP. Please try again.",
                 });
             } else {
-                // Toast for resend success - non-blocking, informational
+                clearErrors("root");
                 toast.success("OTP resent successfully");
             }
         } catch (error) {
-            // Use React Hook Form's setError for unexpected errors
-            setError('root', {
-                type: 'server',
+            setError("root", {
+                type: "server",
                 message: "An error occurred while resending OTP. Please try again.",
             });
             console.error("Resend OTP error:", error);
@@ -184,14 +205,15 @@ const OtpForm = ({
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className={`flex flex-col gap-6 p-6 ${className}`}
+            className={`flex flex-col gap-6 px-6 ${className}`}
             {...props}
         >
             <div className="space-y-4">
-                {email && (
-                    <div className="text-center text-sm text-muted-foreground">
-                        <p>We sent a verification code to</p>
-                        <p className="font-medium text-foreground">{email}</p>
+                {(email || cleanEmail()) && (
+                    <div className="text-c text-sm text-muted-foreground pb-6">
+                        <p className="font-medium text-lg text-foreground">
+                            {maskEmail((email || cleanEmail()).trim())}
+                        </p>
                     </div>
                 )}
 

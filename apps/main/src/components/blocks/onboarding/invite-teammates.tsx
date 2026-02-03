@@ -10,6 +10,9 @@ import { Link, Plus, X } from 'lucide-react';
 import { toast } from '@pacepard/ui';
 import { inviteTeammatesSchema, InviteTeammatesFormValues } from './validation';
 import { cn } from '@pacepard/ui/lib/utils';
+import { PacepardAPI } from '@/config/pacepard';
+import { storage } from '@pacepard/sdk';
+import { getOnboardingRoute } from '@/utils/onboarding';
 
 const InviteTeammates: React.FC = () => {
     const navigate = useNavigate();
@@ -46,6 +49,41 @@ const InviteTeammates: React.FC = () => {
 
     const watchedEmails = watch('emails');
     const allowDomainAccess = watch('allowDomainAccess');
+
+    // Guard: Check onboarding status and redirect if user hasn't completed step 4 or has already completed onboarding
+    useEffect(() => {
+        const checkOnboardingStatus = async () => {
+            // Only check if user is authenticated
+            if (!storage.checkToken()) {
+                return;
+            }
+
+            try {
+                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
+                
+                if (statusResponse.error === false && statusResponse.data) {
+                    const statusData = statusResponse.data as any;
+                    const step = statusData.step || 0;
+                    const status = statusData.status || 'not-started';
+                    const userTypeFromStatus = statusData.userType;
+
+                    // Allow only if step >= 4 and status !== 'completed'
+                    if (step < 4) {
+                        // User hasn't completed workspace creation yet, redirect to create-workspace
+                        navigate('/onboarding/create-workspace');
+                    } else if (status === 'completed') {
+                        // User has already completed onboarding, redirect to dashboard
+                        navigate('/dashboard');
+                    }
+                }
+            } catch (error) {
+                // Silently fail - allow user to proceed if check fails
+                console.error('Error checking onboarding status:', error);
+            }
+        };
+
+        checkOnboardingStatus();
+    }, [navigate]);
 
     // Update domain when emails change and domain access is enabled
     useEffect(() => {
@@ -127,6 +165,8 @@ const InviteTeammates: React.FC = () => {
     };
 
     const handleBack = () => {
+        // Only allow going back to create-workspace (step 3) if current step is 4
+        // Guards will prevent going back if step 3 is already completed
         navigate('/onboarding/create-workspace');
     };
 

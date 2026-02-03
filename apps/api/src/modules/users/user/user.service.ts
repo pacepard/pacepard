@@ -13,6 +13,7 @@ import {
     IBulkUser,
     EditUserDTO,
 } from './user.dto';
+import User from './user.model';
 import userRepository from './user.repository';
 import talentService from '../talent/talent.service';
 import talentRepository from '../talent/talent.repository';
@@ -442,14 +443,14 @@ class UserService {
             data: {},
         };
 
-        const userResult = await userRepository.findById(String(userId));
-        if (userResult.error || !userResult.data) {
+        const userDoc = await User.findById(String(userId));
+        if (!userDoc) {
             result.error = true;
             result.message = 'User not found';
             result.code = 404;
             return result;
         }
-        let user = userResult.data as IUserDoc;
+        let user = userDoc as IUserDoc;
 
         // Validate user type
         if (![UserType.TALENT, UserType.BUSINESS, UserType.USER].includes(data.userType)) {
@@ -544,14 +545,14 @@ class UserService {
             data: {},
         };
 
-        const userResult = await userRepository.findById(String(userId));
-        if (userResult.error || !userResult.data) {
+        const userDoc = await User.findById(String(userId));
+        if (!userDoc) {
             result.error = true;
             result.message = 'User not found';
             result.code = 404;
             return result;
         }
-        let user = userResult.data as IUserDoc;
+        let user = userDoc as IUserDoc;
 
         // Validate step progression
         if (user.onboard.step < 1) {
@@ -618,14 +619,14 @@ class UserService {
             data: {},
         };
 
-        const userResult = await userRepository.findById(String(userId));
-        if (userResult.error || !userResult.data) {
+        const userDoc = await User.findById(String(userId));
+        if (!userDoc) {
             result.error = true;
             result.message = 'User not found';
             result.code = 404;
             return result;
         }
-        const user = userResult.data as IUserDoc;
+        const user = userDoc as IUserDoc;
 
         // Validate user type
         if (user.userType !== UserType.TALENT) {
@@ -756,14 +757,14 @@ class UserService {
             data: {},
         };
 
-        const userResult = await userRepository.findById(String(userId));
-        if (userResult.error || !userResult.data) {
+        const userDoc = await User.findById(String(userId));
+        if (!userDoc) {
             result.error = true;
             result.message = 'User not found';
             result.code = 404;
             return result;
         }
-        const user = userResult.data as IUserDoc;
+        const user = userDoc as IUserDoc;
 
         // Validate user type
         if (user.userType !== UserType.BUSINESS) {
@@ -790,12 +791,12 @@ class UserService {
         }
 
         // Validate business type enum
-        if (!Object.values(BusinessType).includes(data.businessType)) {
-            result.error = true;
-            result.message = 'Invalid business type';
-            result.code = 400;
-            return result;
-        }
+        // if (!Object.values(BusinessType).includes(data.businessType)) {
+        //     result.error = true;
+        //     result.message = 'Invalid business type';
+        //     result.code = 400;
+        //     return result;
+        // }
 
         // Check if business document already exists
         const businessResult = await businessRepository.findOne({
@@ -885,14 +886,14 @@ class UserService {
             data: {},
         };
 
-        const userResult = await userRepository.findById(String(userId));
-        if (userResult.error || !userResult.data) {
+        const userDoc = await User.findById(String(userId));
+        if (!userDoc) {
             result.error = true;
             result.message = 'User not found';
             result.code = 404;
             return result;
         }
-        let user = userResult.data as IUserDoc;
+        let user = userDoc as IUserDoc;
 
         // Validate step progression
         if (user.onboard.step < 3) {
@@ -1081,14 +1082,14 @@ class UserService {
             data: {},
         };
 
-        const userResult = await userRepository.findById(String(userId));
-        if (userResult.error || !userResult.data) {
+        const userDoc = await User.findById(String(userId));
+        if (!userDoc) {
             result.error = true;
             result.message = 'User not found';
             result.code = 404;
             return result;
         }
-        const user = userResult.data as IUserDoc;
+        const user = userDoc as IUserDoc;
 
         // Validate step progression
         if (user.onboard.step < 2) {

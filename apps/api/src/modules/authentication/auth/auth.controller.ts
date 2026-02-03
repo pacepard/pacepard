@@ -180,12 +180,24 @@ export const activateUserAccount: RequestHandler = asyncHandler(
         await authService.updateLastLogin(userDoc);
         //await authService.updateLoginInfo(userDoc, req);
 
+        // Generate authentication token
+        const token = await tokenService.attachToken(userDoc);
+        if (token.error) {
+            return next(new ErrorResponse(token.message, token.code!, []));
+        }
+
         const mappedUser = await authMapper.mapActivatedUser(userDoc);
+
+        // Include token in response
+        const responseData = {
+            ...mappedUser,
+            token: token.data.token,
+        };
 
         res.status(200).json({
             error: false,
             errors: [],
-            data: mappedUser,
+            data: responseData,
             message: 'Account activated successfully!',
             status: 200,
         });

@@ -39,6 +39,11 @@ const uploadHandler: RequestHandler = asyncHandler(
 
             const files: IFile[] = [];
             const formFields: Partial<IFIleUpload> = {};
+            
+            // Initialize req.body if it doesn't exist
+            if (!req.body) {
+                req.body = {};
+            }
 
             stream.on('file', (fieldname, file, info: FileInfo) => {
                 const { filename, mimeType } = info;
@@ -109,6 +114,10 @@ const uploadHandler: RequestHandler = asyncHandler(
 
             stream.on('field', (name, value) => {
                 formFields[name as keyof IFIleUpload] = value as any;
+                // Ensure req.body exists before setting properties
+                if (!req.body) {
+                    req.body = {};
+                }
                 req.body[name] = value;
             });
 

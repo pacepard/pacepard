@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,10 +13,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@pacepard/ui/components/select';
-import { toast } from '@pacepard/ui';
 import { cn } from '@pacepard/ui/lib/utils';
 import { PacepardAPI } from '@/config/pacepard';
 import { CountrySelector } from './country-selector';
+import { storage } from '@pacepard/sdk';
+import { toast } from '@pacepard/ui';
+import { getOnboardingRoute } from '@/utils/onboarding';
 
 const basicInfoSchema = z.object({
     firstName: z.string().min(1, 'First name is required').trim(),
@@ -46,6 +48,42 @@ const timeZones = [
 const BasicInfo: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+
+    // Guard: Check onboarding status and redirect if user hasn't completed step 1 or has already completed step 2
+    useEffect(() => {
+        const checkOnboardingStatus = async () => {
+            // Only check if user is authenticated
+            if (!storage.checkToken()) {
+                return;
+            }
+
+            try {
+                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
+                
+                if (statusResponse.error === false && statusResponse.data) {
+                    const statusData = statusResponse.data as any;
+                    const step = statusData.step || 0;
+                    const status = statusData.status || 'not-started';
+                    const userType = statusData.userType;
+
+                    // Allow only if step >= 1 and step < 2
+                    if (step < 1) {
+                        // User hasn't selected user type yet, redirect to onboarding
+                        navigate('/onboarding');
+                    } else if (step >= 2) {
+                        // User has already completed this step, redirect to next appropriate step
+                        const route = getOnboardingRoute(step, status, userType);
+                        navigate(route);
+                    }
+                }
+            } catch (error) {
+                // Silently fail - allow user to proceed if check fails
+                console.error('Error checking onboarding status:', error);
+            }
+        };
+
+        checkOnboardingStatus();
+    }, [navigate]);
 
     const {
         register,
@@ -82,7 +120,9 @@ const BasicInfo: React.FC = () => {
             });
 
             if (response.error === false && (response.status === 200 || response.status === 201)) {
+                // Navigate first, then show success toast
                 navigate('/onboarding/user-info');
+                toast.success('Basic information saved');
             } else {
                 setError('root', {
                     type: 'server',
@@ -101,6 +141,8 @@ const BasicInfo: React.FC = () => {
     };
 
     const handleBack = () => {
+        // Only allow going back to onboarding (step 0) if current step is 1
+        // Guards will prevent going back if step 0 is already completed
         navigate('/onboarding');
     };
 

@@ -15,7 +15,7 @@ const PacepardLogo = (props: IPacepardLogo) => {
     return (
         
             <img
-                src={src || "/blocks/pacepard.svg"}
+                src={src || "/pacepard.svg"}
                 alt={alt || "Pacepard Logo"}
                 width={width}
                 height={height}

@@ -43,6 +43,26 @@ const sidebarRoutes: Array<IRoute> = [
                 params: [],
                 content: { collapsed: false, backButton: true }
             },
+            {
+                name: 'team-settings',
+                title: 'Team Settings',
+                iconName: 'users',
+                url: '/team-settings',
+                action: 'navigate',
+                isAuth: false,
+                params: [],
+                content: { collapsed: false, backButton: true }
+            },
+            {
+                name: 'team-members',
+                title: 'Team Members',
+                iconName: 'user-plus',
+                url: '/team-members',
+                action: 'navigate',
+                isAuth: false,
+                params: [],
+                content: { collapsed: false, backButton: true }
+            },
             
         ]
     },

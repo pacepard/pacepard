@@ -47,7 +47,7 @@ class AuthService {
             code: 200,
             data: {},
         };
-        const allowedUsers = [UserType.TALENT, UserType.BUSINESS];
+       
 
         if (!data.email) {
             result.error = true;
@@ -56,15 +56,6 @@ class AuthService {
         } else if (!data.password) {
             result.error = true;
             result.message = 'Password is required';
-            result.code = 400;
-        } else if (
-            !data.userType ||
-            !arrayIncludes(allowedUsers, data.userType)
-        ) {
-            result.error = true;
-            result.message = `Invalid user type value. choose from ${allowedUsers.join(
-                ',',
-            )}`;
             result.code = 400;
         } else {
             result.error = false;
@@ -389,18 +380,22 @@ class AuthService {
 
     /**
      * @name generateOTPCode
-     * @param user
-     * @returns
+     * @param user User (plain object or doc) with at least _id
+     * @returns OTP code string
      */
     public async generateOTPCode(
         user: IUserDoc,
         type: OtpType,
     ): Promise<string> {
+        const userDoc = await User.findById(user._id ?? user.id);
+        if (!userDoc) {
+            throw new Error('User not found');
+        }
         const gencode = Random.randomNum(6);
-        user.Otp = gencode.toString();
-        user.OtpExpiry = Date.now() + 15 * 60 * 1000;
-        user.otpType = type;
-        await user.save();
+        userDoc.Otp = gencode.toString();
+        userDoc.OtpExpiry = Date.now() + 15 * 60 * 1000;
+        userDoc.otpType = type;
+        await userDoc.save();
 
         return gencode.toString();
     }

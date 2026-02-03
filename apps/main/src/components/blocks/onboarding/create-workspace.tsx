@@ -10,13 +10,16 @@ import { toast } from '@pacepard/ui';
 import { PacepardAPI } from '@/config/pacepard';
 import { createWorkspaceSchema, CreateWorkspaceFormValues } from './validation';
 import { cn } from '@pacepard/ui/lib/utils';
-import { UserType, UserContext } from '@pacepard/sdk';
+import { UserType, UserContext, storage as storageUtil } from '@pacepard/sdk';
+import { getOnboardingRoute, getPreviousOnboardingRoute } from '@/utils/onboarding';
 
 const CreateWorkspace: React.FC = () => {
     const navigate = useNavigate();
     const { user, userType } = useContext(UserContext) || {};
     const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [uploadedImageData, setUploadedImageData] = useState<any>(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const {
         register,
@@ -34,6 +37,47 @@ const CreateWorkspace: React.FC = () => {
 
     const workspaceName = watch('name');
 
+    // Guard: Check onboarding status and redirect if user hasn't completed step 3 or has already completed step 4
+    useEffect(() => {
+        const checkOnboardingStatus = async () => {
+            // Only check if user is authenticated
+            if (!storageUtil.checkToken()) {
+                return;
+            }
+
+            try {
+                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
+                
+                if (statusResponse.error === false && statusResponse.data) {
+                    const statusData = statusResponse.data as any;
+                    const step = statusData.step || 0;
+                    const status = statusData.status || 'not-started';
+                    const userTypeFromStatus = statusData.userType;
+
+                    // Allow only if step >= 3 and step < 4
+                    if (step < 3) {
+                        // User hasn't completed previous step yet, redirect to previous step
+                        const previousRoute = getPreviousOnboardingRoute(step, userTypeFromStatus);
+                        if (previousRoute) {
+                            navigate(previousRoute);
+                        } else {
+                            navigate('/onboarding');
+                        }
+                    } else if (step >= 4) {
+                        // User has already completed this step, redirect to next step
+                        const route = getOnboardingRoute(step, status, userTypeFromStatus);
+                        navigate(route);
+                    }
+                }
+            } catch (error) {
+                // Silently fail - allow user to proceed if check fails
+                console.error('Error checking onboarding status:', error);
+            }
+        };
+
+        checkOnboardingStatus();
+    }, [navigate]);
+
     // Pre-fill workspace name based on user type
     useEffect(() => {
         if (user) {
@@ -48,8 +92,8 @@ const CreateWorkspace: React.FC = () => {
                     defaultName = `${firstName} ${lastName}`.trim();
                 }
             } else if (userType === UserType.BUSINESS || userType === UserType.USER) {
-                // For business users: use business name
-                defaultName = userObj?.businessName || '';
+                // For business users: use business name from storage first, then fall back to user context
+                defaultName = storageUtil.fetchLegacy('businessName') || userObj?.businessName || '';
             }
 
             if (defaultName) {
@@ -66,25 +110,77 @@ const CreateWorkspace: React.FC = () => {
         return 'N';
     };
 
-    const handleImageChange = (file: File | null, preview: string | null) => {
+    const handleImageChange = async (file: File | null, preview: string | null) => {
         setSelectedFile(file);
         setSelectedIcon(preview);
+        setUploadedImageData(null); // Reset uploaded data
+        
+        // Upload image immediately when file is selected
+        if (file) {
+            // Verify user is authenticated before uploading
+            const token = storageUtil.getToken();
+            if (!token) {
+                setError('root', {
+                    type: 'server',
+                    message: 'You must be logged in to upload images. Please refresh the page.',
+                });
+                setSelectedFile(null);
+                setSelectedIcon(null);
+                return;
+            }
+
+            setIsUploading(true);
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await PacepardAPI.storage.uploadImage(formData);
+                
+                if (response.error === false && response.data) {
+                    setUploadedImageData(response.data);
+                    console.log('Image uploaded successfully:', response.data);
+                } else {
+                    setError('root', {
+                        type: 'server',
+                        message: response.message || 'Failed to upload image. Please try again.',
+                    });
+                    // Clear the selected file if upload fails
+                    setSelectedFile(null);
+                    setSelectedIcon(null);
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                setError('root', {
+                    type: 'server',
+                    message: 'Failed to upload image. Please try again.',
+                });
+                // Clear the selected file if upload fails
+                setSelectedFile(null);
+                setSelectedIcon(null);
+            } finally {
+                setIsUploading(false);
+            }
+        }
     };
 
     const onSubmit = async (data: CreateWorkspaceFormValues) => {
         try {
-            // If an image is selected, send as FormData; otherwise send as JSON
+            // If image was uploaded, use the uploaded image data; otherwise send as JSON
             let payload: any;
             
-            if (selectedFile) {
-                // Create FormData for file upload
-                const formData = new FormData();
-                formData.append('name', data.name.trim());
-                formData.append('description', ''); // Can be added later if needed
-                formData.append('icon', selectedFile); // Append the image file
-                payload = formData;
+            if (uploadedImageData) {
+                // Use the uploaded image data (already uploaded via storage API)
+                // Pass s3Key and fileName as expected by workspace service
+                payload = {
+                    name: data.name.trim(),
+                    description: '', // Can be added later if needed
+                    icon: {
+                        fileName: uploadedImageData.fileName,
+                        s3Key: uploadedImageData.s3Key,
+                    },
+                };
             } else {
-                // Send as regular JSON payload
+                // Send as regular JSON payload (no icon)
                 payload = {
                     name: data.name.trim(),
                     description: '', // Can be added later if needed
@@ -116,7 +212,15 @@ const CreateWorkspace: React.FC = () => {
     };
 
     const handleBack = () => {
-        navigate('/onboarding/submit-info');
+        // Determine previous step based on userType
+        // Guards will prevent going back if previous step is already completed
+        const previousRoute = getPreviousOnboardingRoute(3, userType);
+        if (previousRoute) {
+            navigate(previousRoute);
+        } else {
+            // Fallback to user-info if previous route can't be determined
+            navigate('/onboarding/user-info');
+        }
     };
 
     return (
@@ -147,7 +251,9 @@ const CreateWorkspace: React.FC = () => {
                             </span>
                         }
                     />
-                    <p className="text-[14px] text-[#787774] dark:text-[#9b9a97]">Choose icon</p>
+                    <p className="text-[14px] text-[#787774] dark:text-[#9b9a97]">
+                        {isUploading ? 'Uploading...' : 'Choose icon'}
+                    </p>
                 </div>
 
                 {/* Form Fields */}
@@ -201,10 +307,10 @@ const CreateWorkspace: React.FC = () => {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 pt-2">
                     <Button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isUploading}
                         className="w-full h-10"
                     >
-                        {isSubmitting ? 'Creating...' : 'Continue'}
+                        {isSubmitting ? 'Creating...' : isUploading ? 'Uploading...' : 'Continue'}
                     </Button>
                     <button
                         type="button"

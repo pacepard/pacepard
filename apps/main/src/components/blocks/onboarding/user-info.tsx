@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@pacepard/ui/components/button';
 import {
@@ -9,9 +9,10 @@ import {
     SelectValue,
 } from '@pacepard/ui/components/select';
 import { Label } from '@pacepard/ui/components/label';
-import { UserType, UserContext } from '@pacepard/sdk';
-import { toast } from '@pacepard/ui';
+import { UserType, UserContext, storage } from '@pacepard/sdk';
 import { PacepardAPI } from '@/config/pacepard';
+import { toast } from '@pacepard/ui';
+import { getOnboardingRoute } from '@/utils/onboarding';
 
 interface Specialty {
     value: string;
@@ -78,10 +79,48 @@ const UserInfo: React.FC = () => {
     const [role, setRole] = useState<string>('');
     const [discovery, setDiscovery] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string>('');
+
+    // Guard: Check onboarding status and redirect if user hasn't completed step 2 or has already completed step 3
+    useEffect(() => {
+        const checkOnboardingStatus = async () => {
+            // Only check if user is authenticated
+            if (!storage.checkToken()) {
+                return;
+            }
+
+            try {
+                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
+                
+                if (statusResponse.error === false && statusResponse.data) {
+                    const statusData = statusResponse.data as any;
+                    const step = statusData.step || 0;
+                    const status = statusData.status || 'not-started';
+                    const userTypeFromStatus = statusData.userType;
+
+                    // Allow only if step >= 2 and step < 3
+                    if (step < 2) {
+                        // User hasn't completed basic info yet, redirect to basic-info
+                        navigate('/onboarding/basic-info');
+                    } else if (step >= 3) {
+                        // User has already completed this step, redirect to next appropriate step
+                        const route = getOnboardingRoute(step, status, userTypeFromStatus);
+                        navigate(route);
+                    }
+                }
+            } catch (error) {
+                // Silently fail - allow user to proceed if check fails
+                console.error('Error checking onboarding status:', error);
+            }
+        };
+
+        checkOnboardingStatus();
+    }, [navigate]);
 
     const handleContinue = async () => {
         if (workType && role && discovery) {
             setIsLoading(true);
+            setError(''); // Clear any previous errors
             try {
                 const response = await PacepardAPI.user.setUserInfo({
                     specialty: workType,
@@ -91,29 +130,36 @@ const UserInfo: React.FC = () => {
 
                 if (response.error === false && (response.status === 200 || response.status === 201)) {
                     // Route based on userType
+                    let nextRoute = '/onboarding/create-workspace';
                     if (userType === UserType.TALENT) {
-                        navigate('/onboarding/create-workspace');
+                        nextRoute = '/onboarding/create-workspace';
                     } else if (userType === UserType.BUSINESS || userType === UserType.USER) {
-                        navigate('/onboarding/business-info');
+                        nextRoute = '/onboarding/business-info';
                     } else {
                         const statusResponse = await PacepardAPI.user.getOnboardingStatus();
                         if (statusResponse.error === false && statusResponse.data) {
                             const status = statusResponse.data as any;
                             if (status.userType === 'talent' || status.userType === 'TALENT') {
-                                navigate('/onboarding/create-workspace');
+                                nextRoute = '/onboarding/create-workspace';
                             } else {
-                                navigate('/onboarding/business-info');
+                                nextRoute = '/onboarding/business-info';
                             }
                         } else {
-                            navigate('/onboarding/business-info');
+                            nextRoute = '/onboarding/business-info';
                         }
                     }
+                    
+                    // Navigate first, then show success toast
+                    navigate(nextRoute);
+                    toast.success('User information saved');
                 } else {
-                    toast.error(response.message || 'Failed to save information. Please try again.');
+                    // Use inline error instead of toast
+                    setError(response.message || 'Failed to save information. Please try again.');
                 }
             } catch (error) {
                 console.error('Error submitting User info:', error);
-                toast.error('An error occurred. Please try again.');
+                // Use inline error instead of toast
+                setError('An error occurred. Please try again.');
             } finally {
                 setIsLoading(false);
             }
@@ -121,6 +167,8 @@ const UserInfo: React.FC = () => {
     };
 
     const handleBack = () => {
+        // Only allow going back to basic-info (step 1) if current step is 2
+        // Guards will prevent going back if step 1 is already completed
         navigate('/onboarding/basic-info');
     };
 
@@ -213,6 +261,15 @@ const UserInfo: React.FC = () => {
                         </Select>
                     </div>
                 </div>
+
+                {/* Error Message */}
+                {error && (
+                    <div className="pt-2">
+                        <p className="text-sm text-destructive text-center">
+                            {error}
+                        </p>
+                    </div>
+                )}
 
                 {/* Action Buttons */}
                 <div className="space-y-3 pt-2">

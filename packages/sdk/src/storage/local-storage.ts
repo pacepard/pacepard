@@ -247,6 +247,32 @@ const debugAuth = () => {
     };
 }
 
+/**
+ * Persists auth from an API response when the response contains a token in data.
+ * Use after login or activation when the backend returns { data: { token, _id, userType, email, businessType? } }.
+ */
+export const persistAuthFromResponse = (response: {
+    data?: {
+        token?: string;
+        _id?: string;
+        id?: string;
+        userType?: string;
+        email?: string;
+        businessType?: string;
+    };
+}) => {
+    if (response?.data?.token) {
+        const d = response.data;
+        storeAuth(
+            d.token!,
+            d._id ?? d.id ?? '',
+            d.userType ?? '',
+            d.email ?? '',
+            d.businessType
+        );
+    }
+};
+
 const storage: IStorage = {
 
     storeAuth: storeAuth,

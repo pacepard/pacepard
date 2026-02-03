@@ -17,7 +17,7 @@ const Verification = () => {
                     email={email}
                     otpType={OtpType.ACTIVATEACCOUNT}
                     successMessage="Account activated successfully!"
-                    redirectTo="/login"
+                    redirectTo="/onboarding"
                 />
             </AuthLayout>
         </>

@@ -14,7 +14,9 @@ import {
 } from "../../authentication/auth/auth.dto";
 import redisWrapper from "../../../middlewares/redis.mdw";
 
-
+/** Get authenticated user id from request (supports both id and _id from lean() documents) */
+const getUserId = (req: Request): string | undefined =>
+  (req as any).user?.id ?? (req as any).user?._id?.toString?.() ?? (req as any).user?._id;
 
 /**
  * @name getUser
@@ -25,7 +27,7 @@ import redisWrapper from "../../../middlewares/redis.mdw";
 export const getUser: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
 
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
 
     const cacheKey = `user:profile:${userId}`;
@@ -175,7 +177,7 @@ export const getUsers: RequestHandler = asyncHandler(
  */
 export const deactivateAccount: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) return next(new ErrorResponse("Unauthorized", 401, []));
 
     // Find the user by ID using repository
@@ -222,7 +224,7 @@ export const deactivateAccount: RequestHandler = asyncHandler(
  */
 export const getOnboardingStatus: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) {
       return next(new ErrorResponse("Unauthorized", 401, []));
     }
@@ -252,7 +254,7 @@ export const getOnboardingStatus: RequestHandler = asyncHandler(
  */
 export const setUserType: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) {
       return next(new ErrorResponse("Unauthorized", 401, []));
     }
@@ -283,7 +285,7 @@ export const setUserType: RequestHandler = asyncHandler(
  */
 export const setBasicInfo: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) {
       return next(new ErrorResponse("Unauthorized", 401, []));
     }
@@ -314,7 +316,7 @@ export const setBasicInfo: RequestHandler = asyncHandler(
  */
 export const setTalentInfo: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) {
       return next(new ErrorResponse("Unauthorized", 401, []));
     }
@@ -345,7 +347,7 @@ export const setTalentInfo: RequestHandler = asyncHandler(
  */
 export const setBusinessInfo: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) {
       return next(new ErrorResponse("Unauthorized", 401, []));
     }
@@ -376,7 +378,7 @@ export const setBusinessInfo: RequestHandler = asyncHandler(
  */
 export const setUserInfo: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) {
       return next(new ErrorResponse("Unauthorized", 401, []));
     }
@@ -407,7 +409,7 @@ export const setUserInfo: RequestHandler = asyncHandler(
  */
 export const completeOnboarding: RequestHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req as any).user?.id;
+    const userId = getUserId(req);
     if (!userId) {
       return next(new ErrorResponse("Unauthorized", 401, []));
     }

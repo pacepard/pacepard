@@ -2,6 +2,7 @@ import AxiosService from '../core/axios'
 import AuthAPI from './auth'
 import WorkspaceAPI from './workspace'
 import UserAPI from './user'
+import StorageAPI from './storage'
 
 /**
  * Internal API client
@@ -11,11 +12,13 @@ class PacepardAPIClient {
   public auth: AuthAPI
   public workspace: WorkspaceAPI
   public user: UserAPI
+  public storage: StorageAPI
 
   constructor(axiosService: AxiosService) {
     this.auth = new AuthAPI(axiosService)
     this.workspace = new WorkspaceAPI(axiosService)
     this.user = new UserAPI(axiosService)
+    this.storage = new StorageAPI(axiosService)
   }
 }
 

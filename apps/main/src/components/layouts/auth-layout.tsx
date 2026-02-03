@@ -4,6 +4,7 @@ import AuthHeader from '../blocks/auth/auth-header';
 import { TermsAndPrivacy } from '../blocks/auth/terms-and-privacy';
 // Removed unused import
 import PacepardIcon from '../common/LogoIcon';
+import { Toaster } from '@pacepard/ui/components/sonner';
 
 interface IAuthLayout {
     title: string;
@@ -38,24 +39,27 @@ export const AuthLayout = (props: IAuthLayout) => {
     }[maxWidth];
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center p-4">
-            <div className={`${maxWidthClass} w-full`}>
-                <PacepardIcon className="h-20 w-20 text-green-500 ml-5" />
+        <>
+            <div className="min-h-screen w-full flex items-center justify-center p-4">
+                <div className={`${maxWidthClass} w-full`}>
+                    <PacepardIcon className="h-20 w-20 text-green-500 ml-5" />
 
-                {!hideHeaderOnSuccess && (
-                    <AuthHeader
-                        title={title}
-                        description={description}
-                        buttonLabel={buttonLabel}
-                        onButtonClick={onButtonClick}
-                    />
-                )}
+                    {!hideHeaderOnSuccess && (
+                        <AuthHeader
+                            title={title}
+                            description={description}
+                            buttonLabel={buttonLabel}
+                            onButtonClick={onButtonClick}
+                        />
+                    )}
 
-                {children}
+                    {children}
 
-                {showTermsAndPrivacy && <TermsAndPrivacy authType={authType} />}
+                    {showTermsAndPrivacy && <TermsAndPrivacy authType={authType} />}
+                </div>
             </div>
-        </div>
+            <Toaster />
+        </>
     );
 };
 

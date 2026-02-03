@@ -266,9 +266,12 @@ export async function initiatePermissionData(user: IUserDoc): Promise<IResult> {
       user.roles.push(role._id);
     }
 
-    // Use role.permissions as the user's default permissions
+    // Use role.permissions as the user's default permissions (User schema expects [ObjectId])
     if (Array.isArray(role.permissions)) {
-      user.permissions = role.permissions.map((p: any) => String(p));
+      const toId = (p: any) => (p == null ? '' : typeof p === 'string' ? p : (p._id || p.id || p).toString());
+      user.permissions = role.permissions
+        .map(toId)
+        .filter((id: string) => typeof id === 'string' && /^[a-f0-9]{24}$/i.test(id));
     } else {
       user.permissions = [] as any;
     }
