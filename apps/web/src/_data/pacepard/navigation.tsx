@@ -50,9 +50,28 @@ export const NavigationItems = [
             },
         ],
     },
-    
+    { label: 'Hackathons', href: '/hackathons' },
     { label: 'Research', href: '/research' },
-    { label: 'Open source', href: '/open-source' },
+    // { label: '', href: '/open-source' },
+    {
+        label: 'Open Source',
+        href: '',
+        dropdownItems: [
+            {
+                title: 'Projects',
+                href: '/collective',
+                description:
+                    'The hands-on platform for achieving the mastery of a Superhuman',
+            },
+            {
+                title: 'Personal Projects',
+                href: '/go',
+                description:
+                    'Organize Innovation. The hackathon management stack for hosting world-class hackathons',
+            },
+        ],
+    },
+    
     { label: "About us", href: "/about" },
     // { label: 'Contact', href: '/contact' },
 ];

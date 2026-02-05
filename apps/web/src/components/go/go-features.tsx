@@ -28,7 +28,7 @@ export default function GoFeatures() {
                 {/* Top dashed line with text */}
                 <div className="relative flex items-center justify-center">
                     <DashedLine className="text-muted-foreground" />
-                    <span className="bg-yellow-50 text-muted-foreground absolute px-3 font-mono text-sm font-medium tracking-wide max-md:hidden">
+                    <span className="bg-neutral-50 text-muted-foreground absolute px-3 font-mono text-sm font-medium tracking-wide max-md:hidden">
                         PACEPARD GO. PACEPARD GO.
                     </span>
                 </div>
