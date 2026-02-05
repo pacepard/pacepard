@@ -57,6 +57,8 @@ export {
 } from "./core/node/short-answer-node/short-answer-typed-node-extension"
 export { InputTitleNode } from "./core/node/input-title-node/input-title-node-extension"
 export { InputLabelNode } from "./core/node/input-label-node/input-label-node-extension"
+export { TextAreaNode } from "./core/node/textarea-node/textarea-node-extension"
+export type { TextAreaNodeAttrs } from "./core/node/textarea-node/textarea-node-types"
 export {
   FormInputTextNode,
   FormInputEmailNode,
@@ -66,6 +68,7 @@ export {
 } from "./core/node/form-input/form-input-extension"
 export type { FormInputAttrs } from "./core/node/form-input/form-input-types"
 export type { ShortAnswerAttrs, InputType, InputMode } from "./core/node/short-answer-node/short-answer-types"
+export type { TextAreaNodeAttrs } from "./core/node/textarea-node/textarea-node-types"
 export { TableKit } from "./core/node/table-node/extensions/table-node-extension"
 export { TableHandleExtension } from "./core/node/table-node/extensions/table-handle/table-handle"
 export { ListNormalizationExtension } from "./core/extenstions/list-normalization-extension"

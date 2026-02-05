@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import type { NodeViewProps } from "@tiptap/react"
 import { NodeViewWrapper } from "@tiptap/react"
 import { Button } from "@/core/primitives/button"
@@ -355,6 +355,21 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
   fileItem,
   onRemove,
 }) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  // Create object URL for image preview
+  useEffect(() => {
+    if (fileItem.file.type.startsWith("image/")) {
+      const url = URL.createObjectURL(fileItem.file)
+      setPreviewUrl(url)
+
+      // Cleanup function to revoke the object URL
+      return () => {
+        URL.revokeObjectURL(url)
+      }
+    }
+  }, [fileItem.file])
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes"
     const k = 1024
@@ -363,6 +378,46 @@ const ImageUploadPreview: React.FC<ImageUploadPreviewProps> = ({
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
   }
 
+  const isImage = fileItem.file.type.startsWith("image/")
+
+  // For images, show full-size preview
+  if (isImage && previewUrl) {
+    return (
+      <div className="tiptap-image-upload-preview tiptap-image-upload-preview-image">
+        {fileItem.status === "uploading" && (
+          <div
+            className="tiptap-image-upload-progress"
+            style={{ width: `${fileItem.progress}%` }}
+          />
+        )}
+        <img
+          src={previewUrl}
+          alt={fileItem.file.name}
+          className="tiptap-image-upload-preview-img-full"
+        />
+        <div className="tiptap-image-upload-preview-overlay">
+          {fileItem.status === "uploading" && (
+            <span className="tiptap-image-upload-progress-text">
+              {fileItem.progress}%
+            </span>
+          )}
+          <Button
+            type="button"
+            data-style="ghost"
+            className="tiptap-image-upload-close-btn"
+            onClick={(e) => {
+              e.stopPropagation()
+              onRemove()
+            }}
+          >
+            <CloseIcon className="tiptap-button-icon" />
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // For non-image files, show the original layout
   return (
     <div className="tiptap-image-upload-preview">
       {fileItem.status === "uploading" && (

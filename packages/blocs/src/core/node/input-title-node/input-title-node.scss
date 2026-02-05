@@ -35,7 +35,7 @@
 /* Placeholder when empty (data-empty set by NodeView when node.content.size === 0) */
 .input-title-node__heading[data-empty="true"]::before {
   content: attr(data-placeholder);
-  color: var(--tt-gray-light-a-400, #9ca3af);
+  color: var(--tt-gray-light-a-300, #d1d5db);
   pointer-events: none;
   position: relative;
   left: 0;

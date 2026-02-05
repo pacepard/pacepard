@@ -1,0 +1,26 @@
+:root {
+  --tiptap-textarea-placeholder: var(--tt-gray-light-a-300);
+}
+
+.dark {
+  --tiptap-textarea-placeholder: var(--tt-gray-dark-a-500);
+}
+
+.tiptap-textarea {
+  display: block;
+  width: 100%;
+  min-height: 4rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  background: none;
+  appearance: none;
+  outline: none;
+  resize: vertical;
+
+  &::placeholder {
+    color: var(--tiptap-textarea-placeholder);
+  }
+}

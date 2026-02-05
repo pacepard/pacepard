@@ -85,6 +85,7 @@ import { isNodeTypeSelected } from "@/utils/base-helper"
 import { NodeSelection } from "@tiptap/pm/state"
 import type { ShortAnswerAttrs, InputType } from "@/core/node/short-answer-node/short-answer-types"
 import type { FormInputAttrs } from "@/core/node/form-input/form-input-types"
+import type { TextAreaNodeAttrs } from "@/core/node/textarea-node/textarea-node-types"
 import { Input } from "@/core/primitives/input"
 import { Switch } from "@/core/primitives/switch"
 import "@/core/primitives/switch/switch.scss"
@@ -96,6 +97,8 @@ const FORM_INPUT_NODE_NAMES = [
   "formInputUrl",
   "formInputTel",
 ] as const
+
+const LONG_ANSWER_NODE_NAME = "longAnswer" as const
 
 const useNodeTransformActions = () => {
   const text = useText()
@@ -687,6 +690,75 @@ const FormInputPropertyGroup: React.FC = () => {
   )
 }
 
+/** Property group for long answer node. Required switch adds the required badge. */
+const TextAreaPropertyGroup: React.FC = () => {
+  const { editor } = usePacepardEditor()
+
+  if (!editor || !isNodeTypeSelected(editor, [LONG_ANSWER_NODE_NAME])) return null
+
+  const { selection } = editor.state
+  if (!(selection instanceof NodeSelection)) return null
+
+  const nodeName = selection.node.type.name
+  const attrs = (selection.node.attrs ?? {}) as TextAreaNodeAttrs
+
+  const update = useCallback(
+    (next: Partial<TextAreaNodeAttrs>) => {
+      editor.chain().focus().updateAttributes(nodeName, next).run()
+    },
+    [editor, nodeName]
+  )
+
+  return (
+    <MenuGroup className="textarea-property-group">
+      <MenuGroupLabel>Long Answer</MenuGroupLabel>
+      <div
+        className="property-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Required</Label>
+        <Switch
+          checked={!!attrs.required}
+          onCheckedChange={(checked: boolean) => update({ required: checked })}
+        />
+      </div>
+      <div
+        className="property-row property-input-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Placeholder</Label>
+        <Input
+          type="text"
+          value={attrs.placeholder ?? ""}
+          placeholder="Optional"
+          onChange={(e) => update({ placeholder: e.target.value || null })}
+          className="short-answer-property-input"
+        />
+      </div>
+      <div
+        className="property-row property-input-row"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Label className="property-label">Rows</Label>
+        <Input
+          type="number"
+          value={attrs.rows ?? 4}
+          placeholder="4"
+          onChange={(e) => {
+            const val = e.target.value
+            update({ rows: val ? parseInt(val, 10) || null : null })
+          }}
+          className="short-answer-property-input"
+          min="1"
+        />
+      </div>
+    </MenuGroup>
+  )
+}
+
 const ImageActionGroup: React.FC = () => {
   const { canDownload, handleDownload, label, Icon } = useImageDownload({
     hideWhenUnavailable: true,
@@ -981,6 +1053,7 @@ export const DragContextMenu: React.FC<DragContextMenuProps> = ({
                   <TocShowTitle />
                   <ShortAnswerPropertyGroup />
                   <FormInputPropertyGroup />
+                  <TextAreaPropertyGroup />
                   <ColorMenu />
                   <TableAlignMenu />
                   <TableFitToWidth />

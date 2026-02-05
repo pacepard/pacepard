@@ -275,6 +275,13 @@ const texts = {
     badge: TagIcon,
     group: "Insert",
   },
+  long_answer: {
+    title: "Long Answer",
+    subtext: "Multi-line text input field",
+    keywords: ["long answer", "textarea", "text area", "paragraph", "multiline"],
+    badge: TypeIcon,
+    group: "Insert",
+  },
 }
 
 export type SlashMenuItemType = keyof typeof texts
@@ -535,6 +542,12 @@ const getItemImplementations = () => {
       check: (editor: Editor) => isNodeInSchema("inputLabel", editor),
       action: ({ editor }: { editor: Editor }) => {
         editor.chain().focus().setInputLabel({ level: 4 }).run()
+      },
+    },
+    long_answer: {
+      check: (editor: Editor) => isNodeInSchema("longAnswer", editor),
+      action: ({ editor }: { editor: Editor }) => {
+        editor.chain().focus().insertLongAnswer({ placeholder: "Type your answer..." }).run()
       },
     },
   }

@@ -54,6 +54,7 @@ import {
   FormInputNumberNode,
   FormInputUrlNode,
   FormInputTelNode,
+  TextAreaNode,
   InputTitleNode,
   InputLabelNode,
   CodeBlockShiki,
@@ -326,6 +327,7 @@ export function EditorProvider(props: EditorProviderProps) {
       FormInputNumberNode,
       FormInputUrlNode,
       FormInputTelNode,
+      TextAreaNode,
       InputTitleNode,
       InputLabelNode,
       UniqueID.configure({
@@ -350,6 +352,7 @@ export function EditorProvider(props: EditorProviderProps) {
           "formInputNumber",
           "formInputUrl",
           "formInputTel",
+          "longAnswer",
           "inputTitle",
           "inputLabel",
         ],

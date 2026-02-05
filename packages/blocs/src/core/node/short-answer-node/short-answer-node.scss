@@ -18,7 +18,7 @@
     // Placeholder when empty: light grey "label"
     &.is-empty::before {
       content: "label";
-      color: var(--tt-gray-light-a-400, #9ca3af);
+      color: var(--tt-gray-light-a-300, #d1d5db);
     }
 
     // Required: inline black asterisk immediately after label (no space)
@@ -54,7 +54,7 @@
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
       &::placeholder {
-        color: var(--tt-gray-light-a-400, #9ca3af);
+        color: var(--tt-gray-light-a-300, #d1d5db);
       }
 
       &[aria-invalid="true"] {
@@ -124,7 +124,7 @@
       color: var(--tt-gray-dark-a-100, #f3f4f6);
       border-color: var(--tt-gray-dark-a-300);
       &::placeholder {
-        color: var(--tt-gray-dark-a-400);
+        color: var(--tt-gray-dark-a-500);
       }
       &[aria-invalid="true"] {
         border-color: var(--tt-red-400);

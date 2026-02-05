@@ -29,6 +29,7 @@ const NODE_TYPE_LABELS: Record<string, string> = {
   formInputTel: "Input phone",
   inputTitle: "Title",
   inputLabel: "Label",
+  longAnswer: "Long Answer",
 }
 
 
