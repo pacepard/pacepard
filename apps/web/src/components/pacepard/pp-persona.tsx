@@ -113,11 +113,11 @@ const cardVariants: Variants = {
 export function PPPersona() {
     return (
         // Adjusted horizontal padding for small screens
-        <section className="py-16 px-4 sm:px-8 bg-white overflow-hidden">
+        <section className="py-12 px-4 sm:px-8 bg-white overflow-hidden">
             <div className="max-w-6xl mx-auto ">
                 <div className="flex flex-wrap items-start justify-start gap-4 pb-16">
                     <motion.h1
-                        className="max-w-2xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl"
+                        className="max-w-2xl text-balance text-3xl font-bold tracking-tight text-foreground md:text-3xl"
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.5 }}
