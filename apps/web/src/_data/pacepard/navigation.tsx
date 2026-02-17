@@ -1,67 +1,80 @@
 export const Navigation = [
-  {
-    label: "Products",
-    href: "#",
-    dropdown: [
-      {
-        label: "Pacepard Forge",
-        href: "/forge",
-      },
-      {
-        label: "Pacepard Hack",
-        href: "/hack",
-      },
-      {
-        label: "Our History",
-        href: "/about/history",
-      },
-    ],
-  },
-  {
-    label: "Pricing",
-    href: "/pricing",
-  },
-  {
-    label: "About us",
-    href: "/about",
-  },
-  {
-    label: "FAQ",
-    href: "/faq",
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-  },
-
+    {
+        label: 'Products',
+        href: '#',
+        dropdown: [
+            {
+                label: 'Pacepard Forge',
+                href: '/forge',
+            },
+            {
+                label: 'Pacepard Hack',
+                href: '/hack',
+            },
+            {
+                label: 'Our History',
+                href: '/about/history',
+            },
+        ],
+    },
+    {
+        label: 'About us',
+        href: '/about',
+    },
+    {
+        label: 'FAQ',
+        href: '/faq',
+    },
+    {
+        label: 'Contact',
+        href: '/contact',
+    },
 ];
 
 export const NavigationItems = [
-  {
-    label: "Products",
-    href: "#features",
-    dropdownItems: [
-      {
-        title: "Pacepard Superhuman",
-        href: "/#pacepard-superhuman",
-        description:
-          "The hands-on platform for achieving the mastery of a Superhuman",
-      },
-      {
-        title: "Pacepard Hack",
-        href: "/#pacepard-hack",
-        description: "Organize Innovation. The hackathon management stack for hosting world-class hackathons",
-      },
-    ],
-  },
-  // { label: "About Us", href: "/about" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
+    {
+        label: 'Solutions',
+        href: '#features',
+        dropdownItems: [
+            {
+                title: 'Pacepard Collective',
+                href: '/collective',
+                description:
+                    'The hands-on platform for achieving the mastery of a Superhuman',
+            },
+            {
+                title: 'Pacepard Go',
+                href: '/go',
+                description:
+                    'Organize Innovation. The hackathon management stack for hosting world-class hackathons',
+            },
+        ],
+    },
+    { label: 'Hackathons', href: '/hackathons' },
+    { label: 'Research', href: '/research' },
+    // { label: '', href: '/open-source' },
+    {
+        label: 'Open Source',
+        href: '',
+        dropdownItems: [
+            {
+                title: 'Projects',
+                href: '/collective',
+                description:
+                    'The hands-on platform for achieving the mastery of a Superhuman',
+            },
+            {
+                title: 'Personal Projects',
+                href: '/go',
+                description:
+                    'Organize Innovation. The hackathon management stack for hosting world-class hackathons',
+            },
+        ],
+    },
+    
+    { label: "About us", href: "/about" },
+    // { label: 'Contact', href: '/contact' },
 ];
-
-
-
 
 // the best way to be a superhuman talent
 // The hands-on platform for achieving the mastery of a Superhuman.

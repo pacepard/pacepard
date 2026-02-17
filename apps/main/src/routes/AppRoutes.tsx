@@ -439,9 +439,9 @@ const AppRoutes = () => {
                                 path={routil.computePath(route.url)}
                                 element={
                                     route.action === 'open-secondary' &&
-                                        route.subroutes &&
-                                        route.subroutes.length > 0 &&
-                                        route.subroutes[0] ? (
+                                    route.subroutes &&
+                                    route.subroutes.length > 0 &&
+                                    route.subroutes[0] ? (
                                         <Navigate
                                             to={routil.computeSubPath(
                                                 route,

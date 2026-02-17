@@ -26,7 +26,7 @@ export interface IEntryDoc extends Document {
     createdBy: IUserDoc | any;
 
     settings: {
-        transferOwnershipTo: IUserDoc | any;
+        transferOwnershipTo?: IUserDoc | any;
     };
 
     hackathon: Array<IHackathonDoc | any>; // an entry can belong to multiple hackathons except it has won an hack

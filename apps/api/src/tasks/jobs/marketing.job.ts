@@ -3,9 +3,10 @@ import logger from '../../utils/logger.util';
 import hackathonService from '../../modules/hackathons/hackathon/hackathon.service';
 import userRepository from '../../modules/users/user/user.repository';
 import emailService from '../../services/email.service';
-import { EmailTemplate } from '../../utils/enums.util';
+import { EmailTemplate, EmailService } from '../../utils/enums.util';
 import { HackStatusType } from '../../modules/hackathons/hackathon/hackathon.interface';
 import { SendEmailDTO } from '../../dtos/email.dto';
+import { IUserDoc } from '../../modules/users/user/user.interface';
 
 /**
  * Process marketing job for hackathons this week
@@ -101,12 +102,8 @@ const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> 
                     }
 
                     const emailData: SendEmailDTO = {
-                        user: {
-                            _id: user._id || user.id,
-                            email: user.email,
-                            firstName: user.firstName || '',
-                            lastName: user.lastName || '',
-                        },
+                        user: user as IUserDoc,
+                        driver: EmailService.ZEPTOMAIL,
                         template: EmailTemplate.HACKATHONS_THIS_WEEK,
                         options: {
                             subject: 'Hackathons Happening This Week - Don\'t Miss Out!',

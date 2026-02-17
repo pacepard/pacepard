@@ -12,9 +12,10 @@
       "outputs": [".next/**", "dist/**"]
     },
     "lint": {},
-    "@pacepard/api-docs": {
+    "@pacepard/api-docs#build": {
       "dependsOn": [],
-      "cache": false
+      "cache": false,
+      "outputs": []
     }
   }
 }

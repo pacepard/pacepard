@@ -100,7 +100,7 @@ export async function hasPermission(
     resourceOwnerId?: string | null; 
     checkOwnership?: boolean;
     resource?: any; // workspace/project/hackathon resource for contextual permissions
-    resourceType?: 'workspace' | 'project' | 'hackathon';
+    resourceType?: 'workspace' | 'project' | 'hackathon' | 'entry' | 'squad';
   }
 ): Promise<boolean> {
   const checkOwnership = options?.checkOwnership ?? true;

@@ -2,7 +2,7 @@ export const BRAND_INFO = {
     name: "Pacepard",
     initial: "d",
     initialBgColor: "#a3f443",
-    description: "Pacepard is a research lab and technology company dedicated to ensuring that artificial intelligence serves human learning goals and systems.",
+    description: "We are dedicated to ensuring that artificial intelligence serves human learning goals and systems.",
 };
 
 // Data structure for social media links

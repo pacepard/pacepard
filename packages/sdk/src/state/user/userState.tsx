@@ -19,6 +19,7 @@ import {
     ISidebarProps,
     IToast,
     IUnsetLoading,
+    IRouteItem,
 } from '@/utils/interfaces';
 import storage from '@/storage/local-storage';
 import sidebarRoutes from '../../routes/sidebar.route';
@@ -159,7 +160,7 @@ const setBusinessType = (type: string) => {
         const route = sidebarRoutes.find((x) => x.name === name);
 
         if (route && route.subroutes && route.subroutes.length > 0) {
-            const subroute = route.subroutes.find((m) => m.name === sub);
+            const subroute = route.subroutes.find((m: IRouteItem) => m.name === sub);
 
             if (subroute) {
                 result = {

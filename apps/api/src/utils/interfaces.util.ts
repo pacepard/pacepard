@@ -70,6 +70,7 @@ export interface IResult<T = any> {
     data: T;
     token?: string;
     status?: number;
+    filters?: any;
 }
 
 export interface IPagination {

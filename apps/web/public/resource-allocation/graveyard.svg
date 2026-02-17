@@ -1,0 +1,49 @@
+<svg width="305" height="280" viewBox="0 0 305 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card Background -->
+  <rect width="305" height="280" rx="8" fill="#FFFFFF" stroke="#E9E9E7" stroke-width="1"/>
+  
+  <!-- Header -->
+  <rect x="16" y="16" width="273" height="36" rx="4" fill="#FAFAFA" stroke="#E9E9E7" stroke-width="0.5"/>
+  <text x="24" y="36" font-family="system-ui, -apple-system" font-size="13" fill="#37352F" font-weight="600">Project Status Overview</text>
+  
+  <!-- Status Tabs -->
+  <g>
+    <rect x="16" y="64" width="60" height="24" rx="4" fill="#37352F"/>
+    <text x="46" y="80" font-family="system-ui, -apple-system" font-size="10" fill="#FFFFFF" font-weight="500" text-anchor="middle">Active</text>
+    <rect x="84" y="64" width="60" height="24" rx="4" fill="#FAFAFA"/>
+    <text x="114" y="80" font-family="system-ui, -apple-system" font-size="10" fill="#9B9A97" text-anchor="middle">Review</text>
+    <rect x="152" y="64" width="60" height="24" rx="4" fill="#FAFAFA"/>
+    <text x="182" y="80" font-family="system-ui, -apple-system" font-size="10" fill="#9B9A97" text-anchor="middle">Done</text>
+  </g>
+  
+  <!-- Project Cards -->
+  <g>
+    <!-- Project 1 - Active -->
+    <rect x="16" y="100" width="273" height="48" rx="4" fill="#F7F9FC" stroke="#1D79FF" stroke-width="1"/>
+    <circle cx="32" cy="116" r="4" fill="#1D79FF"/>
+    <text x="48" y="120" font-family="system-ui, -apple-system" font-size="11" fill="#37352F" font-weight="500">AI Chatbot Platform</text>
+    <text x="48" y="136" font-family="system-ui, -apple-system" font-size="9" fill="#9B9A97">Team Alpha " 3 participants</text>
+    <rect x="240" y="112" width="40" height="20" rx="3" fill="#1D79FF" opacity="0.1"/>
+    <text x="260" y="125" font-family="system-ui, -apple-system" font-size="8" fill="#1D79FF" font-weight="500" text-anchor="middle">75%</text>
+  </g>
+  
+  <g>
+    <!-- Project 2 - Active -->
+    <rect x="16" y="156" width="273" height="48" rx="4" fill="#F7F9FC" stroke="#E9E9E7" stroke-width="0.5"/>
+    <circle cx="32" cy="172" r="4" fill="#28E832"/>
+    <text x="48" y="176" font-family="system-ui, -apple-system" font-size="11" fill="#37352F" font-weight="500">Mobile App Prototype</text>
+    <text x="48" y="192" font-family="system-ui, -apple-system" font-size="9" fill="#9B9A97">Team Beta " 5 participants</text>
+    <rect x="240" y="168" width="40" height="20" rx="3" fill="#28E832" opacity="0.1"/>
+    <text x="260" y="181" font-family="system-ui, -apple-system" font-size="8" fill="#28E832" font-weight="500" text-anchor="middle">90%</text>
+  </g>
+  
+  <g>
+    <!-- Project 3 - In Review -->
+    <rect x="16" y="212" width="273" height="48" rx="4" fill="#FAFAFA" stroke="#E9E9E7" stroke-width="0.5"/>
+    <circle cx="32" cy="228" r="4" fill="#FF751F"/>
+    <text x="48" y="232" font-family="system-ui, -apple-system" font-size="11" fill="#37352F" font-weight="500">Data Analytics Dashboard</text>
+    <text x="48" y="248" font-family="system-ui, -apple-system" font-size="9" fill="#9B9A97">Team Gamma " 4 participants</text>
+    <rect x="240" y="224" width="40" height="20" rx="3" fill="#FF751F" opacity="0.1"/>
+    <text x="260" y="237" font-family="system-ui, -apple-system" font-size="8" fill="#FF751F" font-weight="500" text-anchor="middle">100%</text>
+  </g>
+</svg>

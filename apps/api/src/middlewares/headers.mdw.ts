@@ -11,7 +11,8 @@ declare global {
   }
 }
 
-export const validateChannels = asyncHandler(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const validateChannels: any = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     if (!process.env.APP_CHANNELS) {
       return next(

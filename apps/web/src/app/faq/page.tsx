@@ -2,8 +2,8 @@ import React from "react";
 
 import { Background } from "@/components/background";
 import { DashedLine } from "@/components/dashed-line";
-import { FAQ } from "@/components/pacepard/sections/faq";
-import { Testimonials } from "@/components/pacepard/sections/testimonials";
+import { FAQ } from "@/components/shared/sections/faq";
+import { Testimonials } from "@/components/shared/sections/testimonials";
 
 const Page = () => {
   return (

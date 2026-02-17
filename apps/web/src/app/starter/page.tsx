@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Background } from "@/components/background";
-import Starter from "@/components/pacepard/sections/starter";
+import Starter from "@/components/shared/sections/starter";
 
 
 const Page = () => {

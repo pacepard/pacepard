@@ -110,8 +110,12 @@ class SubscriptionService {
             
             case SubscriptionIntentState.AWAITING_PAYMENT:
                 return this.handleAwaitingPayment(intent);
+
             default:
-                break;
+                result.error = true;
+                result.message = 'Unknown subscription intent state';
+                result.code = 400;
+                return result;
         }
     }
 
@@ -148,6 +152,13 @@ class SubscriptionService {
             SubscriptionIntentState.VALIDATING,
         );
 
+        if (!updatedIntent) {
+            result.error = true;
+            result.message = 'Failed to update subscription intent';
+            result.code = 500;
+            return result;
+        }
+
         //2. check if user has consumed a trial
         const consumeTrialResult = await this.hasNotConsumeTrial(
             updatedIntent,
@@ -168,8 +179,14 @@ class SubscriptionService {
         }
 
         //3. Validate plan
+        if (!updatedIntent) {
+            result.error = true;
+            result.message = 'Failed to update subscription intent';
+            result.code = 500;
+            return result;
+        }
         const planResult = await this.checkPlanAvailability(
-            updatedIntent?.planId,
+            String(updatedIntent.planId),
             updatedIntent,
         );
         // make decisions base on code
@@ -280,7 +297,7 @@ class SubscriptionService {
 
         // This state makes use of metadata to check each state of validation and continue from where it left of
         //1.skipTrial
-        if (!intent.metaData.skipTrial) {
+        if (!intent.metaData?.skipTrial) {
             const consumeTrialResult = await this.hasNotConsumeTrial(
                 intent,
                 userProfile,
@@ -302,14 +319,14 @@ class SubscriptionService {
         //2.proceedWithoutTrial has been set to true then no need for plan check
 
         const planResult = await this.checkPlanAvailability(
-            intent?.planId,
+            intent?.planId ? String(intent.planId) : '',
             intent,
         );
 
         if (planResult.code === 400) {
             return planResult;
         }
-        if (!intent.metaData.proceedWithNoTrial) {
+        if (!intent.metaData?.proceedWithNoTrial) {
             if (planResult.code === 200) {
                 return planResult;
             }
@@ -349,6 +366,7 @@ class SubscriptionService {
             data: {},
         };
         // TODO: Implement AwaitingPayment state logic here, possibly using intent.metaData to track progress
+        return result;
     }
 
     /**
@@ -367,6 +385,7 @@ class SubscriptionService {
             data: {},
         };
         // TODO: Implement SubscriptionCreating state logic here, possibly using intent.metaData to track progress
+        return result;
     }
 
     /**
@@ -439,6 +458,7 @@ class SubscriptionService {
 
         //if trial on plan is enabled
         if (planAvailability.data?.trial.enabled !== true) {
+            if (!intent.metaData) intent.metaData = {};
             intent.metaData.proceedWithNoTrial = true;
 
             await subscriptionIntentService.updateIntent(
@@ -468,6 +488,7 @@ class SubscriptionService {
         };
 
         if (userProfile.trial.hasUsedTrial) {
+            if (!intent.metaData) intent.metaData = {};
             intent.metaData.skipTrial = true;
 
             await subscriptionIntentService.updateIntent(
@@ -528,7 +549,7 @@ class SubscriptionService {
             // If trial is true, this is to show that subscription for the plan is on trial so we charge just for card tokenization and to save authorization
             const nairaAmount = 50;
             const cardAmount = Math.round(nairaAmount * 100); // kobo
-            const paymentResult = transactionService.initializeTransaction({
+            const paymentResult = await transactionService.initializeTransaction({
                 email: dto.email,
                 amount: cardAmount,
                 currency: dto.currency,
@@ -543,7 +564,7 @@ class SubscriptionService {
             return paymentResult; // already contains auth url and reference code
         }
 
-        const paymentResult = transactionService.initializeTransaction({
+        const paymentResult = await transactionService.initializeTransaction({
             email: dto.email,
             planCode: dto.planCode,
         });

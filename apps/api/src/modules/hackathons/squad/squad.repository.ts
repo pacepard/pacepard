@@ -28,7 +28,7 @@ class SquadRepository extends RepositoryService<ISquadDoc> {
             | Array<{ path: string }>
             | undefined = undefined,
     ): Promise<IResult> {
-        return this.findById(input, populate);
+        return this.findById(String(input), populate);
     }
 
     /**
