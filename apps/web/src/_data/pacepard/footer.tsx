@@ -40,7 +40,7 @@ export const FOOTER_LINKS_DATA = [
                 external: false,
             },
              {
-                label: "Roadmap",
+                label: "Browse Apprenticeships",
                 href: "#",
                 external: false,
             },

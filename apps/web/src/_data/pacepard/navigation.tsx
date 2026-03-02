@@ -51,6 +51,7 @@ export const NavigationItems = [
         ],
     },
     { label: 'Hackathons', href: '/hackathons' },
+    { label: 'Apprenticeships', href: '/apprenticeships' },
     { label: 'Research', href: '/research' },
     // { label: '', href: '/open-source' },
     {
