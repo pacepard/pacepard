@@ -4,7 +4,7 @@ const workspaceRoutes: Array<IRoute> = [
     {
         name: 'workspace',
         title: 'Workspace',
-        url: 'workspace',
+        url: '/workspace',
         iconName: 'briefcase',
         action: 'navigate',
         isAuth: true,

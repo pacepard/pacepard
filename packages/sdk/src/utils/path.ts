@@ -28,6 +28,9 @@ export const URL_INVITE = '/invite'
 export const URL_WORKSPACES = '/workspaces'
 export const URL_WORKSPACE = '/workspace'
 
+export const URL_HACKATHONS = '/hackathons'
+export const URL_HACKATHON = '/hackathon'
+
 export const URL_STORAGE_UPLOAD = '/storage/upload'
 
 

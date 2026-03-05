@@ -3,6 +3,7 @@ import AuthAPI from './auth'
 import WorkspaceAPI from './workspace'
 import UserAPI from './user'
 import StorageAPI from './storage'
+import HackathonAPI from './hackathon'
 
 /**
  * Internal API client
@@ -13,12 +14,14 @@ class PacepardAPIClient {
   public workspace: WorkspaceAPI
   public user: UserAPI
   public storage: StorageAPI
+  public hackathon: HackathonAPI
 
   constructor(axiosService: AxiosService) {
     this.auth = new AuthAPI(axiosService)
     this.workspace = new WorkspaceAPI(axiosService)
     this.user = new UserAPI(axiosService)
     this.storage = new StorageAPI(axiosService)
+    this.hackathon = new HackathonAPI(axiosService)
   }
 }
 

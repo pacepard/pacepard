@@ -20,6 +20,9 @@ export * from './utils/interfaces'
 export * from './utils/helpers'
 export * as baseTypes from './utils/types'
 
+// DTOs
+export * from './dtos/hackathon.dto'
+
 // Routes
 export { default as routes } from './routes/routes';
 export { default as routil } from './routes/helper';
