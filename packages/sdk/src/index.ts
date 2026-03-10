@@ -25,7 +25,7 @@ export * from './dtos/hackathon.dto'
 
 // Routes
 export { default as routes } from './routes/routes';
-export { default as routil } from './routes/helper';
+export { default as routil, getHackathonPath, getProjectPath, getChallengePath } from './routes/helper';
 
 // Contexts
 export { default as UserContext } from './state/user/userContext';

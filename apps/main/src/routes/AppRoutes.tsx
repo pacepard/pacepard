@@ -94,14 +94,8 @@ import Dashboard from '@/app/dashboard/dashboard';
 
 import EditorPage from '@/app/editor/editor-page';
 
-import Tabs from '@/components/blocks/activity/test-tab';
-import { ReusableTabs } from '@/components/blocks/activity';
 import ErrorUI from '@/app/generics/error-ui';
 import { NotFound } from '@pacepard/ui/components/not-found';
-
-const HomeComponent = () => (
-    <ReusableTabs tabs={Tabs} defaultValue="overview" />
-);
 
 const AppRoutes = () => {
     /**
@@ -156,6 +150,7 @@ const AppRoutes = () => {
 
             // dasboard
             case 'dashboard':
+            case 'home':
                 return <Dashboard />;
 
             // Business routes
@@ -301,8 +296,6 @@ const AppRoutes = () => {
                 return <EditorPage />;
 
             // Common routes
-            case 'home':
-                return <HomeComponent />;
             case 'my-inbox':
                 return <MyInbox />;
             case 'route-fallback':
@@ -601,6 +594,19 @@ const AppRoutes = () => {
                     )}
                 </Fragment>
             ))}
+
+            {/* Hackathon tab route (submission, share, etc.) */}
+            <Route
+                path="/hackathon/:slug/:tab"
+                element={
+                    <DashboardLayout
+                        component={getAppPages('hackathon-details')}
+                        title="Hackathon"
+                        back={true}
+                        sidebar={{ collapsed: false }}
+                    />
+                }
+            />
 
             {/* Fallback routes */}
             <Route

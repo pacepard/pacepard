@@ -8,7 +8,7 @@ const sidebarRoutes: Array<IRoute> = [
         url: '/dashboard',
         iconName: 'layout-right',
         action: 'navigate',
-        isAuth: false,
+        isAuth: true,
         params: [],
         content: { collapsed: false },
     },

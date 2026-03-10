@@ -5,7 +5,7 @@ const productRoutes: Array<IRoute> = [
     {
         name: 'product',
         title: 'Product',
-        url: '',
+        url: '/product',
         iconName: 'layout-right',
         action: 'navigate',
         isAuth: true,

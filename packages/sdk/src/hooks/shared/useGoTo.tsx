@@ -16,8 +16,6 @@ interface IToDetails {
 
 const useGoTo = () => {
 
-    const DASHBOARD_ROUTE = (import.meta.env?.VITE_DASHBOARD_ROUTE as string) || '/dashboard';
-
     const navigate = useNavigate();
     const location = useLocation();
     const { userContext } = useContextType();
@@ -40,7 +38,7 @@ const useGoTo = () => {
 
         if (route) {
 
-            navigate(computePath(route.url))
+            navigate(routil.computePath(route.url))
 
             setSidebar({
                 route: route,
@@ -68,31 +66,21 @@ const useGoTo = () => {
 
             const xroute = routil.computeSubPath(route, subroute);
             goTo(xroute)
-        } else if(options.name) {
+        } else if (options.name) {
 
-            const route = routil.inRoute({
+            const path = routil.inRoute({
                 route: options.route,
                 name: options.name,
-                params: options.id ? [{ type: 'url', name: 'details', value: options.id }] : []
+                params: options.id ? [{ type: 'url', name: 'slug', value: options.id }] : []
             });
 
-            goTo(route);
-
-            console.log(route)
+            goTo(path);
 
         }
 
     }
 
-    const computePath = (route: string) => {
-
-        if (route === DASHBOARD_ROUTE) {
-            return route;
-        } else {
-            return DASHBOARD_ROUTE + route
-        }
-
-    }
+    const computePath = (route: string) => routil.computePath(route);
 
     const getSubroutes = (name: string): Array<IRouteItem> => {
 

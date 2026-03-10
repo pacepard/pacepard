@@ -14,7 +14,7 @@ import {
 } from '@pacepard/ui/components/dropdown-menu';
 import { toast } from '@pacepard/ui';
 import { PacepardAPI } from '@/config/pacepard';
-import { IHackathon, HackStatusType } from '@pacepard/sdk';
+import { IHackathon, HackStatusType, routil } from '@pacepard/sdk';
 
 const statusVariant = (
     status: HackStatusType,
@@ -166,7 +166,7 @@ const MyHackathons = () => {
                         and tracking progress in one place.
                     </p>
                     <Button
-                        onClick={() => navigate('/create-hackathon')}
+                        onClick={() => navigate('/hackathon/create')}
                         className="bg-[#333234] hover:bg-[#333234]/90 text-[#eaeaea] rounded-md h-10 px-5 gap-2"
                     >
                         <Plus className="h-4 w-4" />
@@ -182,7 +182,7 @@ const MyHackathons = () => {
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-semibold text-foreground">My Hackathons</h1>
                 <Button
-                    onClick={() => navigate('/create-hackathon')}
+                    onClick={() => navigate('/hackathon/create')}
                     className="bg-[#333234] hover:bg-[#333234]/90 text-[#eaeaea] rounded-md h-10 px-5 gap-2"
                 >
                     <Plus className="h-4 w-4" />
@@ -210,9 +210,7 @@ const MyHackathons = () => {
                                 key={hackathon.id}
                                 className="flex items-center gap-4 px-6 py-3 hover:bg-muted/30 cursor-pointer transition-colors group"
                                 onClick={() =>
-                                    navigate('/hackathon-details', {
-                                        state: { hackathonId: hackathon.id },
-                                    })
+                                    navigate(routil.getHackathonPath(hackathon.slug ?? hackathon.id))
                                 }
                             >
                                 {/* Thumbnail */}
@@ -266,9 +264,7 @@ const MyHackathons = () => {
                                         <DropdownMenuItem
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate('/hackathon-details', {
-                                                    state: { hackathonId: hackathon.id },
-                                                });
+                                                navigate(routil.getHackathonPath(hackathon.slug ?? hackathon.id));
                                             }}
                                         >
                                             View
@@ -276,9 +272,7 @@ const MyHackathons = () => {
                                         <DropdownMenuItem
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate('/edit-hackathon', {
-                                                    state: { hackathonId: hackathon.id },
-                                                });
+                                                navigate(routil.getHackathonPath(hackathon.slug ?? hackathon.id, 'edit'));
                                             }}
                                         >
                                             Edit

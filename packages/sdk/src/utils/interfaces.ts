@@ -292,7 +292,10 @@ export interface IRoutil {
     computeSubPath(route: IRoute, subroute: IRouteItem): string,
     computeInPath(inroute: IInRoute): string,
     inRoute(payload: { route: string, name: string, params?: Array<IRouteParam> }): string,
-    resolveRouteParams(params: Array<IRouteParam>, stickTo: 'app' | 'page'): string
+    resolveRouteParams(params: Array<IRouteParam>, stickTo: 'app' | 'page'): string,
+    getHackathonPath(slug: string, tab?: string): string,
+    getProjectPath(slug: string, segment?: 'edit'): string,
+    getChallengePath(slug: string, segment?: 'edit'): string,
 }
 
 

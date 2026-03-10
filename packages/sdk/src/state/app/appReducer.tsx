@@ -153,6 +153,11 @@ const appReducer = (state: any, action: any) => {
                 ...state,
                 hackathon: action.payload,
             };
+        case GET_HACKATHONS:
+            return {
+                ...state,
+                hackathons: action.payload,
+            };
         case GET_ENTRY:
             return {    
                 ...state,
@@ -172,6 +177,11 @@ const appReducer = (state: any, action: any) => {
             return {
                 ...state,
                 project: action.payload,
+            };
+        case GET_PROJECTS:
+            return {
+                ...state,
+                projects: action.payload,
             };
         case GET_TEAM:
             return {

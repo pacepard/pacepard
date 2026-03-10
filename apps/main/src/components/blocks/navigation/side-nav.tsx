@@ -120,6 +120,7 @@ const AppSidebar = (data: ISideBar) => {
     const userContext = useContext(UserContext) as any;
     const appContext = useContext(AppContext) as any;
     const { user, userType, sidebar } = userContext || {};
+    const { hackathons, projects } = appContext || {};
 
     // Convert string userType to UserType enum
     const currentUserType = useMemo(() => {
@@ -203,13 +204,13 @@ const AppSidebar = (data: ISideBar) => {
 
     // Handle route navigation
     const handleRouteClick = (route: IRoute, subroute?: IRouteItem) => {
-        if (route.action === 'navigate') {
-            const path = subroute 
-                ? routil.computeSubPath(route, subroute)
-                : routil.computePath(route.url);
+        if (subroute) {
+            const path = routil.computeSubPath(route, subroute);
+            navigate(path);
+        } else if (route.action === 'navigate') {
+            const path = routil.computePath(route.url);
             navigate(path);
         } else if (route.action === 'open-secondary') {
-            // Handle secondary menu opening if needed
             const path = routil.computePath(route.url);
             navigate(path);
         }
@@ -321,6 +322,71 @@ const AppSidebar = (data: ISideBar) => {
                     // Get inroutes for this workspace route
                     const routeInroutes = route.inroutes || [];
                     
+                    // Create dynamic inroutes from state collections
+                    const dynamicInroutes: IInRoute[] = useMemo(() => {
+                        const dynamic: IInRoute[] = [];
+                        
+                        // Add hackathons
+                        if (hackathons?.data && Array.isArray(hackathons.data)) {
+                            hackathons.data.forEach((hackathon: any) => {
+                                dynamic.push({
+                                    route: 'workspace',
+                                    parent: 'my-hackathons',
+                                    name: `hackathon-${hackathon.slug || hackathon._id}`,
+                                    title: hackathon.name || 'Untitled Hackathon',
+                                    url: `/${hackathon.slug || hackathon._id}`,
+                                    action: 'navigate',
+                                    isAuth: true,
+                                    params: [{ type: 'url', name: 'slug', value: hackathon.slug || hackathon._id }],
+                                    content: { collapsed: false },
+                                    iconName: 'trophy'
+                                });
+                            });
+                        }
+                        
+                        // Add projects/apprenticeships (non-challenge projects)
+                        if (projects?.data && Array.isArray(projects.data)) {
+                            projects.data
+                                .filter((project: any) => !project.isChallenge)
+                                .forEach((project: any) => {
+                                    dynamic.push({
+                                        route: 'workspace',
+                                        parent: 'my-projects',
+                                        name: `project-${project.slug || project._id}`,
+                                        title: project.title || project.name || 'Untitled Project',
+                                        url: `/${project.slug || project._id}`,
+                                        action: 'navigate',
+                                        isAuth: true,
+                                        params: [{ type: 'url', name: 'slug', value: project.slug || project._id }],
+                                        content: { collapsed: false },
+                                        iconName: 'folder'
+                                    });
+                                });
+                        }
+                        
+                        // Add challenges (projects with isChallenge flag)
+                        if (projects?.data && Array.isArray(projects.data)) {
+                            projects.data
+                                .filter((project: any) => project.isChallenge === true)
+                                .forEach((challenge: any) => {
+                                    dynamic.push({
+                                        route: 'workspace',
+                                        parent: 'my-challenges',
+                                        name: `challenge-${challenge.slug || challenge._id}`,
+                                        title: challenge.title || challenge.name || 'Untitled Challenge',
+                                        url: `/${challenge.slug || challenge._id}`,
+                                        action: 'navigate',
+                                        isAuth: true,
+                                        params: [{ type: 'url', name: 'slug', value: challenge.slug || challenge._id }],
+                                        content: { collapsed: false },
+                                        iconName: 'zap'
+                                    });
+                                });
+                        }
+                        
+                        return dynamic;
+                    }, [hackathons, projects]);
+                    
                     return (
                         <SidebarGroup key={route.name}>
                             {route.subroutes && route.subroutes.length > 0 ? (
@@ -361,62 +427,64 @@ const AppSidebar = (data: ISideBar) => {
                                                     {route.subroutes
                                                         ?.filter((sr) => sr.name !== 'divider')
                                                         .map((subroute) => {
-                                                            // Get inroutes for this subroute
-                                                            const subrouteInroutes = routeInroutes.filter(
+                                                            // Get only dynamic inroutes (actual created items), exclude static route templates
+                                                            const dynamicItemsForSubroute = dynamicInroutes.filter(
                                                                 (inr: IInRoute) => inr.parent === subroute.name
                                                             );
                                                             
-                                                            return subrouteInroutes.length > 0 ? (
-                                                                <Collapsible
-                                                                    key={subroute.name}
-                                                                    defaultOpen={false}
-                                                                    className="group/sub-collapsible"
-                                                                    asChild
-                                                                >
-                                                                    <SidebarMenuSubItem className="group/subroute-item">
-                                                                        <div className="group/subroute-button flex items-center w-full">
-                                                                            <CollapsibleTrigger asChild>
-                                                                                <SidebarMenuSubButton
-                                                                                    isActive={isRouteActive(route, subroute)}
-                                                                                    className={cn("flex-1", isRouteActive(route, subroute) && "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700")}
-                                                                                >
-                                                                                    <ChevronDown className="h-4 w-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/sub-collapsible:rotate-0 flex-shrink-0" />
-                                                                                    <span className="flex-1">
-                                                                                        {subroute.title || subroute.name}
-                                                                                    </span>
-                                                                                </SidebarMenuSubButton>
-                                                                            </CollapsibleTrigger>
-                                                                            <DropdownMenu>
-                                                                                <DropdownMenuTrigger asChild>
-                                                                                    <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/subroute-button:opacity-100 group-hover/subroute-button:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
-                                                                                        <MoreHorizontal className="h-4 w-4" />
-                                                                                        <span className="sr-only">More</span>
-                                                                                    </SidebarMenuAction>
-                                                                                </DropdownMenuTrigger>
-                                                                                <DropdownMenuContent
-                                                                                    className="w-48"
-                                                                                    side={isMobile ? 'bottom' : 'right'}
-                                                                                    align={isMobile ? 'end' : 'start'}
-                                                                                >
-                                                                                    <DropdownMenuItem>
-                                                                                        <Folder className="text-muted-foreground h-4 w-4" />
-                                                                                        <span>View</span>
-                                                                                    </DropdownMenuItem>
-                                                                                    <DropdownMenuItem>
-                                                                                        <Share2 className="text-muted-foreground h-4 w-4" />
-                                                                                        <span>Share</span>
-                                                                                    </DropdownMenuItem>
-                                                                                    <DropdownMenuSeparator />
-                                                                                    <DropdownMenuItem>
-                                                                                        <Trash2 className="text-muted-foreground h-4 w-4" />
-                                                                                        <span>Delete</span>
-                                                                                    </DropdownMenuItem>
-                                                                                </DropdownMenuContent>
-                                                                            </DropdownMenu>
-                                                                        </div>
-                                                                        <CollapsibleContent>
-                                                                            <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-4 pl-4 translate-x-0">
-                                                                                {subrouteInroutes.map((inroute: IInRoute) => (
+                                                            // Always show the section, but only show collapsible dropdown if there are items
+                                                            if (dynamicItemsForSubroute.length > 0) {
+                                                                return (
+                                                                    <Collapsible
+                                                                        key={subroute.name}
+                                                                        defaultOpen={false}
+                                                                        className="group/sub-collapsible"
+                                                                        asChild
+                                                                    >
+                                                                        <SidebarMenuSubItem className="group/subroute-item">
+                                                                            <div className="group/subroute-button flex items-center w-full">
+                                                                                <CollapsibleTrigger asChild>
+                                                                                    <SidebarMenuSubButton
+                                                                                        isActive={isRouteActive(route, subroute)}
+                                                                                        className={cn("flex-1", isRouteActive(route, subroute) && "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700")}
+                                                                                    >
+                                                                                        <ChevronDown className="h-4 w-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/sub-collapsible:rotate-0 flex-shrink-0" />
+                                                                                        <span className="flex-1">
+                                                                                            {subroute.title || subroute.name}
+                                                                                        </span>
+                                                                                    </SidebarMenuSubButton>
+                                                                                </CollapsibleTrigger>
+                                                                                <DropdownMenu>
+                                                                                    <DropdownMenuTrigger asChild>
+                                                                                        <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/subroute-button:opacity-100 group-hover/subroute-button:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
+                                                                                            <MoreHorizontal className="h-4 w-4" />
+                                                                                            <span className="sr-only">More</span>
+                                                                                        </SidebarMenuAction>
+                                                                                    </DropdownMenuTrigger>
+                                                                                    <DropdownMenuContent
+                                                                                        className="w-48"
+                                                                                        side={isMobile ? 'bottom' : 'right'}
+                                                                                        align={isMobile ? 'end' : 'start'}
+                                                                                    >
+                                                                                        <DropdownMenuItem>
+                                                                                            <Folder className="text-muted-foreground h-4 w-4" />
+                                                                                            <span>View</span>
+                                                                                        </DropdownMenuItem>
+                                                                                        <DropdownMenuItem>
+                                                                                            <Share2 className="text-muted-foreground h-4 w-4" />
+                                                                                            <span>Share</span>
+                                                                                        </DropdownMenuItem>
+                                                                                        <DropdownMenuSeparator />
+                                                                                        <DropdownMenuItem>
+                                                                                            <Trash2 className="text-muted-foreground h-4 w-4" />
+                                                                                            <span>Delete</span>
+                                                                                        </DropdownMenuItem>
+                                                                                    </DropdownMenuContent>
+                                                                                </DropdownMenu>
+                                                                            </div>
+                                                                            <CollapsibleContent>
+                                                                                <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-4 pl-4 translate-x-0">
+                                                                                    {dynamicItemsForSubroute.map((inroute: IInRoute) => (
                                                                                     <SidebarMenuSubItem key={inroute.name} className="group/item">
                                                                                         <SidebarMenuSubButton
                                                                                             asChild
@@ -477,7 +545,10 @@ const AppSidebar = (data: ISideBar) => {
                                                                         </CollapsibleContent>
                                                                     </SidebarMenuSubItem>
                                                                 </Collapsible>
-                                                            ) : (
+                                                            );
+                                                            } else {
+                                                                // Show section without dropdown when no items exist
+                                                                return (
                                                                 <SidebarMenuSubItem key={subroute.name}>
                                                                     <SidebarMenuSubButton
                                                                         asChild
@@ -498,7 +569,8 @@ const AppSidebar = (data: ISideBar) => {
                                                                         </a>
                                                                     </SidebarMenuSubButton>
                                                                 </SidebarMenuSubItem>
-                                                            );
+                                                                );
+                                                            }
                                                         })}
                                                 </SidebarMenuSub>
                                         </SidebarMenuItem>

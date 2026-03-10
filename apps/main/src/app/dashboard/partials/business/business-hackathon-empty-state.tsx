@@ -68,7 +68,7 @@ const BusinessHackathonEmptyState = () => {
     const navigate = useNavigate();
 
     const handleNewHackathon = () => {
-        navigate('/dashboard/workspace/hackathons/create');
+        navigate('/hackathon/create');
     };
 
     return (

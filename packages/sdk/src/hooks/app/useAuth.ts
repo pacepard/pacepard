@@ -62,7 +62,6 @@ const useAuth = () => {
 
             if (
                 location.pathname === '/login' ||
-                location.pathname === '/home' ||
                 location.pathname === '/'
             ) {
                 goTo('/dashboard');
@@ -113,7 +112,6 @@ const useAuth = () => {
 
                     if (
                         location.pathname === '/login' ||
-                        location.pathname === '/home' ||
                         location.pathname === '/'
                     ) {
                         toMainRoute(null, 'dashboard');
