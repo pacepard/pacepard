@@ -57,6 +57,7 @@ docs
 # misc
 .DS_Store
 *.pem
+.cursor/
 
 
 

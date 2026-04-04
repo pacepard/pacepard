@@ -21,7 +21,7 @@ const DashboardContent = ({ component, title, back, sidebar }: DashboardLayoutPr
     const isCollapsed = sidebarState?.collapsed || false;
 
     const mainClasses = cn(
-        'dashboard-body min-h-screen bg-red-500 flex flex-col flex-1',
+        'dashboard-body min-h-screen flex flex-col flex-1',
         //isCollapsed ? 'pl-20' : 'pl-64'
     );
 
