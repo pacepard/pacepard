@@ -100,7 +100,7 @@ export default function ClCta() {
         <section
             className={cn(
                 'w-full py-16 md:py-24',
-                'bg-background',
+                'bg-neutral-50',
             )}
         >
             <div className="container mx-auto max-w-5xl px-4 md:px-6">

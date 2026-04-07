@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 const items = [
     {
         title: 'Organise online, in-person, or hybrid hackathons all in one place',
-        image: '/features/triage-card.svg',
+        image: '/blocks/@create-hackk.png',
     },
     {
         title: 'Get thousands to stick around your product and technology',

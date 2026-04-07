@@ -7,7 +7,7 @@ import { cn } from '@pacepard/ui/lib/utils';
 
 export default function PPCTA() {
     return (
-        <section className="w-full bg-background">
+        <section className="w-full bg-neutral-50">
             <div className="container mx-auto max-w-6xl px-4 md:px-6 py-16 md:py-24">
                 <div className="flex flex-col items-center gap-12 md:flex-row md:items-center md:justify-between md:gap-16">
                     {/* Left: illustration */}

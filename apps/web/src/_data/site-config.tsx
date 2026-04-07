@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Pacepard - unlocking the superhuman potential of all learners",
+  name: "Pacepard - making AI-Native superhumans",
   title: "Pacepard",
   url: "https://www.pacepard.com",
   getStartedUrl: "https://www.app.pacepard.com/login",

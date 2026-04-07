@@ -15,19 +15,21 @@ export default function PPHeroSection() {
 
     return (
         <section className="w-full  bg-background mb-6">
-            <div className="container mx-auto max-w-6xl px-4 md:px-6">
+            <div className="container mx-auto max-w-7xl px-4 md:px-6">
                 <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
                     {/* Left: headline, description, CTAs */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">
-                        <h1 className="text-4xl font-bold tracking-tight text-foreground text-3xl md:text-5xl">
-                            One workspace, one goal. Get consistent desired results.
+                        <h1 className="font-bold tracking-tight text-foreground text-4xl md:text-5xl">
+                            The learning and growth platform for AI-Native
+                            product teams
                         </h1>
                         <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
                             {/* Your projects, wikis and docs, all side by side. For
                             small teams to large organizations. */}
-                            Pacepard is where talents learn and grow by doing, 
-                            and organisations drive long-term product adoption,
-                            engagement and loyalty.
+                            Pacepard is you become an AI-native talent by
+                            learning and growing by doing, and organisations
+                            drive long-term product adoption, engagement and
+                            loyalty.
                         </p>
                         <div className="flex flex-wrap items-center gap-4">
                             <Button
@@ -40,10 +42,10 @@ export default function PPHeroSection() {
                                 )}
                             >
                                 <Link
-                                    href="#"
+                                    href="/apprenticeship"
                                     className="inline-flex items-center gap-2"
                                 >
-                                    Get Pacepard free
+                                    Choose a program
                                     <ArrowRightToLineIcon
                                         className="size-4"
                                         strokeWidth={2.5}
@@ -63,7 +65,9 @@ export default function PPHeroSection() {
                                 )}
                             >
                                 <Link
-                                    href="#"
+                                    href="https://calendly.com/pacepard"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2"
                                 >
                                     Request a demo
@@ -79,18 +83,16 @@ export default function PPHeroSection() {
 
                     {/* Right: illustration — screenshot or SVG from /blocks */}
                     <div className="relative flex shrink-0 items-center justify-center w-full max-w-lg lg:max-w-xl">
-                    
-                            <Image
-                                src={HERO_IMAGE}
-                                alt="Pacepard"
-                                width={560}
-                                height={420}
-                                className="h-auto w-full object-contain"
-                                sizes="(max-width: 1024px) 100vw, 50vw"
-                                priority
-                                onError={() => setImageError(true)}
-                            />
-                      
+                        <Image
+                            src={HERO_IMAGE}
+                            alt="Pacepard"
+                            width={560}
+                            height={420}
+                            className="h-auto w-full object-contain"
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                            priority
+                            onError={() => setImageError(true)}
+                        />
                     </div>
                 </div>
             </div>

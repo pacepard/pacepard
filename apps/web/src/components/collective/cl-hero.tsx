@@ -1,32 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowRightToLineIcon } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
 
-/** Hero illustration: screenshot at public/blocks/cl-hero.png, fallback to learners.svg from /blocks */
-const HERO_IMAGE = '/blocks/collective.png';
-
 export default function ClHero() {
-    const [imageError, setImageError] = useState(false);
-
     return (
-        <section className="w-full  bg-background">
+        <section className="w-full bg-background pt-14 pb-12 md:pt-24 md:pb-16">
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
-                <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
-                    {/* Left: headline, description, CTAs */}
-                    <div className="flex-1 min-w-0 space-y-6 text-left">
-                        <h1 className="text-4xl font-bold tracking-tight text-foreground text-3xl md:text-5xl">
+                <div className="flex flex-col items-center justify-center gap-8 text-center">
+                    <div className="mx-auto w-full min-w-0 max-w-2xl space-y-6">
+                        <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground md:text-5xl">
                             Where teams work better, and together
                         </h1>
-                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
-                            Your projects, wikis and docs, all side by side. For
-                            small teams to large organizations.
+                        <p className="mx-auto max-w-lg text-lg leading-relaxed text-muted-foreground">
+                            This where you learn in teams and capture knowledge,
+                            find answers, and automate projects. Now a team of 7
+                            feels like 70.
                         </p>
-                        <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex flex-wrap items-center justify-center gap-4">
                             <Button
                                 asChild
                                 size="lg"
@@ -72,30 +66,6 @@ export default function ClHero() {
                                 </Link>
                             </Button>
                         </div>
-                    </div>
-
-                    {/* Right: illustration — screenshot or SVG from /blocks */}
-                    <div className="relative flex shrink-0 items-center justify-center w-full max-w-lg lg:max-w-xl">
-                        {!imageError ? (
-                            <Image
-                                src={HERO_IMAGE}
-                                alt="Teams collaborating with projects, wikis and docs"
-                                width={560}
-                                height={420}
-                                className="h-auto w-full object-contain"
-                                sizes="(max-width: 1024px) 100vw, 50vw"
-                                priority
-                                onError={() => setImageError(true)}
-                            />
-                        ) : (
-                            <Image
-                                src={HERO_IMAGE}
-                                alt="Teams collaborating"
-                                width={400}
-                                height={400}
-                                className="h-auto w-full max-w-md object-contain"
-                            />
-                        )}
                     </div>
                 </div>
             </div>

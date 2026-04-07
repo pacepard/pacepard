@@ -61,7 +61,7 @@ export default function GoFAQ() {
         <section className="py-16 md:py-24">
             <div className="mx-auto max-w-2xl px-6">
                 <div className="space-y-12">
-                    <h2 className="text-center text-4xl font-bold tracking-tight text-foreground">Your questions answered</h2>
+                    <h2 className="text-left text-4xl font-bold tracking-tight text-foreground">Your questions answered</h2>
 
                     <Accordion
                         type="single"
@@ -84,10 +84,10 @@ export default function GoFAQ() {
                         ))}
                     </Accordion>
 
-                    <p className="text-muted-foreground text-center">
+                    <p className="text-muted-foreground text-left">
                         Can't find what you're looking for? Contact our{' '}
                         <Link
-                            href="mailto:support@pacepard.com"
+                            href="mailto:hello@pacepard.com"
                             className="text-primary font-medium hover:underline">
                             Support team
                         </Link>

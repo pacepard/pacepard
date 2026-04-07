@@ -150,9 +150,9 @@ export const Navbar = () => {
                             {!scrolled && (
                                 <>
                                     <Button asChild variant="link" size="lg" className="text-sm md:text-base">
-                                        <Link href="/login">
+                                        <Link href="mailto:hello@pacepard.com">
                                             <span className="text-foreground hover:text-accent-foreground relative z-10">
-                                                Login
+                                                Mail us
                                             </span>
                                         </Link>
                                     </Button>
@@ -165,7 +165,7 @@ export const Navbar = () => {
                                         </Link>
                                     </Button> */}
                                     <Button asChild size="lg" className="text-sm md:text-base">
-                                        <Link href="/login">
+                                        <Link href="/apprenticeship">
                                             <span className="">
                                                 Get Started
                                             </span>
@@ -177,7 +177,7 @@ export const Navbar = () => {
 
                             {scrolled && (
                                 <Button asChild size="lg" className="text-sm md:text-base">
-                                    <Link href="#">
+                                    <Link href="mailto:hello@pacepard.com">
                                         <span>Contact sales</span>
                                         <ArrowRightToLineIcon />
                                     </Link>

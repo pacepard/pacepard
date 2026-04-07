@@ -10,7 +10,7 @@ const topItems = [
             'Create challenges, register participants, and set timelines in minutes,  no complicated tools needed.',
         images: [
             {
-                src: '/resource-allocation/templates.svg',
+                src: '/blocks/@reg.png',
                 alt: 'Issue template interface',
                 width: 495,
                 height: 186,
@@ -26,10 +26,10 @@ const topItems = [
             'Draft challenges and hackathons with our smart instructions and templates. No need to start from scratch each time.',
             images: [
                 {
-                    src: '/resource-allocation/templates.svg',
+                    src: '/blocks/@marketing.png',
                     alt: 'Graveyard interface',
-                    width: 305,
-                    height: 280,
+                    width: 3505,
+                    height: 680,
                 },
             ],
         className:
@@ -45,10 +45,10 @@ const bottomItems = [
             'Track everything from start to finish: who’s participating, what they’re building, and how projects are progressing.',
         images: [
             {
-                src: '/resource-allocation/graveyard.svg',
+                src: '/blocks/@manage.png',
                 alt: 'Graveyard interface',
-                width: 305,
-                height: 280,
+                width: 3505,
+                height: 680,
             },
         ],
         className:

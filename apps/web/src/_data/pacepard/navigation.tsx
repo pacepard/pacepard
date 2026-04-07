@@ -32,48 +32,50 @@ export const Navigation = [
 ];
 
 export const NavigationItems = [
-    {
-        label: 'Solutions',
-        href: '#features',
-        dropdownItems: [
-            {
-                title: 'Pacepard Collective',
-                href: '/collective',
-                description:
-                    'The hands-on platform for achieving the mastery of a Superhuman',
-            },
-            {
-                title: 'Pacepard Go',
-                href: '/go',
-                description:
-                    'Organize Innovation. The hackathon management stack for hosting world-class hackathons',
-            },
-        ],
-    },
-    { label: 'Hackathons', href: '/hackathons' },
-    { label: 'Apprenticeships', href: '/apprenticeships' },
+    // {
+    //     label: 'Solutions',
+    //     href: '#features',
+    //     dropdownItems: [
+    //         {
+    //             title: 'Pacepard Collective',
+    //             href: '/collective',
+    //             description:
+    //                 'The hands-on platform for achieving the mastery of a Superhuman',
+    //         },
+    //         {
+    //             title: 'Pacepard Go',
+    //             href: '/go',
+    //             description:
+    //                 'Organize Innovation. The hackathon management stack for hosting world-class hackathons',
+    //         },
+    //     ],
+    // },
+    { label: 'Apprenticeship', href: '/apprenticeship' },
+    { label: 'Hackathon', href: '/hackathon' },
+
     { label: 'Research', href: '/research' },
+    { label: 'Pricing', href: '/pricing' },
     // { label: '', href: '/open-source' },
-    {
-        label: 'Open Source',
-        href: '',
-        dropdownItems: [
-            {
-                title: 'Projects',
-                href: '/collective',
-                description:
-                    'The hands-on platform for achieving the mastery of a Superhuman',
-            },
-            {
-                title: 'Personal Projects',
-                href: '/go',
-                description:
-                    'Organize Innovation. The hackathon management stack for hosting world-class hackathons',
-            },
-        ],
-    },
-    
-    { label: "About us", href: "/about" },
+    // {
+    //     label: 'Open Source',
+    //     href: '',
+    //     dropdownItems: [
+    //         {
+    //             title: 'Projects',
+    //             href: '/collective',
+    //             description:
+    //                 'The hands-on platform for achieving the mastery of a Superhuman',
+    //         },
+    //         {
+    //             title: 'Personal Projects',
+    //             href: '/go',
+    //             description:
+    //                 'Organize Innovation. The hackathon management stack for hosting world-class hackathons',
+    //         },
+    //     ],
+    // },
+
+    // { label: "About us", href: "/about" },
     // { label: 'Contact', href: '/contact' },
 ];
 
