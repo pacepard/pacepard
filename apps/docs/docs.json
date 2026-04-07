@@ -1,122 +1,267 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
-  "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
-  },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "mint",
+    "name": "Pacepard",
+    "colors": {
+        "primary": "#16A34A",
+        "light": "#07C983",
+        "dark": "#15803D"
+    },
+    "favicon": "/pacepard.svg",
+    "navigation": {
+        "tabs": [
+            {
+                "tab": "Guides",
+                "groups": [
+                    {
+                        "group": "Getting started",
+                        "pages": ["index", "quickstart", "development"]
+                    },
+                    {
+                        "group": "Customization",
+                        "pages": [
+                            "essentials/settings",
+                            "essentials/navigation"
+                        ]
+                    },
+                    {
+                        "group": "Writing content",
+                        "pages": [
+                            "essentials/markdown",
+                            "essentials/code",
+                            "essentials/images",
+                            "essentials/reusable-snippets"
+                        ]
+                    },
+                    {
+                        "group": "AI tools",
+                        "pages": [
+                            "ai-tools/cursor",
+                            "ai-tools/claude-code",
+                            "ai-tools/windsurf"
+                        ]
+                    }
+                ]
+            },
+            {
+                "tab": "API reference",
+                "groups": [
+                    {
+                        "group": "Overview",
+                        "pages": ["api-reference/introduction"]
+                    },
+                    {
+                        "group": "Authentication",
+                        "pages": [
+                            "api-reference/authentication/register",
+                            "api-reference/authentication/login",
+                            "api-reference/authentication/verify-otp",
+                            "api-reference/authentication/resend-otp",
+                            "api-reference/authentication/activate",
+                            "api-reference/authentication/forgot-password",
+                            "api-reference/authentication/reset-password",
+                            "api-reference/authentication/change-password",
+                            "api-reference/authentication/token",
+                            "api-reference/authentication/logout"
+                        ]
+                    },
+                    {
+                        "group": "Roles",
+                        "pages": [
+                            "api-reference/roles/create",
+                            "api-reference/roles/list",
+                            "api-reference/roles/get",
+                            "api-reference/roles/update",
+                            "api-reference/roles/delete",
+                            "api-reference/roles/user-attach",
+                            "api-reference/roles/user-detach",
+                            "api-reference/roles/workspace-assign",
+                            "api-reference/roles/project-assign"
+                        ]
+                    },
+                    {
+                        "group": "Workspaces",
+                        "pages": [
+                            "api-reference/workspaces/create",
+                            "api-reference/workspaces/list",
+                            "api-reference/workspaces/get",
+                            "api-reference/workspaces/update",
+                            "api-reference/workspaces/update-domain-access",
+                            "api-reference/workspaces/delete",
+                            "api-reference/workspaces/add-member",
+                            "api-reference/workspaces/remove-member",
+                            "api-reference/workspaces/invite-member",
+                            "api-reference/workspaces/bulk-invite",
+                            "api-reference/workspaces/generate-shareable-link",
+                            "api-reference/workspaces/join-by-link",
+                            "api-reference/workspaces/invite-mentor",
+                            "api-reference/workspaces/invite-judge",
+                            "api-reference/workspaces/resend-mentor-invite",
+                            "api-reference/workspaces/resend-judge-invite",
+                            "api-reference/workspaces/add-mentor",
+                            "api-reference/workspaces/get-mentors",
+                            "api-reference/workspaces/remove-mentor",
+                            "api-reference/workspaces/add-judge",
+                            "api-reference/workspaces/get-judges",
+                            "api-reference/workspaces/remove-judge"
+                        ]
+                    },
+                    {
+                        "group": "Hackathons",
+                        "pages": [
+                            "api-reference/hackathons/create",
+                            "api-reference/hackathons/list",
+                            "api-reference/hackathons/get",
+                            "api-reference/hackathons/update",
+                            "api-reference/hackathons/delete",
+                            "api-reference/hackathons/add-member",
+                            "api-reference/hackathons/remove-member",
+                            "api-reference/hackathons/invite-member",
+                            "api-reference/hackathons/generate-shareable-link",
+                            "api-reference/hackathons/invite-mentor",
+                            "api-reference/hackathons/invite-judge",
+                            "api-reference/hackathons/resend-mentor-invite",
+                            "api-reference/hackathons/resend-judge-invite"
+                        ]
+                    },
+                    {
+                        "group": "Entries",
+                        "pages": [
+                            "api-reference/entries/create",
+                            "api-reference/entries/list",
+                            "api-reference/entries/get",
+                            "api-reference/entries/update",
+                            "api-reference/entries/delete",
+                            "api-reference/entries/add-member",
+                            "api-reference/entries/remove-member",
+                            "api-reference/entries/invite-member"
+                        ]
+                    },
+                    {
+                        "group": "Payments",
+                        "pages": [
+                            "api-reference/payments/plans-list",
+                            "api-reference/payments/plans-create",
+                            "api-reference/payments/plans-update",
+                            "api-reference/payments/subscription-get",
+                            "api-reference/payments/subscription-create",
+                            "api-reference/payments/subscription-verify",
+                            "api-reference/payments/subscription-cancel"
+                        ]
+                    },
+                    {
+                        "group": "Projects",
+                        "pages": [
+                            "api-reference/projects/create",
+                            "api-reference/projects/list",
+                            "api-reference/projects/get",
+                            "api-reference/projects/update",
+                            "api-reference/projects/delete",
+                            "api-reference/projects/publish",
+                            "api-reference/projects/close",
+                            "api-reference/projects/add-member",
+                            "api-reference/projects/remove-member",
+                            "api-reference/projects/generate-shareable-link"
+                        ]
+                    },
+                    {
+                        "group": "Tasks",
+                        "pages": [
+                            "api-reference/tasks/get",
+                            "api-reference/tasks/update",
+                            "api-reference/tasks/delete",
+                            "api-reference/tasks/assign",
+                            "api-reference/tasks/list-project",
+                            "api-reference/tasks/list-team",
+                            "api-reference/tasks/list-user",
+                            "api-reference/tasks/create"
+                        ]
+                    },
+                    {
+                        "group": "Teams",
+                        "pages": [
+                            "api-reference/teams/get",
+                            "api-reference/teams/delete",
+                            "api-reference/teams/create",
+                            "api-reference/teams/list",
+                            "api-reference/teams/add-member",
+                            "api-reference/teams/remove-member",
+                            "api-reference/teams/update-member-role",
+                            "api-reference/teams/generate-shareable-link",
+                            "api-reference/teams/rotate"
+                        ]
+                    },
+                    {
+                        "group": "Users",
+                        "pages": [
+                            "api-reference/users/get-current",
+                            "api-reference/users/list",
+                            "api-reference/users/deactivate",
+                            "api-reference/users/onboard-user-type",
+                            "api-reference/users/onboard-basic-info",
+                            "api-reference/users/onboard-talent-info",
+                            "api-reference/users/onboard-business-info",
+                            "api-reference/users/onboard-user-info",
+                            "api-reference/users/onboard-complete",
+                            "api-reference/users/onboard-status"
+                        ]
+                    },
+                    {
+                        "group": "Storage",
+                        "pages": ["api-reference/storage/upload"]
+                    }
+                ]
+            }
+        ],
+        "global": {
+            "anchors": [
+                {
+                    "anchor": "Documentation",
+                    "href": "https://pacepard.com",
+                    "icon": "book-open-cover"
+                },
+                {
+                    "anchor": "Blog",
+                    "href": "https://pacepard.com",
+                    "icon": "newspaper"
+                }
             ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
         }
-      ]
+    },
+    "logo": {
+        "light": "/logo/pacepard-light.svg",
+        "dark": "/logo/pacepard-dark.svg"
+    },
+    "navbar": {
+        "links": [
+            {
+                "label": "Support",
+                "href": "mailto:engineering@pacepard.com"
+            }
+        ],
+        "primary": {
+            "type": "button",
+            "label": "Dashboard",
+            "href": "https://pacepard.com"
+        }
+    },
+    "contextual": {
+        "options": [
+            "copy",
+            "view",
+            "chatgpt",
+            "claude",
+            "perplexity",
+            "mcp",
+            "cursor",
+            "vscode"
+        ]
+    },
+    "footer": {
+        "socials": {
+            "x": "https://x.com/mintlify",
+            "github": "https://github.com/mintlify",
+            "linkedin": "https://linkedin.com/company/mintlify"
+        }
     }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
-  }
 }

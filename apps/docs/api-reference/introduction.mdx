@@ -1,33 +1,135 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: 'API Reference'
+description: 'Complete API documentation for Pacepard platform'
 ---
 
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  Welcome to the Pacepard API documentation. This comprehensive reference covers all endpoints for authentication, workspaces, hackathons, projects, payments, and user management.
 </Note>
 
-## Welcome
+## Overview
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+The Pacepard API provides a complete platform for managing innovation ecosystems including:
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+- **Authentication & Users**: User registration, login, role management, and onboarding
+- **Workspaces**: Collaborative environments for teams and organizations
+- **Hackathons**: Event management with entries, teams, and judging
+- **Projects**: Project management with tasks, teams, and collaboration
+- **Payments**: Subscription plans and payment processing
+- **Storage**: File upload and management
+- **Webhooks**: Payment notifications and integrations
+
+## Getting Started
+
+1. **Authentication**: All API endpoints require Bearer token authentication
+2. **Base URL**: `https://api.pacepard.com`
+3. **Content Type**: All requests use `application/json` unless specified otherwise
+4. **Rate Limiting**: Standard rate limits apply to all endpoints
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints are authenticated using Bearer tokens. Include the token in the Authorization header:
+
+```bash
+Authorization: Bearer <your-jwt-token>
+```
+
+### Obtaining Tokens
+
+1. **Register**: Create a new account via `POST /auth/register`
+2. **Login**: Get access tokens via `POST /auth/login`
+3. **Refresh**: Use refresh tokens via `POST /auth/token`
+
+## Response Format
+
+All API responses follow a consistent structure:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "error": false,
+  "errors": [],
+  "data": { /* Response data */ },
+  "message": "Success message",
+  "status": 200
+}
 ```
+
+### Error Responses
+
+```json
+{
+  "error": true,
+  "errors": ["Error description"],
+  "message": "Error message",
+  "status": 400
+}
+```
+
+## Pagination
+
+List endpoints support pagination with the following parameters:
+
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 10)
+
+Paginated responses include:
+
+```json
+{
+  "error": false,
+  "data": [/* items */],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 150,
+    "count": 10
+  }
+}
+```
+
+## API Modules
+
+<CardGroup cols={2}>
+  <Card
+    title="Authentication"
+    icon="key"
+    href="#authentication"
+  >
+    User registration, login, roles, and permissions
+  </Card>
+  <Card
+    title="Workspaces"
+    icon="building"
+    href="#workspaces"
+  >
+    Collaborative environments and team management
+  </Card>
+  <Card
+    title="Hackathons"
+    icon="trophy"
+    href="#hackathons"
+  >
+    Event management, entries, and competitions
+  </Card>
+  <Card
+    title="Projects"
+    icon="folder"
+    href="#projects"
+  >
+    Project management and task tracking
+  </Card>
+  <Card
+    title="Payments"
+    icon="credit-card"
+    href="#payments"
+  >
+    Subscription plans and payment processing
+  </Card>
+  <Card
+    title="Users"
+    icon="users"
+    href="#users"
+  >
+    User profiles, onboarding, and management
+  </Card>
+</CardGroup>
