@@ -9,6 +9,7 @@ const plans = [
         price: '₦35,000',
         period: '/month',
         cta: 'Get Started',
+        link: 'https://paystack.shop/pay/pacepard-starter',
     },
     {
         name: 'Pro',
@@ -16,14 +17,19 @@ const plans = [
         period: '/month',
         cta: 'Select Plan',
         highlighted: true,
+        link: 'https://paystack.shop/pay/pacepard-pro',
     },
     {
         name: 'Team',
         price: '₦124,000',
         period: '/month',
         cta: 'Select Plan',
+        link: 'https://paystack.shop/pay/pacepard-membership',
+
     },
 ]
+
+// https://paystack.shop/pay/pacepard-membership
 
 const planKeys = ['basic', 'pro', 'team'] as const
 
@@ -50,7 +56,7 @@ export default function Comparator() {
         <section className="bg-background @container py-24">
             <div className="mx-auto max-w-4xl px-6">
                 <div className="text-center">
-                    <h2 className="text-balance font-serif text-4xl font-medium">Compare Plans</h2>
+                    <h2 className="text-balance text-4xl font-bold">Compare Plans</h2>
                     <p className="text-muted-foreground mx-auto mt-4 max-w-md text-balance">Find the perfect plan that matches your needs.</p>
                 </div>
 
@@ -64,7 +70,7 @@ export default function Comparator() {
                                 <div className={`flex flex-col border-b p-4 text-center ${plan.highlighted ? 'bg-primary/5' : ''}`}>
                                     <p className="text-foreground font-medium">{plan.name}</p>
                                     <p className="mt-1">
-                                        <span className="font-serif text-2xl font-medium">{plan.price}</span>
+                                        <span className="text-2xl font-medium">{plan.price}</span>
                                         <span className="text-muted-foreground text-sm">{plan.period}</span>
                                     </p>
                                 </div>
@@ -89,7 +95,10 @@ export default function Comparator() {
                                         variant={plan.highlighted ? 'default' : 'outline'}
                                         size="sm"
                                         className="w-full">
-                                        <Link href="#link">{plan.cta}</Link>
+                                            <Link href={plan.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >{plan.cta}</Link>
                                     </Button>
                                 </div>
                             </Card>
@@ -140,7 +149,12 @@ export default function Comparator() {
                                     variant={plan.highlighted ? 'default' : 'outline'}
                                     size="sm"
                                     className="w-full">
-                                    <Link href="#link">{plan.cta}</Link>
+                                    <Link
+                                        href={plan.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        {plan.cta}
+                                    </Link>
                                 </Button>
                             </div>
                         ))}

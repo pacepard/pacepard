@@ -95,32 +95,32 @@ export default function PPGo() {
     return (
         <section className="w-full py-16 md:py-24">
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
-                {/* Top section: text and image on same line */}
-                <div className="flex flex-row flex-wrap items-center justify-between gap-8 lg:gap-16">
-                    <div className="min-w-0 flex-1 space-y-4">
+                {/* Top section: stack on mobile, row from lg */}
+                <div className="flex flex-col items-stretch gap-8 lg:flex-row lg:items-center lg:justify-start lg:gap-8 xl:gap-10">
+                    <div className="order-2 min-w-0 w-full max-w-xl shrink space-y-4 lg:order-1 lg:max-w-2xl">
                         <h2 className="max-w-xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
                             Run memorable and rewarding hackathons
                         </h2>
-                        <p className="max-w-lg text-lg text-muted-foreground">
+                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
                             Design events that drive real engagement, adoption,
                             and lasting loyalty. Built for small teams and large
                             organizations.
                         </p>
                         <Link
                             href="/go"
-                            className="inline-flex w-fit items-center gap-1.5 text-blue-600 font-medium transition-colors hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                            className="inline-flex w-fit items-center gap-1.5 font-medium text-blue-600 transition-colors hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         >
                             Explore Pacepard Go
                             <ArrowRight className="size-4" aria-hidden />
                         </Link>
                     </div>
-                    <div className="relative flex shrink-0 items-center justify-center w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[440px]">
+                    <div className="relative order-1 flex w-full max-w-md shrink-0 items-start justify-start sm:max-w-lg lg:order-2 lg:max-w-[440px] lg:items-center">
                         <Image
                             src="/blocks/damola-dark.svg"
                             alt="Illustration of use cases and workflows"
                             width={520}
                             height={130}
-                            className="h-auto w-full max-w-[280px] sm:max-w-[360px] lg:max-w-[540px]"
+                            className="h-auto w-full max-w-full object-contain object-left"
                             priority={false}
                         />
                     </div>
@@ -146,10 +146,10 @@ export default function PPGo() {
                                 >
                                     <Icon className="size-5" aria-hidden />
                                 </span>
-                                <span className="font-medium text-foreground">
+                                <span className="font-medium text-lg text-foreground">
                                     {label}
                                 </span>
-                                <p className="mt-2 text-muted-foreground">
+                                <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
                                     {description}
                                 </p>
                             </div>

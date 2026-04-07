@@ -53,10 +53,16 @@ export const Navbar = () => {
                 className={cn(
                     'sticky top-0 z-50 w-full transition-all duration-300',
                     'bg-background/70 backdrop-blur-md border-b border-border/70',
+                    isMenuOpen && 'max-lg:bg-background',
                 )}
             >
                 {/* 1. Increased Vertical Padding to make the header taller (e.g., py-10 for 40px top/bottom padding) */}
-                <div className="mx-auto max-w-8xl flex items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+                <div
+                    className={cn(
+                        'relative mx-auto flex max-w-8xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8',
+                        'max-lg:z-[110]',
+                    )}
+                >
                     {/* Logo and Desktop Navigation */}
                     <div className="flex items-center gap-6">
                         <Link
@@ -150,9 +156,9 @@ export const Navbar = () => {
                             {!scrolled && (
                                 <>
                                     <Button asChild variant="link" size="lg" className="text-sm md:text-base">
-                                        <Link href="mailto:hello@pacepard.com">
+                                        <Link href="/login">
                                             <span className="text-foreground hover:text-accent-foreground relative z-10">
-                                                Mail us
+                                                Login
                                             </span>
                                         </Link>
                                     </Button>
@@ -190,7 +196,9 @@ export const Navbar = () => {
                             className="text-muted-foreground relative flex size-8 lg:hidden"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
-                            <span className="sr-only">Open main menu</span>
+                            <span className="sr-only">
+                                {isMenuOpen ? 'Close main menu' : 'Open main menu'}
+                            </span>
                             <div className="absolute top-1/2 left-1/2 block w-[18px] -translate-x-1/2 -translate-y-1/2">
                                 <span
                                     aria-hidden="true"
@@ -213,11 +221,10 @@ export const Navbar = () => {
                 <Background variant="bottom">
                     <div
                         className={cn(
-                            // Adjusting top position to match the new header height
-                            'bg-background fixed inset-x-0 top-[6rem] flex flex-col rounded-b-2xl border-x border-b p-6 transition-all duration-300 ease-in-out lg:hidden',
+                            'bg-white fixed inset-0 z-[100] flex h-[100dvh] max-h-[100dvh] flex-col overflow-y-auto px-6 pb-6 pt-20 transition-all duration-300 ease-in-out lg:hidden',
                             isMenuOpen
                                 ? 'visible opacity-100'
-                                : 'invisible -translate-y-4 opacity-0',
+                                : 'pointer-events-none invisible -translate-y-4 opacity-0',
                         )}
                     >
                         <nav className="divide-border flex flex-1 flex-col divide-y">
@@ -309,8 +316,7 @@ export const Navbar = () => {
                         <div className="mt-12 pt-4 border-t border-border/70">
                             {/* Tagline - Left aligned */}
                             <p className="text-left text-sm text-muted-foreground mb-4">
-                                Unlocking the superhuman potentials for LLM
-                                builders
+                           The growth platform for AI-Native Product teams.
                             </p>
 
                             {/* 2. Social Icons Section - Changed to flex row and added items-center for vertical alignment */}

@@ -14,6 +14,8 @@ import {
     UtensilsCrossed,
     Target,
     Check,
+    CalendarDaysIcon,
+    ArrowRightToLineIcon,
 } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '../ui/button';
@@ -104,8 +106,8 @@ export default function PPCollective() {
         <section className="w-full py-16 md:py-24 ">
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
                 {/* Top section: text and image on same line */}
-                <div className="flex flex-row flex-wrap items-center justify-start gap-6 lg:gap-8 xl:gap-10">
-                    <div className="min-w-0 max-w-xl shrink space-y-4 lg:max-w-2xl">
+                <div className="flex flex-col items-stretch justify-start gap-6 lg:flex-row lg:flex-wrap lg:items-center lg:gap-8 xl:gap-10">
+                    <div className="order-2 min-w-0 max-w-xl shrink space-y-4 lg:order-1 lg:max-w-2xl">
                         <h2 className="max-w-xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
                             Introducing Pacepard Apprenticeship 1.0
                         </h2>
@@ -115,7 +117,7 @@ export default function PPCollective() {
                             AI-native talents AI-native talents.
                         </p>
 
-                        <ul className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                        <ul className="flex flex-wrap items-center gap-6 text-lg text-muted-foreground">
                             {guarantees.map((item) => (
                                 <li
                                     key={item}
@@ -129,27 +131,57 @@ export default function PPCollective() {
                             ))}
                         </ul>
 
-                        <Button
-                            asChild
-                            size="lg"
-                            variant="link"
-                            className={cn(
-                                'h-11 rounded-md px-5 text-base font-medium mt-4',
-                                'text-blue-600 font-medium transition-colors hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
-                                // 'bg-foreground text-background hover:bg-foreground/90',
-                                // 'shadow-sm transition-colors',
-                            )}
-                        >
-                            <Link
-                                href="/apprenticeship"
-                                className="inline-flex w-fit items-center gap-1.5 "
+                        <div className="flex flex-wrap items-left justify-start gap-4 mt-6">
+                            <Button
+                                asChild
+                                size="lg"
+                                className={cn(
+                                    'h-11 rounded-md px-5 text-base font-medium',
+                                    'bg-foreground text-background hover:bg-foreground/90',
+                                    'shadow-sm transition-colors',
+                                )}
                             >
-                               Choose a program
-                                <ArrowRight className="size-4" aria-hidden />
-                            </Link>
-                        </Button>
+                                <Link
+                                    href="/apprenticeship"
+                                    className="inline-flex items-center gap-2"
+                                >
+                                    Choose a program
+                                    <ArrowRightToLineIcon
+                                        className="size-4"
+                                        strokeWidth={2.5}
+                                        aria-hidden
+                                    />
+                                </Link>
+                            </Button>
+                            <Button
+                                asChild
+                                variant="outline"
+                                size="lg"
+                                className={cn(
+                                    'h-11 rounded-md px-5 text-base font-medium',
+                                    'border-foreground/30 bg-background text-foreground',
+                                    'hover:bg-muted hover:text-foreground',
+                                    'shadow-sm transition-colors',
+                                )}
+                            >
+                                <Link
+                                    href="https://calendly.com/pacepard"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2"
+                                >
+                                    Request demo
+                                    <ArrowRightToLineIcon
+                                        className="size-4"
+                                        strokeWidth={2.5}
+                                        aria-hidden
+                                    />
+                                </Link>
+                            </Button>
+                        </div>
+
                     </div>
-                    <div className="relative flex w-full max-w-[280px] shrink-0 items-center justify-center sm:max-w-[360px] lg:max-w-[400px]">
+                    <div className="relative order-1 mx-auto flex w-full max-w-[280px] shrink-0 items-left justify-left sm:max-w-[360px] lg:order-2 lg:mx-0 lg:max-w-[400px]">
                         <Image
                             src="/blocks/collective.png"
                             alt="Illustration of use cases and workflows"
@@ -181,10 +213,10 @@ export default function PPCollective() {
                                 >
                                     <Icon className="size-5" aria-hidden />
                                 </span>
-                                <span className="font-medium text-foreground">
+                                <span className="font-medium text-lg text-foreground">
                                     {label}
                                 </span>
-                                <p className="mt-2 text-muted-foreground">
+                                <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
                                     {description}
                                 </p>
                             </div>
