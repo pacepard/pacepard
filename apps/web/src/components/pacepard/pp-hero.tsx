@@ -1,37 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, ArrowRightToLineIcon } from 'lucide-react';
+import { ArrowRightToLineIcon } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
 
-const HERO_IMAGE = '/blocks/pp.png';
-//const HERO_IMAGE = '/blocks/hero.avif';
-
 export default function PPHeroSection() {
-    const [imageError, setImageError] = useState(false);
-
     return (
-        <section className="w-full  bg-background mb-6">
+        <section className="mb-24 w-full bg-background pt-14 md:pt-24">
             <div className="container mx-auto max-w-7xl px-4 md:px-6">
-                <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
-                    {/* Left: headline, description, CTAs */}
-                    <div className="flex-1 min-w-0 space-y-6 text-left">
-                        <h1 className="font-bold tracking-tight text-foreground text-4xl md:text-5xl">
-                            The learning and growth platform for AI-Native
-                            product teams
+                <div className="flex flex-col gap-8 text-left md:items-center md:text-center">
+                    <div className="w-full min-w-0 max-w-3xl space-y-6 md:mx-auto">
+                        <h1 className="text-pretty text-4xl font-bold tracking-tight text-foreground md:text-balance md:text-5xl">
+                            The learning and growth platform for AI-native
+                            product teams.
                         </h1>
-                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
-                            {/* Your projects, wikis and docs, all side by side. For
-                            small teams to large organizations. */}
+                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground md:mx-auto">
                             Pacepard is you become an AI-native talent by
                             learning and growing by doing, and organisations
                             drive long-term product adoption, engagement and
                             loyalty.
                         </p>
-                        <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex flex-wrap items-center justify-start gap-4 md:justify-center">
                             <Button
                                 asChild
                                 size="lg"
@@ -79,20 +70,6 @@ export default function PPHeroSection() {
                                 </Link>
                             </Button>
                         </div>
-                    </div>
-
-                    {/* Right: illustration — screenshot or SVG from /blocks */}
-                    <div className="relative flex shrink-0 items-center justify-center w-full max-w-lg lg:max-w-xl">
-                        <Image
-                            src={HERO_IMAGE}
-                            alt="Pacepard"
-                            width={560}
-                            height={420}
-                            className="h-auto w-full object-contain"
-                            sizes="(max-width: 1024px) 100vw, 50vw"
-                            priority
-                            onError={() => setImageError(true)}
-                        />
                     </div>
                 </div>
             </div>

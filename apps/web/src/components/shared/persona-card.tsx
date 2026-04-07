@@ -30,11 +30,11 @@ const PersonaCard: FC<IPersonaCard> = (data) => {
             transition={{ type: 'spring', stiffness: 300 }}
         >
             <div className="flex items-start justify-between mb-8">
-                <div className="flex-1 pr-6">
+                <div className="flex-1 pr-2">
                     <h2 className="font-text text-foreground font-regular text-lg mb-2 transition-colors duration-300 group-hover:primary">
                         {title}
                     </h2>
-                    <p className="text-sm  text-muted-foreground leading-relaxed transition-colors duration-300 group-hover:text-gray-900">
+                    <p className="text-lg md:text-lg  text-muted-foreground leading-relaxed transition-colors duration-300 group-hover:text-gray-900">
                         {description}
                     </p>
                 </div>

@@ -12,8 +12,8 @@ const personas = [
         id: 'product-design-folks',
         title: 'Product & Design folks',
         description:
-            'Become the person others trust with the hardest customer  and user problems.',
-        image: '/blocks/product.svg',
+            'Become the person others trust with the hardest user problems.',
+        image: '/blocks/product.png',
         bgColor: 'from-blue-300 to-cyan-200',
         features: [
             { icon: Trophy, label: 'ML competition hosting' },
@@ -25,8 +25,8 @@ const personas = [
         id: 'engineers',
         title: 'Engineers',
         description:
-            'Be part of recreating advanced tools like Git, S3 bucket, Redis and SQLite from scratch.',
-        image: '/blocks/eng.svg',
+            'Build advanced tools like Git, S3 buckets, and CLIs from scratch.',
+        image: '/blocks/eng.png',
         bgColor: 'from-yellow-400 to-yellow-200',
         features: [
             { icon: Wrench, label: 'Open-sourced models' },
@@ -38,8 +38,8 @@ const personas = [
         id: 'data-ai-professionals',
         title: 'Data & AI Professionals',
         description:
-            'Be part of building ML Models and pipelines for the toughest data challenges.',
-        image: '/blocks/ai.svg',
+            'Build ML Models and pipelines for the toughest data challenges.',
+        image: '/blocks/ai.png',
         bgColor: 'from-yellow-400 to-yellow-200',
         features: [
             { icon: Wrench, label: 'Open-sourced models' },
@@ -51,9 +51,9 @@ const personas = [
     {
         id: 'security-and-testing-folks',
         title: 'Security & testing folks',
-        image: '/blocks/security.svg',
+        image: '/blocks/security.png',
         description:
-            'Become the safeguard we rely on to uncover hidden failures and security flaws.',
+            'Uncover hidden failures and security flaws on live systems.',
         bgColor: 'from-blue-400 to-blue-200',
         features: [
             { icon: Smile, label: 'Beginner competitions' },
@@ -65,8 +65,10 @@ const personas = [
         id: 'product-marketing-and-sales',
         title: 'Marketing & sales',
         description:
-            'Become the pillar that generates leads and drives product usage with effective strategies.',
-        image: '/blocks/market.svg',
+            'Drive adoption, and engagement for socio-good products.', 
+
+
+        image: '/blocks/market.png',
         bgColor: 'from-blue-300 to-cyan-200',
         features: [
             { icon: Trophy, label: 'ML competition hosting' },
@@ -78,9 +80,9 @@ const personas = [
     {
         id: 'learners', // Note: Duplicate ID, changed to avoid React warnings if this were production
         title: 'Learners',
-        image: '/blocks/learners.svg',
+        image: '/blocks/learner.png',
         description:
-            'Projects that go beyond basics and make you understand the underlying complexity.',
+            'We hold your hands as you learn by doing tasks beyond basics.',
         bgColor: 'from-blue-400 to-blue-200',
         features: [
             { icon: Smile, label: 'Beginner competitions' },
@@ -112,8 +114,8 @@ const cardVariants: Variants = {
 
 export function PPPersona() {
     return (
-        // Adjusted horizontal padding for small screens
-        <section className="py-24 px-4 sm:px-8 bg-neutral-50 overflow-hidden">
+        // Adjusted horizontal padding for small screens -  #e5f6ff
+        <section className="py-24 px-4 sm:px-8 bg-[#f1ffee] overflow-hidden">
             <div className="max-w-6xl mx-auto ">
                 <div className="flex flex-wrap items-start justify-start gap-4 pb-16">
                     <motion.h1
