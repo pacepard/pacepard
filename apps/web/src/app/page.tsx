@@ -6,6 +6,7 @@ import PPGo from '@/components/pacepard/pp-go';
 import PPCollective from '@/components/pacepard/pp-collective';
 import PPCTA from '@/components/pacepard/pp-cta';
 import PPDivider from '@/components/pacepard/pp-divider';
+import { Testimonials } from '@/components/shared/sections/testimonials';
 
 export default function Home() {
     return (
@@ -20,6 +21,8 @@ export default function Home() {
                 <PPDivider />
 
                 <PPGo />
+                <Testimonials dashedLineClassName="hidden" />
+                
                 <PPCTA />
 
                 {/* <PPTestimonials /> */}

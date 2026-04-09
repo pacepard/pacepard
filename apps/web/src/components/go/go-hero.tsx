@@ -14,19 +14,19 @@ export default function GoHero() {
 
     return (
         <section className="w-full  bg-background">
-            <div className="container mx-auto max-w-6xl px-4 md:px-6">
+            <div className="container mx-auto max-w-6xl px-4 md:px-6 py-12 md:py-0">
                 <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
                     {/* Left: headline, description, CTAs */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">
-                        <h1 className="text-4xl font-bold tracking-tight text-foreground text-3xl md:text-5xl">
+                        <h1 className="text-4xl font-regular tracking-tight text-foreground text-3xl md:text-5xl">
                             Run memorable and rewarding hackathons
                         </h1>
                         <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
                             {/* Your projects, wikis and docs, all side by side. For
                             small teams to large organizations. */}
-                            Design AI-native events that drive real engagement, adoption,
-                            and lasting loyalty. Built for small teams and large
-                            organizations.
+                            Design AI-native events that drive real engagement,
+                            adoption, and lasting loyalty. Built for small teams
+                            and large organizations.
                         </p>
                         <div className="flex flex-wrap items-center gap-4">
                             <Button

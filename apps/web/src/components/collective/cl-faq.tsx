@@ -49,9 +49,11 @@ export default function ClFAQ() {
                                 <AccordionItem
                                     value={item.id}
                                     className="data-[state=open]:bg-muted peer rounded-xl border-none px-5 py-1 data-[state=open]:border-none md:px-7">
-                                    <AccordionTrigger className="cursor-pointer text-base hover:no-underline">{item.question}</AccordionTrigger>
-                                    <AccordionContent>
-                                        <p className="text-base">{item.answer}</p>
+                                    <AccordionTrigger className="cursor-pointer text-lg hover:no-underline">
+                                        {item.question}
+                                    </AccordionTrigger>
+                                    <AccordionContent className="text-lg">
+                                        <p>{item.answer}</p>
                                     </AccordionContent>
                                 </AccordionItem>
                                 <hr className="mx-5 -mb-px group-last:hidden peer-data-[state=open]:opacity-0 md:mx-7" />

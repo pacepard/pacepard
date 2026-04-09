@@ -24,7 +24,7 @@ export default function PPCTA() {
 
                     {/* Right: headline, description, CTA */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">
-                        <h2 className="text-4xl font-bold tracking-tight text-foreground text-3xl md:text-5xl">
+                        <h2 className="text-4xl font-regular tracking-tight text-foreground  md:text-5xl">
                             <span className="text-muted-foreground">
                                 The world's best got{' '}
                             </span><br />
@@ -45,10 +45,10 @@ export default function PPCTA() {
                                 )}
                             >
                                 <Link
-                                    href="#"
+                                    href="/apprenticeship"
                                     className="inline-flex items-center gap-2"
                                 >
-                                    Try Pacepard for Free
+                                    Choose a program
                                     <ArrowRightToLineIcon
                                         className="size-4"
                                         strokeWidth={2.5}
@@ -78,7 +78,7 @@ export default function PPCTA() {
                                         strokeWidth={2.5}
                                         aria-hidden
                                     />
-                                    Request a Demo
+                                    Request demo
                                 </Link>
                             </Button>
                         </div>

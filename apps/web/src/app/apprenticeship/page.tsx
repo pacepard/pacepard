@@ -1,12 +1,10 @@
 import { Background } from '@/components/background';
 import ClCta from '@/components/collective/cl-cta';
 import ClHero from '@/components/collective/cl-hero';
-import ClFeatures from '@/components/collective/cl-features';
-import ClPricing from '@/components/collective/cl-pricing';
 import ClTestimonials from '@/components/collective/cl-testimonials';
 import ClFAQ from '@/components/collective/cl-faq';
-import ClUsecase from '@/components/collective/cl-usecase';
 import ClTracks from '@/components/collective/cl-tracks';
+import PPCollective from '@/components/pacepard/pp-collective';
 
 const Collective = () => {
     return (
@@ -15,16 +13,19 @@ const Collective = () => {
 
             <ClTracks />
             <Background>
-                <ClUsecase />
+                <PPCollective />
+                {/* <ClUsecase /> */}
                 <ClCta />
                 <ClTestimonials />
                 <ClFAQ />
-                 {/* 
+
+                <ClCta />
+                {/* 
           
                 <ClFeatures /> */}
             </Background>
-
-            <ClPricing />
+            {/* 
+            <ClPricing /> */}
         </>
     );
 };

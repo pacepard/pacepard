@@ -55,6 +55,7 @@ export const NavigationItems = [
 
     { label: 'Research', href: '/research' },
     { label: 'Pricing', href: '/pricing' },
+    { label: 'FAQ', href: '/faq' },
     // { label: '', href: '/open-source' },
     // {
     //     label: 'Open Source',

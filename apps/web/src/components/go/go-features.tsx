@@ -34,8 +34,8 @@ export default function GoFeatures() {
                 </div>
 
                 {/* Content */}
-                <div className="mx-auto mt-10 grid max-w-4xl items-center gap- md:gap-6 lg:mt-24 lg:grid-cols-2">
-                    <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+                <div className="mx-auto mt-10 grid max-w-4xl items-center gap-4 md:gap-6 lg:mt-24 lg:grid-cols-2">
+                    <h2 className="text-4xl font-regular tracking-tight text-foreground md:text-5xl">
                         Built for world-class hackathons
                     </h2>
                     <p className="text-lg leading-relaxed text-muted-foreground">
@@ -47,7 +47,7 @@ export default function GoFeatures() {
                 </div>
 
                 {/* Features Card */}
-                <Card className="mt-8 rounded-3xl md:mt-12 lg:mt-20">
+                <Card className="mt-8 rounded-3xl md:mt-12 lg:mt-20 ">
                     <CardContent className="flex p-0 max-md:flex-col">
                         {items.map((item, i) => (
                             <div
@@ -71,7 +71,7 @@ export default function GoFeatures() {
                                             'group flex items-center justify-between gap-4 pe-4 pt-4 md:pe-6 md:pt-6'
                                         }
                                     >
-                                        <h3 className="max-w-60 text-xl font-semibold tracking-tight text-foreground">
+                                        <h3 className="max-w-60 text-xl font-regular tracking-tight text-foreground">
                                             {item.title}
                                         </h3>
                                         <div className="rounded-full border p-2">

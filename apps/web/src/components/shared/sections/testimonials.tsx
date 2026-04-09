@@ -92,25 +92,25 @@ export const Testimonials = ({
     return (
         <>
             <section
-                className={cn('overflow-hidden py-28 lg:py-32', className)}
+                className={cn('overflow-hidden py-24', className)}
             >
                 <div className="container">
                     <div className="space-y-4">
-                        <h2 className="text-2xl tracking-tight md:text-4xl lg:text-5xl">
+                        <h2 className="text-4xl font-regular tracking-tight md:text-5xl">
                             Be the best by doing.
                         </h2>
-                        <p className="text-muted-foreground max-w-md leading-snug">
+                        <p className="text-muted-foreground  text-lg max-w-lg leading-snug">
                             Pacepard is built on the habits that make our
                             superhumans; learn and grow by doing, and generate
                             high-quality outputs without the usual headaches.
                         </p>
-                        <Button variant="outline" className="shadow-md">
+                        {/* <Button variant="outline" className="shadow-md">
                             Read our sucess Stories{' '}
                             <ArrowRight className="size-4" />
-                        </Button>
+                        </Button> */}
                     </div>
 
-                    <div className="relative mt-8 -mr-[max(3rem,calc((100vw-80rem)/2+3rem))] md:mt-12 lg:mt-20">
+                    <div className="relative mt-8 -mr-[max(3rem,calc((100vw-80rem)/2+3rem))] md:mt-8 ">
                         <Carousel
                             opts={{
                                 align: 'start',

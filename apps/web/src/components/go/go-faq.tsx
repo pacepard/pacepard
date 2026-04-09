@@ -61,7 +61,7 @@ export default function GoFAQ() {
         <section className="py-16 md:py-24">
             <div className="mx-auto max-w-2xl px-6">
                 <div className="space-y-12">
-                    <h2 className="text-left text-4xl font-bold tracking-tight text-foreground">Your questions answered</h2>
+                    <h2 className="text-left text-4xl font-regular tracking-tight text-foreground">Your questions answered</h2>
 
                     <Accordion
                         type="single"

@@ -56,12 +56,14 @@ function TestimonialCard({
     role,
     company,
     image,
+    className,
 }: {
     quote: string;
     author: string;
     role: string;
     company: string;
     image: string;
+    className?: string;
 }) {
     return (
         <div
@@ -69,6 +71,7 @@ function TestimonialCard({
                 'flex w-[300px] shrink-0 flex-col gap-4 rounded-xl border border-border',
                 'bg-card p-5 shadow-sm',
                 'transition-shadow hover:shadow-md',
+                className,
             )}
         >
             <div className="flex items-start gap-3">
@@ -102,39 +105,23 @@ export default function ClTestimonials() {
             <div className="mx-auto  px-4 md:px-6">
                 {/* Title: "The people." / "They love us." */}
                 <div className="mb-12 text-center md:mb-16">
-                    <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
+                    <h2 className="text-4xl font-regular tracking-tight text-foreground sm:text-5xl md:text-6xl">
                         The people.
                     </h2>
-                    <h2 className="mt-1 text-4xl font-bold tracking-tight text-muted-foreground sm:text-5xl md:text-6xl">
+                    <h2 className="mt-1 text-4xl font-regular tracking-tight text-muted-foreground sm:text-5xl md:text-6xl">
                         They love us.
                     </h2>
                 </div>
 
                 {/* Moving marquee: 2 rows of horizontally scrolling cards */}
                 <div className="relative overflow-hidden">
-                    <div className="flex flex-col gap-4 [--gap:1rem] md:gap-6 md:[--gap:1.5rem] px-4 md:px-6">
-                        {/* Top row — scrolls left */}
-                        <Marquee
-                            pauseOnHover
-                            className="[--duration:50s] [--gap:1rem] md:[--gap:1.5rem] md:[--duration:45s]"
-                            repeat={4}
-                        >
-                            {testimonials.slice(0, 3).map(({ quote, author, role, company, image }) => (
-                                <TestimonialCard
-                                    key={author}
-                                    quote={quote}
-                                    author={author}
-                                    role={role}
-                                    company={company}
-                                    image={image}
-                                />
-                            ))}
-                        </Marquee>
-                        {/* Bottom row — scrolls right (reverse) */}
+                    <div className="flex flex-col gap-6 md:gap-8">
+                        {/* Top row — inverse: last 3 cards, scrolls right */}
                         <Marquee
                             pauseOnHover
                             reverse
-                            className="[--duration:55s] [--gap:1rem] md:[--gap:1.5rem] md:[--duration:50s]"
+                            trackClassName="!gap-0 flex-row pe-[var(--gap)]"
+                            className="[--duration:55s] [--gap:1.5rem] sm:[--gap:1.75rem] md:[--gap:1rem] md:[--duration:50s]"
                             repeat={4}
                         >
                             {testimonials.slice(3, 6).map(({ quote, author, role, company, image }) => (
@@ -145,6 +132,26 @@ export default function ClTestimonials() {
                                     role={role}
                                     company={company}
                                     image={image}
+                                    className="me-[var(--gap)] last:me-0"
+                                />
+                            ))}
+                        </Marquee>
+                        {/* Bottom row — inverse: first 3 cards, scrolls left */}
+                        <Marquee
+                            pauseOnHover
+                            trackClassName="!gap-0 flex-row pe-[var(--gap)]"
+                            className="[--duration:50s] [--gap:1.5rem] sm:[--gap:1.75rem] md:[--gap:1rem] md:[--duration:45s]"
+                            repeat={4}
+                        >
+                            {testimonials.slice(0, 3).map(({ quote, author, role, company, image }) => (
+                                <TestimonialCard
+                                    key={author}
+                                    quote={quote}
+                                    author={author}
+                                    role={role}
+                                    company={company}
+                                    image={image}
+                                    className="me-[var(--gap)] last:me-0"
                                 />
                             ))}
                         </Marquee>

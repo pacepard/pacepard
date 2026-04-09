@@ -25,11 +25,11 @@ const TRACK_COLUMNS: TrackEntry[][] = [
                 { label: 'AI', variant: 'ai' },
                 { label: 'Live', variant: 'live' },
             ],
-            title: 'AI Prototyping',
+            title: 'AI product Management',
             description:
-                'Learn how to use AI-powered prototyping to test concepts, validate assumptions, and ship better products faster.',
+                'Learn how to use AI-powered product management to test concepts, validate assumptions, and ship better products faster.',
             instructor: 'With Ravi Mehta',
-            imageSrc: '/blocks/damola.png',
+            imageSrc: '/blocks/ravi.png',
             imageAlt: 'Ravi Mehta',
         },
         {
@@ -45,7 +45,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
     [
         {
             badges: [{ label: 'AI', variant: 'ai' }],
-            title: 'AI Product Leadership',
+            title: 'Growth Engineering',
             description:
                 'Lead product strategy in an AI-native world: roadmaps, governance, and customer value when models move fast.',
             instructor: 'With Damola Oladipo',
@@ -65,7 +65,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
     [
         {
             badges: [{ label: 'AI', variant: 'ai' }],
-            title: 'AI Foundations',
+            title: 'AI Software Engineering',
             description:
                 'Ground yourself in how modern AI systems work so you can scope builds, evaluate vendors, and de-risk bets.',
             instructor: 'With Brian Balfour',

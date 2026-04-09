@@ -108,7 +108,7 @@ export default function PPCollective() {
                 {/* Top section: text and image on same line */}
                 <div className="flex flex-col items-stretch justify-start gap-6 lg:flex-row lg:flex-wrap lg:items-center lg:gap-8 xl:gap-10">
                     <div className="order-2 min-w-0 max-w-xl shrink space-y-4 lg:order-1 lg:max-w-2xl">
-                        <h2 className="max-w-xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                        <h2 className="max-w-xl text-balance font-regular tracking-tight text-foreground text-4xl md:text-5xl">
                             Introducing Pacepard Apprenticeship 1.0
                         </h2>
                         <p className="max-w-lg text-lg text-muted-foreground">
@@ -145,7 +145,7 @@ export default function PPCollective() {
                                     href="/apprenticeship"
                                     className="inline-flex items-center gap-2"
                                 >
-                                    Choose a program
+                                    Choose program
                                     <ArrowRightToLineIcon
                                         className="size-4"
                                         strokeWidth={2.5}

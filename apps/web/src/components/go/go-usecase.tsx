@@ -24,14 +24,14 @@ const topItems = [
         title: 'Reusable event templates:',
         description:
             'Draft challenges and hackathons with our smart instructions and templates. No need to start from scratch each time.',
-            images: [
-                {
-                    src: '/blocks/@marketing.png',
-                    alt: 'Graveyard interface',
-                    width: 3505,
-                    height: 680,
-                },
-            ],
+        images: [
+            {
+                src: '/blocks/@marketing.png',
+                alt: 'Graveyard interface',
+                width: 3505,
+                height: 680,
+            },
+        ],
         className:
             'flex-1 [&>.title-container]:mb-5 md:[&>.title-container]:mb-8 md:[&>.title-container]:translate-x-2 xl:[&>.title-container]:translate-x-4 [&>.title-container]:translate-x-0',
         fade: [],
@@ -89,15 +89,15 @@ const bottomItems = [
     },
 ];
 
-const  GoUsecase = () => {
+const GoUsecase = () => {
     return (
         <section
             id="resource-allocation"
             className="overflow-hidden pb-28 lg:pb-32"
         >
             <div className="">
-                <h2 className="container text-center text-4xl font-bold tracking-tight text-balance text-foreground md:text-5xl lg:text-6xl">
-                    Everything you need <br className="hidden lg:block" /> to
+                <h2 className="container text-left text-4xl font-regular tracking-tight text-balance text-foreground md:text-center md:text-5xl lg:text-6xl">
+                    Everything you need to 
                     run the best hackathons.
                 </h2>
 
@@ -159,7 +159,9 @@ const Item = ({ item, isLast, className }: ItemProps) => {
             )}
         >
             <div className="title-container text-balance">
-                <h3 className="inline font-semibold text-foreground">{item.title} </h3>
+                <h3 className="inline text-lg font-medium text-foreground">
+                    {item.title}{' '}
+                </h3>
                 <span className="text-lg leading-relaxed text-muted-foreground">
                     {' '}
                     {item.description}
@@ -241,4 +243,4 @@ const Item = ({ item, isLast, className }: ItemProps) => {
     );
 };
 
-export default GoUsecase
+export default GoUsecase;

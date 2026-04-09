@@ -31,7 +31,7 @@ const PersonaCard: FC<IPersonaCard> = (data) => {
         >
             <div className="mb-8 flex items-start gap-4 md:gap-2">
                 <div className="min-w-0 flex-1">
-                    <h2 className="font-text text-foreground font-regular text-lg mb-2 transition-colors duration-300 group-hover:primary">
+                    <h2 className="font-text text-muted-foreground text-lg mb-2 transition-colors duration-300 group-hover:primary">
                         {title}
                     </h2>
                     <p className="text-lg text-muted-foreground leading-relaxed transition-colors duration-300 group-hover:text-gray-900">

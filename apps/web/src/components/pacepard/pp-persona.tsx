@@ -119,7 +119,7 @@ export function PPPersona() {
             <div className="max-w-6xl mx-auto ">
                 <div className="flex flex-wrap items-start justify-start gap-4 pb-16">
                     <motion.h1
-                        className="max-w-2xl text-balance text-3xl font-bold tracking-tight text-foreground md:text-3xl"
+                        className="max-w-2xl text-balance font-regular tracking-tight text-foreground text-3xl md:text-4xl"
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.5 }}

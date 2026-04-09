@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowRightToLineIcon, Calendar } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -124,15 +124,63 @@ export default function ClCta() {
 
                     {/* Right: headline, description, CTA */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">
-                        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                        <h2 className="text-4xl font-regular tracking-tight text-foreground md:text-5xl">
                             Become a superhuman
                         </h2>
-                        <p className="max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
+                        <p className="max-w-lgleading-relaxed text-muted-foreground text-lg">
                             Submit your template to the Notion template gallery,
                             get featured, and even get paid – all in just a few
                             clicks.
                         </p>
-                        <Button
+
+                        <div className="flex flex-wrap items-center justify-start gap-4 ">
+                            <Button
+                                asChild
+                                size="lg"
+                                className={cn(
+                                    'h-11 rounded-md px-5 text-base font-medium',
+                                    'bg-foreground text-background hover:bg-foreground/90',
+                                    'shadow-sm transition-colors',
+                                )}
+                            >
+                                <Link
+                                    href="#"
+                                    className="inline-flex items-center gap-2"
+                                >
+                                   Choose program
+                                    <ArrowRightToLineIcon
+                                        className="size-4"
+                                        strokeWidth={2.5}
+                                        aria-hidden
+                                    />
+                                </Link>
+                            </Button>
+                            <Button
+                                asChild
+                                variant="outline"
+                                size="lg"
+                                className={cn(
+                                    'h-11 rounded-md px-5 text-base font-medium',
+                                    'border-foreground/30 bg-background text-foreground',
+                                    'hover:bg-muted hover:text-foreground',
+                                    'shadow-sm transition-colors',
+                                )}
+                            >
+                                <Link
+                                    href="#"
+                                    className="inline-flex items-center gap-2"
+                                >
+                                      <Calendar
+                                        className="size-4"
+                                        strokeWidth={2.5}
+                                        aria-hidden
+                                    />
+                                    Clarity session
+                                  
+                                </Link>
+                            </Button>
+                        </div>
+                        {/* <Button
                             asChild
                             variant="outline"
                             size="default"
@@ -154,7 +202,7 @@ export default function ClCta() {
                                     aria-hidden
                                 />
                             </Link>
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
             </div>

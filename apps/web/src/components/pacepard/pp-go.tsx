@@ -98,7 +98,7 @@ export default function PPGo() {
                 {/* Top section: stack on mobile, row from lg */}
                 <div className="flex flex-col items-stretch gap-8 lg:flex-row lg:items-center lg:justify-start lg:gap-8 xl:gap-10">
                     <div className="order-2 min-w-0 w-full max-w-xl shrink space-y-4 lg:order-1 lg:max-w-2xl">
-                        <h2 className="max-w-xl text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
+                        <h2 className="max-w-xl text-balance text-4xl font-regular tracking-tight text-foreground md:text-5xl">
                             Run memorable and rewarding hackathons
                         </h2>
                         <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
