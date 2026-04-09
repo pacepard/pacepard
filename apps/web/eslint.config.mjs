@@ -1,4 +1,4 @@
-import { nextJsConfig } from '@pacepard/configs/eslint/next.js'
+import { nextJsConfig } from '../../configs/eslint/next.js'
 
 const eslintConfig = [
   {

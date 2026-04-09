@@ -1,3 +1,15 @@
+export type NavigationDropdownItem = {
+    title: string;
+    href: string;
+    description: string;
+};
+
+export type NavigationItem = {
+    label: string;
+    href: string;
+    dropdownItems?: NavigationDropdownItem[];
+};
+
 export const Navigation = [
     {
         label: 'Products',
@@ -31,7 +43,7 @@ export const Navigation = [
     },
 ];
 
-export const NavigationItems = [
+export const NavigationItems: NavigationItem[] = [
     // {
     //     label: 'Solutions',
     //     href: '#features',
