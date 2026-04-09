@@ -78,6 +78,7 @@ docker-compose*.yml
 .turbo/
 
 # apps/web image: shrink context (see apps/web/Dockerfile). Root + configs/ still sent.
+tooling/
 apps/api
 apps/demo
 apps/main

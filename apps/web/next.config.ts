@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
   experimental: {
     mdxRs: false,
   },
+  output: "standalone",
   outputFileTracingRoot: path.join(__dirname, "../../"),
   // Docker/Coolify: ESLint flat config pulls repo-wide deps; lint stays in CI (`pnpm lint`).
   eslint: {

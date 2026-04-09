@@ -1,0 +1,12 @@
+{
+  "name": "@pacepard/devtools",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Docs and release CLIs kept out of the root install graph so Docker/web installs stay fast.",
+  "dependencies": {
+    "@changesets/cli": "^2.29.8",
+    "del-cli": "^7.0.0",
+    "mintlify": "^4.2.240",
+    "rimraf": "^6.1.2"
+  }
+}
