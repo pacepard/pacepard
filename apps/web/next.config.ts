@@ -16,7 +16,11 @@ const nextConfig: NextConfig = {
   experimental: {
     mdxRs: false,
   },
-  outputFileTracingRoot: path.join(__dirname, "../../"), 
+  outputFileTracingRoot: path.join(__dirname, "../../"),
+  // Docker/Coolify: ESLint flat config pulls repo-wide deps; lint stays in CI (`pnpm lint`).
+  eslint: {
+    ignoreDuringBuilds: process.env.NEXT_DISABLE_ESLINT === "1",
+  },
 };
 
 export default mdx(nextConfig);
