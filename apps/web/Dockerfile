@@ -18,11 +18,9 @@ COPY packages ./packages
 COPY configs ./configs
 COPY apps/web ./apps/web
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
-
-# Build packages first (they're dependencies)
-RUN pnpm build --filter './packages/*' --filter './configs/*'
+# Install only @pacepard/web and its dependency graph (avoids private @tiptap-pro
+# packages used by other workspace apps; full monorepo install needs TIPTAP_PRO_TOKEN).
+RUN pnpm install --frozen-lockfile --filter @pacepard/web...
 
 # Build Next.js app (from monorepo root to respect outputFileTracingRoot)
 WORKDIR /web
@@ -67,13 +65,10 @@ RUN mkdir -p /web/.pnpm-store /web/.local/share/pnpm /web/.tmp && \
 # Switch to nodejs user BEFORE installing to avoid store path conflicts
 USER nodejs
 
-# Install all dependencies (needed for TypeScript to load next.config.ts)
-# Next.js requires TypeScript at runtime to load next.config.ts
-# We need to install for the entire workspace to resolve workspace:* dependencies
-# Clear any potential pnpm cache/store issues first, then install fresh
+# Same filtered install as build stage (workspace:* to @pacepard/ui only; no full monorepo)
 RUN rm -rf /web/.pnpm-store /web/.local/share/pnpm node_modules 2>/dev/null || true && \
     mkdir -p /web/.pnpm-store /web/.local/share/pnpm && \
-    pnpm install --frozen-lockfile
+    pnpm install --frozen-lockfile --filter @pacepard/web...
 
 # Copy built Next.js app and source files (needed for server components at runtime)
 USER root
