@@ -117,17 +117,22 @@ export function PPPersona() {
         // Adjusted horizontal padding for small screens -  #e5f6ff
         <section className="py-24 px-4 sm:px-8 bg-[#f1ffee] overflow-hidden">
             <div className="max-w-6xl mx-auto ">
-                <div className="flex flex-wrap items-start justify-start gap-4 pb-16">
+                <div className="flex flex-col items-start gap-4 pb-12 md:items-center">
                     <motion.h1
-                        className="max-w-2xl text-balance font-regular tracking-tight text-foreground text-3xl md:text-4xl"
+                        className="max-w-2xl text-balance text-left font-regular tracking-tight text-foreground text-3xl md:mx-auto md:text-center md:text-4xl"
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.5 }}
                         variants={titleVariants}
                     >
                         Who&apos;s on Pacepard?
+
+                        <p className="max-w-2xl  text-left font-regular tracking-tight text-muted-foreground text-lg md:mx-auto md:text-center mt-2">
+                        Join other AI-native talents who are learning and growing by doing.
+                    </p>
                     </motion.h1>
 
+                   
                 </div>
 
                 {/* --- RESPONSIVENESS APPLIED HERE --- */}

@@ -34,14 +34,19 @@ const plans = [
 const planKeys = ['basic', 'pro', 'team'] as const
 
 const features = [
-    { name: 'Integrations', basic: '5', pro: 'Unlimited', team: 'Unlimited' },
-    // { name: 'API Calls', basic: '10K/mo', pro: '100K/mo', team: '1M/mo' },
+    { name: 'Learning quests', basic: 'unlimited', pro: 'Unlimited', team: 'Unlimited' },
+    { name: 'Growth quests', basic: 'unlimited', pro: 'Unlimited', team: 'Unlimited' },
+    { name: 'Live Sessions', basic: true, pro: true, team: true },
+    { name: 'Group mentor calls', basic: true, pro: true, team: true },
+    { name: '1-on-1 mentor calls', basic: false, pro: true, team: true },
+    { name: 'Work within a micro-team', basic: false, pro: true, team: true },
+    { name: 'Rotate between teams', basic: false, pro: false, team: true },
+    { name: 'Rotate across projects', basic: false, pro: false, team: true },
+    { name: 'Pacepard talent pool', basic: true, pro: true, team: true },
+    { name: 'Pacepard community', basic: true, pro: true, team: true },
+        // { name: 'API Calls', basic: '10K/mo', pro: '100K/mo', team: '1M/mo' },
     // { name: 'Team Members', basic: '1', pro: '5', team: 'Unlimited' },
-    { name: 'Support', basic: 'Email', pro: 'Priority', team: 'Dedicated' },
-    { name: 'Analytics', basic: true, pro: true, team: true },
-    { name: 'Custom Webhooks', basic: false, pro: true, team: true },
-    { name: 'SSO', basic: false, pro: false, team: true },
-    { name: 'Audit Logs', basic: false, pro: false, team: true },
+    // { name: 'Priority Support', basic: 'Email', pro: 'Priority', team: 'Dedicated' },
 ]
 
 function FeatureValue({ value }: { value: string | boolean }) {
@@ -94,7 +99,7 @@ export default function Comparator() {
                                         asChild
                                         variant={plan.highlighted ? 'default' : 'outline'}
                                         size="sm"
-                                        className="w-full">
+                                        className="w-full h-11">
                                             <Link href={plan.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
