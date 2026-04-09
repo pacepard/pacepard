@@ -2,11 +2,11 @@
 #
 # Build from repo root:  docker build -f apps/web/Dockerfile -t pacepard-web .
 #
-# Coolify: pass TURBO_TOKEN / TURBO_TEAM as build args for remote cache. If builds are still
-# slow, enable persistent Docker BuildKit cache on the server and/or raise the deploy timeout.
+# Coolify: DOCKER_BUILDKIT=1. Optional build args: TURBO_TOKEN, TURBO_TEAM (Turborepo remote cache).
+# Use valid https:// URLs in FQDN fields (not https//).
 #
-# Root install graph is slim: mintlify/changesets/del/rimraf live in tooling/devtools (excluded
-# from context via .dockerignore). Runtime image uses Next "standalone" (no pnpm in prod).
+# Layout matches the Coolify-proven flow: default pnpm store + Turbo dir on BuildKit cache mounts,
+# full source build, production stage reinstalls @pacepard/web and runs `pnpm start` (not standalone).
 
 FROM node:20-alpine AS base
 
@@ -15,61 +15,85 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     TURBO_TELEMETRY_DISABLED=1 \
     NEXT_DISABLE_ESLINT=1
 
-RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
+RUN corepack enable \
+    && corepack prepare pnpm@10.33.0 --activate \
+    && apk add --no-cache python3 make g++ bash git
 
-WORKDIR /web
+WORKDIR /app
 
-# 1) Manifests only (keeps `pnpm install` cached when app source changes).
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.json ./
 COPY apps/web/docker.npmrc ./.npmrc
-COPY apps/web/package.json ./apps/web/package.json
-COPY packages/ui/package.json ./packages/ui/package.json
-COPY configs/eslint/package.json ./configs/eslint/package.json
-COPY configs/typescript/package.json ./configs/typescript/package.json
+
+COPY packages ./packages
+COPY configs ./configs
+COPY apps/web ./apps/web
 
 ARG TURBO_TOKEN=""
 ARG TURBO_TEAM=""
 ENV TURBO_TOKEN=$TURBO_TOKEN \
     TURBO_TEAM=$TURBO_TEAM
 
-# Smaller default avoids swap thrash on 2–4GB build VMs; override: --build-arg NODE_MEMORY_LIMIT=6144
-ARG NODE_MEMORY_LIMIT=4096
+ARG NODE_MEMORY_LIMIT=3072
 
-RUN --mount=type=cache,id=pnpm-store-pacepard-web,target=/pnpm/store \
-    PNPM_STORE_DIR=/pnpm/store \
+ENV PNPM_STORE_DIR=/root/.local/share/pnpm/store \
+    TURBO_CACHE_DIR=/app/.turbo \
+    PNPM_NETWORK_CONCURRENCY=16 \
+    NODE_OPTIONS=--max-old-space-size=${NODE_MEMORY_LIMIT}
+
+# tooling/ is dockerignored but listed in the workspace; use a filter (not a full root install).
+RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm config set package-import-method copy && \
-    pnpm config set network-concurrency 24 && \
-    pnpm install --frozen-lockfile --filter @pacepard/web...
+    pnpm install --frozen-lockfile --prefer-offline --filter @pacepard/web...
 
-# 2) Sources (invalidates from here on code edits).
-COPY packages ./packages
-COPY configs ./configs
-COPY apps/web ./apps/web
+RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
+    --mount=type=cache,id=pacepard-turbo-cache,target=/app/.turbo \
+    pnpm build --filter @pacepard/web
 
-ENV NODE_OPTIONS=--max-old-space-size=${NODE_MEMORY_LIMIT}
-RUN pnpm build --filter @pacepard/web
-
-# Runtime: traced bundle only (see next.config.ts output: "standalone").
 FROM node:20-alpine AS production
 
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+RUN corepack enable \
+    && corepack prepare pnpm@10.33.0 --activate \
+    && apk add --no-cache curl
+
+RUN addgroup -g 1001 -S nodejs \
+    && adduser -S nodejs -u 1001
 
 WORKDIR /app
 
-COPY --from=base --chown=nodejs:nodejs /web/apps/web/.next/standalone ./
-COPY --from=base --chown=nodejs:nodejs /web/apps/web/.next/static ./apps/web/.next/static
-COPY --from=base --chown=nodejs:nodejs /web/apps/web/public ./apps/web/public
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    HOSTNAME=0.0.0.0 \
+    PNPM_STORE_DIR=/app/.pnpm-store \
+    NODE_OPTIONS=--max-old-space-size=3072
+
+RUN mkdir -p /app/.pnpm-store && chmod 777 /app/.pnpm-store
+
+COPY --from=base --chown=root:root /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml /app/turbo.json ./
+COPY --from=base --chown=root:root /app/.npmrc ./
+COPY --from=base --chown=root:root /app/packages ./packages
+COPY --from=base --chown=root:root /app/configs ./configs
+
+COPY --from=base --chown=root:root /app/apps/web/package.json ./apps/web/
+COPY --from=base --chown=root:root /app/apps/web/next.config.ts ./apps/web/
+COPY --from=base --chown=root:root /app/apps/web/tsconfig.json ./apps/web/
+COPY --from=base --chown=root:root /app/apps/web/postcss.config.mjs ./apps/web/
+COPY --from=base --chown=root:root /app/apps/web/components.json ./apps/web/
+COPY --from=base --chown=root:root /app/apps/web/.next ./apps/web/.next
+COPY --from=base --chown=root:root /app/apps/web/public ./apps/web/public
+COPY --from=base --chown=root:root /app/apps/web/src ./apps/web/src
+
+RUN --mount=type=cache,id=pacepard-prod-pnpm-store,target=/app/.pnpm-store \
+    sh -c 'unset NODE_ENV && pnpm install --frozen-lockfile --prefer-offline --filter @pacepard/web'
+
+RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
 EXPOSE 3000
 
-ENV NODE_ENV=production \
-    NEXT_TELEMETRY_DISABLED=1 \
-    HOSTNAME=0.0.0.0
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD node -e "const p=process.env.PORT||3000;require('http').get('http://127.0.0.1:'+p,r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD sh -c 'node -e "const p=process.env.PORT||3000;require(\"http\").get(\"http://127.0.0.1:\"+p,r=>process.exit(r.statusCode===200?0:1)).on(\"error\",()=>process.exit(1))"'
-
-CMD ["node", "apps/web/server.js"]
+CMD ["pnpm", "--filter", "@pacepard/web", "start"]

@@ -1,7 +1,6 @@
 /** next.config.ts */
 import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
-import path from "path";
 
 const mdx = createMDX({
   options: {
@@ -16,8 +15,6 @@ const nextConfig: NextConfig = {
   experimental: {
     mdxRs: false,
   },
-  output: "standalone",
-  outputFileTracingRoot: path.join(__dirname, "../../"),
   // Docker/Coolify: ESLint flat config pulls repo-wide deps; lint stays in CI (`pnpm lint`).
   eslint: {
     ignoreDuringBuilds: process.env.NEXT_DISABLE_ESLINT === "1",
