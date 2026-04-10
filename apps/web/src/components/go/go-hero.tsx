@@ -7,14 +7,14 @@ import { ArrowRightToLineIcon, Calendar } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
 
-const HERO_IMAGE = '/blocks/go.png';
+const HERO_IMAGE = '/blocks/hack-with-workflow.png';
 
 export default function GoHero() {
     const [imageError, setImageError] = useState(false);
 
     return (
         <section className="w-full  bg-background">
-            <div className="container mx-auto max-w-6xl px-4 md:px-6 py-12 md:py-0">
+            <div className="container mx-auto max-w-6xl px-4 md:px-6 py-12 md:py-0 mb-20">
                 <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
                     {/* Left: headline, description, CTAs */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">

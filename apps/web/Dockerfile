@@ -5,12 +5,15 @@
 # Coolify: DOCKER_BUILDKIT=1. Optional build args: TURBO_TOKEN, TURBO_TEAM (Turborepo remote cache).
 # Use valid https:// URLs in FQDN fields (not https//).
 #
-# Layout matches the Coolify-proven flow: default pnpm store + Turbo dir on BuildKit cache mounts,
-# full source build, production stage reinstalls @pacepard/web and runs `pnpm start` (not standalone).
+# Standalone output (next.config.ts output:"standalone") means the production stage
+# only copies .next/standalone — no pnpm install at runtime. This is the biggest
+# speed win: eliminates a cold full pnpm install on every deploy.
 #
-# Coolify injects COOLIFY_* ARGs here. Fix UI typos: use https:// (not https//) and one FQDN per field
-# so COOLIFY_FQDN is not parsed as "domain,https". If the build dies during "apk add", raise builder
-# RAM/swap or the deployment build timeout; exit 255 is often OOM or a killed build step.
+# Cache mounts (BuildKit): apk, corepack, and pnpm store are all cached.
+# If Coolify uses an ephemeral builder the pnpm/corepack mounts won't persist, but
+# the standalone fix still eliminates the production install unconditionally.
+#
+# Coolify injects COOLIFY_* ARGs here. Fix UI typos: use https:// (not https//) and one FQDN per field.
 
 FROM node:20-alpine AS base
 
@@ -19,9 +22,14 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     TURBO_TELEMETRY_DISABLED=1 \
     NEXT_DISABLE_ESLINT=1
 
-RUN corepack enable \
-    && corepack prepare pnpm@10.33.0 --activate \
-    && apk add --no-cache python3 build-base
+# Cache apk packages across builds (remove --no-cache so the mount is used).
+RUN --mount=type=cache,id=apk-base-cache,target=/var/cache/apk \
+    apk add python3 build-base
+
+# Cache the pnpm binary so corepack doesn't re-download it every build.
+RUN --mount=type=cache,id=corepack-cache,target=/root/.cache/node/corepack \
+    corepack enable \
+    && corepack prepare pnpm@10.33.0 --activate
 
 WORKDIR /app
 
@@ -44,22 +52,23 @@ ENV PNPM_STORE_DIR=/root/.local/share/pnpm/store \
     PNPM_NETWORK_CONCURRENCY=16 \
     NODE_OPTIONS=--max-old-space-size=${NODE_MEMORY_LIMIT}
 
-# tooling/ is dockerignored but listed in the workspace; use a filter (not a full root install).
+# tooling/ is dockerignored; use a filter (not a full root install).
+# Default hard-link import method (faster than copy — removed pnpm config set package-import-method copy).
 RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
-    pnpm config set package-import-method copy && \
     pnpm install --frozen-lockfile --prefer-offline --filter @pacepard/web...
 
 RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
     --mount=type=cache,id=pacepard-turbo-cache,target=/app/.turbo \
     pnpm build --filter @pacepard/web
 
+# ── Production ────────────────────────────────────────────────────────────────
+# Standalone output already bundles the minimal node_modules needed to run.
+# No pnpm install required — just copy three directories.
 FROM node:20-alpine AS production
 
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-
-RUN corepack enable \
-    && corepack prepare pnpm@10.33.0 --activate \
-    && apk add --no-cache curl
+# Cache apk packages; curl is for the healthcheck.
+RUN --mount=type=cache,id=apk-prod-cache,target=/var/cache/apk \
+    apk add curl
 
 RUN addgroup -g 1001 -S nodejs \
     && adduser -S nodejs -u 1001
@@ -69,29 +78,14 @@ WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
-    PNPM_STORE_DIR=/app/.pnpm-store \
+    PORT=3000 \
     NODE_OPTIONS=--max-old-space-size=3072
 
-RUN mkdir -p /app/.pnpm-store && chmod 777 /app/.pnpm-store
-
-COPY --from=base --chown=root:root /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml /app/turbo.json ./
-COPY --from=base --chown=root:root /app/.npmrc ./
-COPY --from=base --chown=root:root /app/packages ./packages
-COPY --from=base --chown=root:root /app/configs ./configs
-
-COPY --from=base --chown=root:root /app/apps/web/package.json ./apps/web/
-COPY --from=base --chown=root:root /app/apps/web/next.config.ts ./apps/web/
-COPY --from=base --chown=root:root /app/apps/web/tsconfig.json ./apps/web/
-COPY --from=base --chown=root:root /app/apps/web/postcss.config.mjs ./apps/web/
-COPY --from=base --chown=root:root /app/apps/web/components.json ./apps/web/
-COPY --from=base --chown=root:root /app/apps/web/.next ./apps/web/.next
-COPY --from=base --chown=root:root /app/apps/web/public ./apps/web/public
-COPY --from=base --chown=root:root /app/apps/web/src ./apps/web/src
-
-RUN --mount=type=cache,id=pacepard-prod-pnpm-store,target=/app/.pnpm-store \
-    sh -c 'unset NODE_ENV && pnpm install --frozen-lockfile --prefer-offline --filter @pacepard/web'
-
-RUN chown -R nodejs:nodejs /app
+# .next/standalone contains server.js + traced node_modules (monorepo-aware via outputFileTracingRoot).
+# .next/static and public/ must be copied separately — standalone doesn't include them.
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/public ./apps/web/public
 
 USER nodejs
 
@@ -100,4 +94,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
     CMD node -e "const p=process.env.PORT||3000;require('http').get('http://127.0.0.1:'+p,r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
 
-CMD ["pnpm", "--filter", "@pacepard/web", "start"]
+CMD ["node", "apps/web/server.js"]

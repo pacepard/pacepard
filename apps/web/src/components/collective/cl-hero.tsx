@@ -34,7 +34,7 @@ export default function ClHero() {
                                     href="#"
                                     className="inline-flex items-center gap-2"
                                 >
-                                   Choose a program
+                                    Choose a program
                                     <ArrowRightToLineIcon
                                         className="size-4"
                                         strokeWidth={2.5}
@@ -57,13 +57,12 @@ export default function ClHero() {
                                     href="#"
                                     className="inline-flex items-center gap-2"
                                 >
-                                      <Calendar
+                                    <Calendar
                                         className="size-4"
                                         strokeWidth={2.5}
                                         aria-hidden
                                     />
                                     Clarity session
-                                  
                                 </Link>
                             </Button>
                         </div>

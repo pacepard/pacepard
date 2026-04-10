@@ -13,7 +13,7 @@ export default function PPCTA() {
                     {/* Left: illustration */}
                     <div className="relative flex shrink-0 items-center justify-center w-full max-w-md md:max-w-[400px]">
                         <Image
-                            src="/blocks/eng.svg"
+                            src="/blocks/cta.png"
                             alt="Pacepard platform illustration"
                             width={400}
                             height={280}

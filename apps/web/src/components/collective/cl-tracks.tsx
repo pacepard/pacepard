@@ -101,18 +101,18 @@ const TRACK_COLUMNS: TrackEntry[][] = [
 ]
 
 const COLUMN_STAGGER = [
-    'pt-0 sm:pt-12 xl:pt-[10rem]',
-    'pt-0 sm:pt-0 xl:pt-1',
-    'pt-0 sm:pt-8 xl:pt-14',
-    'pt-0 sm:pt-10 xl:pt-[8rem]',
+    'lg:pt-[8rem]',
+    'lg:pt-1',
+    'lg:pt-12',
+    'lg:pt-[6rem]',
 ] as const
 
 export default function ClTracks() {
     return (
         <section className="bg-[#78B9B1]">
-            <div className="py-20 md:py-24 ">
-                <div className="mx-auto w-full max-w-8xl px-6">
-                    <div className="grid grid-cols-1 items-start gap-x-7 gap-y-8 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="py-20 md:py-24">
+                <div className="mx-auto w-full max-w-8xl min-w-7xl px-6">
+                    <div className="grid grid-cols-1 items-start gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
                         {TRACK_COLUMNS.map((columnTracks, colIndex) => (
                             <div
                                 key={colIndex}

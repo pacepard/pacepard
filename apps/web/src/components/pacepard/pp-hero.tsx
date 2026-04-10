@@ -6,22 +6,20 @@ import { ArrowRightToLineIcon, Calendar } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
 
-
 export default function PPHeroSection() {
     return (
         <section className="mb-24 w-full bg-background pt-14 md:pt-24">
             <div className="container mx-auto max-w-7xl px-4 md:px-6">
                 <div className="flex flex-col gap-8 text-left md:items-center md:text-center">
-                    <div className="w-full min-w-0 max-w-3xl space-y-6 md:mx-auto">
-                        <h1 className="text-pretty text-4xl font-regular tracking-tight text-foreground md:text-balance md:text-5xl">
+                    <div className="w-full min-w-0 max-w-4xl space-y-6 md:mx-auto">
+                        <h1 className="text-pretty text-4xl font-regular tracking-tight text-foreground md:text-balance md:text-6xl">
                             The learning and growth platform for AI-native
                             product teams.
                         </h1>
-                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground md:mx-auto">
-                            Pacepard is you become an AI-native talent by
-                            learning and growing by doing, and organisations
-                            drive long-term product adoption, engagement and
-                            loyalty.
+                        <p className="max-w-xl text-lg leading-relaxed text-muted-foreground md:mx-auto">
+                            Learn through team training. Work with AI agent
+                            workflows. Get insights from human feedback. Build
+                            deep technical and non-technical skills.
                         </p>
                         <div className="flex flex-wrap items-center justify-start gap-4 md:justify-center">
                             <Button
@@ -62,13 +60,12 @@ export default function PPHeroSection() {
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2"
                                 >
-                                       <Calendar
+                                    <Calendar
                                         className="size-4"
                                         strokeWidth={2.5}
                                         aria-hidden
                                     />
                                     Request a demo
-                                 
                                 </Link>
                             </Button>
                         </div>

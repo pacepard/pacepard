@@ -31,8 +31,6 @@ const useCases = [
         href: '#',
         icon: HelpCircle,
         label: 'Simple, customisable setup',
-        description:
-            'Tailor flows to your team without wrestling with complex configuration.',
         iconWrapClass:
             'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-200',
     },
@@ -40,8 +38,6 @@ const useCases = [
         href: '#',
         icon: List,
         label: 'Reusable event templates',
-        description:
-            'Clone proven structures and ship consistent events faster every time.',
         iconWrapClass:
             'bg-sky-100 text-sky-800 dark:bg-sky-950/50 dark:text-sky-200',
     },
@@ -49,8 +45,6 @@ const useCases = [
         href: '#',
         icon: FolderOpen,
         label: 'Track progress at every stage',
-        description:
-            'See where teams stand from kickoff through build to demo day.',
         iconWrapClass:
             'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200',
     },
@@ -58,8 +52,6 @@ const useCases = [
         href: '#',
         icon: User,
         label: 'Knowledgebase for participants',
-        description:
-            'Self-serve answers so organizers spend less time repeating the basics.',
         iconWrapClass:
             'bg-violet-100 text-violet-800 dark:bg-violet-950/50 dark:text-violet-200',
     },
@@ -67,8 +59,6 @@ const useCases = [
         href: '#',
         icon: Globe,
         label: 'Organise online, in-person, or hybrid',
-        description:
-            'One workspace for any format—remote, on-site, or mixed events.',
         iconWrapClass:
             'bg-cyan-100 text-cyan-800 dark:bg-cyan-950/50 dark:text-cyan-200',
     },
@@ -76,8 +66,6 @@ const useCases = [
         href: '#',
         icon: Map,
         label: 'Friendly feedback channels',
-        description:
-            'Collect structured input before, during, and after the hackathon.',
         iconWrapClass:
             'bg-orange-100 text-orange-800 dark:bg-orange-950/50 dark:text-orange-200',
     },
@@ -85,8 +73,6 @@ const useCases = [
         href: '#',
         icon: UtensilsCrossed,
         label: 'Drive engagement and adoption',
-        description:
-            'Nudges and visibility that keep participants showing up and shipping.',
         iconWrapClass:
             'bg-teal-100 text-teal-800 dark:bg-teal-950/50 dark:text-teal-200',
     },
@@ -94,8 +80,6 @@ const useCases = [
         href: '#',
         icon: Target,
         label: 'Build lasting loyalty',
-        description:
-            'Turn one-off hackathons into relationships and communities that last.',
         iconWrapClass:
             'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-200',
     },
@@ -106,6 +90,14 @@ export default function PPCollective() {
         <section className="w-full py-16 md:py-24 ">
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
                 {/* Top section: text and image on same line */}
+                <div className="space-y-4">
+                                <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                                    <span>Custom Agents</span>
+                                    <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white">
+                                        New
+                                    </span>
+                                </p>                            
+                            </div>
                 <div className="flex flex-col items-stretch justify-start gap-6 lg:flex-row lg:flex-wrap lg:items-center lg:gap-8 xl:gap-10">
                     <div className="order-2 min-w-0 max-w-xl shrink space-y-4 lg:order-1 lg:max-w-2xl">
                         <h2 className="max-w-xl text-balance font-regular tracking-tight text-foreground text-4xl md:text-5xl">
@@ -196,7 +188,7 @@ export default function PPCollective() {
                 {/* Use case cards grid: 2 rows × 4 columns */}
                 <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-[-20px] lg:grid-cols-4">
                     {useCases.map(
-                        ({ icon: Icon, label, description, iconWrapClass }) => (
+                        ({ icon: Icon, label, iconWrapClass }) => (
                             <div
                                 key={label}
                                 className={cn(
@@ -216,9 +208,9 @@ export default function PPCollective() {
                                 <span className="font-medium text-lg text-foreground">
                                     {label}
                                 </span>
-                                <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
-                                    {description}
-                                </p>
+                                {/* <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
+                                    {label}
+                                </p> */}
                             </div>
                         ),
                     )}

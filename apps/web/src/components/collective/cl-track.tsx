@@ -65,7 +65,7 @@ export function TrackCard({
     const v = VARIANT[cardVariant]
 
     return (
-        <article className={cn('relative overflow-hidden', v.article, className)}>
+        <article className={cn('relative overflow-hidden ', v.article, className)}>
             <div className="relative px-6 pb-28 pt-6" style={{ backgroundColor: v.surface }}>
                 <div className="flex flex-wrap items-center gap-2">
                     {badges.map((b) => (
