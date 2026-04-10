@@ -7,6 +7,10 @@
 #
 # Layout matches the Coolify-proven flow: default pnpm store + Turbo dir on BuildKit cache mounts,
 # full source build, production stage reinstalls @pacepard/web and runs `pnpm start` (not standalone).
+#
+# Coolify injects COOLIFY_* ARGs here. Fix UI typos: use https:// (not https//) and one FQDN per field
+# so COOLIFY_FQDN is not parsed as "domain,https". If the build dies during "apk add", raise builder
+# RAM/swap or the deployment build timeout; exit 255 is often OOM or a killed build step.
 
 FROM node:20-alpine AS base
 
@@ -17,7 +21,7 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
 
 RUN corepack enable \
     && corepack prepare pnpm@10.33.0 --activate \
-    && apk add --no-cache python3 make g++ bash git
+    && apk add --no-cache python3 build-base
 
 WORKDIR /app
 
