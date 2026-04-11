@@ -19,15 +19,27 @@ COPY packages ./packages
 COPY configs ./configs
 COPY apps/api ./apps/api
 
+# Optional: Turborepo remote cache in CI (pass --build-arg TURBO_TOKEN / TURBO_TEAM)
+ARG TURBO_TOKEN=""
+ARG TURBO_TEAM=""
+ARG TIPTAP_PRO_TOKEN=""
+ENV TURBO_TOKEN=$TURBO_TOKEN \
+    TURBO_TEAM=$TURBO_TEAM \
+    TIPTAP_PRO_TOKEN=$TIPTAP_PRO_TOKEN \
+    TURBO_TELEMETRY_DISABLED=1 \
+    TURBO_CACHE_DIR=/app/.turbo
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Build packages first (they're dependencies)
 # Note: || true allows packages/configs without build scripts to skip
-RUN pnpm build --filter './packages/*' --filter './configs/*' || true
+RUN --mount=type=cache,target=/app/.turbo \
+    pnpm build --filter './packages/*' --filter './configs/*' || true
 
 # Build API app
-RUN pnpm build --filter @pacepard/api
+RUN --mount=type=cache,target=/app/.turbo \
+    pnpm build --filter @pacepard/api
 
 # Production stage
 FROM node:20-alpine AS production

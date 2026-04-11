@@ -15,15 +15,27 @@ COPY packages ./packages
 COPY configs ./configs
 COPY apps/main ./apps/main
 
+# Optional: Turborepo remote cache in CI (pass --build-arg TURBO_TOKEN / TURBO_TEAM)
+ARG TURBO_TOKEN=""
+ARG TURBO_TEAM=""
+ARG TIPTAP_PRO_TOKEN=""
+ENV TURBO_TOKEN=$TURBO_TOKEN \
+    TURBO_TEAM=$TURBO_TEAM \
+    TIPTAP_PRO_TOKEN=$TIPTAP_PRO_TOKEN \
+    TURBO_TELEMETRY_DISABLED=1 \
+    TURBO_CACHE_DIR=/app/.turbo
+
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Build packages first (they're dependencies)
-RUN pnpm build --filter './packages/*' --filter './configs/*' || true
+RUN --mount=type=cache,target=/app/.turbo \
+    pnpm build --filter './packages/*' --filter './configs/*' || true
 
 # Build Vite app
 WORKDIR /app
-RUN pnpm build --filter @pacepard/app
+RUN --mount=type=cache,target=/app/.turbo \
+    pnpm build --filter @pacepard/app
 
 # Production stage - use Caddy to serve static files (lightweight, fast, SPA-friendly)
 FROM caddy:2-alpine AS production

@@ -1,0 +1,13 @@
+# Coolify: Build Pack = Docker Compose. Point "Docker Compose Location" to this file.
+# Set resource env in Coolify (required):
+#   GHCR_ORG = GitHub org or user (lowercase), e.g. pacepard
+#   IMAGE_TAG = floating tag CI pushes: development | staging | production
+# CI image: ghcr.io/${GHCR_ORG}/pacepard-web:${IMAGE_TAG}
+# Private GHCR: configure registry credentials on the server / in Coolify.
+services:
+  web:
+    image: ghcr.io/${GHCR_ORG}/pacepard-web:${IMAGE_TAG}
+    pull_policy: always
+    restart: unless-stopped
+    expose:
+      - "3000"

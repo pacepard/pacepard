@@ -1,0 +1,10 @@
+# Coolify: production only (CI does not push pacepard-service for staging/development).
+# Env: GHCR_ORG (lowercase), IMAGE_TAG = production
+# CI image: ghcr.io/${GHCR_ORG}/pacepard-service:${IMAGE_TAG}
+services:
+  service:
+    image: ghcr.io/${GHCR_ORG}/pacepard-service:${IMAGE_TAG}
+    pull_policy: always
+    restart: unless-stopped
+    expose:
+      - "3000"

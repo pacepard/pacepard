@@ -19,6 +19,15 @@ COPY packages ./packages
 COPY configs ./configs
 COPY apps/web ./apps/web
 
+# Optional: Turborepo remote cache + Tiptap registry (CI: --build-arg TURBO_* , TIPTAP_PRO_TOKEN)
+ARG TURBO_TOKEN=""
+ARG TURBO_TEAM=""
+ARG TIPTAP_PRO_TOKEN=""
+ENV TURBO_TOKEN=$TURBO_TOKEN \
+    TURBO_TEAM=$TURBO_TEAM \
+    TIPTAP_PRO_TOKEN=$TIPTAP_PRO_TOKEN \
+    TURBO_TELEMETRY_DISABLED=1
+
 # Set environment variables
 ENV PNPM_STORE_DIR=/root/.local/share/pnpm/store \
     TURBO_CACHE_DIR=/app/.turbo \
