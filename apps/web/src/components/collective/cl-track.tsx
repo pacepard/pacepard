@@ -47,6 +47,8 @@ export type TrackCardProps = {
     instructor: string
     imageSrc: string
     imageAlt: string
+    /** Product/tool logos shown in a horizontal row below the instructor name. */
+    productImages?: { src: string; alt?: string }[]
     className?: string
     /** `pale` matches the masonry grid reference (light card + brighter gold). */
     cardVariant?: TrackCardVariant
@@ -59,6 +61,7 @@ export function TrackCard({
     instructor,
     imageSrc,
     imageAlt,
+    productImages,
     className,
     cardVariant = 'mint',
 }: TrackCardProps) {
@@ -84,6 +87,20 @@ export function TrackCard({
                     {description}
                 </p>
                 <p className="mt-6 text-sm font-semibold text-zinc-950 sm:text-base">{instructor}</p>
+                {productImages && productImages.length > 0 && (
+                    <div className="mt-3 flex flex-row items-center gap-3">
+                        {productImages.map((img, i) => (
+                            <div key={i} className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
+                                <Image
+                                    src={img.src}
+                                    alt={img.alt ?? ''}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
             <div
                 className="relative h-[61px] w-full sm:h-[72px] md:h-[85px]"

@@ -12,12 +12,20 @@ type TrackEntry = {
     imageAlt: string
     /** Defaults to `/hack-ogbomoso/mentor.png` when omitted */
     imageSrc?: string
+    /** Product/tool logos shown in a horizontal row below the instructor name */
+    productImages?: { src: string; alt?: string }[]
 }
 
 /**
  * Columns left-to-right match the masonry reference: two cards per column.
  * Stagger (xl+) approximates waterfall offsets — col 1 lowest, col 2 near top, 3 mid, 4 slightly below 3.
  */
+const PRODUCT_IMAGES = [
+    { src: '/blocks/cal.avif' },
+    { src: '/blocks/go.png' },
+    { src: '/blocks/terminal.png' },
+]
+
 const TRACK_COLUMNS: TrackEntry[][] = [
     [
         {
@@ -28,9 +36,10 @@ const TRACK_COLUMNS: TrackEntry[][] = [
             title: 'AI product Management',
             description:
                 'Learn how to use AI-powered product management to test concepts, validate assumptions, and ship better products faster.',
-            instructor: 'With Ravi Mehta',
-            imageSrc: '/blocks/ravi.png',
+            instructor: 'With Cal.com (Open Source)',
+            imageSrc: '/blocks/damola.png',
             imageAlt: 'Ravi Mehta',
+            productImages: PRODUCT_IMAGES,
         },
         {
             badges: [{ label: 'Product', variant: 'product' }],
@@ -38,19 +47,21 @@ const TRACK_COLUMNS: TrackEntry[][] = [
             description:
                 'Build reliable product operating rhythms, align teams on outcomes, and scale execution without losing quality.',
             instructor: 'With Jenny Wanger',
-            imageSrc: '/blocks/damola-me.png',
+            imageSrc: '/blocks/damola.png',
             imageAlt: 'Jenny Wanger',
+            productImages: PRODUCT_IMAGES,
         },
     ],
     [
         {
             badges: [{ label: 'AI', variant: 'ai' }],
-            title: 'AI Software Engineering with Cal.com',
+            title: 'AI Software Engineering',
             description:
                 'Lead product strategy in an AI-native world: roadmaps, governance, and customer value when models move fast.',
-            instructor: 'With Damola Oladipo',
-            imageSrc: '/blocks/damolapic.png',
+            instructor: 'With Cal.com (Open Source)',
+            imageSrc: '/blocks/dml.png',
             imageAlt: 'Damola Oladipo',
+            productImages: PRODUCT_IMAGES,
         },
         {
             badges: [{ label: 'Growth', variant: 'growth' }],
@@ -60,6 +71,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
             instructor: 'With Fareed Mosavat & Elena Verna',
             imageSrc: '/blocks/madebydam.png',
             imageAlt: 'Fareed Mosavat and Elena Verna',
+            productImages: PRODUCT_IMAGES,
         },
     ],
     [
@@ -70,6 +82,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
                 'Ground yourself in how modern AI systems work so you can scope builds, evaluate vendors, and de-risk bets.',
             instructor: 'With Brian Balfour',
             imageAlt: 'Brian Balfour',
+            productImages: PRODUCT_IMAGES,
         },
         {
             badges: [{ label: 'Product', variant: 'product' }],
@@ -78,6 +91,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
                 'Partner effectively with engineering: APIs, data, and architecture tradeoffs that shape what you can ship.',
             instructor: 'With Anand Subramani & Alex Allain',
             imageAlt: 'Anand Subramani and Alex Allain',
+            productImages: PRODUCT_IMAGES,
         },
     ],
     [
@@ -88,6 +102,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
                 'Adopt AI workflows that compound: research, specs, and delivery habits that save hours every week.',
             instructor: 'With Sachin Rekhi',
             imageAlt: 'Sachin Rekhi',
+            productImages: PRODUCT_IMAGES,
         },
         {
             badges: [{ label: 'Growth', variant: 'growth' }],
@@ -96,6 +111,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
                 'Understand flywheels, cold start, and retention loops so growth compounds instead of stalling at scale.',
             instructor: 'With guest instructors',
             imageAlt: 'Instructors',
+            productImages: PRODUCT_IMAGES,
         },
     ],
 ]
@@ -127,6 +143,7 @@ export default function ClTracks() {
                                         instructor={track.instructor}
                                         imageSrc={track.imageSrc ?? MENTOR_IMAGE}
                                         imageAlt={track.imageAlt}
+                                        productImages={track.productImages}
                                         className="w-full"
                                     />
                                 ))}
