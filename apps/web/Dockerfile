@@ -36,7 +36,7 @@ ARG TURBO_TEAM=""
 ENV TURBO_TOKEN=$TURBO_TOKEN \
     TURBO_TEAM=$TURBO_TEAM
 
-ARG NODE_MEMORY_LIMIT=3072
+ARG NODE_MEMORY_LIMIT=1536
 
 ENV PNPM_STORE_DIR=/root/.local/share/pnpm/store \
     TURBO_CACHE_DIR=/app/.turbo \
@@ -63,7 +63,7 @@ ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
     PORT=3000 \
-    NODE_OPTIONS=--max-old-space-size=3072
+    NODE_OPTIONS=--max-old-space-size=1536
 
 # .next/standalone contains server.js + traced node_modules (monorepo-aware via outputFileTracingRoot).
 # .next/static and public/ must be copied separately — standalone doesn't include them.
