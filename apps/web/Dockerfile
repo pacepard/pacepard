@@ -1,17 +1,11 @@
-# syntax=docker/dockerfile:1
-#
 # Build from repo root:  docker build -f apps/web/Dockerfile -t pacepard-web .
 #
-# Coolify: DOCKER_BUILDKIT=1. Optional build args: TURBO_TOKEN, TURBO_TEAM (Turborepo remote cache).
+# Coolify: Optional build args: TURBO_TOKEN, TURBO_TEAM (Turborepo remote cache).
 # Use valid https:// URLs in FQDN fields (not https//).
 #
 # Standalone output (next.config.ts output:"standalone") means the production stage
 # only copies .next/standalone — no pnpm install at runtime. This is the biggest
 # speed win: eliminates a cold full pnpm install on every deploy.
-#
-# Cache mounts (BuildKit): apk, corepack, and pnpm store are all cached.
-# If Coolify uses an ephemeral builder the pnpm/corepack mounts won't persist, but
-# the standalone fix still eliminates the production install unconditionally.
 #
 # Coolify injects COOLIFY_* ARGs here. Fix UI typos: use https:// (not https//) and one FQDN per field.
 
@@ -23,13 +17,9 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     NEXT_DISABLE_ESLINT=1 \
     NEXT_DISABLE_TYPECHECK=1
 
-# Cache apk packages across builds (remove --no-cache so the mount is used).
-RUN --mount=type=cache,id=apk-base-cache,target=/var/cache/apk \
-    apk add python3 build-base
+RUN apk add --no-cache python3 build-base
 
-# Cache the pnpm binary so corepack doesn't re-download it every build.
-RUN --mount=type=cache,id=corepack-cache,target=/root/.cache/node/corepack \
-    corepack enable \
+RUN corepack enable \
     && corepack prepare pnpm@10.33.0 --activate
 
 WORKDIR /app
@@ -53,23 +43,16 @@ ENV PNPM_STORE_DIR=/root/.local/share/pnpm/store \
     PNPM_NETWORK_CONCURRENCY=16 \
     NODE_OPTIONS=--max-old-space-size=${NODE_MEMORY_LIMIT}
 
-# tooling/ is dockerignored; use a filter (not a full root install).
-# Default hard-link import method (faster than copy — no package-import-method copy).
-RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile --prefer-offline --ignore-scripts --filter @pacepard/web...
+RUN pnpm install --frozen-lockfile --prefer-offline --ignore-scripts --filter @pacepard/web...
 
-RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
-    --mount=type=cache,id=pacepard-turbo-cache,target=/app/.turbo \
-    pnpm build --filter @pacepard/web
+RUN pnpm build --filter @pacepard/web
 
 # ── Production ────────────────────────────────────────────────────────────────
 # Standalone output already bundles the minimal node_modules needed to run.
 # No pnpm install required — just copy three directories.
 FROM node:20-alpine AS production
 
-# Cache apk packages; curl is for the healthcheck.
-RUN --mount=type=cache,id=apk-prod-cache,target=/var/cache/apk \
-    apk add curl
+RUN apk add --no-cache curl
 
 RUN addgroup -g 1001 -S nodejs \
     && adduser -S nodejs -u 1001
