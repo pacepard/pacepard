@@ -104,11 +104,11 @@ export default function ClTestimonials() {
         <section className="w-full py-16 md:py-24 bg-background">
             <div className="mx-auto  px-4 md:px-6">
                 {/* Title: "The people." / "They love us." */}
-                <div className="mb-12 text-center md:mb-16">
-                    <h2 className="text-4xl font-regular tracking-tight text-foreground sm:text-5xl md:text-6xl">
+                <div className="mb-12 text-left md:mb-16 md:text-center">
+                    <h2 className="text-4xl font-regular tracking-tight text-foreground md:text-5xl">
                         The people.
                     </h2>
-                    <h2 className="mt-1 text-4xl font-regular tracking-tight text-muted-foreground sm:text-5xl md:text-6xl">
+                    <h2 className="mt-1 text-4xl font-regular tracking-tight text-muted-foreground md:text-5xl">
                         They love us.
                     </h2>
                 </div>

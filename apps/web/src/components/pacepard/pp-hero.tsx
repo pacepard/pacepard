@@ -12,7 +12,7 @@ export default function PPHeroSection() {
             <div className="container mx-auto max-w-7xl px-4 md:px-6">
                 <div className="flex flex-col gap-8 text-left md:items-center md:text-center">
                     <div className="w-full min-w-0 max-w-4xl space-y-6 md:mx-auto">
-                        <h1 className="text-pretty text-4xl font-regular tracking-tight text-foreground md:text-balance md:text-6xl">
+                        <h1 className="text-pretty text-4xl font-regular tracking-tight text-foreground md:text-balance md:text-5xl">
                             The learning and growth platform for AI-native
                             product teams.
                         </h1>

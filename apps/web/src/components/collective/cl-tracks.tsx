@@ -45,7 +45,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
     [
         {
             badges: [{ label: 'AI', variant: 'ai' }],
-            title: 'Growth Engineering',
+            title: 'AI Software Engineering with Cal.com',
             description:
                 'Lead product strategy in an AI-native world: roadmaps, governance, and customer value when models move fast.',
             instructor: 'With Damola Oladipo',
@@ -111,7 +111,7 @@ export default function ClTracks() {
     return (
         <section className="bg-[#78B9B1]">
             <div className="py-20 md:py-24">
-                <div className="mx-auto w-full max-w-8xl min-w-7xl px-6">
+                <div className="mx-auto w-full min-w-0 max-w-8xl px-6">
                     <div className="grid grid-cols-1 items-start gap-x-6 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
                         {TRACK_COLUMNS.map((columnTracks, colIndex) => (
                             <div

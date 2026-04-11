@@ -237,9 +237,9 @@ export function PPFeatureShowcase({
             <div className="container max-w-6xl px-4 md:px-6">
                 <div className="flex flex-col items-stretch gap-10 lg:flex-row lg:gap-14">
                     {/* Accordion: left on desktop, bottom on mobile */}
-                    <div className="order-2 flex min-w-0 flex-1 flex-col justify-center space-y-8 lg:order-1">
-                        <div className="flex flex-wrap items-start justify-between gap-4">
-                            <div className="space-y-4">
+                    <div className="order-2 flex min-w-0 flex-1 flex-col justify-start space-y-8 lg:order-1 lg:justify-center">
+                        <div className="flex w-full flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                            <div className="space-y-4 text-left">
                                 <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                     <span>Pacepard Go</span>
                                     <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-600">

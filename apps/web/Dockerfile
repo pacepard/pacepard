@@ -20,7 +20,8 @@ FROM node:20-alpine AS base
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     NEXT_TELEMETRY_DISABLED=1 \
     TURBO_TELEMETRY_DISABLED=1 \
-    NEXT_DISABLE_ESLINT=1
+    NEXT_DISABLE_ESLINT=1 \
+    NEXT_DISABLE_TYPECHECK=1
 
 # Cache apk packages across builds (remove --no-cache so the mount is used).
 RUN --mount=type=cache,id=apk-base-cache,target=/var/cache/apk \
@@ -53,9 +54,9 @@ ENV PNPM_STORE_DIR=/root/.local/share/pnpm/store \
     NODE_OPTIONS=--max-old-space-size=${NODE_MEMORY_LIMIT}
 
 # tooling/ is dockerignored; use a filter (not a full root install).
-# Default hard-link import method (faster than copy — removed pnpm config set package-import-method copy).
+# Default hard-link import method (faster than copy — no package-import-method copy).
 RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
-    pnpm install --frozen-lockfile --prefer-offline --filter @pacepard/web...
+    pnpm install --frozen-lockfile --prefer-offline --ignore-scripts --filter @pacepard/web...
 
 RUN --mount=type=cache,id=pacepard-pnpm-store,target=/root/.local/share/pnpm/store \
     --mount=type=cache,id=pacepard-turbo-cache,target=/app/.turbo \

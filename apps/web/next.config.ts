@@ -15,16 +15,19 @@ const nextConfig: NextConfig = {
   // Standalone output bundles only needed node_modules into .next/standalone,
   // eliminating the full pnpm install in the Docker production stage.
   output: "standalone",
+  // Tells Next.js file tracing to resolve workspace-symlinked packages
+  // (e.g. @pacepard/ui) from the monorepo root, not the app directory.
+  outputFileTracingRoot: path.join(__dirname, "../../"),
   images: { unoptimized: true },
   experimental: {
     mdxRs: false,
-    // Required for standalone in a pnpm monorepo: tells Next.js file tracing
-    // to resolve workspace-symlinked packages (e.g. @pacepard/ui) from the repo root.
-    outputFileTracingRoot: path.join(__dirname, "../../"),
   },
-  // Docker/Coolify: ESLint flat config pulls repo-wide deps; lint stays in CI (`pnpm lint`).
+  // Docker/Coolify: lint and type checks run in CI, not during Docker build.
   eslint: {
     ignoreDuringBuilds: process.env.NEXT_DISABLE_ESLINT === "1",
+  },
+  typescript: {
+    ignoreBuildErrors: process.env.NEXT_DISABLE_TYPECHECK === "1",
   },
 };
 
