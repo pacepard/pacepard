@@ -1,10 +1,26 @@
 # Coolify: Build Pack = Docker Compose. Point "Docker Compose Location" to this file.
-# Env: GHCR_ORG (lowercase), IMAGE_TAG = development | staging | production
+#
+# Required resource env (Coolify UI):
+#   GHCR_ORG = GitHub owner/org in lowercase (must match ghcr.io namespace CI uses).
+#   IMAGE_TAG = floating tag CI pushes: development | staging | production
+#
 # CI image: ghcr.io/${GHCR_ORG}/pacepard-api:${IMAGE_TAG}
+#
+# "Error manifest unknown" on pull:
+#   - No image at that ref yet (GitHub Actions deploy build-and-push failed or did not run).
+#   - Wrong GHCR_ORG or IMAGE_TAG (typo or wrong environment).
+#   - GHCR package is private: add ghcr.io registry credentials in Coolify, or make the package public.
+#
+# Logs: The "B" variable is not set (or similar for $2, $b, ...):
+#   Compose treats $ in interpolated strings as variable references. Values with bcrypt ($2b$10$...)
+#   or other $... sequences must use a literal dollar: write $$ for each $ in Coolify env values
+#   that end up in compose/env files, or store those secrets in runtime-only injection paths that
+#   do not pass through compose variable substitution.
+#
 # unauthorized on pull -> register ghcr.io in Coolify or make package public (see docs/coolify-monorepo-setup.md 4.5.1).
 services:
   api:
-    image: ghcr.io/${GHCR_ORG}/pacepard-api:${IMAGE_TAG}
+    image: ghcr.io/${GHCR_ORG?GHCR_ORG unset}/pacepard-api:${IMAGE_TAG?IMAGE_TAG unset}
     pull_policy: always
     restart: unless-stopped
     expose:
