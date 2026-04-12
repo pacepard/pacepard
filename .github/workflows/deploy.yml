@@ -14,7 +14,8 @@
 # Private GHCR: registry credentials in Coolify (ghcr.io + read-only PAT with read:packages).
 #
 # GitHub: Actions "Read and write" (packages: write) or PAT with write:packages.
-# Secrets: COOLIFY_API_TOKEN, COOLIFY_APP_UUID_* ; optional TURBO_TOKEN, TIPTAP_PRO_TOKEN.
+# Secrets: COOLIFY_API_TOKEN, COOLIFY_APP_UUID_* ; optional TURBO_TOKEN.
+# TIPTAP_PRO_TOKEN: NPM token from TipTap Cloud > My features > Pro Extensions (not the API key).
 # Variables: COOLIFY_API_URL, TURBO_TEAM, per-env URLs.
 
 name: Deploy

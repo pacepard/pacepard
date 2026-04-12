@@ -25,8 +25,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Repository secret TIPTAP_PRO_TOKEN: TipTap Pro registry token (https://cloud.tiptap.dev/) - required
-# for @tiptap-pro/* (see root .npmrc). Same secret as deploy.yml Docker builds.
+# Repository secret TIPTAP_PRO_TOKEN: TipTap NPM token from Cloud > My features > Pro Extensions
+# (https://cloud.tiptap.dev/v2/features/pro-extensions). Not the generic Cloud API key.
+# If pnpm hits registry.tiptap.dev with 403, the token is wrong/expired or the plan does not include
+# the requested Pro extension (e.g. Content AI). Same value as deploy.yml / local .env.
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '9.0.0'
