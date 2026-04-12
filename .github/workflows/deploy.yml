@@ -18,6 +18,8 @@
 # TIPTAP_PRO_TOKEN: TipTap Pro Extensions NPM token (https://cloud.tiptap.dev/v2/features/pro-extensions).
 # Must allow @tiptap-pro/extension-ai for your plan. Put on the repo OR on each GitHub Environment
 # (development, staging, production) — image build jobs use the same environment so env-only secrets work.
+# Docker: build uses `docker buildx ... --build-arg TIPTAP_PRO_TOKEN` (no =value) so bash never expands
+# `$` inside the token when passing it to BuildKit.
 # Variables: COOLIFY_API_URL, TURBO_TEAM, per-env URLs.
 
 name: Deploy
@@ -145,9 +147,9 @@ jobs:
           SHA="${{ steps.meta.outputs.sha }}"
           docker buildx build \
             --push \
-            --build-arg "TURBO_TOKEN=${TURBO_TOKEN:-}" \
-            --build-arg "TURBO_TEAM=${TURBO_TEAM:-}" \
-            --build-arg "TIPTAP_PRO_TOKEN=${TIPTAP_PRO_TOKEN:-}" \
+            --build-arg TURBO_TOKEN \
+            --build-arg TURBO_TEAM \
+            --build-arg TIPTAP_PRO_TOKEN \
             -f "${{ matrix.dockerfile }}" \
             -t "ghcr.io/${OWNER}/${{ matrix.image }}:${FLOAT}" \
             -t "ghcr.io/${OWNER}/${{ matrix.image }}:${FLOAT}-${SHA}" \
@@ -207,9 +209,9 @@ jobs:
           SHA="${{ steps.meta.outputs.sha }}"
           docker buildx build \
             --push \
-            --build-arg "TURBO_TOKEN=${TURBO_TOKEN:-}" \
-            --build-arg "TURBO_TEAM=${TURBO_TEAM:-}" \
-            --build-arg "TIPTAP_PRO_TOKEN=${TIPTAP_PRO_TOKEN:-}" \
+            --build-arg TURBO_TOKEN \
+            --build-arg TURBO_TEAM \
+            --build-arg TIPTAP_PRO_TOKEN \
             -f apps/service/Dockerfile \
             -t "ghcr.io/${OWNER}/pacepard-service:${FLOAT}" \
             -t "ghcr.io/${OWNER}/pacepard-service:${FLOAT}-${SHA}" \
