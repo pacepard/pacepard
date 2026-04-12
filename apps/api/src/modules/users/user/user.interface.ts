@@ -126,6 +126,8 @@ export interface ILocation {
     state: string;
     country: string;
     postalCode: string;
+    phoneNumber?: string;
+    phoneCode?: string;
 }
 
 export interface IDevice {
