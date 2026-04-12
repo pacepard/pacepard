@@ -1,8 +1,8 @@
 //import BlogList from "@/app/components/blog/blog-list";
-import Herobanner from "@/app/components/shared/hero-banner";
-import { Metadata } from "next";
+import Herobanner from '@/app/components/shared/hero-banner';
+import { Metadata } from 'next';
 export const metadata: Metadata = {
-    title: "Blog | Pacepard",
+    title: 'Blog | Pacepard',
 };
 
 export default function Page() {
@@ -11,8 +11,9 @@ export default function Page() {
             <Herobanner
                 bannerimage="/images/blog/banner/blog_banner.png"
                 heading="Blog"
-                desc="Excited to <span>begin something amazing?</span> Get in touch—we'd love to connect with you!" />    
-                {/* <BlogList/> */}
+                desc="Excited to <span>begin something amazing?</span> Get in touch—we'd love to connect with you!"
+            />
+            {/* <BlogList/> */}
         </main>
     );
-};
+}

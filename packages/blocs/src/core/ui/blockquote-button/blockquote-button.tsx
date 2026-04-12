@@ -1,43 +1,42 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Tiptap UI ---
-import type { UseBlockquoteConfig } from "@/core/ui/blockquote-button"
+import type { UseBlockquoteConfig } from '@/core/ui/blockquote-button';
 import {
-  BLOCKQUOTE_SHORTCUT_KEY,
-  useBlockquote,
-} from "@/core/ui/blockquote-button"
+    BLOCKQUOTE_SHORTCUT_KEY,
+    useBlockquote,
+} from '@/core/ui/blockquote-button';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface BlockquoteButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseBlockquoteConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseBlockquoteConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function BlockquoteShortcutBadge({
-  shortcutKeys = BLOCKQUOTE_SHORTCUT_KEY,
+    shortcutKeys = BLOCKQUOTE_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -46,78 +45,82 @@ export function BlockquoteShortcutBadge({
  * For custom button implementations, use the `useBlockquote` hook instead.
  */
 export const BlockquoteButton = forwardRef<
-  HTMLButtonElement,
-  BlockquoteButtonProps
+    HTMLButtonElement,
+    BlockquoteButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onToggled,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            text,
+            hideWhenUnavailable = false,
+            onToggled,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canToggle,
+            isActive,
+            handleToggle,
+            label,
+            shortcutKeys,
+            Icon,
+        } = useBlockquote({
+            editor,
+            hideWhenUnavailable,
+            onToggled,
+        });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleToggle();
+            },
+            [handleToggle, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                data-active-state={isActive ? 'on' : 'off'}
+                role="button"
+                tabIndex={-1}
+                disabled={!canToggle}
+                data-disabled={!canToggle}
+                aria-label={label}
+                aria-pressed={isActive}
+                tooltip="Blockquote"
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <BlockquoteShortcutBadge
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      canToggle,
-      isActive,
-      handleToggle,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useBlockquote({
-      editor,
-      hideWhenUnavailable,
-      onToggled,
-    })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleToggle()
-      },
-      [handleToggle, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        data-active-state={isActive ? "on" : "off"}
-        role="button"
-        tabIndex={-1}
-        disabled={!canToggle}
-        data-disabled={!canToggle}
-        aria-label={label}
-        aria-pressed={isActive}
-        tooltip="Blockquote"
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <BlockquoteShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-BlockquoteButton.displayName = "BlockquoteButton"
+BlockquoteButton.displayName = 'BlockquoteButton';

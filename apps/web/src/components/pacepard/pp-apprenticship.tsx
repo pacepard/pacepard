@@ -149,7 +149,6 @@ const ACCENT = {
     pink: '#EC4899',
 } as const;
 
-
 export type PPFeatureShowcaseItem = {
     id: string;
     title: string;
@@ -186,7 +185,8 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     {
         id: 'reporting',
         title: 'Track progress at every stage',
-        description: 'See where teams stand from kickoff through build to demo day.',
+        description:
+            'See where teams stand from kickoff through build to demo day.',
         accent: ACCENT.teal,
         icon: (
             <IconCircle color={ACCENT.teal}>
@@ -253,7 +253,6 @@ export function PPApprenticeship({
                                 </h2>
                             </div>
 
-                           
                             <button
                                 type="button"
                                 className="inline-flex items-center gap-1.5 text-foreground transition-opacity hover:opacity-80 hover:underline"

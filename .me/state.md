@@ -40,10 +40,10 @@ Account Registration
 
 ### Notes
 
-* Project creation happens after team formation.
-* No need for pre approval.
-* Everyone can participate.
-* Projects are judged at the end.
+- Project creation happens after team formation.
+- No need for pre approval.
+- Everyone can participate.
+- Projects are judged at the end.
 
 This model prioritizes flexibility and creativity.
 
@@ -212,12 +212,12 @@ After sponsor track selection.
 
 After judging:
 
-* Leaderboards finalized
-* Judges submit scores
-* Winners confirmed
-* Public announcement page
-* Emails sent
-* Certificates generated
+- Leaderboards finalized
+- Judges submit scores
+- Winners confirmed
+- Public announcement page
+- Emails sent
+- Certificates generated
 
 Platforms like Devpost support this structured submission to judging pipeline.
 
@@ -229,10 +229,10 @@ Your system should not hardcode one flow.
 
 Instead it should support:
 
-* Flexible project creation timing
-* Optional challenge selection
-* Optional pre submission filtering
-* Multiple judging structures
+- Flexible project creation timing
+- Optional challenge selection
+- Optional pre submission filtering
+- Multiple judging structures
 
 The core data model stays the same.
 

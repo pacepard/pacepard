@@ -6,7 +6,9 @@ const CreateChallenge = () => {
     return (
         <div className="p-6">
             <h1 className="text-2xl font-semibold">New Challenge</h1>
-            <p className="text-muted-foreground mt-1">Create a new challenge. Wire to challenge API when available.</p>
+            <p className="text-muted-foreground mt-1">
+                Create a new challenge. Wire to challenge API when available.
+            </p>
             <button
                 type="button"
                 onClick={() => navigate('/challenge')}
@@ -19,4 +21,3 @@ const CreateChallenge = () => {
 };
 
 export default CreateChallenge;
-

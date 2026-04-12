@@ -1,7 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { IUserDoc } from '../../users/user/user.interface';
 
-
 type ObjectId = Types.ObjectId;
 
 export interface IDiscoveryDoc extends Document {

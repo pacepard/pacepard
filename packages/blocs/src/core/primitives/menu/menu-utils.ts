@@ -1,4 +1,4 @@
-import type { Action } from "@/core/primitives/menu/menu-types"
+import type { Action } from '@/core/primitives/menu/menu-types';
 
 /**
  * Filters menu items based on search value
@@ -7,32 +7,32 @@ import type { Action } from "@/core/primitives/menu/menu-types"
  * @returns Filtered array of actions
  */
 export function filterMenuItems(
-  { items = [], ...group }: Action,
-  searchValue: string
+    { items = [], ...group }: Action,
+    searchValue: string,
 ): Action[] {
-  if (!searchValue.trim()) return items
+    if (!searchValue.trim()) return items;
 
-  const normalizedSearchValue = searchValue.toLowerCase().trim()
+    const normalizedSearchValue = searchValue.toLowerCase().trim();
 
-  const groupKeywords = [group.label, ...(group.keywords || [])]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase()
+    const groupKeywords = [group.label, ...(group.keywords || [])]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
 
-  if (groupKeywords.includes(normalizedSearchValue)) {
-    return items
-  }
+    if (groupKeywords.includes(normalizedSearchValue)) {
+        return items;
+    }
 
-  return items.filter((item) => {
-    if (item.filterItems) return true
+    return items.filter((item) => {
+        if (item.filterItems) return true;
 
-    const itemKeywords = [item.label, item.value, ...(item.keywords || [])]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase()
+        const itemKeywords = [item.label, item.value, ...(item.keywords || [])]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
 
-    return itemKeywords.includes(normalizedSearchValue)
-  })
+        return itemKeywords.includes(normalizedSearchValue);
+    });
 }
 
 /**
@@ -42,21 +42,21 @@ export function filterMenuItems(
  * @returns Filtered array of action groups
  */
 export function filterMenuGroups(
-  menuGroups: Action[],
-  searchValue: string
+    menuGroups: Action[],
+    searchValue: string,
 ): Action[] {
-  if (!searchValue.trim()) return menuGroups
+    if (!searchValue.trim()) return menuGroups;
 
-  return menuGroups.reduce<Action[]>((acc, group) => {
-    const filteredItems = filterMenuItems(group, searchValue)
+    return menuGroups.reduce<Action[]>((acc, group) => {
+        const filteredItems = filterMenuItems(group, searchValue);
 
-    if (filteredItems.length > 0) {
-      acc.push({
-        ...group,
-        items: filteredItems,
-      })
-    }
+        if (filteredItems.length > 0) {
+            acc.push({
+                ...group,
+                items: filteredItems,
+            });
+        }
 
-    return acc
-  }, [])
+        return acc;
+    }, []);
 }

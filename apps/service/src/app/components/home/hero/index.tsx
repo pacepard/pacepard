@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Parallax, ParallaxProvider } from "react-scroll-parallax";
+import Image from 'next/image';
+import { Parallax, ParallaxProvider } from 'react-scroll-parallax';
 
 function HeroSection() {
     return (
@@ -11,7 +11,7 @@ function HeroSection() {
                     {/* Background Image */}
                     <div className="absolute top-0 left-0 w-full h-full">
                         <Image
-                            src="/images/home/services/hackathon.jpeg" // 
+                            src="/images/home/services/hackathon.jpeg" //
                             alt="Background"
                             layout="fill"
                             objectFit="cover"
@@ -28,7 +28,7 @@ function HeroSection() {
                             <div className="flex items-start gap-2 md:gap-6">
                                 <div className="w-11 h-11 flex-shrink-0">
                                     <Image
-                                        src={"/images/Icon/primary-leaf.svg"}
+                                        src={'/images/Icon/primary-leaf.svg'}
                                         alt="icon"
                                         width={44}
                                         height={44}
@@ -36,14 +36,24 @@ function HeroSection() {
                                     />
                                 </div>
                                 <p className="text-white/70 max-w-md">
-                                    We build <span className="text-primary">products with useful features </span> that help people get important things done everday.
+                                    We build{' '}
+                                    <span className="text-primary">
+                                        products with useful features{' '}
+                                    </span>{' '}
+                                    that help people get important things done
+                                    everday.
                                 </p>
                             </div>
                             <div className="flex flex-col lg:flex-row items-start lg:items-end gap-4">
                                 <h1 className="large-heading">Pacepard</h1>
                                 <div>
                                     <div className="bg-primary rounded-full p-1.5 pl-8">
-                                        <Image src={"/images/Icon/arrow-icon.svg"} alt="icon" height={52} width={52} />
+                                        <Image
+                                            src={'/images/Icon/arrow-icon.svg'}
+                                            alt="icon"
+                                            height={52}
+                                            width={52}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -56,11 +66,6 @@ function HeroSection() {
 }
 
 export default HeroSection;
-
-
-
-
-
 
 // "use client";
 

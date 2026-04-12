@@ -1,43 +1,42 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseCopyToClipboardConfig } from "@/core/ui/copy-to-clipboard-button"
+import type { UseCopyToClipboardConfig } from '@/core/ui/copy-to-clipboard-button';
 import {
-  COPY_TO_CLIPBOARD_SHORTCUT_KEY,
-  useCopyToClipboard,
-} from "@/core/ui/copy-to-clipboard-button"
+    COPY_TO_CLIPBOARD_SHORTCUT_KEY,
+    useCopyToClipboard,
+} from '@/core/ui/copy-to-clipboard-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface CopyToClipboardButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseCopyToClipboardConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseCopyToClipboardConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function CopyToClipboardShortcutBadge({
-  shortcutKeys = COPY_TO_CLIPBOARD_SHORTCUT_KEY,
+    shortcutKeys = COPY_TO_CLIPBOARD_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -46,69 +45,73 @@ export function CopyToClipboardShortcutBadge({
  * For custom button implementations, use the `useCopyToClipboard` hook instead.
  */
 export const CopyToClipboardButton = forwardRef<
-  HTMLButtonElement,
-  CopyToClipboardButtonProps
+    HTMLButtonElement,
+    CopyToClipboardButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      text,
-      copyWithFormatting = true,
-      hideWhenUnavailable = false,
-      onCopied,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            text,
+            copyWithFormatting = true,
+            hideWhenUnavailable = false,
+            onCopied,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const { isVisible, handleCopyToClipboard, label, shortcutKeys, Icon } =
+            useCopyToClipboard({
+                editor,
+                copyWithFormatting,
+                hideWhenUnavailable,
+                onCopied,
+            });
+
+        const handleClick = useCallback(
+            async (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                await handleCopyToClipboard();
+            },
+            [handleCopyToClipboard, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                role="button"
+                tabIndex={-1}
+                aria-label={label}
+                tooltip="Copy to clipboard"
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <CopyToClipboardShortcutBadge
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const { isVisible, handleCopyToClipboard, label, shortcutKeys, Icon } =
-      useCopyToClipboard({
-        editor,
-        copyWithFormatting,
-        hideWhenUnavailable,
-        onCopied,
-      })
+);
 
-    const handleClick = useCallback(
-      async (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        await handleCopyToClipboard()
-      },
-      [handleCopyToClipboard, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        role="button"
-        tabIndex={-1}
-        aria-label={label}
-        tooltip="Copy to clipboard"
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <CopyToClipboardShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-CopyToClipboardButton.displayName = "CopyToClipboardButton"
+CopyToClipboardButton.displayName = 'CopyToClipboardButton';

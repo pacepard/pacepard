@@ -18,7 +18,8 @@ const ProjectDetails = () => {
                 <h1 className="text-2xl font-semibold">Project Details</h1>
                 <p className="text-muted-foreground mt-1">Slug: {slug}</p>
                 <p className="text-muted-foreground text-sm mt-1">
-                    Wire GET project by slug when project API is mounted (e.g. GET /api/v1/projects/:slug).
+                    Wire GET project by slug when project API is mounted (e.g.
+                    GET /api/v1/projects/:slug).
                 </p>
             </header>
         </div>

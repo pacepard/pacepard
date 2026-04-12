@@ -40,7 +40,12 @@ class TokenService {
                 {
                     id: user._id,
                     email: user.email,
-                    role: (user.roles && user.roles.length > 0) ? (typeof user.roles[0] === 'string' ? user.roles[0] : user.roles[0].name) : 'user',
+                    role:
+                        user.roles && user.roles.length > 0
+                            ? typeof user.roles[0] === 'string'
+                                ? user.roles[0]
+                                : user.roles[0].name
+                            : 'user',
                     tokenVersion: user.tokenVersion,
                 },
                 this.secret,
@@ -93,7 +98,12 @@ class TokenService {
                     {
                         id: user._id,
                         email: user.email,
-                        role: (user.roles && user.roles.length > 0) ? (typeof user.roles[0] === 'string' ? user.roles[0] : user.roles[0].name) : 'user',
+                        role:
+                            user.roles && user.roles.length > 0
+                                ? typeof user.roles[0] === 'string'
+                                    ? user.roles[0]
+                                    : user.roles[0].name
+                                : 'user',
                         tokenVersion: user.tokenVersion,
                     },
                     this.secret,

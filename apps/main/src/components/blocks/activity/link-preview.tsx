@@ -41,12 +41,8 @@ export function LinkPreview({
                 <div className="space-y-3">
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1.5">
-                            <Sparkles
-                                className="size-5 text-yellow-500 fill-yellow-500"
-                            />
-                            <Sparkles
-                                className="size-5 text-yellow-500 fill-yellow-500"
-                            />
+                            <Sparkles className="size-5 text-yellow-500 fill-yellow-500" />
+                            <Sparkles className="size-5 text-yellow-500 fill-yellow-500" />
                         </div>
                         <h3 className="text-base font-semibold text-card-foreground">
                             {title}
@@ -55,7 +51,9 @@ export function LinkPreview({
 
                     <p className="text-sm text-muted-foreground">{subtitle}</p>
 
-                    <p className="text-sm text-card-foreground">{description}</p>
+                    <p className="text-sm text-card-foreground">
+                        {description}
+                    </p>
 
                     <div className="flex items-center gap-2 pt-2">
                         <div className="size-2 rounded-full bg-muted-foreground/30" />

@@ -68,9 +68,11 @@ export default function PPCollective() {
                         Why and how Pacepard Collective
                     </h2>
                     <p className="max-w-2xl text-lg text-muted-foreground">
-                        Over the past 6 months, my team and I at Pacepard have successfully ran an experiment. 
-                        Working on a production application increased skill mastery and problem solving by over 68%. 
-                        We are democratizing this process and we invite you to join us.
+                        Over the past 6 months, my team and I at Pacepard have
+                        successfully ran an experiment. Working on a production
+                        application increased skill mastery and problem solving
+                        by over 68%. We are democratizing this process and we
+                        invite you to join us.
                     </p>
                     <ul className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                         {guarantees.map((item) => (
@@ -95,41 +97,46 @@ export default function PPCollective() {
                                 'bg-[var(--color-decorative-orange)]',
                                 'bg-[var(--color-decorative-green)]',
                             ];
-                            const decorativeColor = decorativeColors[index % decorativeColors.length];
-                            
+                            const decorativeColor =
+                                decorativeColors[
+                                    index % decorativeColors.length
+                                ];
+
                             return (
-                            <div
-                                key={card.title}
-                                className={cn(
-                                    'flex items-start gap-5 rounded-xl border border-border bg-card p-5 shadow-sm',
-                                    'transition-colors hover:border-primary/20 hover:bg-muted/30',
-                                )}
-                            >
-                                <div className={cn(
-                                    'flex size-12 shrink-0 items-center justify-center rounded-lg text-white',
-                                    decorativeColor
-                                )}>
-                                    {card.type === 'number' ? (
-                                        <span className="text-2xl font-bold tabular-nums">
-                                            {card.value}
-                                        </span>
-                                    ) : (
-                                        <Sparkles
-                                            className="size-6"
-                                            aria-hidden
-                                        />
+                                <div
+                                    key={card.title}
+                                    className={cn(
+                                        'flex items-start gap-5 rounded-xl border border-border bg-card p-5 shadow-sm',
+                                        'transition-colors hover:border-primary/20 hover:bg-muted/30',
                                     )}
+                                >
+                                    <div
+                                        className={cn(
+                                            'flex size-12 shrink-0 items-center justify-center rounded-lg text-white',
+                                            decorativeColor,
+                                        )}
+                                    >
+                                        {card.type === 'number' ? (
+                                            <span className="text-2xl font-bold tabular-nums">
+                                                {card.value}
+                                            </span>
+                                        ) : (
+                                            <Sparkles
+                                                className="size-6"
+                                                aria-hidden
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="min-w-0 flex-1 space-y-1">
+                                        <h3 className="font-semibold text-foreground">
+                                            {card.title}
+                                        </h3>
+                                        <p className="text-sm text-muted-foreground leading-relaxed">
+                                            {card.description}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="min-w-0 flex-1 space-y-1">
-                                    <h3 className="font-semibold text-foreground">
-                                        {card.title}
-                                    </h3>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">
-                                        {card.description}
-                                    </p>
-                                </div>
-                            </div>
-                        );
+                            );
                         })}
                     </div>
 
@@ -145,7 +152,8 @@ export default function PPCollective() {
                                 Join Waitlist
                             </p>
                             <p className="mt-1 text-sm text-background/80">
-                                Get roadmaps, 3 month free trial, and join teams & products
+                                Get roadmaps, 3 month free trial, and join teams
+                                & products
                             </p>
                             <div className="mt-6 flex flex-wrap items-baseline gap-2">
                                 <span className="text-4xl font-bold tracking-tight sm:text-5xl">

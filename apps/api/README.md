@@ -2,13 +2,9 @@
 
 ### become a superhuman
 
-> **Pacepard** 
-
+> **Pacepard**
 
 ## Introduction
-
-
-
 
 ## Techonologies
 

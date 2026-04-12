@@ -47,10 +47,10 @@ const HackathonSchema = new Schema<IHackathonDoc>(
             redirectOnClose: { type: String, default: '' },
         },
 
-        formtype: { 
-            type: String, 
+        formtype: {
+            type: String,
             enum: Object.values(FormType),
-            default: FormType.REGISTRATION 
+            default: FormType.REGISTRATION,
         },
 
         workspace: {

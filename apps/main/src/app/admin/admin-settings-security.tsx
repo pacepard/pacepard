@@ -5,4 +5,3 @@ const AdminSettingsSecurity = () => {
 };
 
 export default AdminSettingsSecurity;
-

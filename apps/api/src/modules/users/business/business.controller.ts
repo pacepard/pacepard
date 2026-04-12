@@ -19,11 +19,7 @@ import userRepository from '../user/user.repository';
 import userService from '../user/user.service';
 import authService from '../../authentication/auth/auth.service';
 import redisWrapper from '../../../middlewares/redis.mdw';
-import {
-    PasswordType,
-    UserType,
-    IUserDoc,
-} from '../user/user.interface';
+import { PasswordType, UserType, IUserDoc } from '../user/user.interface';
 
 /**
  * @name getBusiness
@@ -46,16 +42,13 @@ export const getBusiness: RequestHandler = asyncHandler(
                 error: false,
                 errors: [],
                 data: cached,
-                message:
-                    'Business profile retrieved successfully (cached).',
+                message: 'Business profile retrieved successfully (cached).',
                 status: 200,
             });
         }
 
         // Get business profile from service
-        const result = await businessService.getBusinessProfile(
-            String(userId),
-        );
+        const result = await businessService.getBusinessProfile(String(userId));
 
         if (result.error || !result.data) {
             return next(
@@ -78,8 +71,7 @@ export const getBusiness: RequestHandler = asyncHandler(
             errors: [],
             data: result.data,
             message:
-                result.message ||
-                'Business profile retrieved successfully.',
+                result.message || 'Business profile retrieved successfully.',
             status: 200,
         });
     },
@@ -233,10 +225,7 @@ export const updateTags: RequestHandler = asyncHandler(
             return next(new ErrorResponse('Tags must be an array', 400, []));
         }
 
-        const result = await businessService.updateTags(
-            String(userId),
-            tags,
-        );
+        const result = await businessService.updateTags(String(userId), tags);
 
         if (result.error) {
             return next(
@@ -449,11 +438,8 @@ export const inviteBusiness: RequestHandler = asyncHandler(
  */
 export const acceptBusinessInvitation: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const {
-            token,
-            email,
-            password,
-        }: AcceptBusinessInvitationDTO = req.body;
+        const { token, email, password }: AcceptBusinessInvitationDTO =
+            req.body;
 
         // Validate input
         if (!token || !email || !password) {
@@ -522,13 +508,7 @@ export const acceptBusinessInvitation: RequestHandler = asyncHandler(
                     createdBy: invitedBy,
                 });
             } catch (error: any) {
-                return next(
-                    new ErrorResponse(
-                        error.message,
-                        500,
-                        [],
-                    ),
-                );
+                return next(new ErrorResponse(error.message, 500, []));
             }
         }
 
@@ -572,9 +552,7 @@ export const setBusinessPassword: RequestHandler = asyncHandler(
         const { password }: SetBusinessPasswordDTO = req.body;
 
         if (!password) {
-            return next(
-                new ErrorResponse('Password is required', 400, []),
-            );
+            return next(new ErrorResponse('Password is required', 400, []));
         }
 
         // Validate password
@@ -600,7 +578,11 @@ export const setBusinessPassword: RequestHandler = asyncHandler(
         // Check if user is a business
         if (user.userType !== UserType.BUSINESS) {
             return next(
-                new ErrorResponse('This endpoint is only for business users', 403, []),
+                new ErrorResponse(
+                    'This endpoint is only for business users',
+                    403,
+                    [],
+                ),
             );
         }
 
@@ -647,11 +629,7 @@ export const revokeBusinessInvitation: RequestHandler = asyncHandler(
 
         if (revokeResult.error) {
             return next(
-                new ErrorResponse(
-                    revokeResult.message,
-                    revokeResult.code,
-                    [],
-                ),
+                new ErrorResponse(revokeResult.message, revokeResult.code, []),
             );
         }
 

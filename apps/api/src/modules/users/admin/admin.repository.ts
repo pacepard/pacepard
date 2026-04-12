@@ -57,9 +57,7 @@ class AdminRepository extends RepositoryService<IAdminDoc> {
      * @returns {Promise<IResult>}
      * @description Create a new admin
      */
-    public async createAdmin(
-        adminData: Partial<IAdminDoc>,
-    ): Promise<IResult> {
+    public async createAdmin(adminData: Partial<IAdminDoc>): Promise<IResult> {
         return this.create(adminData);
     }
 

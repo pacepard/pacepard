@@ -5,4 +5,3 @@ const CreateHackathon = () => {
 };
 
 export default CreateHackathon;
-

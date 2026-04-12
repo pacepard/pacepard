@@ -54,9 +54,7 @@ export const createGuest: RequestHandler = asyncHandler(
         const result = await guestService.createGuest(data);
 
         if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code, []),
-            );
+            return next(new ErrorResponse(result.message, result.code, []));
         }
 
         res.status(201).json({
@@ -184,10 +182,7 @@ export const getGuests: RequestHandler = asyncHandler(
         }
 
         // Get guests from service
-        const result = await guestService.getGuests(
-            filter,
-            options,
-        );
+        const result = await guestService.getGuests(filter, options);
 
         if (result.error) {
             return next(

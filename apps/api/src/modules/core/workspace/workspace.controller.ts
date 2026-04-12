@@ -38,17 +38,16 @@ import { GuestTypeEnum } from '../../users/guest/guest.interface';
  */
 export const createWorkspace: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-
         const userId = (req as any).user?.id;
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         // Extract icon file from req.files if present
         const files = (req as any).files as IFile[] | undefined;
         let iconFile: IFile | undefined;
-        
+
         if (files && files.length > 0) {
             // Find the icon file (fieldname should be 'icon' based on frontend)
-            iconFile = files.find(file => file.fieldname === 'icon');
+            iconFile = files.find((file) => file.fieldname === 'icon');
         }
 
         const data: CreateWorkspaceDTO = {
@@ -60,9 +59,7 @@ export const createWorkspace: RequestHandler = asyncHandler(
         const result = await workspaceService.createWorkspace(data);
 
         if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code, []),
-            );
+            return next(new ErrorResponse(result.message, result.code, []));
         }
 
         res.status(201).json({
@@ -1008,11 +1005,7 @@ export const resendMentorInvite: RequestHandler = asyncHandler(
 
         if (resendResult.error) {
             return next(
-                new ErrorResponse(
-                    resendResult.message,
-                    resendResult.code,
-                    [],
-                ),
+                new ErrorResponse(resendResult.message, resendResult.code, []),
             );
         }
 
@@ -1064,7 +1057,9 @@ export const resendMentorInvite: RequestHandler = asyncHandler(
                 ...resendResult.data,
                 emailQueued: !emailResult.error,
             },
-            message: resendResult.message || 'Mentor invitation resent successfully.',
+            message:
+                resendResult.message ||
+                'Mentor invitation resent successfully.',
             status: 200,
         });
     },
@@ -1101,11 +1096,7 @@ export const resendJudgeInvite: RequestHandler = asyncHandler(
 
         if (resendResult.error) {
             return next(
-                new ErrorResponse(
-                    resendResult.message,
-                    resendResult.code,
-                    [],
-                ),
+                new ErrorResponse(resendResult.message, resendResult.code, []),
             );
         }
 
@@ -1157,7 +1148,8 @@ export const resendJudgeInvite: RequestHandler = asyncHandler(
                 ...resendResult.data,
                 emailQueued: !emailResult.error,
             },
-            message: resendResult.message || 'Judge invitation resent successfully.',
+            message:
+                resendResult.message || 'Judge invitation resent successfully.',
             status: 200,
         });
     },
@@ -1532,7 +1524,11 @@ export const joinWorkspaceByLink: RequestHandler = asyncHandler(
 
         if (!token || !workspaceId) {
             return next(
-                new ErrorResponse('Token and workspace ID are required', 400, []),
+                new ErrorResponse(
+                    'Token and workspace ID are required',
+                    400,
+                    [],
+                ),
             );
         }
 

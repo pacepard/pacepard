@@ -1,42 +1,45 @@
-"use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import SocialSignIn from "../SocialSignIn";
-import { useState } from "react";
-import Image from "next/image";
-import Loader from "../../shared/loader";
+'use client';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import SocialSignIn from '../SocialSignIn';
+import { useState } from 'react';
+import Image from 'next/image';
+import Loader from '../../shared/loader';
 
 const SignUp = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
+        name: '',
+        email: '',
+        password: '',
     });
     const [errors, setErrors] = useState({
-        name: "",
-        email: "",
-        password: "",
+        name: '',
+        email: '',
+        password: '',
     });
 
     // Validation functions
     const validateName = (name: string) => {
-        if (!name.trim()) return "Name is required";
-        if (!/^[a-zA-Z\s]{3,}$/.test(name)) return "Name must be at least 3 characters and contain only letters";
-        return "";
+        if (!name.trim()) return 'Name is required';
+        if (!/^[a-zA-Z\s]{3,}$/.test(name))
+            return 'Name must be at least 3 characters and contain only letters';
+        return '';
     };
 
     const validateEmail = (email: string) => {
-        if (!email.trim()) return "Email is required";
-        if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) return "Enter a valid email address";
-        return "";
+        if (!email.trim()) return 'Email is required';
+        if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email))
+            return 'Enter a valid email address';
+        return '';
     };
 
     const validatePassword = (password: string) => {
-        if (!password.trim()) return "Password is required";
-        if (password.length < 6) return "Password must be at least 6 characters";
-        return "";
+        if (!password.trim()) return 'Password is required';
+        if (password.length < 6)
+            return 'Password must be at least 6 characters';
+        return '';
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,11 +49,12 @@ const SignUp = () => {
         // Validate on change
         setErrors((prev) => ({
             ...prev,
-            [name]: name === "name"
-                ? validateName(value)
-                : name === "email"
-                    ? validateEmail(value)
-                    : validatePassword(value),
+            [name]:
+                name === 'name'
+                    ? validateName(value)
+                    : name === 'email'
+                      ? validateEmail(value)
+                      : validatePassword(value),
         }));
     };
 
@@ -62,7 +66,11 @@ const SignUp = () => {
         const emailError = validateEmail(formData.email);
         const passwordError = validatePassword(formData.password);
 
-        setErrors({ name: nameError, email: emailError, password: passwordError });
+        setErrors({
+            name: nameError,
+            email: emailError,
+            password: passwordError,
+        });
         if (nameError || emailError || passwordError) {
             return;
         }
@@ -70,8 +78,11 @@ const SignUp = () => {
         setLoading(true);
         try {
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            localStorage.setItem("user", JSON.stringify({ user: formData.name }));
-            router.push("/");
+            localStorage.setItem(
+                'user',
+                JSON.stringify({ user: formData.name }),
+            );
+            router.push('/');
         } catch (error) {
         } finally {
             setLoading(false);
@@ -85,9 +96,24 @@ const SignUp = () => {
                     <div className="flex flex-wrap">
                         <div className="w-full">
                             <div className="relative shadow-xl mx-auto max-w-lg overflow-hidden bg-white dark:bg-darkblack px-8 py-14 text-center sm:px-12 md:px-16">
-                                <Link href={"/"} className="mb-10 flex justify-center">
-                                    <Image src={"/images/logo/logo-black.svg"} alt="Image" width={187} height={30} className="dark:hidden" />
-                                    <Image src={"/images/logo/WhiteLogo.svg"} alt="Image" width={187} height={30} className="hidden dark:block" />
+                                <Link
+                                    href={'/'}
+                                    className="mb-10 flex justify-center"
+                                >
+                                    <Image
+                                        src={'/images/logo/logo-black.svg'}
+                                        alt="Image"
+                                        width={187}
+                                        height={30}
+                                        className="dark:hidden"
+                                    />
+                                    <Image
+                                        src={'/images/logo/WhiteLogo.svg'}
+                                        alt="Image"
+                                        width={187}
+                                        height={30}
+                                        className="hidden dark:block"
+                                    />
                                 </Link>
 
                                 <SocialSignIn actionText="Sign Up" />
@@ -111,7 +137,11 @@ const SignUp = () => {
                                                 ${errors.email ? 'border-red-500' : 'border-stroke'} 
                                                 focus:border-secondary/60 dark:focus:border-primary`}
                                         />
-                                        {errors.name && <p className="text-red-500 dark:text-red-500 text-sm mt-1">{errors.name}</p>}
+                                        {errors.name && (
+                                            <p className="text-red-500 dark:text-red-500 text-sm mt-1">
+                                                {errors.name}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="mb-3 text-left">
                                         <input
@@ -124,7 +154,11 @@ const SignUp = () => {
                                                 ${errors.email ? 'border-red-500' : 'border-stroke'} 
                                                 focus:border-secondary/60 dark:focus:border-primary`}
                                         />
-                                        {errors.email && <p className="text-red-500 dark:text-red-500 text-sm mt-1">{errors.email}</p>}
+                                        {errors.email && (
+                                            <p className="text-red-500 dark:text-red-500 text-sm mt-1">
+                                                {errors.email}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="mb-5 text-left">
                                         <input
@@ -137,7 +171,11 @@ const SignUp = () => {
                                                 ${errors.email ? 'border-red-500' : 'border-stroke'} 
                                                 focus:border-secondary/60 dark:focus:border-primary`}
                                         />
-                                        {errors.password && <p className="text-red-500 dark:text-red-500 text-sm mt-1">{errors.password}</p>}
+                                        {errors.password && (
+                                            <p className="text-red-500 dark:text-red-500 text-sm mt-1">
+                                                {errors.password}
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="my-9">
                                         <button
@@ -152,20 +190,32 @@ const SignUp = () => {
 
                                 <div className="flex flex-col max-w-xs mx-auto gap-2">
                                     <p className="text-base font-medium text-secondary/70 dark:text-white/70">
-                                        By creating an account, you agree with our{" "}
-                                        <Link href="/privacy-policy" className="text-secondary/70 dark:text-white/70 hover:text-secondary dark:hover:text-primary">
+                                        By creating an account, you agree with
+                                        our{' '}
+                                        <Link
+                                            href="/privacy-policy"
+                                            className="text-secondary/70 dark:text-white/70 hover:text-secondary dark:hover:text-primary"
+                                        >
                                             Privacy
-                                        </Link>{" "}
-                                        and{" "}
-                                        <Link href="/privacy-policy" className="text-secondary/70 dark:text-white/70 hover:text-secondary dark:hover:text-primary">
+                                        </Link>{' '}
+                                        and{' '}
+                                        <Link
+                                            href="/privacy-policy"
+                                            className="text-secondary/70 dark:text-white/70 hover:text-secondary dark:hover:text-primary"
+                                        >
                                             Policy
-                                        </Link>.
+                                        </Link>
+                                        .
                                     </p>
 
                                     <p className="text-base font-medium text-secondary/70 dark:text-white/70">
                                         Already have an account?
-                                        <Link href="/signin" className="text-secondary/70 dark:text-white/70 hover:text-secondary dark:hover:text-primary">
-                                            {" "}Sign In
+                                        <Link
+                                            href="/signin"
+                                            className="text-secondary/70 dark:text-white/70 hover:text-secondary dark:hover:text-primary"
+                                        >
+                                            {' '}
+                                            Sign In
                                         </Link>
                                     </p>
                                 </div>

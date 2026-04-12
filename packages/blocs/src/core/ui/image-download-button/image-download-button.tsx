@@ -1,43 +1,42 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseImageDownloadConfig } from "@/core/ui/image-download-button"
+import type { UseImageDownloadConfig } from '@/core/ui/image-download-button';
 import {
-  IMAGE_DOWNLOAD_SHORTCUT_KEY,
-  useImageDownload,
-} from "@/core/ui/image-download-button"
+    IMAGE_DOWNLOAD_SHORTCUT_KEY,
+    useImageDownload,
+} from '@/core/ui/image-download-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface ImageDownloadButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseImageDownloadConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseImageDownloadConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function ImageDownloadShortcutBadge({
-  shortcutKeys = IMAGE_DOWNLOAD_SHORTCUT_KEY,
+    shortcutKeys = IMAGE_DOWNLOAD_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -47,78 +46,82 @@ export function ImageDownloadShortcutBadge({
  * For custom button implementations, use the `useImageDownload` hook instead.
  */
 export const ImageDownloadButton = forwardRef<
-  HTMLButtonElement,
-  ImageDownloadButtonProps
+    HTMLButtonElement,
+    ImageDownloadButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onDownloaded,
-      resolveFileUrl,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            text,
+            hideWhenUnavailable = false,
+            onDownloaded,
+            resolveFileUrl,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canDownload,
+            handleDownload,
+            label,
+            shortcutKeys,
+            Icon,
+        } = useImageDownload({
+            editor,
+            hideWhenUnavailable,
+            onDownloaded,
+            resolveFileUrl,
+        });
+
+        const handleClick = useCallback(
+            async (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                await handleDownload();
+            },
+            [handleDownload, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                data-active-state="off"
+                role="button"
+                tabIndex={-1}
+                disabled={!canDownload}
+                data-disabled={!canDownload}
+                aria-label={label}
+                tooltip={label}
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <ImageDownloadShortcutBadge
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      canDownload,
-      handleDownload,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useImageDownload({
-      editor,
-      hideWhenUnavailable,
-      onDownloaded,
-      resolveFileUrl,
-    })
+);
 
-    const handleClick = useCallback(
-      async (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        await handleDownload()
-      },
-      [handleDownload, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        data-active-state="off"
-        role="button"
-        tabIndex={-1}
-        disabled={!canDownload}
-        data-disabled={!canDownload}
-        aria-label={label}
-        tooltip={label}
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <ImageDownloadShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-ImageDownloadButton.displayName = "ImageDownloadButton"
+ImageDownloadButton.displayName = 'ImageDownloadButton';

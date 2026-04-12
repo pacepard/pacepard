@@ -39,7 +39,7 @@ const uploadHandler: RequestHandler = asyncHandler(
 
             const files: IFile[] = [];
             const formFields: Partial<IFIleUpload> = {};
-            
+
             // Initialize req.body if it doesn't exist
             if (!req.body) {
                 req.body = {};

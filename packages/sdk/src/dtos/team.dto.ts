@@ -1,6 +1,5 @@
 interface Team {
-    
-       // time stamps
+    // time stamps
     createdAt: Date;
     updatedAt: Date;
     _version: number;

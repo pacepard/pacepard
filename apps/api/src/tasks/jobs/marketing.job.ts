@@ -13,7 +13,10 @@ import { IUserDoc } from '../../modules/users/user/user.interface';
  * This is the worker function that processes marketing jobs from the queue
  * Follows the Bull pattern with Job and DoneCallback
  */
-const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> => {
+const processMarketingJob = async (
+    job: Job,
+    done: DoneCallback,
+): Promise<void> => {
     const { type, message } = job.data;
 
     logger.log({
@@ -29,7 +32,7 @@ const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> 
             const startOfWeek = new Date(now);
             startOfWeek.setUTCDate(now.getUTCDate() - now.getUTCDay() + 1); // Monday
             startOfWeek.setUTCHours(0, 0, 0, 0);
-            
+
             const endOfWeek = new Date(startOfWeek);
             endOfWeek.setUTCDate(startOfWeek.getUTCDate() + 6); // Sunday
             endOfWeek.setUTCHours(23, 59, 59, 999);
@@ -58,7 +61,12 @@ const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> 
                     label: 'marketing-job',
                     type: 'info',
                 });
-                return done(null, { success: true, type, message, hackathonsCount: 0 });
+                return done(null, {
+                    success: true,
+                    type,
+                    message,
+                    hackathonsCount: 0,
+                });
             }
 
             // Get all users (talents) to send the email to
@@ -73,9 +81,11 @@ const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> 
                 },
             );
 
-            const users = Array.isArray(usersResult.data) 
-                ? usersResult.data 
-                : (usersResult.data ? [usersResult.data] : []);
+            const users = Array.isArray(usersResult.data)
+                ? usersResult.data
+                : usersResult.data
+                  ? [usersResult.data]
+                  : [];
 
             if (users.length === 0) {
                 logger.log({
@@ -83,11 +93,17 @@ const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> 
                     label: 'marketing-job',
                     type: 'info',
                 });
-                return done(null, { success: true, type, message, usersCount: 0 });
+                return done(null, {
+                    success: true,
+                    type,
+                    message,
+                    usersCount: 0,
+                });
             }
 
             // Prepare email metadata
-            const hackathonLink = process.env.FRONTEND_URL || 'https://pacepard.com';
+            const hackathonLink =
+                process.env.FRONTEND_URL || 'https://pacepard.com';
             const allHackathonsLink = `${hackathonLink}/hackathons`;
 
             // Send email to each user
@@ -106,7 +122,8 @@ const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> 
                         driver: EmailService.ZEPTOMAIL,
                         template: EmailTemplate.HACKATHONS_THIS_WEEK,
                         options: {
-                            subject: 'Hackathons Happening This Week - Don\'t Miss Out!',
+                            subject:
+                                "Hackathons Happening This Week - Don't Miss Out!",
                         },
                         metadata: {
                             hackathons: hackathons.map((h: any) => ({
@@ -130,7 +147,9 @@ const processMarketingJob = async (job: Job, done: DoneCallback): Promise<void> 
                     errorCount++;
                     logger.log({
                         data: `Failed to send marketing email to user ${user.email}: ${
-                            error instanceof Error ? error.message : String(error)
+                            error instanceof Error
+                                ? error.message
+                                : String(error)
                         }`,
                         label: 'marketing-job',
                         type: 'error',

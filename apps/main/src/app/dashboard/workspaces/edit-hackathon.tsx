@@ -5,4 +5,3 @@ const EditHackathon = () => {
 };
 
 export default EditHackathon;
-

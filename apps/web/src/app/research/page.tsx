@@ -5,7 +5,8 @@ import ComingSoonPanel from '@/components/shared/coming-soon';
 
 export const metadata: Metadata = {
     title: `Research | ${siteConfig.title}`,
-    description: 'Research hub and resources from Pacepard. This area is coming soon.',
+    description:
+        'Research hub and resources from Pacepard. This area is coming soon.',
 };
 
 export default function ResearchPage() {

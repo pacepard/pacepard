@@ -1,22 +1,26 @@
-import { cn } from "@/utils/base-helper"
-import "@/core/primitives/input/input.scss"
+import { cn } from '@/utils/base-helper';
+import '@/core/primitives/input/input.scss';
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
-  return (
-    <input type={type} className={cn("tiptap-input", className)} {...props} />
-  )
+function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
+    return (
+        <input
+            type={type}
+            className={cn('tiptap-input', className)}
+            {...props}
+        />
+    );
 }
 
 function InputGroup({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div className={cn("tiptap-input-group", className)} {...props}>
-      {children}
-    </div>
-  )
+    className,
+    children,
+    ...props
+}: React.ComponentProps<'div'>) {
+    return (
+        <div className={cn('tiptap-input-group', className)} {...props}>
+            {children}
+        </div>
+    );
 }
 
-export { Input, InputGroup }
+export { Input, InputGroup };

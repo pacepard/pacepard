@@ -56,9 +56,7 @@ class GuestRepository extends RepositoryService<IGuestDoc> {
      * @returns {Promise<IResult>}
      * @description Create a new guest
      */
-    public async createGuest(
-        guestData: Partial<IGuestDoc>,
-    ): Promise<IResult> {
+    public async createGuest(guestData: Partial<IGuestDoc>): Promise<IResult> {
         return this.create(guestData);
     }
 

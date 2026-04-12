@@ -156,9 +156,7 @@ export const createAdmin: RequestHandler = asyncHandler(
         const result = await adminService.createAdmin(data);
 
         if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code, []),
-            );
+            return next(new ErrorResponse(result.message, result.code, []));
         }
 
         res.status(201).json({
@@ -279,10 +277,7 @@ export const getAdmins: RequestHandler = asyncHandler(
         }
 
         // Get admins from service
-        const result = await adminService.getAdmins(
-            filters as any,
-            options,
-        );
+        const result = await adminService.getAdmins(filters as any, options);
 
         if (result.error) {
             return next(
@@ -463,11 +458,7 @@ export const deleteAdmin: RequestHandler = asyncHandler(
  */
 export const acceptAdminInvitation: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const {
-            token,
-            email,
-            password,
-        }: AcceptAdminInvitationDTO = req.body;
+        const { token, email, password }: AcceptAdminInvitationDTO = req.body;
 
         // Validate input
         if (!token || !email || !password) {
@@ -546,11 +537,7 @@ export const acceptAdminInvitation: RequestHandler = asyncHandler(
             const createUserResult = await userRepository.createUser(payload);
             if (createUserResult.error) {
                 return next(
-                    new ErrorResponse(
-                        createUserResult.message,
-                        500,
-                        [],
-                    ),
+                    new ErrorResponse(createUserResult.message, 500, []),
                 );
             }
 
@@ -563,7 +550,10 @@ export const acceptAdminInvitation: RequestHandler = asyncHandler(
             await authService.encryptUserPassword(user, password);
 
             // Attach ADMIN role
-            const attachRole = await roleService.attachRole(user, UserType.ADMIN);
+            const attachRole = await roleService.attachRole(
+                user,
+                UserType.ADMIN,
+            );
             if (!attachRole.error && attachRole.data) {
                 let updatedUser = attachRole.data as IUserDoc;
 
@@ -627,9 +617,7 @@ export const setAdminPassword: RequestHandler = asyncHandler(
         const { password }: SetAdminPasswordDTO = req.body;
 
         if (!password) {
-            return next(
-                new ErrorResponse('Password is required', 400, []),
-            );
+            return next(new ErrorResponse('Password is required', 400, []));
         }
 
         // Validate password
@@ -655,7 +643,11 @@ export const setAdminPassword: RequestHandler = asyncHandler(
         // Check if user is an admin
         if (user.userType !== UserType.ADMIN) {
             return next(
-                new ErrorResponse('This endpoint is only for admin users', 403, []),
+                new ErrorResponse(
+                    'This endpoint is only for admin users',
+                    403,
+                    [],
+                ),
             );
         }
 
@@ -702,11 +694,7 @@ export const revokeAdminInvitation: RequestHandler = asyncHandler(
 
         if (revokeResult.error) {
             return next(
-                new ErrorResponse(
-                    revokeResult.message,
-                    revokeResult.code,
-                    [],
-                ),
+                new ErrorResponse(revokeResult.message, revokeResult.code, []),
             );
         }
 

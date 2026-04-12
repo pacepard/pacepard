@@ -11,7 +11,10 @@ import { PacepardAPI } from '@/config/pacepard';
 import { createWorkspaceSchema, CreateWorkspaceFormValues } from './validation';
 import { cn } from '@pacepard/ui/lib/utils';
 import { UserType, UserContext, storage as storageUtil } from '@pacepard/sdk';
-import { getOnboardingRoute, getPreviousOnboardingRoute } from '@/utils/onboarding';
+import {
+    getOnboardingRoute,
+    getPreviousOnboardingRoute,
+} from '@/utils/onboarding';
 
 const CreateWorkspace: React.FC = () => {
     const navigate = useNavigate();
@@ -46,8 +49,9 @@ const CreateWorkspace: React.FC = () => {
             }
 
             try {
-                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
-                
+                const statusResponse =
+                    await PacepardAPI.user.getOnboardingStatus();
+
                 if (statusResponse.error === false && statusResponse.data) {
                     const statusData = statusResponse.data as any;
                     const step = statusData.step || 0;
@@ -57,7 +61,10 @@ const CreateWorkspace: React.FC = () => {
                     // Allow only if step >= 3 and step < 4
                     if (step < 3) {
                         // User hasn't completed previous step yet, redirect to previous step
-                        const previousRoute = getPreviousOnboardingRoute(step, userTypeFromStatus);
+                        const previousRoute = getPreviousOnboardingRoute(
+                            step,
+                            userTypeFromStatus,
+                        );
                         if (previousRoute) {
                             navigate(previousRoute);
                         } else {
@@ -65,7 +72,11 @@ const CreateWorkspace: React.FC = () => {
                         }
                     } else if (step >= 4) {
                         // User has already completed this step, redirect to next step
-                        const route = getOnboardingRoute(step, status, userTypeFromStatus);
+                        const route = getOnboardingRoute(
+                            step,
+                            status,
+                            userTypeFromStatus,
+                        );
                         navigate(route);
                     }
                 }
@@ -91,9 +102,15 @@ const CreateWorkspace: React.FC = () => {
                 if (firstName || lastName) {
                     defaultName = `${firstName} ${lastName}`.trim();
                 }
-            } else if (userType === UserType.BUSINESS || userType === UserType.USER) {
+            } else if (
+                userType === UserType.BUSINESS ||
+                userType === UserType.USER
+            ) {
                 // For business users: use business name from storage first, then fall back to user context
-                defaultName = storageUtil.fetchLegacy('businessName') || userObj?.businessName || '';
+                defaultName =
+                    storageUtil.fetchLegacy('businessName') ||
+                    userObj?.businessName ||
+                    '';
             }
 
             if (defaultName) {
@@ -110,11 +127,14 @@ const CreateWorkspace: React.FC = () => {
         return 'N';
     };
 
-    const handleImageChange = async (file: File | null, preview: string | null) => {
+    const handleImageChange = async (
+        file: File | null,
+        preview: string | null,
+    ) => {
         setSelectedFile(file);
         setSelectedIcon(preview);
         setUploadedImageData(null); // Reset uploaded data
-        
+
         // Upload image immediately when file is selected
         if (file) {
             // Verify user is authenticated before uploading
@@ -122,7 +142,8 @@ const CreateWorkspace: React.FC = () => {
             if (!token) {
                 setError('root', {
                     type: 'server',
-                    message: 'You must be logged in to upload images. Please refresh the page.',
+                    message:
+                        'You must be logged in to upload images. Please refresh the page.',
                 });
                 setSelectedFile(null);
                 setSelectedIcon(null);
@@ -133,16 +154,19 @@ const CreateWorkspace: React.FC = () => {
             try {
                 const formData = new FormData();
                 formData.append('file', file);
-                
-                const response = await PacepardAPI.storage.uploadImage(formData);
-                
+
+                const response =
+                    await PacepardAPI.storage.uploadImage(formData);
+
                 if (response.error === false && response.data) {
                     setUploadedImageData(response.data);
                     console.log('Image uploaded successfully:', response.data);
                 } else {
                     setError('root', {
                         type: 'server',
-                        message: response.message || 'Failed to upload image. Please try again.',
+                        message:
+                            response.message ||
+                            'Failed to upload image. Please try again.',
                     });
                     // Clear the selected file if upload fails
                     setSelectedFile(null);
@@ -167,7 +191,7 @@ const CreateWorkspace: React.FC = () => {
         try {
             // If image was uploaded, use the uploaded image data; otherwise send as JSON
             let payload: any;
-            
+
             if (uploadedImageData) {
                 // Use the uploaded image data (already uploaded via storage API)
                 // Pass s3Key and fileName as expected by workspace service
@@ -187,9 +211,13 @@ const CreateWorkspace: React.FC = () => {
                 };
             }
 
-            const response = await PacepardAPI.workspace.createWorkspace(payload);
+            const response =
+                await PacepardAPI.workspace.createWorkspace(payload);
 
-            if (response.error === false && (response.status === 200 || response.status === 201)) {
+            if (
+                response.error === false &&
+                (response.status === 200 || response.status === 201)
+            ) {
                 // Navigate first, then show optional success toast
                 navigate('/onboarding/invite-teammates');
                 // Optional: Show success toast after navigation (non-blocking, informational)
@@ -198,7 +226,9 @@ const CreateWorkspace: React.FC = () => {
                 // Use React Hook Form's setError for server errors (inline, not toast)
                 setError('root', {
                     type: 'server',
-                    message: response.message || 'Failed to create workspace. Please try again.',
+                    message:
+                        response.message ||
+                        'Failed to create workspace. Please try again.',
                 });
             }
         } catch (error) {
@@ -260,8 +290,8 @@ const CreateWorkspace: React.FC = () => {
                 <div className="space-y-6">
                     {/* Workspace Name */}
                     <div className="space-y-2">
-                        <Label 
-                            htmlFor="workspace-name" 
+                        <Label
+                            htmlFor="workspace-name"
                             className="text-[14px] font-medium text-foreground leading-[1.5]"
                         >
                             Workspace name
@@ -284,7 +314,8 @@ const CreateWorkspace: React.FC = () => {
                                 'focus-visible:ring-1 focus-visible:ring-[#2383e2]/20',
                                 'focus-visible:shadow-[0_0_0_3px_rgba(35,131,226,0.1)]',
                                 'placeholder:text-[#9b9a97] dark:placeholder:text-[#6e6d69]',
-                                errors.name && 'border-[#eb5757] dark:border-[#eb5757] focus-visible:border-[#eb5757] focus-visible:ring-[#eb5757]/20'
+                                errors.name &&
+                                    'border-[#eb5757] dark:border-[#eb5757] focus-visible:border-[#eb5757] focus-visible:ring-[#eb5757]/20',
                             )}
                         />
                         <p className="text-[13px] leading-[1.5] text-[#787774] dark:text-[#9b9a97]">
@@ -304,13 +335,20 @@ const CreateWorkspace: React.FC = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 pt-2">
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-3 pt-2"
+                >
                     <Button
                         type="submit"
                         disabled={isSubmitting || isUploading}
                         className="w-full h-10"
                     >
-                        {isSubmitting ? 'Creating...' : isUploading ? 'Uploading...' : 'Continue'}
+                        {isSubmitting
+                            ? 'Creating...'
+                            : isUploading
+                              ? 'Uploading...'
+                              : 'Continue'}
                     </Button>
                     <button
                         type="button"

@@ -1,4 +1,4 @@
-import { IRoute } from "@/utils/interfaces";
+import { IRoute } from '@/utils/interfaces';
 
 const onboardRoutes: Array<IRoute> = [
     {
@@ -21,7 +21,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-basic-user',
@@ -32,7 +32,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-user-info',
@@ -43,7 +43,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-business-user',
@@ -54,7 +54,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-business-info',
@@ -65,7 +65,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-create-workspace',
@@ -76,7 +76,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-invite-teammates',
@@ -87,7 +87,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-status',
@@ -98,7 +98,7 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
             {
                 name: 'onboard-complete',
@@ -109,24 +109,22 @@ const onboardRoutes: Array<IRoute> = [
                 action: 'navigate',
                 isAuth: false,
                 params: [],
-                content: { collapsed: false, backButton: true }
+                content: { collapsed: false, backButton: true },
             },
-          
-        ]
+        ],
     },
-]
+];
 
 export default onboardRoutes;
 
-
-            // {
-            //     name: 'onboard-submit-info',
-            //     title: 'Step 2: Basic Info',
-            //     displayTitle: 'Basic Information',
-            //     iconName: 'user-circle',
-            //     url: '/submit-info',
-            //     action: 'navigate',
-            //     isAuth: false,
-            //     params: [],
-            //     content: { collapsed: false, backButton: true }
-            // },
+// {
+//     name: 'onboard-submit-info',
+//     title: 'Step 2: Basic Info',
+//     displayTitle: 'Basic Information',
+//     iconName: 'user-circle',
+//     url: '/submit-info',
+//     action: 'navigate',
+//     isAuth: false,
+//     params: [],
+//     content: { collapsed: false, backButton: true }
+// },

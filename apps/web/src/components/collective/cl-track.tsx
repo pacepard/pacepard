@@ -1,8 +1,8 @@
-import Image from 'next/image'
+import Image from 'next/image';
 
-import { cn } from '@pacepard/ui/lib/utils'
+import { cn } from '@pacepard/ui/lib/utils';
 
-export type TrackCardVariant = 'mint' | 'pale'
+export type TrackCardVariant = 'mint' | 'pale';
 
 const VARIANT = {
     mint: {
@@ -14,45 +14,58 @@ const VARIANT = {
     pale: {
         surface: '#F1F5F4',
         gold: '#ffdc5d',
-        article: 'rounded border border-zinc-900/[0.06] shadow-sm shadow-zinc-950/5',
+        article:
+            'rounded border border-zinc-900/[0.06] shadow-sm shadow-zinc-950/5',
     },
-} as const
+} as const;
 
-export type TrackBadgeVariant = 'ai' | 'live' | 'growth' | 'product'
+export type TrackBadgeVariant = 'ai' | 'live' | 'growth' | 'product';
 
-export type TrackBadge = { label: string; variant: TrackBadgeVariant }
+export type TrackBadge = { label: string; variant: TrackBadgeVariant };
 
 function badgeClass(variant: TrackCardVariant, b: TrackBadgeVariant): string {
-    const shapePale = 'rounded-md px-3 py-1'
-    const shapeMint = 'rounded-md px-2.5 py-1'
-    const shape = variant === 'pale' ? shapePale : shapeMint
-    const type = 'text-xs font-semibold tracking-wide'
+    const shapePale = 'rounded-md px-3 py-1';
+    const shapeMint = 'rounded-md px-2.5 py-1';
+    const shape = variant === 'pale' ? shapePale : shapeMint;
+    const type = 'text-xs font-semibold tracking-wide';
 
     if (b === 'live') {
-        return cn(shape, type, variant === 'pale' ? 'text-zinc-900' : 'text-white')
+        return cn(
+            shape,
+            type,
+            variant === 'pale' ? 'text-zinc-900' : 'text-white',
+        );
     }
     if (variant === 'pale') {
-        return cn(shapePale, type, 'bg-[#E8EEEC] text-zinc-900 ring-1 ring-zinc-900/8')
+        return cn(
+            shapePale,
+            type,
+            'bg-[#E8EEEC] text-zinc-900 ring-1 ring-zinc-900/8',
+        );
     }
     if (b === 'ai') {
-        return cn(shapeMint, type, 'bg-white text-zinc-950')
+        return cn(shapeMint, type, 'bg-white text-zinc-950');
     }
-    return cn(shapeMint, type, 'bg-white/90 text-zinc-900 ring-1 ring-zinc-900/10')
+    return cn(
+        shapeMint,
+        type,
+        'bg-white/90 text-zinc-900 ring-1 ring-zinc-900/10',
+    );
 }
 
 export type TrackCardProps = {
-    badges: TrackBadge[]
-    title: string
-    description: string
-    instructor: string
-    imageSrc: string
-    imageAlt: string
+    badges: TrackBadge[];
+    title: string;
+    description: string;
+    instructor: string;
+    imageSrc: string;
+    imageAlt: string;
     /** Product/tool logos shown in a horizontal row below the instructor name. */
-    productImages?: { src: string; alt?: string }[]
-    className?: string
+    productImages?: { src: string; alt?: string }[];
+    className?: string;
     /** `pale` matches the masonry grid reference (light card + brighter gold). */
-    cardVariant?: TrackCardVariant
-}
+    cardVariant?: TrackCardVariant;
+};
 
 export function TrackCard({
     badges,
@@ -65,17 +78,27 @@ export function TrackCard({
     className,
     cardVariant = 'mint',
 }: TrackCardProps) {
-    const v = VARIANT[cardVariant]
+    const v = VARIANT[cardVariant];
 
     return (
-        <article className={cn('relative overflow-hidden ', v.article, className)}>
-            <div className="relative px-6 pb-28 pt-6" style={{ backgroundColor: v.surface }}>
+        <article
+            className={cn('relative overflow-hidden ', v.article, className)}
+        >
+            <div
+                className="relative px-6 pb-28 pt-6"
+                style={{ backgroundColor: v.surface }}
+            >
                 <div className="flex flex-wrap items-center gap-2">
                     {badges.map((b) => (
                         <span
                             key={`${b.label}-${b.variant}`}
                             className={badgeClass(cardVariant, b.variant)}
-                            style={b.variant === 'live' ? { backgroundColor: v.gold } : undefined}>
+                            style={
+                                b.variant === 'live'
+                                    ? { backgroundColor: v.gold }
+                                    : undefined
+                            }
+                        >
                             {b.label}
                         </span>
                     ))}
@@ -86,11 +109,16 @@ export function TrackCard({
                 <p className="mt-3 max-w-[178px] text-pretty text-[13px] leading-relaxed text-zinc-900 sm:max-w-none sm:text-sm md:text-[15px]">
                     {description}
                 </p>
-                <p className="mt-6 text-sm font-semibold text-zinc-950 sm:text-base">{instructor}</p>
+                <p className="mt-6 text-sm font-semibold text-zinc-950 sm:text-base">
+                    {instructor}
+                </p>
                 {productImages && productImages.length > 0 && (
                     <div className="mt-3 flex flex-row items-center gap-3">
                         {productImages.map((img, i) => (
-                            <div key={i} className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
+                            <div
+                                key={i}
+                                className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full"
+                            >
                                 <Image
                                     src={img.src}
                                     alt={img.alt ?? ''}
@@ -123,10 +151,10 @@ export function TrackCard({
                 </div>
             </div>
         </article>
-    )
+    );
 }
 
-const INSTRUCTOR_IMAGE = '/blocks/damola.png'
+const INSTRUCTOR_IMAGE = '/blocks/damola.png';
 
 export default function SingleTrack() {
     return (
@@ -149,5 +177,5 @@ export default function SingleTrack() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
+import { useRef } from 'react';
 
-import { ABOUT_SECTION_HEADLINE } from "@/_data/pacepard/about";
-import { TimelineContent } from "@/components/ui/timeline-animation";
+import { ABOUT_SECTION_HEADLINE } from '@/_data/pacepard/about';
+import { TimelineContent } from '@/components/ui/timeline-animation';
 
 export default function AboutSection() {
     const heroRef = useRef<HTMLDivElement>(null);
@@ -13,21 +13,21 @@ export default function AboutSection() {
         visible: (i: number) => ({
             y: 0,
             opacity: 1,
-            filter: "blur(0px)",
+            filter: 'blur(0px)',
             transition: {
                 delay: i * 1.5,
                 duration: 0.7,
             },
         }),
         hidden: {
-            filter: "blur(10px)",
+            filter: 'blur(10px)',
             y: 40,
             opacity: 0,
         },
     };
     const textVariants = {
         visible: (i: number) => ({
-            filter: "blur(0px)",
+            filter: 'blur(0px)',
             opacity: 1,
             transition: {
                 delay: i * 0.3,
@@ -35,7 +35,7 @@ export default function AboutSection() {
             },
         }),
         hidden: {
-            filter: "blur(10px)",
+            filter: 'blur(10px)',
             opacity: 0,
         },
     };
@@ -56,17 +56,23 @@ export default function AboutSection() {
                         >
                             {ABOUT_SECTION_HEADLINE.map((segment, index) => {
                                 // Determine which animation variants to use
-                                const variantsToUse = segment.isHighlighted ? textVariants : revealVariants;
-                                
-                                // The initial animationNum for the whole block is 0. 
-                                // We use the segment's defined animationNum for highlighted words (1, 2, 3), 
+                                const variantsToUse = segment.isHighlighted
+                                    ? textVariants
+                                    : revealVariants;
+
+                                // The initial animationNum for the whole block is 0.
+                                // We use the segment's defined animationNum for highlighted words (1, 2, 3),
                                 // and fallback to the container's 0 for continuous text.
-                                const animationIndex = segment.isHighlighted ? segment.animationNum : 0;
+                                const animationIndex = segment.isHighlighted
+                                    ? segment.animationNum
+                                    : 0;
 
                                 return (
                                     <TimelineContent
                                         key={index}
-                                        as={segment.as as keyof HTMLElementTagNameMap}
+                                        as={
+                                            segment.as as keyof HTMLElementTagNameMap
+                                        }
                                         animationNum={animationIndex as number}
                                         timelineRef={heroRef}
                                         customVariants={variantsToUse}

@@ -1,43 +1,42 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Tiptap UI ---
-import type { UseCodeBlockConfig } from "@/core/ui/code-block-button"
+import type { UseCodeBlockConfig } from '@/core/ui/code-block-button';
 import {
-  CODE_BLOCK_SHORTCUT_KEY,
-  useCodeBlock,
-} from "@/core/ui/code-block-button"
+    CODE_BLOCK_SHORTCUT_KEY,
+    useCodeBlock,
+} from '@/core/ui/code-block-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface CodeBlockButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseCodeBlockConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseCodeBlockConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function CodeBlockShortcutBadge({
-  shortcutKeys = CODE_BLOCK_SHORTCUT_KEY,
+    shortcutKeys = CODE_BLOCK_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -46,78 +45,82 @@ export function CodeBlockShortcutBadge({
  * For custom button implementations, use the `useCodeBlock` hook instead.
  */
 export const CodeBlockButton = forwardRef<
-  HTMLButtonElement,
-  CodeBlockButtonProps
+    HTMLButtonElement,
+    CodeBlockButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onToggled,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            text,
+            hideWhenUnavailable = false,
+            onToggled,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canToggle,
+            isActive,
+            handleToggle,
+            label,
+            shortcutKeys,
+            Icon,
+        } = useCodeBlock({
+            editor,
+            hideWhenUnavailable,
+            onToggled,
+        });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleToggle();
+            },
+            [handleToggle, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                data-active-state={isActive ? 'on' : 'off'}
+                role="button"
+                disabled={!canToggle}
+                data-disabled={!canToggle}
+                tabIndex={-1}
+                aria-label={label}
+                aria-pressed={isActive}
+                tooltip="Code Block"
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <CodeBlockShortcutBadge
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      canToggle,
-      isActive,
-      handleToggle,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useCodeBlock({
-      editor,
-      hideWhenUnavailable,
-      onToggled,
-    })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleToggle()
-      },
-      [handleToggle, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        data-active-state={isActive ? "on" : "off"}
-        role="button"
-        disabled={!canToggle}
-        data-disabled={!canToggle}
-        tabIndex={-1}
-        aria-label={label}
-        aria-pressed={isActive}
-        tooltip="Code Block"
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <CodeBlockShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-CodeBlockButton.displayName = "CodeBlockButton"
+CodeBlockButton.displayName = 'CodeBlockButton';

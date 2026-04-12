@@ -1,46 +1,39 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Tiptap UI ---
-import type {
-  Level,
-  UseHeadingConfig,
-} from "@/core/ui/heading-button"
-import {
-  HEADING_SHORTCUT_KEYS,
-  useHeading,
-} from "@/core/ui/heading-button"
+import type { Level, UseHeadingConfig } from '@/core/ui/heading-button';
+import { HEADING_SHORTCUT_KEYS, useHeading } from '@/core/ui/heading-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 export interface HeadingButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseHeadingConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseHeadingConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function HeadingShortcutBadge({
-  level,
-  shortcutKeys = HEADING_SHORTCUT_KEYS[level],
+    level,
+    shortcutKeys = HEADING_SHORTCUT_KEYS[level],
 }: {
-  level: Level
-  shortcutKeys?: string
+    level: Level;
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -49,77 +42,82 @@ export function HeadingShortcutBadge({
  * For custom button implementations, use the `useHeading` hook instead.
  */
 export const HeadingButton = forwardRef<HTMLButtonElement, HeadingButtonProps>(
-  (
-    {
-      editor: providedEditor,
-      level,
-      text,
-      hideWhenUnavailable = false,
-      onToggled,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            level,
+            text,
+            hideWhenUnavailable = false,
+            onToggled,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canToggle,
+            isActive,
+            handleToggle,
+            label,
+            Icon,
+            shortcutKeys,
+        } = useHeading({
+            editor,
+            level,
+            hideWhenUnavailable,
+            onToggled,
+        });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleToggle();
+            },
+            [handleToggle, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                data-active-state={isActive ? 'on' : 'off'}
+                role="button"
+                tabIndex={-1}
+                disabled={!canToggle}
+                data-disabled={!canToggle}
+                aria-label={label}
+                aria-pressed={isActive}
+                tooltip={label}
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <HeadingShortcutBadge
+                                level={level}
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      canToggle,
-      isActive,
-      handleToggle,
-      label,
-      Icon,
-      shortcutKeys,
-    } = useHeading({
-      editor,
-      level,
-      hideWhenUnavailable,
-      onToggled,
-    })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleToggle()
-      },
-      [handleToggle, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        data-active-state={isActive ? "on" : "off"}
-        role="button"
-        tabIndex={-1}
-        disabled={!canToggle}
-        data-disabled={!canToggle}
-        aria-label={label}
-        aria-pressed={isActive}
-        tooltip={label}
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <HeadingShortcutBadge level={level} shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-HeadingButton.displayName = "HeadingButton"
+HeadingButton.displayName = 'HeadingButton';

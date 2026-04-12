@@ -5,29 +5,34 @@ import { useNavigate } from 'react-router';
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
-    const [currentStep, setCurrentStep] = useState<'email' | 'otp' | 'success'>('email');
+    const [currentStep, setCurrentStep] = useState<'email' | 'otp' | 'success'>(
+        'email',
+    );
 
     const getStepContent = () => {
         switch (currentStep) {
             case 'email':
                 return {
-                    title: "Forgot your password?",
-                    description: "Enter your email address and we'll send you a verification code",
+                    title: 'Forgot your password?',
+                    description:
+                        "Enter your email address and we'll send you a verification code",
                 };
             case 'otp':
                 return {
-                    title: "Enter verification code",
-                    description: "Check your email for the 6-digit verification code",
+                    title: 'Enter verification code',
+                    description:
+                        'Check your email for the 6-digit verification code',
                 };
             case 'success':
                 return {
-                    title: "",
-                    description: "",
+                    title: '',
+                    description: '',
                 };
             default:
                 return {
-                    title: "Forgot your password?",
-                    description: "Enter your email address and we'll send you a verification code",
+                    title: 'Forgot your password?',
+                    description:
+                        "Enter your email address and we'll send you a verification code",
                 };
         }
     };

@@ -18,13 +18,15 @@ export const inviteTeammatesSchema = z
     .refine(
         (data) => {
             // At least one non-empty email is required
-            const nonEmptyEmails = data.emails.filter((e) => e.email.trim() !== '');
+            const nonEmptyEmails = data.emails.filter(
+                (e) => e.email.trim() !== '',
+            );
             return nonEmptyEmails.length > 0;
         },
         {
             message: 'At least one email address is required',
             path: ['emails'],
-        }
+        },
     );
 
 export type InviteTeammatesFormValues = z.infer<typeof inviteTeammatesSchema>;

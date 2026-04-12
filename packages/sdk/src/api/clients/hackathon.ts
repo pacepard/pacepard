@@ -12,7 +12,13 @@ class HackathonAPI {
     constructor(private axiosService: AxiosService) {}
 
     getHackathons(payload: GetHackathonsDTO): Promise<IAPIResponse> {
-        const { limit = 25, page = 1, sort = '-createdAt', workspaceId, status } = payload;
+        const {
+            limit = 25,
+            page = 1,
+            sort = '-createdAt',
+            workspaceId,
+            status,
+        } = payload;
         const params = new URLSearchParams({
             limit: String(limit),
             page: String(page),

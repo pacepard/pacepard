@@ -130,10 +130,14 @@ class TeamService {
         }
 
         // Handle image upload if provided
-        let imageData: { fileName: string; s3Key: string } | undefined = undefined;
+        let imageData: { fileName: string; s3Key: string } | undefined =
+            undefined;
         if (data.image) {
             // If image is an IFile with stream, upload it
-            if (typeof data.image === 'object' && (data.image as IFile).stream) {
+            if (
+                typeof data.image === 'object' &&
+                (data.image as IFile).stream
+            ) {
                 const uploadResult = await storageService.uploadFile(
                     data.image as IFile,
                 );
@@ -141,8 +145,7 @@ class TeamService {
                 if (uploadResult.error) {
                     result.error = true;
                     result.code = uploadResult.code || 500;
-                    result.message =
-                        uploadResult.message;
+                    result.message = uploadResult.message;
                     return result;
                 }
 
@@ -161,7 +164,8 @@ class TeamService {
                 } else {
                     result.error = true;
                     result.code = 400;
-                    result.message = 'Image s3Key is required for already uploaded images';
+                    result.message =
+                        'Image s3Key is required for already uploaded images';
                     return result;
                 }
             } else if (typeof data.image === 'string') {
@@ -321,8 +325,7 @@ class TeamService {
         if (findResult.error) {
             result.error = true;
             result.code = findResult.code || 500;
-            result.message =
-                findResult.message;
+            result.message = findResult.message;
             return result;
         }
 
@@ -374,7 +377,10 @@ class TeamService {
         for (const key of allowed) {
             // Use type assertion that UpdateTeamDTO has the same keys as allowed (subset of ITeamDoc)
             // Skip keys of 'allowed' if they do not exist in updateData (i.e., not part of UpdateTeamDTO)
-            if (Object.prototype.hasOwnProperty.call(updateData, key) && updateData[key as keyof UpdateTeamDTO] !== undefined) {
+            if (
+                Object.prototype.hasOwnProperty.call(updateData, key) &&
+                updateData[key as keyof UpdateTeamDTO] !== undefined
+            ) {
                 const value = updateData[key as keyof UpdateTeamDTO];
                 (finalUpdate as Partial<ITeamDoc>)[key] =
                     typeof value === 'string' ? value.trim() : value;
@@ -395,7 +401,10 @@ class TeamService {
             }
 
             // If image is an IFile with stream, upload it
-            if (typeof updateData.image === 'object' && (updateData.image as IFile).stream) {
+            if (
+                typeof updateData.image === 'object' &&
+                (updateData.image as IFile).stream
+            ) {
                 const uploadResult = await storageService.uploadFile(
                     updateData.image as IFile,
                 );
@@ -403,8 +412,7 @@ class TeamService {
                 if (uploadResult.error) {
                     result.error = true;
                     result.code = uploadResult.code || 500;
-                    result.message =
-                        uploadResult.message;
+                    result.message = uploadResult.message;
                     return result;
                 }
 
@@ -423,7 +431,8 @@ class TeamService {
                 } else {
                     result.error = true;
                     result.code = 400;
-                    result.message = 'Image s3Key is required for already uploaded images';
+                    result.message =
+                        'Image s3Key is required for already uploaded images';
                     return result;
                 }
             } else if (typeof updateData.image === 'string') {
@@ -435,7 +444,6 @@ class TeamService {
                 return result;
             }
         }
-
 
         const updateResult = await teamRepository.updateTeam(
             teamId,
@@ -501,8 +509,7 @@ class TeamService {
             if (deleteResult.error) {
                 result.error = true;
                 result.code = deleteResult.code || 500;
-                result.message =
-                    deleteResult.message;
+                result.message = deleteResult.message;
                 return result;
             }
 
@@ -626,8 +633,7 @@ class TeamService {
         if (updateResult.error) {
             result.error = true;
             result.code = updateResult.code || 500;
-            result.message =
-                updateResult.message;
+            result.message = updateResult.message;
             return result;
         }
 
@@ -767,8 +773,7 @@ class TeamService {
         if (updateResult.error) {
             result.error = true;
             result.code = updateResult.code || 500;
-            result.message =
-                updateResult.message;
+            result.message = updateResult.message;
             return result;
         }
 
@@ -871,8 +876,7 @@ class TeamService {
             if (addResult.error) {
                 result.error = true;
                 result.code = addResult.code || 500;
-                result.message =
-                    addResult.message;
+                result.message = addResult.message;
                 return result;
             }
 
@@ -938,7 +942,11 @@ class TeamService {
         }
 
         // Get user ID
-        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+        const userId =
+            typeof user === 'string'
+                ? user
+                : (user as IUserDoc)?._id?.toString() ||
+                  (user as IUserDoc)?.id?.toString();
 
         if (!userId) {
             result.error = true;

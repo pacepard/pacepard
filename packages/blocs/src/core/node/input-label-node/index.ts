@@ -1,1 +1,1 @@
-export { InputLabelNode } from "./input-label-node-extension"
+export { InputLabelNode } from './input-label-node-extension';

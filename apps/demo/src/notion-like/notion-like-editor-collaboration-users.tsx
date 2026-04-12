@@ -1,81 +1,87 @@
-import { getAvatar, usePacepardEditor } from "@pacepard/blocs"
+import { getAvatar, usePacepardEditor } from '@pacepard/blocs';
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarImage,
-} from "@pacepard/blocs/primitives/avatar"
-import { Button, ButtonGroup } from "@pacepard/blocs/primitives/button"
+    Avatar,
+    AvatarFallback,
+    AvatarGroup,
+    AvatarImage,
+} from '@pacepard/blocs/primitives/avatar';
+import { Button, ButtonGroup } from '@pacepard/blocs/primitives/button';
+import { Card, CardBody, CardItemGroup } from '@pacepard/blocs/primitives/card';
 import {
-  Card,
-  CardBody,
-  CardItemGroup,
-} from "@pacepard/blocs/primitives/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@pacepard/blocs/primitives/dropdown-menu"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@pacepard/blocs/primitives/dropdown-menu';
 
-type User = { clientId: number; id: string; name: string; color: string }
+type User = { clientId: number; id: string; name: string; color: string };
 
 export function CollaborationUsers() {
-  const { editor } = usePacepardEditor()
+    const { editor } = usePacepardEditor();
 
-  if (!editor || !editor.storage.collaborationCaret) {
-    return null
-  }
+    if (!editor || !editor.storage.collaborationCaret) {
+        return null;
+    }
 
-  const collaborationUsers: User[] =
-    editor.storage.collaborationCaret.users.map((user: { clientId: number; name?: string; color?: string }) => ({
-      clientId: user.clientId,
-      id: String(user.clientId),
-      name: user.name || "Anonymous",
-      color: user.color || "#000000",
-    }))
+    const collaborationUsers: User[] =
+        editor.storage.collaborationCaret.users.map(
+            (user: { clientId: number; name?: string; color?: string }) => ({
+                clientId: user.clientId,
+                id: String(user.clientId),
+                name: user.name || 'Anonymous',
+                color: user.color || '#000000',
+            }),
+        );
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          data-style="ghost"
-          data-appearance="subdued"
-          style={{ padding: "0.25rem" }}
-        >
-          <AvatarGroup maxVisible={3}>
-            {collaborationUsers.map((user) => (
-              <Avatar key={user.id} userColor={user.color}>
-                <AvatarImage src={getAvatar(user.name)} />
-                <AvatarFallback>{user.name?.toUpperCase()[0]}</AvatarFallback>
-              </Avatar>
-            ))}
-          </AvatarGroup>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <Card>
-          <CardBody>
-            <CardItemGroup>
-              <ButtonGroup>
-                {collaborationUsers.map((user) => (
-                  <DropdownMenuItem key={user.id} asChild>
-                    <Button data-style="ghost">
-                      <Avatar userColor={user.color}>
-                        <AvatarImage src={getAvatar(user.name)} />
-                        <AvatarFallback>
-                          {user.name?.toUpperCase()[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="tiptap-button-text">{user.name}</span>
-                    </Button>
-                  </DropdownMenuItem>
-                ))}
-              </ButtonGroup>
-            </CardItemGroup>
-          </CardBody>
-        </Card>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    data-style="ghost"
+                    data-appearance="subdued"
+                    style={{ padding: '0.25rem' }}
+                >
+                    <AvatarGroup maxVisible={3}>
+                        {collaborationUsers.map((user) => (
+                            <Avatar key={user.id} userColor={user.color}>
+                                <AvatarImage src={getAvatar(user.name)} />
+                                <AvatarFallback>
+                                    {user.name?.toUpperCase()[0]}
+                                </AvatarFallback>
+                            </Avatar>
+                        ))}
+                    </AvatarGroup>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <Card>
+                    <CardBody>
+                        <CardItemGroup>
+                            <ButtonGroup>
+                                {collaborationUsers.map((user) => (
+                                    <DropdownMenuItem key={user.id} asChild>
+                                        <Button data-style="ghost">
+                                            <Avatar userColor={user.color}>
+                                                <AvatarImage
+                                                    src={getAvatar(user.name)}
+                                                />
+                                                <AvatarFallback>
+                                                    {
+                                                        user.name?.toUpperCase()[0]
+                                                    }
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <span className="tiptap-button-text">
+                                                {user.name}
+                                            </span>
+                                        </Button>
+                                    </DropdownMenuItem>
+                                ))}
+                            </ButtonGroup>
+                        </CardItemGroup>
+                    </CardBody>
+                </Card>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }

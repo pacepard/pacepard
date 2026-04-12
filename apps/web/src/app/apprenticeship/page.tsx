@@ -14,10 +14,10 @@ const Collective = () => {
             <ClHero />
 
             <ClTracks />
-            
+
             <Background>
-            <PPApprenticeship/>
-            <PPAgentUsecases />
+                <PPApprenticeship />
+                <PPAgentUsecases />
                 {/* <PPCollective /> */}
                 {/* <ClUsecase /> */}
                 <ClTestimonials />

@@ -29,7 +29,11 @@ hackathonRoutes.delete('/:id', Protect, deleteHackathon);
 hackathonRoutes.post('/:id/members', Protect, addMember);
 hackathonRoutes.delete('/:id/members/:userId', Protect, removeMember);
 hackathonRoutes.post('/:id/invite', Protect, inviteMember);
-hackathonRoutes.post('/:id/invite/shareable-link', Protect, generateHackathonShareableLink);
+hackathonRoutes.post(
+    '/:id/invite/shareable-link',
+    Protect,
+    generateHackathonShareableLink,
+);
 
 // Hackathon mentor/judge invitation routes
 hackathonRoutes.post('/:id/invite/mentor', Protect, inviteMentor);

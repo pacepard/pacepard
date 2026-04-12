@@ -1,20 +1,20 @@
-import { TrackCard, type TrackBadge } from '@/components/collective/cl-track'
+import { TrackCard, type TrackBadge } from '@/components/collective/cl-track';
 
-import { cn } from '@pacepard/ui/lib/utils'
+import { cn } from '@pacepard/ui/lib/utils';
 
-const MENTOR_IMAGE = '/hack-ogbomoso/mentor.png'
+const MENTOR_IMAGE = '/hack-ogbomoso/mentor.png';
 
 type TrackEntry = {
-    badges: TrackBadge[]
-    title: string
-    description: string
-    instructor: string
-    imageAlt: string
+    badges: TrackBadge[];
+    title: string;
+    description: string;
+    instructor: string;
+    imageAlt: string;
     /** Defaults to `/hack-ogbomoso/mentor.png` when omitted */
-    imageSrc?: string
+    imageSrc?: string;
     /** Product/tool logos shown in a horizontal row below the instructor name */
-    productImages?: { src: string; alt?: string }[]
-}
+    productImages?: { src: string; alt?: string }[];
+};
 
 /**
  * Columns left-to-right match the masonry reference: two cards per column.
@@ -24,7 +24,7 @@ const PRODUCT_IMAGES = [
     { src: '/blocks/cal.avif' },
     { src: '/blocks/go.png' },
     { src: '/blocks/terminal.png' },
-]
+];
 
 const TRACK_COLUMNS: TrackEntry[][] = [
     [
@@ -114,14 +114,14 @@ const TRACK_COLUMNS: TrackEntry[][] = [
             productImages: PRODUCT_IMAGES,
         },
     ],
-]
+];
 
 const COLUMN_STAGGER = [
     'lg:pt-[8rem]',
     'lg:pt-1',
     'lg:pt-12',
     'lg:pt-[6rem]',
-] as const
+] as const;
 
 export default function ClTracks() {
     return (
@@ -132,7 +132,11 @@ export default function ClTracks() {
                         {TRACK_COLUMNS.map((columnTracks, colIndex) => (
                             <div
                                 key={colIndex}
-                                className={cn('flex flex-col gap-7', COLUMN_STAGGER[colIndex])}>
+                                className={cn(
+                                    'flex flex-col gap-7',
+                                    COLUMN_STAGGER[colIndex],
+                                )}
+                            >
                                 {columnTracks.map((track) => (
                                     <TrackCard
                                         key={track.title}
@@ -141,7 +145,9 @@ export default function ClTracks() {
                                         title={track.title}
                                         description={track.description}
                                         instructor={track.instructor}
-                                        imageSrc={track.imageSrc ?? MENTOR_IMAGE}
+                                        imageSrc={
+                                            track.imageSrc ?? MENTOR_IMAGE
+                                        }
                                         imageAlt={track.imageAlt}
                                         productImages={track.productImages}
                                         className="w-full"
@@ -153,5 +159,5 @@ export default function ClTracks() {
                 </div>
             </div>
         </section>
-    )
+    );
 }

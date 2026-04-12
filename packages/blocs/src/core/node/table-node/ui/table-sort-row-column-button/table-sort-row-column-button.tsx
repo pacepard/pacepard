@@ -1,23 +1,22 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseTableSortRowColumnConfig } from "@/core/node/table-node/ui/table-sort-row-column-button"
-import { useTableSortRowColumn } from "@/core/node/table-node/ui/table-sort-row-column-button"
+import type { UseTableSortRowColumnConfig } from '@/core/node/table-node/ui/table-sort-row-column-button';
+import { useTableSortRowColumn } from '@/core/node/table-node/ui/table-sort-row-column-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
 
 export interface TableSortRowColumnButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseTableSortRowColumnConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
+    extends Omit<ButtonProps, 'type'>, UseTableSortRowColumnConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
 }
 
 /**
@@ -26,73 +25,75 @@ export interface TableSortRowColumnButtonProps
  * For custom button implementations, use the `useTableSortRowColumn` hook instead.
  */
 export const TableSortRowColumnButton = forwardRef<
-  HTMLButtonElement,
-  TableSortRowColumnButtonProps
+    HTMLButtonElement,
+    TableSortRowColumnButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      index,
-      orientation,
-      direction,
-      hideWhenUnavailable = false,
-      onSorted,
-      text,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            index,
+            orientation,
+            direction,
+            hideWhenUnavailable = false,
+            onSorted,
+            text,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const { isVisible, handleSort, label, canSortRowColumn, Icon } =
+            useTableSortRowColumn({
+                editor,
+                index,
+                orientation,
+                direction,
+                hideWhenUnavailable,
+                onSorted,
+            });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleSort();
+            },
+            [handleSort, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                disabled={!canSortRowColumn}
+                data-style="ghost"
+                data-active-state="off"
+                data-disabled={!canSortRowColumn}
+                role="button"
+                tabIndex={-1}
+                aria-label={label}
+                aria-pressed={false}
+                tooltip={label}
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const { isVisible, handleSort, label, canSortRowColumn, Icon } =
-      useTableSortRowColumn({
-        editor,
-        index,
-        orientation,
-        direction,
-        hideWhenUnavailable,
-        onSorted,
-      })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleSort()
-      },
-      [handleSort, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        disabled={!canSortRowColumn}
-        data-style="ghost"
-        data-active-state="off"
-        data-disabled={!canSortRowColumn}
-        role="button"
-        tabIndex={-1}
-        aria-label={label}
-        aria-pressed={false}
-        tooltip={label}
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-TableSortRowColumnButton.displayName = "TableSortRowColumnButton"
+TableSortRowColumnButton.displayName = 'TableSortRowColumnButton';

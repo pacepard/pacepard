@@ -43,7 +43,11 @@ workspaceRoutes.delete('/:id/members/:userId', Protect, removeMember);
 // Workspace member invitation routes
 workspaceRoutes.post('/:id/invite', Protect, inviteMember);
 workspaceRoutes.post('/:id/invite/bulk', Protect, bulkInviteMembers);
-workspaceRoutes.post('/:id/invite/shareable-link', Protect, generateShareableLink);
+workspaceRoutes.post(
+    '/:id/invite/shareable-link',
+    Protect,
+    generateShareableLink,
+);
 
 // Workspace join by shareable link (public route, but requires authentication)
 workspaceRoutes.post('/invite/join', Protect, joinWorkspaceByLink);

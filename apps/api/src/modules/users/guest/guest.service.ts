@@ -1,6 +1,13 @@
 import { Types } from 'mongoose';
 import { dateToday, IDateToday } from '@btffamily/pacitude';
-import { IGuestDoc, GuestTypeEnum, MentorContextType, GuestVisibiltyEnum, GuestStatusEnum, GuestInviteStatus } from './guest.interface';
+import {
+    IGuestDoc,
+    GuestTypeEnum,
+    MentorContextType,
+    GuestVisibiltyEnum,
+    GuestStatusEnum,
+    GuestInviteStatus,
+} from './guest.interface';
 import { CreateGuestDTO, UpdateGuestDTO } from './guest.dto';
 import guestRepository from './guest.repository';
 import { IResult, IFile } from '../../../utils/interfaces.util';
@@ -60,7 +67,8 @@ class GuestService {
         if (!firstName || !lastName || !email || !type) {
             result.error = true;
             result.code = 400;
-            result.message = 'First name, last name, email, and type are required';
+            result.message =
+                'First name, last name, email, and type are required';
             return result;
         }
 
@@ -77,10 +85,7 @@ class GuestService {
             email: email.toLowerCase(),
             type: type,
         });
-        if (
-            existingGuestResult.error === false &&
-            existingGuestResult.data
-        ) {
+        if (existingGuestResult.error === false && existingGuestResult.data) {
             result.error = true;
             result.code = 400;
             result.message = `Guest profile already exists with this email and type (${type})`;
@@ -177,14 +182,18 @@ class GuestService {
                 const imageWithS3Key = guestImage as any;
                 if (imageWithS3Key.s3Key) {
                     imageData = {
-                        fileName: imageWithS3Key.fileName || guestImage.fileName || '',
+                        fileName:
+                            imageWithS3Key.fileName ||
+                            guestImage.fileName ||
+                            '',
                         s3Key: imageWithS3Key.s3Key || '',
                     };
                 } else if (guestImage.fileName) {
                     // If only fileName is provided, we can't use it without s3Key
                     result.error = true;
                     result.code = 400;
-                    result.message = 'Image s3Key is required for already uploaded images';
+                    result.message =
+                        'Image s3Key is required for already uploaded images';
                     return result;
                 }
             }
@@ -195,7 +204,7 @@ class GuestService {
         // If no user exists, create profile-only guest (external, no account)
         let linkedUser: IUserDoc | null = null;
         const existingUser = await User.findOne({ email: email.toLowerCase() });
-        
+
         if (existingUser) {
             linkedUser = existingUser;
         }
@@ -239,7 +248,7 @@ class GuestService {
             return result;
         }
 
-        result.message = linkedUser 
+        result.message = linkedUser
             ? `Guest profile (${type}) created successfully with linked user account`
             : `Guest profile (${type}) created successfully (profile-only, no user account)`;
         result.code = 201;
@@ -259,17 +268,14 @@ class GuestService {
             data: {},
         };
 
-        const guestResult = await guestRepository.findGuest(
-            guestId,
-            [
-                { path: 'user' },
-                { path: 'hackathons' },
-                { path: 'entries' },
-                { path: 'projects' },
-                { path: 'workspace' },
-                { path: 'invitedBy' },
-            ],
-        );
+        const guestResult = await guestRepository.findGuest(guestId, [
+            { path: 'user' },
+            { path: 'hackathons' },
+            { path: 'entries' },
+            { path: 'projects' },
+            { path: 'workspace' },
+            { path: 'invitedBy' },
+        ]);
 
         if (guestResult.error || !guestResult.data) {
             result.error = true;
@@ -304,10 +310,7 @@ class GuestService {
             data: [],
         };
 
-        const guestsResult = await guestRepository.getGuests(
-            filter,
-            options,
-        );
+        const guestsResult = await guestRepository.getGuests(filter, options);
 
         if (guestsResult.error) {
             result.error = true;
@@ -354,30 +357,42 @@ class GuestService {
         if (data.mentorType && guest.type !== GuestTypeEnum.MENTOR) {
             result.error = true;
             result.code = 400;
-            result.message = 'mentorType can only be set when guest type is MENTOR';
+            result.message =
+                'mentorType can only be set when guest type is MENTOR';
             return result;
         }
 
         const updateData: Partial<IGuestDoc> = {};
-        if (data.firstName !== undefined) updateData.firstName = data.firstName.trim();
-        if (data.lastName !== undefined) updateData.lastName = data.lastName.trim();
+        if (data.firstName !== undefined)
+            updateData.firstName = data.firstName.trim();
+        if (data.lastName !== undefined)
+            updateData.lastName = data.lastName.trim();
         if (data.bio !== undefined) updateData.bio = data.bio;
         if (data.jobTitle !== undefined) updateData.jobTitle = data.jobTitle;
-        if (data.organization !== undefined) updateData.organization = data.organization;
-        if (data.areasOfExpertise !== undefined) updateData.areasOfExpertise = data.areasOfExpertise;
-        if (data.yearsOfExperience !== undefined) updateData.yearsOfExperience = data.yearsOfExperience;
+        if (data.organization !== undefined)
+            updateData.organization = data.organization;
+        if (data.areasOfExpertise !== undefined)
+            updateData.areasOfExpertise = data.areasOfExpertise;
+        if (data.yearsOfExperience !== undefined)
+            updateData.yearsOfExperience = data.yearsOfExperience;
         if (data.status !== undefined) updateData.status = data.status;
-        if (data.visibility !== undefined) updateData.visibility = data.visibility;
-        if (data.mentorType !== undefined && guest.type === GuestTypeEnum.MENTOR) {
+        if (data.visibility !== undefined)
+            updateData.visibility = data.visibility;
+        if (
+            data.mentorType !== undefined &&
+            guest.type === GuestTypeEnum.MENTOR
+        ) {
             updateData.mentorType = data.mentorType;
         }
 
         // Handle socials update
         if (data.linkedInUrl || data.githubUrl || data.website) {
             const socials = [...(guest.socials || [])];
-            
+
             if (data.linkedInUrl) {
-                const linkedInIndex = socials.findIndex(s => s.name === 'linkedin');
+                const linkedInIndex = socials.findIndex(
+                    (s) => s.name === 'linkedin',
+                );
                 if (linkedInIndex >= 0) {
                     socials[linkedInIndex] = {
                         name: 'linkedin',
@@ -393,7 +408,9 @@ class GuestService {
                 }
             }
             if (data.githubUrl) {
-                const githubIndex = socials.findIndex(s => s.name === 'github');
+                const githubIndex = socials.findIndex(
+                    (s) => s.name === 'github',
+                );
                 if (githubIndex >= 0) {
                     socials[githubIndex] = {
                         name: 'github',
@@ -409,7 +426,9 @@ class GuestService {
                 }
             }
             if (data.website) {
-                const websiteIndex = socials.findIndex(s => s.name === 'website');
+                const websiteIndex = socials.findIndex(
+                    (s) => s.name === 'website',
+                );
                 if (websiteIndex >= 0) {
                     socials[websiteIndex] = {
                         name: 'website',
@@ -463,14 +482,18 @@ class GuestService {
                 const imageWithS3Key = data.guestImage as any;
                 if (imageWithS3Key.s3Key) {
                     updateData.image = {
-                        fileName: imageWithS3Key.fileName || data.guestImage.fileName || '',
+                        fileName:
+                            imageWithS3Key.fileName ||
+                            data.guestImage.fileName ||
+                            '',
                         s3Key: imageWithS3Key.s3Key || '',
                     };
                 } else if (data.guestImage.fileName) {
                     // If only fileName is provided, we can't use it without s3Key
                     result.error = true;
                     result.code = 400;
-                    result.message = 'Image s3Key is required for already uploaded images';
+                    result.message =
+                        'Image s3Key is required for already uploaded images';
                     return result;
                 }
             }

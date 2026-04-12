@@ -1,7 +1,7 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Check, Minus } from 'lucide-react'
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Check, Minus } from 'lucide-react';
 
 const plans = [
     {
@@ -25,17 +25,26 @@ const plans = [
         period: '/month',
         cta: 'Select Plan',
         link: 'https://paystack.shop/pay/pacepard-membership',
-
     },
-]
+];
 
 // https://paystack.shop/pay/pacepard-membership
 
-const planKeys = ['basic', 'pro', 'team'] as const
+const planKeys = ['basic', 'pro', 'team'] as const;
 
 const features = [
-    { name: 'Learning quests', basic: 'unlimited', pro: 'Unlimited', team: 'Unlimited' },
-    { name: 'Growth quests', basic: 'unlimited', pro: 'Unlimited', team: 'Unlimited' },
+    {
+        name: 'Learning quests',
+        basic: 'unlimited',
+        pro: 'Unlimited',
+        team: 'Unlimited',
+    },
+    {
+        name: 'Growth quests',
+        basic: 'unlimited',
+        pro: 'Unlimited',
+        team: 'Unlimited',
+    },
     { name: 'Live Sessions', basic: true, pro: true, team: true },
     { name: 'Group mentor calls', basic: true, pro: true, team: true },
     { name: '1-on-1 mentor calls', basic: false, pro: true, team: true },
@@ -44,16 +53,20 @@ const features = [
     { name: 'Rotate across projects', basic: false, pro: false, team: true },
     { name: 'Pacepard talent pool', basic: true, pro: true, team: true },
     { name: 'Pacepard community', basic: true, pro: true, team: true },
-        // { name: 'API Calls', basic: '10K/mo', pro: '100K/mo', team: '1M/mo' },
+    // { name: 'API Calls', basic: '10K/mo', pro: '100K/mo', team: '1M/mo' },
     // { name: 'Team Members', basic: '1', pro: '5', team: 'Unlimited' },
     // { name: 'Priority Support', basic: 'Email', pro: 'Priority', team: 'Dedicated' },
-]
+];
 
 function FeatureValue({ value }: { value: string | boolean }) {
     if (typeof value === 'boolean') {
-        return value ? <Check className="text-primary size-4 shrink-0" /> : <Minus className="text-muted-foreground size-4 shrink-0" />
+        return value ? (
+            <Check className="text-primary size-4 shrink-0" />
+        ) : (
+            <Minus className="text-muted-foreground size-4 shrink-0" />
+        );
     }
-    return <span className="text-foreground">{value}</span>
+    return <span className="text-foreground">{value}</span>;
 }
 
 export default function Comparator() {
@@ -61,53 +74,81 @@ export default function Comparator() {
         <section className="bg-background @container py-24">
             <div className="mx-auto max-w-4xl px-6">
                 <div className="text-center">
-                    <h2 className="text-balance text-4xl font-regular">Compare Plans</h2>
-                    <p className="text-muted-foreground mx-auto mt-4 max-w-md text-balance">Find the perfect plan that matches your needs.</p>
+                    <h2 className="text-balance text-4xl font-regular">
+                        Compare Plans
+                    </h2>
+                    <p className="text-muted-foreground mx-auto mt-4 max-w-md text-balance">
+                        Find the perfect plan that matches your needs.
+                    </p>
                 </div>
 
                 <div className="mt-12 flex flex-col gap-6 md:hidden">
                     {plans.map((plan, planIndex) => {
-                        const key = planKeys[planIndex]!
+                        const key = planKeys[planIndex]!;
                         return (
                             <Card
                                 key={plan.name}
-                                className={`overflow-hidden ${plan.highlighted ? 'ring-primary/20 ring-2' : ''}`}>
-                                <div className={`flex flex-col border-b p-4 text-center ${plan.highlighted ? 'bg-primary/5' : ''}`}>
-                                    <p className="text-foreground font-medium">{plan.name}</p>
+                                className={`overflow-hidden ${plan.highlighted ? 'ring-primary/20 ring-2' : ''}`}
+                            >
+                                <div
+                                    className={`flex flex-col border-b p-4 text-center ${plan.highlighted ? 'bg-primary/5' : ''}`}
+                                >
+                                    <p className="text-foreground font-medium">
+                                        {plan.name}
+                                    </p>
                                     <p className="mt-1">
-                                        <span className="text-2xl font-medium">{plan.price}</span>
-                                        <span className="text-muted-foreground text-sm">{plan.period}</span>
+                                        <span className="text-2xl font-medium">
+                                            {plan.price}
+                                        </span>
+                                        <span className="text-muted-foreground text-sm">
+                                            {plan.period}
+                                        </span>
                                     </p>
                                 </div>
                                 <div className="flex flex-col divide-y">
                                     {features.map((feature) => {
-                                        const value = feature[key]
+                                        const value = feature[key];
                                         return (
                                             <div
                                                 key={feature.name}
-                                                className="flex items-center justify-between gap-4 px-4 py-3">
-                                                <span className="text-muted-foreground text-sm">{feature.name}</span>
+                                                className="flex items-center justify-between gap-4 px-4 py-3"
+                                            >
+                                                <span className="text-muted-foreground text-sm">
+                                                    {feature.name}
+                                                </span>
                                                 <div className="flex shrink-0 items-center justify-end">
-                                                    <FeatureValue value={value} />
+                                                    <FeatureValue
+                                                        value={value}
+                                                    />
                                                 </div>
                                             </div>
-                                        )
+                                        );
                                     })}
                                 </div>
-                                <div className={`flex flex-col border-t p-4 ${plan.highlighted ? 'bg-primary/5' : ''}`}>
+                                <div
+                                    className={`flex flex-col border-t p-4 ${plan.highlighted ? 'bg-primary/5' : ''}`}
+                                >
                                     <Button
                                         asChild
-                                        variant={plan.highlighted ? 'default' : 'outline'}
+                                        variant={
+                                            plan.highlighted
+                                                ? 'default'
+                                                : 'outline'
+                                        }
                                         size="sm"
-                                        className="w-full h-11">
-                                            <Link href={plan.link}
+                                        className="w-full h-11"
+                                    >
+                                        <Link
+                                            href={plan.link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                        >{plan.cta}</Link>
+                                        >
+                                            {plan.cta}
+                                        </Link>
                                     </Button>
                                 </div>
                             </Card>
-                        )
+                        );
                     })}
                 </div>
 
@@ -117,11 +158,18 @@ export default function Comparator() {
                         {plans.map((plan) => (
                             <div
                                 key={plan.name}
-                                className={`border-l p-4 text-center ${plan.highlighted ? 'bg-primary/5' : ''}`}>
-                                <p className="text-foreground font-medium">{plan.name}</p>
+                                className={`border-l p-4 text-center ${plan.highlighted ? 'bg-primary/5' : ''}`}
+                            >
+                                <p className="text-foreground font-medium">
+                                    {plan.name}
+                                </p>
                                 <p className="mt-1">
-                                    <span className="font-serif text-2xl font-medium">{plan.price}</span>
-                                    <span className="text-muted-foreground text-sm">{plan.period}</span>
+                                    <span className="font-serif text-2xl font-medium">
+                                        {plan.price}
+                                    </span>
+                                    <span className="text-muted-foreground text-sm">
+                                        {plan.period}
+                                    </span>
                                 </p>
                             </div>
                         ))}
@@ -129,17 +177,21 @@ export default function Comparator() {
                     {features.map((feature) => (
                         <div
                             key={feature.name}
-                            className="grid grid-cols-4 border-b last:border-b-0">
-                            <div className="text-muted-foreground p-4 text-sm">{feature.name}</div>
+                            className="grid grid-cols-4 border-b last:border-b-0"
+                        >
+                            <div className="text-muted-foreground p-4 text-sm">
+                                {feature.name}
+                            </div>
                             {planKeys.map((plan, idx) => {
-                                const value = feature[plan]
+                                const value = feature[plan];
                                 return (
                                     <div
                                         key={plan}
-                                        className={`flex items-center justify-center border-l p-4 text-sm ${idx === 1 ? 'bg-primary/5' : ''}`}>
+                                        className={`flex items-center justify-center border-l p-4 text-sm ${idx === 1 ? 'bg-primary/5' : ''}`}
+                                    >
                                         <FeatureValue value={value} />
                                     </div>
-                                )
+                                );
                             })}
                         </div>
                     ))}
@@ -148,16 +200,21 @@ export default function Comparator() {
                         {plans.map((plan) => (
                             <div
                                 key={plan.name}
-                                className={`border-l p-4 ${plan.highlighted ? 'bg-primary/5' : ''}`}>
+                                className={`border-l p-4 ${plan.highlighted ? 'bg-primary/5' : ''}`}
+                            >
                                 <Button
                                     asChild
-                                    variant={plan.highlighted ? 'default' : 'outline'}
+                                    variant={
+                                        plan.highlighted ? 'default' : 'outline'
+                                    }
                                     size="sm"
-                                    className="w-full">
+                                    className="w-full"
+                                >
                                     <Link
                                         href={plan.link}
                                         target="_blank"
-                                        rel="noopener noreferrer">
+                                        rel="noopener noreferrer"
+                                    >
                                         {plan.cta}
                                     </Link>
                                 </Button>
@@ -167,5 +224,5 @@ export default function Comparator() {
                 </Card>
             </div>
         </section>
-    )
+    );
 }

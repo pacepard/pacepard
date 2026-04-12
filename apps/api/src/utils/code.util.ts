@@ -96,7 +96,6 @@ export const genTeamCode = (): string => {
     return `tm-${year}-${code}`;
 };
 
-
 /**
  * @name genGuestCode
  * @description Generates a unique, standardized identification code for a guest.

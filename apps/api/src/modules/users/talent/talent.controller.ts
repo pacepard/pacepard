@@ -19,12 +19,7 @@ import userRepository from '../user/user.repository';
 import userService from '../user/user.service';
 import authService from '../../authentication/auth/auth.service';
 import redisWrapper from '../../../middlewares/redis.mdw';
-import {
-    PasswordType,
-    UserType,
-    IUserDoc,
-} from '../user/user.interface';
-
+import { PasswordType, UserType, IUserDoc } from '../user/user.interface';
 
 /**
  * @name inviteTalent
@@ -130,11 +125,7 @@ export const inviteTalent: RequestHandler = asyncHandler(
  */
 export const acceptTalentInvitation: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const {
-            token,
-            email,
-            password,
-        }: AcceptTalentInvitationDTO = req.body;
+        const { token, email, password }: AcceptTalentInvitationDTO = req.body;
 
         // Validate input
         if (!token || !email || !password) {
@@ -203,13 +194,7 @@ export const acceptTalentInvitation: RequestHandler = asyncHandler(
                     createdBy: invitedBy,
                 });
             } catch (error: any) {
-                return next(
-                    new ErrorResponse(
-                        error.message,
-                        500,
-                        [],
-                    ),
-                );
+                return next(new ErrorResponse(error.message, 500, []));
             }
         }
 
@@ -568,9 +553,7 @@ export const setTalentPassword: RequestHandler = asyncHandler(
         const { password }: SetTalentPasswordDTO = req.body;
 
         if (!password) {
-            return next(
-                new ErrorResponse('Password is required', 400, []),
-            );
+            return next(new ErrorResponse('Password is required', 400, []));
         }
 
         // Validate password
@@ -596,7 +579,11 @@ export const setTalentPassword: RequestHandler = asyncHandler(
         // Check if user is a talent
         if (user.userType !== UserType.TALENT) {
             return next(
-                new ErrorResponse('This endpoint is only for talent users', 403, []),
+                new ErrorResponse(
+                    'This endpoint is only for talent users',
+                    403,
+                    [],
+                ),
             );
         }
 
@@ -643,11 +630,7 @@ export const revokeTalentInvitation: RequestHandler = asyncHandler(
 
         if (revokeResult.error) {
             return next(
-                new ErrorResponse(
-                    revokeResult.message,
-                    revokeResult.code,
-                    [],
-                ),
+                new ErrorResponse(revokeResult.message, revokeResult.code, []),
             );
         }
 
@@ -656,9 +639,9 @@ export const revokeTalentInvitation: RequestHandler = asyncHandler(
             errors: [],
             data: {},
             message:
-                revokeResult.message || 'Talent invitation revoked successfully',
+                revokeResult.message ||
+                'Talent invitation revoked successfully',
             status: 200,
         });
     },
 );
-

@@ -1,27 +1,22 @@
-'use client'
+'use client';
 
-import { FC } from 'react'
+import { FC } from 'react';
 
-import Image from 'next/image'
+import Image from 'next/image';
 
-import { motion } from 'motion/react' // Import motion
-import { type LucideIcon } from 'lucide-react'
+import { motion } from 'motion/react'; // Import motion
+import { type LucideIcon } from 'lucide-react';
 
 interface IPersonaCard {
-    title?: string
-    image?: string
-    description?: string
-    bgColor?: string // Added for completeness, although not used in the return JSX
-    features?: { icon: LucideIcon, label: string }[] // Added for completeness
+    title?: string;
+    image?: string;
+    description?: string;
+    bgColor?: string; // Added for completeness, although not used in the return JSX
+    features?: { icon: LucideIcon; label: string }[]; // Added for completeness
 }
 
 const PersonaCard: FC<IPersonaCard> = (data) => {
-
-    const {
-        title,
-        description,
-        image,
-    } = data
+    const { title, description, image } = data;
 
     return (
         <motion.div // Use motion.div for animation/interaction
@@ -38,7 +33,6 @@ const PersonaCard: FC<IPersonaCard> = (data) => {
                         {description}
                     </p>
                 </div>
-
 
                 <div className="w-20 h-20 flex-shrink-0">
                     {image && (
@@ -57,7 +51,7 @@ const PersonaCard: FC<IPersonaCard> = (data) => {
                 {/* Assuming features would be rendered here in a complete component */}
             </div>
         </motion.div>
-    )
-}
+    );
+};
 
-export default PersonaCard
+export default PersonaCard;

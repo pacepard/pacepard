@@ -60,7 +60,8 @@ export const createEntry: RequestHandler = asyncHandler(
 export const getEntry: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
-        if (!id) return next(new ErrorResponse('Entry ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Entry ID is required', 400, []));
 
         const cacheKey = `entry:${id}`;
         const cacheTTL = 300; // 5 minutes
@@ -196,7 +197,8 @@ export const updateEntry: RequestHandler = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
-        if (!id) return next(new ErrorResponse('Entry ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Entry ID is required', 400, []));
 
         const entryResult = await entryRepository.findById(id);
         if (entryResult.error || !entryResult.data) {
@@ -245,7 +247,8 @@ export const deleteEntry: RequestHandler = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
-        if (!id) return next(new ErrorResponse('Entry ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Entry ID is required', 400, []));
 
         const entryResult = await entryRepository.findById(id);
         if (entryResult.error || !entryResult.data) {
@@ -290,7 +293,8 @@ export const addMember: RequestHandler = asyncHandler(
         const { id } = req.params;
         const { userId: memberUserId } = req.body;
 
-        if (!id) return next(new ErrorResponse('Entry ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Entry ID is required', 400, []));
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
@@ -338,7 +342,8 @@ export const removeMember: RequestHandler = asyncHandler(
 
         const { id, userId: memberUserId } = req.params;
 
-        if (!id) return next(new ErrorResponse('Entry ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Entry ID is required', 400, []));
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 

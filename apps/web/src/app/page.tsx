@@ -17,25 +17,24 @@ export default function Home() {
         <>
             <PPHeroSection />
 
-        
-                {/* <PPPersona /> */}
-                <Testimonials/>
-                {/* <Background> */}
-                <PPApprenticeship/>
-                {/* <PPCollective /> */}
+            {/* <PPPersona /> */}
+            <Testimonials />
+            {/* <Background> */}
+            <PPApprenticeship />
+            {/* <PPCollective /> */}
 
-                <ClTestimonials />
+            <ClTestimonials />
 
-               {/* <PPDivider /> */}
+            {/* <PPDivider /> */}
 
-               <PPFeatureShowcase/>
+            <PPFeatureShowcase />
 
-                {/* <PPGo /> */}
-                {/* <Testimonials dashedLineClassName="hidden" /> */}
-                
-                <PPCTA />
+            {/* <PPGo /> */}
+            {/* <Testimonials dashedLineClassName="hidden" /> */}
 
-                {/* <PPTestimonials /> */}
+            <PPCTA />
+
+            {/* <PPTestimonials /> */}
             {/* </Background> */}
         </>
     );

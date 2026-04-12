@@ -1,6 +1,10 @@
 import AxiosService from '@/api/core/axios';
 import { IAPIResponse } from '@/api/types';
-import { CreateWorkspaceDTO, GetWorkspaceDTO, UpdateWorkspaceDTO } from '@/dtos/workspace.dto';
+import {
+    CreateWorkspaceDTO,
+    GetWorkspaceDTO,
+    UpdateWorkspaceDTO,
+} from '@/dtos/workspace.dto';
 import { IListQuery } from '@/utils/interfaces';
 import { URL_WORKSPACE, URL_WORKSPACES } from '@/utils/path';
 
@@ -25,18 +29,16 @@ class WorkspaceAPI {
     }
 
     getWorkspaces(payload: IListQuery): Promise<IAPIResponse> {
-        
         const { limit, page, order } = payload;
         const q = `limit=${limit ? limit.toString() : 25}&page=${page ? page.toString() : 1}&order=${order ? order : 'desc'}`;
-        
+
         return this.axiosService.call({
             type: 'default',
             method: 'GET',
             path: `${URL_WORKSPACES}?${q}`,
             isAuth: true,
-            payload
+            payload,
         });
-        
     }
 
     createWorkspace(payload: CreateWorkspaceDTO): Promise<IAPIResponse> {
@@ -45,7 +47,7 @@ class WorkspaceAPI {
             method: 'POST',
             path: URL_WORKSPACE,
             isAuth: true,
-            payload
+            payload,
         });
     }
 
@@ -55,7 +57,7 @@ class WorkspaceAPI {
             method: 'PUT',
             path: URL_WORKSPACE,
             isAuth: true,
-            payload
+            payload,
         });
     }
 
@@ -67,7 +69,10 @@ class WorkspaceAPI {
      * @param {string} payload.email The email address of the member to invite.
      * @returns {Promise<IAPIResponse>} Server response.
      */
-    inviteMember(payload: { workspaceId: string; email: string }): Promise<IAPIResponse> {
+    inviteMember(payload: {
+        workspaceId: string;
+        email: string;
+    }): Promise<IAPIResponse> {
         return this.axiosService.call({
             type: 'default',
             method: 'POST',
@@ -88,7 +93,10 @@ class WorkspaceAPI {
      * @param {string[]} payload.emails Array of email addresses to invite.
      * @returns {Promise<IAPIResponse>} Server response with success/failure for each email.
      */
-    bulkInviteMembers(payload: { workspaceId: string; emails: string[] }): Promise<IAPIResponse> {
+    bulkInviteMembers(payload: {
+        workspaceId: string;
+        emails: string[];
+    }): Promise<IAPIResponse> {
         return this.axiosService.call({
             type: 'default',
             method: 'POST',

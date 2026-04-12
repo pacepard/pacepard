@@ -1,1 +1,1 @@
-export { InputTitleNode } from "./input-title-node-extension"
+export { InputTitleNode } from './input-title-node-extension';

@@ -8,7 +8,10 @@ import { InvitationStatus } from '../../modules/platform/Invitation/invitation.i
  * This is the worker function that processes invitation-related jobs from the queue
  * Follows the Bull pattern with Job and DoneCallback
  */
-const processInvitationJob = async (job: Job, done: DoneCallback): Promise<void> => {
+const processInvitationJob = async (
+    job: Job,
+    done: DoneCallback,
+): Promise<void> => {
     const { type } = job.data;
 
     logger.log({

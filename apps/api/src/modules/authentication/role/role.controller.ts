@@ -3,7 +3,13 @@ import asyncHandler from '../../../middlewares/async.mdw';
 import ErrorResponse from '../../../utils/error.util';
 import roleService from './role.service';
 import roleRepository from './role.repository';
-import { CreateRoleDTO, UpdateRoleDTO, AttachRoleDTO, AssignWorkspaceRoleDTO, AssignProjectRoleDTO } from './role.dto';
+import {
+    CreateRoleDTO,
+    UpdateRoleDTO,
+    AttachRoleDTO,
+    AssignWorkspaceRoleDTO,
+    AssignProjectRoleDTO,
+} from './role.dto';
 import redisWrapper from '../../../middlewares/redis.mdw';
 import userRepository from '../../users/user/user.repository';
 import { IUserDoc, UserType } from '../../users/user/user.interface';
@@ -336,42 +342,59 @@ export const assignWorkspaceRole: RequestHandler = asyncHandler(
 
         // Validate role enum
         if (!Object.values(WorkspaceMemberRole).includes(data.role)) {
-            return next(new ErrorResponse('Invalid workspace member role', 400, []));
+            return next(
+                new ErrorResponse('Invalid workspace member role', 400, []),
+            );
         }
 
         // Check if workspace exists
         const workspaceResult = await workspaceRepository.findById(workspaceId);
         if (workspaceResult.error || !workspaceResult.data) {
             return next(
-                new ErrorResponse('Workspace not found', workspaceResult.code || 404, []),
+                new ErrorResponse(
+                    'Workspace not found',
+                    workspaceResult.code || 404,
+                    [],
+                ),
             );
         }
 
         const workspace = workspaceResult.data as any;
-        
+
         // Check if user is already a member
         const existingMember = workspace.members?.find(
-            (m: any) => String(m.user) === data.userId || String(m.user?._id) === data.userId,
+            (m: any) =>
+                String(m.user) === data.userId ||
+                String(m.user?._id) === data.userId,
         );
         if (existingMember) {
             return next(
-                new ErrorResponse('User is already a member of this workspace', 400, []),
+                new ErrorResponse(
+                    'User is already a member of this workspace',
+                    400,
+                    [],
+                ),
             );
         }
 
         // Add member with role using $addToSet
-        const updateResult = await workspaceRepository.updateWorkspace(workspaceId, {
-            $addToSet: {
-                members: {
-                    user: new Types.ObjectId(data.userId),
-                    role: data.role,
-                    joinedAt: new Date(),
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                $addToSet: {
+                    members: {
+                        user: new Types.ObjectId(data.userId),
+                        role: data.role,
+                        joinedAt: new Date(),
+                    },
                 },
-            },
-        } as any);
+            } as any,
+        );
 
         if (updateResult.error) {
-            return next(new ErrorResponse(updateResult.message, updateResult.code, []));
+            return next(
+                new ErrorResponse(updateResult.message, updateResult.code, []),
+            );
         }
 
         // Invalidate cache
@@ -409,21 +432,30 @@ export const removeWorkspaceRole: RequestHandler = asyncHandler(
         const workspaceResult = await workspaceRepository.findById(workspaceId);
         if (workspaceResult.error || !workspaceResult.data) {
             return next(
-                new ErrorResponse('Workspace not found', workspaceResult.code || 404, []),
+                new ErrorResponse(
+                    'Workspace not found',
+                    workspaceResult.code || 404,
+                    [],
+                ),
             );
         }
 
         // Remove member using $pull
-        const updateResult = await workspaceRepository.updateWorkspace(workspaceId, {
-            $pull: {
-                members: {
-                    user: new Types.ObjectId(userId),
+        const updateResult = await workspaceRepository.updateWorkspace(
+            workspaceId,
+            {
+                $pull: {
+                    members: {
+                        user: new Types.ObjectId(userId),
+                    },
                 },
-            },
-        } as any);
+            } as any,
+        );
 
         if (updateResult.error) {
-            return next(new ErrorResponse(updateResult.message, updateResult.code, []));
+            return next(
+                new ErrorResponse(updateResult.message, updateResult.code, []),
+            );
         }
 
         // Invalidate cache
@@ -463,13 +495,21 @@ export const assignProjectRole: RequestHandler = asyncHandler(
 
         // Validate role enum
         if (!Object.values(ProjectMemberRole).includes(data.role)) {
-            return next(new ErrorResponse('Invalid project member role', 400, []));
+            return next(
+                new ErrorResponse('Invalid project member role', 400, []),
+            );
         }
 
         // Import project service dynamically to avoid circular dependency
-        const projectService = (await import('../../projects/project/project.service')).default;
-        
-        const result = await projectService.addMember(projectId, data.userId, data.role);
+        const projectService = (
+            await import('../../projects/project/project.service')
+        ).default;
+
+        const result = await projectService.addMember(
+            projectId,
+            data.userId,
+            data.role,
+        );
 
         if (result.error) {
             return next(new ErrorResponse(result.message, result.code, []));
@@ -507,8 +547,10 @@ export const removeProjectRole: RequestHandler = asyncHandler(
             return next(new ErrorResponse('User ID is required', 400, []));
 
         // Import project service dynamically to avoid circular dependency
-        const projectService = (await import('../../projects/project/project.service')).default;
-        
+        const projectService = (
+            await import('../../projects/project/project.service')
+        ).default;
+
         const result = await projectService.removeMember(projectId, userId);
 
         if (result.error) {

@@ -112,10 +112,14 @@ class TaskService {
         };
 
         // Handle image upload if provided
-        let imageData: { fileName: string; s3Key: string } | undefined = undefined;
+        let imageData: { fileName: string; s3Key: string } | undefined =
+            undefined;
         if (data.image) {
             // If image is an IFile with stream, upload it
-            if (typeof data.image === 'object' && (data.image as IFile).stream) {
+            if (
+                typeof data.image === 'object' &&
+                (data.image as IFile).stream
+            ) {
                 const uploadResult = await storageService.uploadFile(
                     data.image as IFile,
                 );
@@ -124,8 +128,7 @@ class TaskService {
                     return {
                         error: true,
                         code: uploadResult.code || 500,
-                        message:
-                            uploadResult.message,
+                        message: uploadResult.message,
                         data: {} as any,
                     };
                 }
@@ -146,7 +149,8 @@ class TaskService {
                     return {
                         error: true,
                         code: 400,
-                        message: 'Image s3Key is required for already uploaded images',
+                        message:
+                            'Image s3Key is required for already uploaded images',
                         data: {} as any,
                     };
                 }
@@ -417,7 +421,10 @@ class TaskService {
             }
 
             // If image is an IFile with stream, upload it
-            if (typeof updateData.image === 'object' && (updateData.image as IFile).stream) {
+            if (
+                typeof updateData.image === 'object' &&
+                (updateData.image as IFile).stream
+            ) {
                 const uploadResult = await storageService.uploadFile(
                     updateData.image as IFile,
                 );
@@ -425,8 +432,7 @@ class TaskService {
                 if (uploadResult.error) {
                     result.error = true;
                     result.code = uploadResult.code || 500;
-                    result.message =
-                        uploadResult.message;
+                    result.message = uploadResult.message;
                     return result;
                 }
 
@@ -445,7 +451,8 @@ class TaskService {
                 } else {
                     result.error = true;
                     result.code = 400;
-                    result.message = 'Image s3Key is required for already uploaded images';
+                    result.message =
+                        'Image s3Key is required for already uploaded images';
                     return result;
                 }
             } else if (typeof updateData.image === 'string') {

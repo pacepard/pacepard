@@ -18,7 +18,7 @@ const EditorContent = ({ component, title, back, sidebar }: IEditorLayout) => {
     const { sidebar: sidebarState } = userContext || {};
 
     const mainClasses = cn(
-        'dashboard-body min-h-screen flex flex-col flex-1 bg-background text-foreground'
+        'dashboard-body min-h-screen flex flex-col flex-1 bg-background text-foreground',
     );
 
     const wrapperClasses = 'mt-0 px-8 py-6 ';
@@ -39,14 +39,14 @@ const EditorLayout = (data: IEditorLayout) => {
 
     return (
         <>
-                <div className="flex h-screen w-full bg-background text-foreground">
-                    <EditorContent
-                        component={component}
-                        title={title}
-                        back={back}
-                        sidebar={sidebar}
-                    />
-                </div>
+            <div className="flex h-screen w-full bg-background text-foreground">
+                <EditorContent
+                    component={component}
+                    title={title}
+                    back={back}
+                    sidebar={sidebar}
+                />
+            </div>
             <Toaster />
         </>
     );
@@ -54,19 +54,17 @@ const EditorLayout = (data: IEditorLayout) => {
 
 export default EditorLayout;
 
+// hacakthon page =
+// analytics, entries, submissions, settings, etc.
+// the sidebar should be visible and collapsible
 
-// hacakthon page = 
-    // analytics, entries, submissions, settings, etc.
-    // the sidebar should be visible and collapsible
-
-// hackathon eidt page = 
-    // publish, draft, preview, delete, copy etc.
-    // share, invite team, version history
-    // Flow (list of forms)
-    // the sidebar should be be hidden
-
+// hackathon eidt page =
+// publish, draft, preview, delete, copy etc.
+// share, invite team, version history
+// Flow (list of forms)
+// the sidebar should be be hidden
 
 // editor page for the connected forms=
-    // back button
-    // save, draft, preview, delete, copy, etc.
-    // the sidebar should be hidden
+// back button
+// save, draft, preview, delete, copy, etc.
+// the sidebar should be hidden

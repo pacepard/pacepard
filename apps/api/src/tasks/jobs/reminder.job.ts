@@ -6,7 +6,10 @@ import logger from '../../utils/logger.util';
  * This is the worker function that processes reminder jobs from the queue
  * Follows the Bull pattern with Job and DoneCallback
  */
-const processReminderJob = async (job: Job, done: DoneCallback): Promise<void> => {
+const processReminderJob = async (
+    job: Job,
+    done: DoneCallback,
+): Promise<void> => {
     const { type, message } = job.data;
 
     logger.log({

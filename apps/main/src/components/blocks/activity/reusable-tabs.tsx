@@ -53,7 +53,7 @@ export function ReusableTabs({
                 <TabsList
                     className={cn(
                         'mb-3 h-auto gap-2 rounded-none border-b bg-transparent px-0 py-1 text-foreground',
-                        tabsListClassName
+                        tabsListClassName,
                     )}
                 >
                     {tabs.map((tab) => {
@@ -64,7 +64,7 @@ export function ReusableTabs({
                                 value={tab.value}
                                 className={cn(
                                     'after:-mb-1 relative after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 hover:bg-accent hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:hover:bg-accent data-[state=active]:after:bg-primary',
-                                    tabsTriggerClassName
+                                    tabsTriggerClassName,
                                 )}
                             >
                                 {IconComponent && (
@@ -80,7 +80,7 @@ export function ReusableTabs({
                                         className={cn(
                                             'ms-1.5',
                                             typeof tab.badge === 'number' &&
-                                                'min-w-5 bg-primary/15 px-1'
+                                                'min-w-5 bg-primary/15 px-1',
                                         )}
                                         variant={
                                             tab.badgeVariant ||

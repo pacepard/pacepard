@@ -11,10 +11,7 @@ const strongPasswordSchema = z
     .regex(/[0-9]/, 'Must contain number')
     .regex(/[^A-Za-z0-9]/, 'Must contain special character');
 
-const otpSchema = z
-    .string()
-    .length(6)
-    .regex(/^\d+$/);
+const otpSchema = z.string().length(6).regex(/^\d+$/);
 
 // Composite schemas
 export const registerSchema = z.object({

@@ -1,7 +1,3 @@
-
-
-
-
 // import Link from 'next/link'
 
 // import { Check } from 'lucide-react'
@@ -9,7 +5,6 @@
 // import { pricingHeader, plans } from '@/_data/pacepard/pricing'
 // import { Button } from '@/components/ui/button'
 // import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-
 
 // export default function Pricing() {
 //   return (

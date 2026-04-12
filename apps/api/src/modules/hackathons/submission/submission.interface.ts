@@ -15,8 +15,6 @@ export interface ISubmissionDoc extends Document {
 
     isCompleted: boolean;
     submittedAt: Date;
-    
-    
 
     // relationships
     respondent: IUserDoc | any; // user who submitted the submission

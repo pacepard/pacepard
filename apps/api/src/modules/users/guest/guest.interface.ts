@@ -23,13 +23,13 @@ export interface IGuestDoc extends Document {
     areasOfExpertise: Array<string>;
     yearsOfExperience: string;
     socials: Array<ISocials | any>;
-    
+
     image: {
         fileName: string;
         s3Key: string;
     };
 
-    type: GuestTypeEnum
+    type: GuestTypeEnum;
     visibility: GuestVisibiltyEnum;
     status: GuestStatusEnum;
     inviteStatus: GuestInviteStatus;
@@ -40,7 +40,6 @@ export interface IGuestDoc extends Document {
 
     // ownership
     invitedBy: IUserDoc | any;
-    
 
     settings: {
         // Additional settings can be added here
@@ -64,7 +63,7 @@ export interface IGuestDoc extends Document {
 export enum GuestTypeEnum {
     MENTOR = 'mentor',
     JUDGE = 'judge',
-    GUEST = 'guest'
+    GUEST = 'guest',
 }
 
 export enum MentorContextType {
@@ -73,7 +72,6 @@ export enum MentorContextType {
     PROJECT = 'project',
     HACKATHON = 'hackathon',
 }
-
 
 export interface ISocials {
     name: string;

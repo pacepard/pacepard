@@ -1,17 +1,16 @@
-import Link from "next/link"
+import Link from 'next/link';
 
-import { ChevronRight } from "lucide-react"
+import { ChevronRight } from 'lucide-react';
 
 const Partners = () => {
-
     return (
-                        
         <section className="bg-amber-100/50 dark:bg-background pb-16 pt-16 md:pb-32">
             <div className="group relative m-auto max-w-6xl px-6">
                 <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 duration-500 group-hover:scale-100 group-hover:opacity-100">
                     <Link
                         href="/"
-                        className="block text-sm duration-150 hover:opacity-75">
+                        className="block text-sm duration-150 hover:opacity-75"
+                    >
                         <span>Our Partners</span>
 
                         <ChevronRight className="ml-1 inline-block size-3" />
@@ -73,13 +72,11 @@ const Partners = () => {
                             height="16"
                             width="auto"
                         />
-                    </div>                    
-                </div> 
-
+                    </div>
+                </div>
             </div>
         </section>
+    );
+};
 
-    )
-}
-
-export default Partners
+export default Partners;

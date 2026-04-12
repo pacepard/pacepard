@@ -1,51 +1,54 @@
-import Link from "next/link"
+import Link from 'next/link';
 
-import VenueDateTime from "@/components/z-hack/containers/venue"
-import { Button } from "@/components/ui/button"
-import { TextEffect } from "@/components/ui/text-effect"
+import VenueDateTime from '@/components/z-hack/containers/venue';
+import { Button } from '@/components/ui/button';
+import { TextEffect } from '@/components/ui/text-effect';
 
 export default function Location() {
-  return (
-    <section className="bg-amber-100 dark:bg-neutral-900 py-20 px-6 md:px-16">
-      <div className="max-w-5xl mx-auto flex flex-col-reverse md:flex-row items-center md:items-start justify-between gap-20">
-        
-        {/* Left Section — Text + Button */}
-        <div className="flex-1 w-full text-left">
-          <TextEffect
-            per="line"
-            preset="fade-in-blur"
-            speedSegment={0.3}
-            delay={0.5}
-            as="p"
-            className="text-lg md:text-xl max-w-xl leading-relaxed"
-          >
-            {"These and more are the key areas around which the #HACK2025 solutions will be built. "}
-          </TextEffect>
+    return (
+        <section className="bg-amber-100 dark:bg-neutral-900 py-20 px-6 md:px-16">
+            <div className="max-w-5xl mx-auto flex flex-col-reverse md:flex-row items-center md:items-start justify-between gap-20">
+                {/* Left Section — Text + Button */}
+                <div className="flex-1 w-full text-left">
+                    <TextEffect
+                        per="line"
+                        preset="fade-in-blur"
+                        speedSegment={0.3}
+                        delay={0.5}
+                        as="p"
+                        className="text-lg md:text-xl max-w-xl leading-relaxed"
+                    >
+                        {
+                            'These and more are the key areas around which the #HACK2025 solutions will be built. '
+                        }
+                    </TextEffect>
 
-          <div className="mt-8">
-            <Button
-              asChild
-              size="lg"
-              className="rounded-md px-6 py-3 bg-brand text-black hover:bg-brand/90 transition-all"
-            >
-              <Link href="#link">
-                <span className="whitespace-nowrap">About Ennovate Lab</span>
-              </Link>
-            </Button>
-          </div>
-        </div>
+                    <div className="mt-8">
+                        <Button
+                            asChild
+                            size="lg"
+                            className="rounded-md px-6 py-3 bg-brand text-black hover:bg-brand/90 transition-all"
+                        >
+                            <Link href="#link">
+                                <span className="whitespace-nowrap">
+                                    About Ennovate Lab
+                                </span>
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
 
-        {/* Right Section — Venue + DateTime */}
-        <div className="flex-1 w-full md:text-right">
-          <VenueDateTime />
-        </div>
-      </div>
-    </section>
-  )
+                {/* Right Section — Venue + DateTime */}
+                <div className="flex-1 w-full md:text-right">
+                    <VenueDateTime />
+                </div>
+            </div>
+        </section>
+    );
 }
 
-
-{/* <div className="mx-auto max-w-5xl px-6">
+{
+    /* <div className="mx-auto max-w-5xl px-6">
 
                 <div className="text-center">
                     <h2 className="text-title text-balance text-4xl font-semibold lg:text-5xl">Start Building</h2>
@@ -76,4 +79,5 @@ export default function Location() {
                         </Button>
                     </div>
                 </div>
-            </div> */}
+            </div> */
+}

@@ -109,8 +109,7 @@ export const generateTeamShareableLink: RequestHandler = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
+        if (!id) return next(new ErrorResponse('Team ID is required', 400, []));
 
         const { expiresInDays } = req.body;
 

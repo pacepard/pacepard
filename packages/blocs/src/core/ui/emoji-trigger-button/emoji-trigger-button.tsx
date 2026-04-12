@@ -1,43 +1,42 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseEmojiTriggerConfig } from "@/core/ui/emoji-trigger-button"
+import type { UseEmojiTriggerConfig } from '@/core/ui/emoji-trigger-button';
 import {
-  EMOJI_TRIGGER_SHORTCUT_KEY,
-  useEmojiTrigger,
-} from "@/core/ui/emoji-trigger-button"
+    EMOJI_TRIGGER_SHORTCUT_KEY,
+    useEmojiTrigger,
+} from '@/core/ui/emoji-trigger-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface EmojiTriggerButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseEmojiTriggerConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseEmojiTriggerConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function EmojiTriggerShortcutBadge({
-  shortcutKeys = EMOJI_TRIGGER_SHORTCUT_KEY,
+    shortcutKeys = EMOJI_TRIGGER_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -46,81 +45,85 @@ export function EmojiTriggerShortcutBadge({
  * For custom button implementations, use the `useEmojiTrigger` hook instead.
  */
 export const EmojiTriggerButton = forwardRef<
-  HTMLButtonElement,
-  EmojiTriggerButtonProps
+    HTMLButtonElement,
+    EmojiTriggerButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      node,
-      nodePos,
-      text,
-      trigger = ":",
-      hideWhenUnavailable = false,
-      onTriggerApplied,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            node,
+            nodePos,
+            text,
+            trigger = ':',
+            hideWhenUnavailable = false,
+            onTriggerApplied,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canAddTrigger,
+            handleAddTrigger,
+            label,
+            shortcutKeys,
+            Icon,
+        } = useEmojiTrigger({
+            editor,
+            node,
+            nodePos,
+            trigger,
+            hideWhenUnavailable,
+            onTriggerApplied,
+        });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleAddTrigger();
+            },
+            [handleAddTrigger, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                role="button"
+                tabIndex={-1}
+                disabled={!canAddTrigger}
+                data-disabled={!canAddTrigger}
+                aria-label={label}
+                tooltip="Add emoji"
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <EmojiTriggerShortcutBadge
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      canAddTrigger,
-      handleAddTrigger,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useEmojiTrigger({
-      editor,
-      node,
-      nodePos,
-      trigger,
-      hideWhenUnavailable,
-      onTriggerApplied,
-    })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleAddTrigger()
-      },
-      [handleAddTrigger, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        role="button"
-        tabIndex={-1}
-        disabled={!canAddTrigger}
-        data-disabled={!canAddTrigger}
-        aria-label={label}
-        tooltip="Add emoji"
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <EmojiTriggerShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-EmojiTriggerButton.displayName = "EmojiTriggerButton"
+EmojiTriggerButton.displayName = 'EmojiTriggerButton';

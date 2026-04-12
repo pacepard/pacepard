@@ -2,9 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, MoreHorizontal, Calendar } from 'lucide-react';
 import { Button } from '@pacepard/ui/components/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@pacepard/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from '@pacepard/ui/components/card';
 import { Badge } from '@pacepard/ui/components/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@pacepard/ui/components/avatar';
+import {
+    Avatar,
+    AvatarFallback,
+    AvatarImage,
+} from '@pacepard/ui/components/avatar';
 import { Skeleton } from '@pacepard/ui/components/skeleton';
 import {
     DropdownMenu,
@@ -134,7 +143,9 @@ const MyHackathons = () => {
         return (
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold text-foreground">My Hackathons</h1>
+                    <h1 className="text-2xl font-semibold text-foreground">
+                        My Hackathons
+                    </h1>
                     <Skeleton className="h-9 w-36 rounded-md" />
                 </div>
                 <Card className="rounded-2xl border border-border/30">
@@ -162,8 +173,8 @@ const MyHackathons = () => {
                         className="text-base text-[#545454] leading-6"
                         style={{ fontFamily: 'DM Sans, sans-serif' }}
                     >
-                        Create your first hackathon to start accepting projects, managing teams,
-                        and tracking progress in one place.
+                        Create your first hackathon to start accepting projects,
+                        managing teams, and tracking progress in one place.
                     </p>
                     <Button
                         onClick={() => navigate('/hackathon/create')}
@@ -180,7 +191,9 @@ const MyHackathons = () => {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold text-foreground">My Hackathons</h1>
+                <h1 className="text-2xl font-semibold text-foreground">
+                    My Hackathons
+                </h1>
                 <Button
                     onClick={() => navigate('/hackathon/create')}
                     className="bg-[#333234] hover:bg-[#333234]/90 text-[#eaeaea] rounded-md h-10 px-5 gap-2"
@@ -193,13 +206,18 @@ const MyHackathons = () => {
             <Card className="rounded-2xl border border-border/30 overflow-hidden">
                 <CardHeader className="px-6 py-4 border-b border-border/30">
                     <CardTitle className="text-sm font-medium text-muted-foreground">
-                        {hackathons.length} hackathon{hackathons.length !== 1 ? 's' : ''}
+                        {hackathons.length} hackathon
+                        {hackathons.length !== 1 ? 's' : ''}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0 divide-y divide-border/20">
                     {hackathons.map((hackathon) => {
-                        const startDate = formatDate(hackathon.settings?.startDate);
-                        const closeDate = formatDate(hackathon.settings?.closeDate);
+                        const startDate = formatDate(
+                            hackathon.settings?.startDate,
+                        );
+                        const closeDate = formatDate(
+                            hackathon.settings?.closeDate,
+                        );
                         const dateRange =
                             startDate !== '—' || closeDate !== '—'
                                 ? `${startDate} – ${closeDate}`
@@ -210,7 +228,11 @@ const MyHackathons = () => {
                                 key={hackathon.id}
                                 className="flex items-center gap-4 px-6 py-3 hover:bg-muted/30 cursor-pointer transition-colors group"
                                 onClick={() =>
-                                    navigate(routil.getHackathonPath(hackathon.slug ?? hackathon.id))
+                                    navigate(
+                                        routil.getHackathonPath(
+                                            hackathon.slug ?? hackathon.id,
+                                        ),
+                                    )
                                 }
                             >
                                 {/* Thumbnail */}
@@ -264,7 +286,12 @@ const MyHackathons = () => {
                                         <DropdownMenuItem
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate(routil.getHackathonPath(hackathon.slug ?? hackathon.id));
+                                                navigate(
+                                                    routil.getHackathonPath(
+                                                        hackathon.slug ??
+                                                            hackathon.id,
+                                                    ),
+                                                );
                                             }}
                                         >
                                             View
@@ -272,7 +299,13 @@ const MyHackathons = () => {
                                         <DropdownMenuItem
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                navigate(routil.getHackathonPath(hackathon.slug ?? hackathon.id, 'edit'));
+                                                navigate(
+                                                    routil.getHackathonPath(
+                                                        hackathon.slug ??
+                                                            hackathon.id,
+                                                        'edit',
+                                                    ),
+                                                );
                                             }}
                                         >
                                             Edit

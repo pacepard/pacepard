@@ -64,9 +64,7 @@ const personas = [
     {
         id: 'product-marketing-and-sales',
         title: 'Marketing & sales',
-        description:
-            'Drive adoption, and engagement for socio-good products.', 
-
+        description: 'Drive adoption, and engagement for socio-good products.',
 
         image: '/blocks/market.png',
         bgColor: 'from-blue-300 to-cyan-200',
@@ -126,13 +124,11 @@ export function PPPersona() {
                         variants={titleVariants}
                     >
                         Who&apos;s on Pacepard?
-
                         <p className="max-w-2xl  text-left font-regular tracking-tight text-muted-foreground text-lg md:mx-auto md:text-center mt-2">
-                        Join other AI-native talents who are learning and growing by doing.
-                    </p>
+                            Join other AI-native talents who are learning and
+                            growing by doing.
+                        </p>
                     </motion.h1>
-
-                   
                 </div>
 
                 {/* --- RESPONSIVENESS APPLIED HERE --- */}

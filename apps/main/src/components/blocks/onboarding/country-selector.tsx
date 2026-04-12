@@ -39,12 +39,14 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState('');
     const [countries, setCountries] = useState<ICountry[]>([]);
-    const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+    const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(
+        null,
+    );
 
     useEffect(() => {
         const allCountries = helper.readCountries();
         setCountries(allCountries);
-        
+
         // Set default to Nigeria if no value
         if (!value) {
             const nigeria = helper.getCountry('NG');
@@ -62,7 +64,7 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
     }, [value]);
 
     const filteredCountries = countries.filter((country) =>
-        country.name.toLowerCase().includes(search.toLowerCase())
+        country.name.toLowerCase().includes(search.toLowerCase()),
     );
 
     const handleSelect = (countryCode: string) => {
@@ -91,7 +93,7 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
                         disabled={disabled}
                         className={cn(
                             'w-full h-10 justify-between text-sm',
-                            error && 'border-destructive'
+                            error && 'border-destructive',
                         )}
                     >
                         {selectedCountry ? (
@@ -102,7 +104,8 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
                                         alt={selectedCountry.name}
                                         className="w-5 h-5 rounded-md object-cover"
                                         onError={(e) => {
-                                            e.currentTarget.style.display = 'none';
+                                            e.currentTarget.style.display =
+                                                'none';
                                         }}
                                     />
                                 ) : (
@@ -110,7 +113,9 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
                                         🏳️
                                     </span>
                                 )}
-                                <span className="truncate">{selectedCountry.name}</span>
+                                <span className="truncate">
+                                    {selectedCountry.name}
+                                </span>
                             </span>
                         ) : (
                             'Select country'
@@ -118,7 +123,10 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0 sm:w-[400px]" align="start">
+                <PopoverContent
+                    className="w-full p-0 sm:w-[400px]"
+                    align="start"
+                >
                     <Command>
                         <CommandInput
                             placeholder="Search country..."
@@ -133,7 +141,9 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
                                     <CommandItem
                                         key={country.code2}
                                         value={country.name}
-                                        onSelect={() => handleSelect(country.code2)}
+                                        onSelect={() =>
+                                            handleSelect(country.code2)
+                                        }
                                         className="cursor-pointer"
                                     >
                                         <div className="flex items-center gap-2 flex-1">
@@ -143,7 +153,8 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
                                                     alt={country.name}
                                                     className="w-5 h-5 rounded-md object-cover"
                                                     onError={(e) => {
-                                                        e.currentTarget.style.display = 'none';
+                                                        e.currentTarget.style.display =
+                                                            'none';
                                                     }}
                                                 />
                                             ) : (
@@ -151,8 +162,11 @@ export const CountrySelector: React.FC<CountrySelectorProps> = ({
                                                     🏳️
                                                 </span>
                                             )}
-                                            <span className="flex-1 truncate">{country.name}</span>
-                                            {selectedCountry?.code2 === country.code2 ? (
+                                            <span className="flex-1 truncate">
+                                                {country.name}
+                                            </span>
+                                            {selectedCountry?.code2 ===
+                                            country.code2 ? (
                                                 <Check className="ml-auto h-4 w-4 text-primary" />
                                             ) : null}
                                         </div>

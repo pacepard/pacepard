@@ -262,12 +262,14 @@ class RepositoryService<T extends Document> {
                 total: total,
                 count: documents.length,
                 pagination: {
-                    next: endIndex < total
-                        ? { page: pageNum + 1, limit: limitNum }
-                        : { page: pageNum, limit: limitNum },
-                    prev: startIndex > 0
-                        ? { page: pageNum - 1, limit: limitNum }
-                        : { page: pageNum, limit: limitNum },
+                    next:
+                        endIndex < total
+                            ? { page: pageNum + 1, limit: limitNum }
+                            : { page: pageNum, limit: limitNum },
+                    prev:
+                        startIndex > 0
+                            ? { page: pageNum - 1, limit: limitNum }
+                            : { page: pageNum, limit: limitNum },
                 },
                 data: documents,
             };
@@ -672,12 +674,14 @@ class RepositoryService<T extends Document> {
                 total: total,
                 count: documents.length,
                 pagination: {
-                    next: endIndex < total
-                        ? { page: pageNum + 1, limit: limitNum }
-                        : { page: pageNum, limit: limitNum },
-                    prev: startIndex > 0
-                        ? { page: pageNum - 1, limit: limitNum }
-                        : { page: pageNum, limit: limitNum },
+                    next:
+                        endIndex < total
+                            ? { page: pageNum + 1, limit: limitNum }
+                            : { page: pageNum, limit: limitNum },
+                    prev:
+                        startIndex > 0
+                            ? { page: pageNum - 1, limit: limitNum }
+                            : { page: pageNum, limit: limitNum },
                 },
                 data: documents,
             };

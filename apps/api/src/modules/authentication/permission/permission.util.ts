@@ -471,7 +471,6 @@ export const rolePermissionMap: Record<string, string[]> = {
         'notification:delete',
     ],
 
-
     [UserType.USER]: [
         // Project Management - View public projects
         'project:read',

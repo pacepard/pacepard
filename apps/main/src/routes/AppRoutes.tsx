@@ -16,11 +16,19 @@ const Preview = lazy(() => import('@/app/generics/preview'));
 const NoNetwork = lazy(() => import('@/app/generics/no-network'));
 
 const Onboard = lazy(() => import('@/components/blocks/onboarding/onboard'));
-const BasicInfo = lazy(() => import('@/components/blocks/onboarding/basic-info'));
+const BasicInfo = lazy(
+    () => import('@/components/blocks/onboarding/basic-info'),
+);
 const UserInfo = lazy(() => import('@/components/blocks/onboarding/user-info'));
-const BusinessInfo = lazy(() => import('@/components/blocks/onboarding/business-info'));
-const CreateWorkspace = lazy(() => import('@/components/blocks/onboarding/create-workspace'));
-const InviteTeammates = lazy(() => import('@/components/blocks/onboarding/invite-teammates'));
+const BusinessInfo = lazy(
+    () => import('@/components/blocks/onboarding/business-info'),
+);
+const CreateWorkspace = lazy(
+    () => import('@/components/blocks/onboarding/create-workspace'),
+);
+const InviteTeammates = lazy(
+    () => import('@/components/blocks/onboarding/invite-teammates'),
+);
 
 import MyInbox from '@/app/dashboard/partials/inbox/my-inbox';
 import TalentDashboard from '@/app/dashboard/partials/home/talent-home';
@@ -113,13 +121,12 @@ const AppRoutes = () => {
             // Utility routes
             case 'preview':
                 return <Preview />;
-               
+
             case 'no-network':
                 return <NoNetwork />;
-         
+
             case 'not-found':
                 return <NotFound />;
-
 
             // authentication routes
             case 'login':
@@ -138,11 +145,11 @@ const AppRoutes = () => {
             case 'onboarding':
                 return <Onboard />;
             case 'onboard-basic-user':
-                return <BasicInfo />
+                return <BasicInfo />;
             case 'onboard-user-info':
                 return <UserInfo />;
             case 'onboard-business-info':
-                return <BusinessInfo />
+                return <BusinessInfo />;
             case 'onboard-create-workspace':
                 return <CreateWorkspace />;
             case 'onboard-invite-teammates':
@@ -321,9 +328,18 @@ const AppRoutes = () => {
                                         <OnboardingLayout
                                             title={route.title || route.name}
                                             logo=""
-                                            description={(route.content as any)?.description}
-                                            maxWidth={(route.content as any)?.maxWidth || '4xl'}
-                                            onboardingType={(route.content as any)?.onboardingType || 'talent'}
+                                            description={
+                                                (route.content as any)
+                                                    ?.description
+                                            }
+                                            maxWidth={
+                                                (route.content as any)
+                                                    ?.maxWidth || '4xl'
+                                            }
+                                            onboardingType={
+                                                (route.content as any)
+                                                    ?.onboardingType || 'talent'
+                                            }
                                         >
                                             {getAppPages(route.name)}
                                         </OnboardingLayout>
@@ -333,30 +349,29 @@ const AppRoutes = () => {
                                             title={route.title || route.name}
                                             back={true}
                                         />
+                                    ) : route.subroutes &&
+                                      route.subroutes.length > 0 ? (
+                                        <DashboardLayout
+                                            component={getAppPages(route.name)}
+                                            title={
+                                                route.title
+                                                    ? route.title
+                                                    : route.name
+                                            }
+                                            back={
+                                                route.content.backButton
+                                                    ? route.content.backButton
+                                                    : false
+                                            }
+                                            sidebar={{
+                                                collapsed: route.content
+                                                    .collapsed
+                                                    ? route.content.collapsed
+                                                    : false,
+                                            }}
+                                        />
                                     ) : (
-                                        route.subroutes && route.subroutes.length > 0 ? (
-                                            <DashboardLayout
-                                                component={getAppPages(route.name)}
-                                                title={
-                                                    route.title
-                                                        ? route.title
-                                                        : route.name
-                                                }
-                                                back={
-                                                    route.content.backButton
-                                                        ? route.content.backButton
-                                                        : false
-                                                }
-                                                sidebar={{
-                                                    collapsed: route.content
-                                                        .collapsed
-                                                        ? route.content.collapsed
-                                                        : false,
-                                                }}
-                                            />
-                                        ) : (
-                                            getAppPages(route.name)
-                                        )
+                                        getAppPages(route.name)
                                     )
                                 }
                             />
@@ -374,23 +389,49 @@ const AppRoutes = () => {
                                             {subroute.name !== 'divider' && (
                                                 <Route
                                                     path={
-                                                        route.url === '/dashboard'
+                                                        route.url ===
+                                                        '/dashboard'
                                                             ? routil.computeSubPath(
-                                                                route,
-                                                                subroute,
-                                                            )
-                                                            : route.url + subroute.url
+                                                                  route,
+                                                                  subroute,
+                                                              )
+                                                            : route.url +
+                                                              subroute.url
                                                     }
                                                     element={
-                                                        isOnboardingRoute(subroute.name) ? (
+                                                        isOnboardingRoute(
+                                                            subroute.name,
+                                                        ) ? (
                                                             <OnboardingLayout
-                                                                title={subroute.title || subroute.name}
+                                                                title={
+                                                                    subroute.title ||
+                                                                    subroute.name
+                                                                }
                                                                 logo=""
-                                                                description={(subroute.content as any)?.description}
-                                                                maxWidth={(subroute.content as any)?.maxWidth || '4xl'}
-                                                                onboardingType={(subroute.content as any)?.onboardingType || 'talent'}
+                                                                description={
+                                                                    (
+                                                                        subroute.content as any
+                                                                    )
+                                                                        ?.description
+                                                                }
+                                                                maxWidth={
+                                                                    (
+                                                                        subroute.content as any
+                                                                    )
+                                                                        ?.maxWidth ||
+                                                                    '4xl'
+                                                                }
+                                                                onboardingType={
+                                                                    (
+                                                                        subroute.content as any
+                                                                    )
+                                                                        ?.onboardingType ||
+                                                                    'talent'
+                                                                }
                                                             >
-                                                                {getAppPages(subroute.name)}
+                                                                {getAppPages(
+                                                                    subroute.name,
+                                                                )}
                                                             </OnboardingLayout>
                                                         ) : (
                                                             <DashboardLayout
@@ -409,8 +450,8 @@ const AppRoutes = () => {
                                                                             .content
                                                                             .collapsed
                                                                             ? subroute
-                                                                                .content
-                                                                                .collapsed
+                                                                                  .content
+                                                                                  .collapsed
                                                                             : false,
                                                                 }}
                                                             />
@@ -446,9 +487,28 @@ const AppRoutes = () => {
                                         <OnboardingLayout
                                             title={route.title || route.name}
                                             logo=""
-                                            description={route.content.description}
-                                            maxWidth={(route.content.maxWidth || 'sxl') as 'sm' | 'md' | 'lg' | 'xl' | 'txl' | 'fxl' | 'sxl' | 'full'}
-                                            onboardingType={(route.content.onboardingType || 'talent') as 'talent' | 'business' | 'education'}
+                                            description={
+                                                route.content.description
+                                            }
+                                            maxWidth={
+                                                (route.content.maxWidth ||
+                                                    'sxl') as
+                                                    | 'sm'
+                                                    | 'md'
+                                                    | 'lg'
+                                                    | 'xl'
+                                                    | 'txl'
+                                                    | 'fxl'
+                                                    | 'sxl'
+                                                    | 'full'
+                                            }
+                                            onboardingType={
+                                                (route.content.onboardingType ||
+                                                    'talent') as
+                                                    | 'talent'
+                                                    | 'business'
+                                                    | 'education'
+                                            }
                                         >
                                             {getAppPages(route.name)}
                                         </OnboardingLayout>
@@ -500,15 +560,39 @@ const AppRoutes = () => {
                                                         subroute,
                                                     )}
                                                     element={
-                                                        isOnboardingRoute(subroute.name) ? (
+                                                        isOnboardingRoute(
+                                                            subroute.name,
+                                                        ) ? (
                                                             <OnboardingLayout
-                                                                title={subroute.title || subroute.name}
+                                                                title={
+                                                                    subroute.title ||
+                                                                    subroute.name
+                                                                }
                                                                 logo=""
-                                                                description={(subroute.content as any)?.description}
-                                                                maxWidth={(subroute.content as any)?.maxWidth || '6xl'}
-                                                                onboardingType={(subroute.content as any)?.onboardingType || 'talent'}
+                                                                description={
+                                                                    (
+                                                                        subroute.content as any
+                                                                    )
+                                                                        ?.description
+                                                                }
+                                                                maxWidth={
+                                                                    (
+                                                                        subroute.content as any
+                                                                    )
+                                                                        ?.maxWidth ||
+                                                                    '6xl'
+                                                                }
+                                                                onboardingType={
+                                                                    (
+                                                                        subroute.content as any
+                                                                    )
+                                                                        ?.onboardingType ||
+                                                                    'talent'
+                                                                }
                                                             >
-                                                                {getAppPages(subroute.name)}
+                                                                {getAppPages(
+                                                                    subroute.name,
+                                                                )}
                                                             </OnboardingLayout>
                                                         ) : (
                                                             <DashboardLayout
@@ -527,8 +611,8 @@ const AppRoutes = () => {
                                                                             .content
                                                                             .collapsed
                                                                             ? subroute
-                                                                                .content
-                                                                                .collapsed
+                                                                                  .content
+                                                                                  .collapsed
                                                                             : false,
                                                                 }}
                                                             />
@@ -553,15 +637,37 @@ const AppRoutes = () => {
                                                     inroute,
                                                 )}
                                                 element={
-                                                    isOnboardingRoute(inroute.name) ? (
+                                                    isOnboardingRoute(
+                                                        inroute.name,
+                                                    ) ? (
                                                         <OnboardingLayout
-                                                            title={inroute.title || inroute.name}
+                                                            title={
+                                                                inroute.title ||
+                                                                inroute.name
+                                                            }
                                                             logo=""
-                                                            description={(inroute.content as any)?.description}
-                                                            maxWidth={(inroute.content as any)?.maxWidth || '4xl'}
-                                                            onboardingType={(inroute.content as any)?.onboardingType || 'talent'}
+                                                            description={
+                                                                (
+                                                                    inroute.content as any
+                                                                )?.description
+                                                            }
+                                                            maxWidth={
+                                                                (
+                                                                    inroute.content as any
+                                                                )?.maxWidth ||
+                                                                '4xl'
+                                                            }
+                                                            onboardingType={
+                                                                (
+                                                                    inroute.content as any
+                                                                )
+                                                                    ?.onboardingType ||
+                                                                'talent'
+                                                            }
                                                         >
-                                                            {getAppPages(inroute.name)}
+                                                            {getAppPages(
+                                                                inroute.name,
+                                                            )}
                                                         </OnboardingLayout>
                                                     ) : (
                                                         <DashboardLayout
@@ -575,13 +681,14 @@ const AppRoutes = () => {
                                                             }
                                                             back={true}
                                                             sidebar={{
-                                                                collapsed: inroute
-                                                                    .content
-                                                                    .collapsed
-                                                                    ? inroute
+                                                                collapsed:
+                                                                    inroute
                                                                         .content
                                                                         .collapsed
-                                                                    : false,
+                                                                        ? inroute
+                                                                              .content
+                                                                              .collapsed
+                                                                        : false,
                                                             }}
                                                         />
                                                     )
@@ -609,10 +716,7 @@ const AppRoutes = () => {
             />
 
             {/* Fallback routes */}
-            <Route
-                path="/talent"
-                element={''}
-            />
+            <Route path="/talent" element={''} />
             <Route path="*" element={<NotFound />} />
             <Route path="/route-fallback" element={<ErrorUI />} />
         </Routes>

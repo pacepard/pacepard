@@ -1,9 +1,9 @@
-"use client";
-import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import Image from "next/image";
-import Link from "next/link";
+'use client';
+import { useEffect, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay } from 'swiper/modules';
+import Image from 'next/image';
+import Link from 'next/link';
 
 type Project = {
     title: string;
@@ -14,10 +14,10 @@ type Project = {
 };
 
 const Projectswiper = () => {
-    const [projects, setProjects] = useState<Project[]>([]);  
+    const [projects, setProjects] = useState<Project[]>([]);
 
     useEffect(() => {
-        fetch("/api/projects")
+        fetch('/api/projects')
             .then((res) => res.json())
             .then((data) => setProjects(data));
     }, []);
@@ -29,7 +29,7 @@ const Projectswiper = () => {
                 delay: 2000,
                 disableOnInteraction: false,
             }}
-            slidesPerView={"auto"}
+            slidesPerView={'auto'}
             breakpoints={{
                 320: { spaceBetween: 0 },
                 640: { spaceBetween: 10 },
@@ -40,9 +40,8 @@ const Projectswiper = () => {
             modules={[Autoplay]}
             className="mySwiper"
         >
-            {projects.map((value,index)=>{
-                
-                return(
+            {projects.map((value, index) => {
+                return (
                     <SwiperSlide key={index}>
                         <div className="relative group flex flex-col gap-3 lg:gap-5">
                             <div className="relative">
@@ -52,7 +51,12 @@ const Projectswiper = () => {
                                         alt={value.title}
                                         width={530}
                                         height={350}
-                                        style={{ width: "100%", maxWidth: "100%", height: "100%", objectFit: "cover" }}
+                                        style={{
+                                            width: '100%',
+                                            maxWidth: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                        }}
                                     />
                                 </div>
                                 <Link
@@ -60,8 +64,20 @@ const Projectswiper = () => {
                                     className="absolute top-0 left-0 backdrop-blur-xs bg-black/70 w-full h-full hidden group-hover:flex"
                                 >
                                     <span className="flex justify-center items-center p-5 w-full">
-                                        <svg width="65" height="64" viewBox="0 0 65 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="0.333374" width="64" height="64" rx="32" fill="#C1FF72" />
+                                        <svg
+                                            width="65"
+                                            height="64"
+                                            viewBox="0 0 65 64"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <rect
+                                                x="0.333374"
+                                                width="64"
+                                                height="64"
+                                                rx="32"
+                                                fill="#C1FF72"
+                                            />
                                             <path
                                                 d="M25.6667 25.3333H39M39 25.3333V38.6666M39 25.3333L25.6667 38.6666"
                                                 stroke="#1F2A2E"
@@ -88,7 +104,7 @@ const Projectswiper = () => {
                             </div>
                         </div>
                     </SwiperSlide>
-                )
+                );
             })}
         </Swiper>
     );

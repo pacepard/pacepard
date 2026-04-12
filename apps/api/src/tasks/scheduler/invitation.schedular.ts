@@ -6,7 +6,7 @@ import { CronPatterns } from '../cron/cron.patterns';
 /**
  * Invitation Scheduled Jobs
  * Define all invitation-related scheduled jobs here
- * 
+ *
  * Cron pattern format: "* * * * *"
  *  | | | | |
  *  | | | | └─── day of week (0-7, where 0 and 7 are Sunday)

@@ -95,9 +95,7 @@ class RoleRepository extends RepositoryService<IRoleDoc> {
      * @returns {Promise<IResult>}
      * @description Create a new role
      */
-    public async createRole(
-        roleData: Partial<IRoleDoc>,
-    ): Promise<IResult> {
+    public async createRole(roleData: Partial<IRoleDoc>): Promise<IResult> {
         return this.create(roleData);
     }
 

@@ -14,7 +14,7 @@ import { UserType } from '@pacepard/sdk';
 export function getOnboardingRoute(
     step: number,
     status: string,
-    userType?: string
+    userType?: string,
 ): string {
     // If onboarding is completed, go to dashboard
     if (status === 'completed') {
@@ -62,7 +62,7 @@ export function getOnboardingRoute(
  */
 export function getNextOnboardingRoute(
     currentStep: number,
-    userType?: string
+    userType?: string,
 ): string {
     return getOnboardingRoute(currentStep + 1, 'in-progress', userType);
 }
@@ -75,7 +75,7 @@ export function getNextOnboardingRoute(
  */
 export function getPreviousOnboardingRoute(
     currentStep: number,
-    userType?: string
+    userType?: string,
 ): string | null {
     if (currentStep <= 0) {
         return null;

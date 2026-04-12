@@ -7,6 +7,5 @@ find the full documentation for it [in our repository](https://github.com/change
 We have a quick list of common questions to get you started engaging with this project in
 [our documentation](https://github.com/changesets/changesets/blob/main/docs/common-questions.md)
 
-
 <!-- Automates versioning, changelog, and GitHub releases based on commit messages.
 Independent Versioning: Each app/package has its own version (preferred for monorepos). -->

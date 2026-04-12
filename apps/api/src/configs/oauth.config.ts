@@ -1,24 +1,22 @@
 // import passport from 'passport';
 // import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 // import { Strategy as GitHubStrategy } from 'passport-github'; // Import the GitHub Strategy
-// import { Strategy as AppleStrategy } from 'passport-apple'; 
+// import { Strategy as AppleStrategy } from 'passport-apple';
 // import userRepository from '../repositories/user.repository';
 
-
-// const { 
-//   GOOGLE_CLIENT_ID, 
-//   GOOGLE_CLIENT_SECRET, 
+// const {
+//   GOOGLE_CLIENT_ID,
+//   GOOGLE_CLIENT_SECRET,
 //   GOOGLE_REDIRECT_URI,
-//   GITHUB_CLIENT_ID, 
+//   GITHUB_CLIENT_ID,
 //   GITHUB_CLIENT_SECRET,
 //   GITHUB_REDIRECT_URI,
-//   APPLE_CLIENT_ID, 
-//   APPLE_TEAM_ID, 
-//   APPLE_KEY_ID, 
-//   APPLE_KEY_FILE, 
+//   APPLE_CLIENT_ID,
+//   APPLE_TEAM_ID,
+//   APPLE_KEY_ID,
+//   APPLE_KEY_FILE,
 //   APPLE_REDIRECT_URI
 // } = process.env;
-
 
 // // --- 1. Serialize and Deserialize User (Session Management) ---
 
@@ -30,11 +28,11 @@
 // passport.deserializeUser(async (id: string, done) => {
 //     try {
 //         // Retrieves the full user object from the database using the ID from the session
-//         const user = await userRepository.findUser(id); 
+//         const user = await userRepository.findUser(id);
 //         done(null, user);
 //     } catch (err) {
 //         // Signals a technical error during user retrieval
-//         done(err, null); 
+//         done(err, null);
 //     }
 // });
 
@@ -45,7 +43,7 @@
 //     clientSecret: GOOGLE_CLIENT_SECRET!,
 //     callbackURL: GOOGLE_REDIRECT_URI,
 //     scope: ['profile', 'email', ],
-//     passReqToCallback: true 
+//     passReqToCallback: true
 //   },
 //   // Verify Callback function: Pass profile data to controller
 //   (req, accessToken, refreshToken, profile, done) => {
@@ -68,10 +66,9 @@
 //   // Verify Callback function
 //   (req, accessToken, refreshToken, profile, done) => {
 //     // Pass the GitHub profile object to the controller
-//     done(null, profile); 
+//     done(null, profile);
 //   }
 // ));
-
 
 // // --- 4. Apple Sign-In Strategy (Note: Requires complex JWT setup) ---
 
@@ -79,10 +76,10 @@
 //     clientID: APPLE_CLIENT_ID!,
 //     teamID: APPLE_TEAM_ID!,
 //     keyIdentifier: APPLE_KEY_ID!,
-//     privateKeyPath: APPLE_KEY_FILE!, 
-//     callbackURL: APPLE_REDIRECT_URI, 
+//     privateKeyPath: APPLE_KEY_FILE!,
+//     callbackURL: APPLE_REDIRECT_URI,
 //     scope: ['email', 'name', ""],
-//     passReqToCallback: true 
+//     passReqToCallback: true
 //   },
 //   // Verify Callback function
 //   (req: Request, accessToken: any, refreshToken: any, profile: any, done: any) => {
@@ -90,6 +87,5 @@
 //     done(null, profile);
 //   }
 // ));
-
 
 // export default passport;

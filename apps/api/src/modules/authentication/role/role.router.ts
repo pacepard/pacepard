@@ -28,9 +28,17 @@ roleRoutes.delete('/user/:userId/detach', Protect, detachRoleFromUser);
 
 // Contextual role management routes (must come before /:id routes)
 roleRoutes.post('/workspace/:workspaceId/assign', Protect, assignWorkspaceRole);
-roleRoutes.delete('/workspace/:workspaceId/user/:userId', Protect, removeWorkspaceRole);
+roleRoutes.delete(
+    '/workspace/:workspaceId/user/:userId',
+    Protect,
+    removeWorkspaceRole,
+);
 roleRoutes.post('/project/:projectId/assign', Protect, assignProjectRole);
-roleRoutes.delete('/project/:projectId/user/:userId', Protect, removeProjectRole);
+roleRoutes.delete(
+    '/project/:projectId/user/:userId',
+    Protect,
+    removeProjectRole,
+);
 
 // Role CRUD routes with ID parameter (must come after specific routes)
 roleRoutes.get('/:id', Protect, getRole);

@@ -1,17 +1,16 @@
-import Signin from "@/app/components/auth/sign-in";
-import { Metadata } from "next";
+import Signin from '@/app/components/auth/sign-in';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title:
-    "Sign In | Pacepard",
+    title: 'Sign In | Pacepard',
 };
 
 const SigninPage = () => {
-  return (
-    <>
-      <Signin />
-    </>
-  );
+    return (
+        <>
+            <Signin />
+        </>
+    );
 };
 
 export default SigninPage;

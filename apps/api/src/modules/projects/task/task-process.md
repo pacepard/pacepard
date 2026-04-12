@@ -20,6 +20,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Create Task Flow
 
 ### User Story
+
 **As a** user  
 **I want to** create task  
 **So that** I can manage task management
@@ -27,9 +28,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Create Task Process
 
 **Step 1**: User submits create task request
+
 - System receives create task request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs create task operation
 - System returns response
@@ -39,6 +42,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Get Task Flow
 
 ### User Story
+
 **As a** user  
 **I want to** get task  
 **So that** I can manage task management
@@ -46,9 +50,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Get Task Process
 
 **Step 1**: User submits get task request
+
 - System receives get task request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs get task operation
 - System returns response
@@ -58,6 +64,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Get Tasks by Project Flow
 
 ### User Story
+
 **As a** user  
 **I want to** get tasks by project  
 **So that** I can manage task management
@@ -65,9 +72,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Get Tasks by Project Process
 
 **Step 1**: User submits get tasks by project request
+
 - System receives get tasks by project request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs get tasks by project operation
 - System returns response
@@ -77,6 +86,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Get Tasks by Team Flow
 
 ### User Story
+
 **As a** user  
 **I want to** get tasks by team  
 **So that** I can manage task management
@@ -84,9 +94,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Get Tasks by Team Process
 
 **Step 1**: User submits get tasks by team request
+
 - System receives get tasks by team request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs get tasks by team operation
 - System returns response
@@ -96,6 +108,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Get Tasks by Assignee Flow
 
 ### User Story
+
 **As a** user  
 **I want to** get tasks by assignee  
 **So that** I can manage task management
@@ -103,9 +116,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Get Tasks by Assignee Process
 
 **Step 1**: User submits get tasks by assignee request
+
 - System receives get tasks by assignee request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs get tasks by assignee operation
 - System returns response
@@ -115,6 +130,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Update Task Flow
 
 ### User Story
+
 **As a** user  
 **I want to** update task  
 **So that** I can manage task management
@@ -122,9 +138,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Update Task Process
 
 **Step 1**: User submits update task request
+
 - System receives update task request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs update task operation
 - System returns response
@@ -134,6 +152,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Delete Task Flow
 
 ### User Story
+
 **As a** user  
 **I want to** delete task  
 **So that** I can manage task management
@@ -141,9 +160,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Delete Task Process
 
 **Step 1**: User submits delete task request
+
 - System receives delete task request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs delete task operation
 - System returns response
@@ -153,6 +174,7 @@ This document outlines the complete user journey and system behavior for task pr
 ## Assign Task Flow
 
 ### User Story
+
 **As a** user  
 **I want to** assign task  
 **So that** I can manage task management
@@ -160,9 +182,11 @@ This document outlines the complete user journey and system behavior for task pr
 ### Algorithm: Assign Task Process
 
 **Step 1**: User submits assign task request
+
 - System receives assign task request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs assign task operation
 - System returns response
@@ -172,11 +196,13 @@ This document outlines the complete user journey and system behavior for task pr
 ## Error Handling
 
 ### Validation Errors
+
 - System validates all required fields
 - System returns specific error messages for validation failures
 - System stops process execution on validation errors
 
 ### System Errors
+
 - System handles unexpected errors gracefully
 - System returns error messages for system failures
 - System logs errors for system administrators

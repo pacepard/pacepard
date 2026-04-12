@@ -139,11 +139,10 @@ class UserService {
         }
 
         await user.save();
-        
+
         return user;
     }
 
- 
     /**
      * @name createBulkUsers
      * @param data - Array of IBulkUser objects
@@ -199,22 +198,30 @@ class UserService {
                                         user,
                                         bulk.userType,
                                     );
-                                if (!roleAttachResult.error && roleAttachResult.data) {
-                                    let updatedUser = roleAttachResult.data as IUserDoc;
-                                    const permResult = await PermissionService.initiatePermissionData(
-                                        updatedUser,
-                                    );
+                                if (
+                                    !roleAttachResult.error &&
+                                    roleAttachResult.data
+                                ) {
+                                    let updatedUser =
+                                        roleAttachResult.data as IUserDoc;
+                                    const permResult =
+                                        await PermissionService.initiatePermissionData(
+                                            updatedUser,
+                                        );
                                     if (!permResult.error && permResult.data) {
-                                        updatedUser = permResult.data as IUserDoc;
+                                        updatedUser =
+                                            permResult.data as IUserDoc;
                                     }
-                                    
+
                                     // Update user reference
                                     user = updatedUser;
-                                    
+
                                     // Clear permission cache
                                     const userId = updatedUser?._id || user._id;
                                     if (userId) {
-                                        await PermissionService.clearUserCache(String(userId));
+                                        await PermissionService.clearUserCache(
+                                            String(userId),
+                                        );
                                     }
                                 }
                             } catch (error) {
@@ -282,7 +289,13 @@ class UserService {
         }
 
         // Handle location fields
-        if (data.country || data.address || data.city || data.state || data.postalCode) {
+        if (
+            data.country ||
+            data.address ||
+            data.city ||
+            data.state ||
+            data.postalCode
+        ) {
             updateData.location = {
                 ...user.location,
                 address: data.address || user.location?.address || '',
@@ -453,7 +466,11 @@ class UserService {
         let user = userDoc as IUserDoc;
 
         // Validate user type
-        if (![UserType.TALENT, UserType.BUSINESS, UserType.USER].includes(data.userType)) {
+        if (
+            ![UserType.TALENT, UserType.BUSINESS, UserType.USER].includes(
+                data.userType,
+            )
+        ) {
             result.error = true;
             result.message = 'Invalid user type';
             result.code = 400;
@@ -500,7 +517,8 @@ class UserService {
         let updatedUser = roleAttachResult.data as IUserDoc;
 
         // Initialize permissions for the user
-        const permResult = await PermissionService.initiatePermissionData(updatedUser);
+        const permResult =
+            await PermissionService.initiatePermissionData(updatedUser);
         if (permResult.error) {
             result.error = true;
             result.message = permResult.message;
@@ -509,7 +527,8 @@ class UserService {
         }
         if (!permResult.data) {
             result.error = true;
-            result.message = 'Failed to initialize permissions: no user data returned';
+            result.message =
+                'Failed to initialize permissions: no user data returned';
             result.code = 500;
             return result;
         }
@@ -961,7 +980,8 @@ class UserService {
             }
             if (!permResult.data) {
                 result.error = true;
-                result.message = 'Failed to initialize permissions: no user data returned';
+                result.message =
+                    'Failed to initialize permissions: no user data returned';
                 result.code = 500;
                 return result;
             }
@@ -985,7 +1005,8 @@ class UserService {
         }
 
         // Send welcome email (at onboarding completion)
-        const welcomeEmailResult = await emailService.sendUserWelcomeEmail(user);
+        const welcomeEmailResult =
+            await emailService.sendUserWelcomeEmail(user);
         if (welcomeEmailResult.error) {
             // Log error but don't fail the request
             console.error(
@@ -1129,7 +1150,6 @@ class UserService {
 
         return result;
     }
-
 
     //   /**
     //    * @name createSocialUser

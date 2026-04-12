@@ -17,6 +17,7 @@ This document outlines the complete user journey and system behavior for plan pr
 ## Create Plan Flow
 
 ### User Story
+
 **As a** user  
 **I want to** create plan  
 **So that** I can manage plan management
@@ -24,9 +25,11 @@ This document outlines the complete user journey and system behavior for plan pr
 ### Algorithm: Create Plan Process
 
 **Step 1**: User submits create plan request
+
 - System receives create plan request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs create plan operation
 - System returns response
@@ -36,6 +39,7 @@ This document outlines the complete user journey and system behavior for plan pr
 ## Update Plan Flow
 
 ### User Story
+
 **As a** user  
 **I want to** update plan  
 **So that** I can manage plan management
@@ -43,9 +47,11 @@ This document outlines the complete user journey and system behavior for plan pr
 ### Algorithm: Update Plan Process
 
 **Step 1**: User submits update plan request
+
 - System receives update plan request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs update plan operation
 - System returns response
@@ -55,6 +61,7 @@ This document outlines the complete user journey and system behavior for plan pr
 ## Get All Plans Flow
 
 ### User Story
+
 **As a** user  
 **I want to** get all plans  
 **So that** I can manage plan management
@@ -62,9 +69,11 @@ This document outlines the complete user journey and system behavior for plan pr
 ### Algorithm: Get All Plans Process
 
 **Step 1**: User submits get all plans request
+
 - System receives get all plans request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs get all plans operation
 - System returns response
@@ -74,6 +83,7 @@ This document outlines the complete user journey and system behavior for plan pr
 ## Validate Plan Flow
 
 ### User Story
+
 **As a** user  
 **I want to** validate plan  
 **So that** I can manage plan management
@@ -81,9 +91,11 @@ This document outlines the complete user journey and system behavior for plan pr
 ### Algorithm: Validate Plan Process
 
 **Step 1**: User submits validate plan request
+
 - System receives validate plan request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs validate plan operation
 - System returns response
@@ -93,6 +105,7 @@ This document outlines the complete user journey and system behavior for plan pr
 ## Get Plan Availability Flow
 
 ### User Story
+
 **As a** user  
 **I want to** get plan availability  
 **So that** I can manage plan management
@@ -100,9 +113,11 @@ This document outlines the complete user journey and system behavior for plan pr
 ### Algorithm: Get Plan Availability Process
 
 **Step 1**: User submits get plan availability request
+
 - System receives get plan availability request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs get plan availability operation
 - System returns response
@@ -112,11 +127,13 @@ This document outlines the complete user journey and system behavior for plan pr
 ## Error Handling
 
 ### Validation Errors
+
 - System validates all required fields
 - System returns specific error messages for validation failures
 - System stops process execution on validation errors
 
 ### System Errors
+
 - System handles unexpected errors gracefully
 - System returns error messages for system failures
 - System logs errors for system administrators

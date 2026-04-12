@@ -1,7 +1,17 @@
-"use client";
-import Image from "next/image";
+'use client';
+import Image from 'next/image';
 
-const Herobanner = ({ bannerimage, heading, desc, headingClass = "large-heading"}: { bannerimage: string; heading: string; desc: string; headingClass?: string }) => {
+const Herobanner = ({
+    bannerimage,
+    heading,
+    desc,
+    headingClass = 'large-heading',
+}: {
+    bannerimage: string;
+    heading: string;
+    desc: string;
+    headingClass?: string;
+}) => {
     const splitDesc = desc.split(/<\/?span>/);
 
     return (
@@ -21,7 +31,7 @@ const Herobanner = ({ bannerimage, heading, desc, headingClass = "large-heading"
                     <div className="flex items-start gap-2 md:gap-6">
                         <div className="w-11 h-11 flex-shrink-0">
                             <Image
-                                src={"/images/Icon/primary-leaf.svg"}
+                                src={'/images/Icon/primary-leaf.svg'}
                                 alt="icon"
                                 width={44}
                                 height={44}
@@ -35,11 +45,27 @@ const Herobanner = ({ bannerimage, heading, desc, headingClass = "large-heading"
                         </p>
                     </div>
                     <div className="flex flex-row items-end lg:items-baseline gap-4">
-                        <h1 className={`${headingClass ? headingClass : "large-heading"}`}>{heading}</h1>
+                        <h1
+                            className={`${headingClass ? headingClass : 'large-heading'}`}
+                        >
+                            {heading}
+                        </h1>
                         <div className="bg-primary rounded-full  pl-8 p-1.5">
                             <div className="bg-white p-3 md:p-5 rounded-full">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1.33337 1.33331H14.6667M14.6667 1.33331V14.6666M14.6667 1.33331L1.33337 14.6666" stroke="#1F2A2E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M1.33337 1.33331H14.6667M14.6667 1.33331V14.6666M14.6667 1.33331L1.33337 14.6666"
+                                        stroke="#1F2A2E"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
                                 </svg>
                             </div>
                         </div>
@@ -48,6 +74,6 @@ const Herobanner = ({ bannerimage, heading, desc, headingClass = "large-heading"
             </div>
         </section>
     );
-}
+};
 
 export default Herobanner;

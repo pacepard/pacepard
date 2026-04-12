@@ -5,4 +5,3 @@ const Domains = () => {
 };
 
 export default Domains;
-

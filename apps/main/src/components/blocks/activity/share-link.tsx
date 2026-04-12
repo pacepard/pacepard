@@ -37,8 +37,8 @@ export function ShareLink({
                     Share Link
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                    Your hackathon is now published and ready to be shared with the
-                    world! Copy the link to share your form on social media,
+                    Your hackathon is now published and ready to be shared with
+                    the world! Copy the link to share your form on social media,
                     messaging apps or via email.
                 </p>
             </div>

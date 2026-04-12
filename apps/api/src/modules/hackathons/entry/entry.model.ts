@@ -36,9 +36,7 @@ const EntrySchema = new Schema<IEntryDoc>(
             },
         },
 
-        hackathon: [
-            { type: Schema.Types.ObjectId, ref: DbModels.HACKATHON },
-        ],
+        hackathon: [{ type: Schema.Types.ObjectId, ref: DbModels.HACKATHON }],
         forms: [{ type: Schema.Types.ObjectId, ref: 'Form' }],
         submissions: [
             { type: Schema.Types.ObjectId, ref: DbModels.SUBMISSION },

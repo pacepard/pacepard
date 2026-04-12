@@ -188,12 +188,13 @@ class HackathonService {
             organizers: [],
         };
 
-        const createResult = await hackathonRepository.createHackathon(hackathonData as Partial<IHackathonDoc>);
+        const createResult = await hackathonRepository.createHackathon(
+            hackathonData as Partial<IHackathonDoc>,
+        );
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message = 
-                createResult.message;
+            result.message = createResult.message;
             return result;
         }
 
@@ -243,7 +244,8 @@ class HackathonService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to update this hackathon';
+            result.message =
+                'You do not have permission to update this hackathon';
             return result;
         }
 
@@ -412,7 +414,8 @@ class HackathonService {
             if (!hasPermission) {
                 result.error = true;
                 result.code = 403;
-                result.message = 'You do not have permission to delete this hackathon';
+                result.message =
+                    'You do not have permission to delete this hackathon';
                 return result;
             }
         }
@@ -477,15 +480,17 @@ class HackathonService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this hackathon';
+            result.message =
+                'You do not have permission to manage members in this hackathon';
             return result;
         }
 
         // Check if user is already a member
         const existingMember = (hackathon.members || []).find((m: any) => {
-            const memberUserId = typeof m.user === 'object'
-                ? String(m.user._id || m.user.id)
-                : String(m.user);
+            const memberUserId =
+                typeof m.user === 'object'
+                    ? String(m.user._id || m.user.id)
+                    : String(m.user);
             return memberUserId === userId;
         });
 
@@ -563,15 +568,17 @@ class HackathonService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this hackathon';
+            result.message =
+                'You do not have permission to manage members in this hackathon';
             return result;
         }
 
         // Find and remove the member
         const members = (hackathon.members || []).filter((m: any) => {
-            const memberUserId = typeof m.user === 'object'
-                ? String(m.user._id || m.user.id)
-                : String(m.user);
+            const memberUserId =
+                typeof m.user === 'object'
+                    ? String(m.user._id || m.user.id)
+                    : String(m.user);
             return memberUserId !== userId;
         });
 
@@ -653,7 +660,11 @@ class HackathonService {
         }
 
         // Get user ID
-        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+        const userId =
+            typeof user === 'string'
+                ? user
+                : (user as IUserDoc)?._id?.toString() ||
+                  (user as IUserDoc)?.id?.toString();
 
         if (!userId) {
             result.error = true;

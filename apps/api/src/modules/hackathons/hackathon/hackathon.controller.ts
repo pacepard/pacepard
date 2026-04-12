@@ -40,9 +40,7 @@ export const createHackathon: RequestHandler = asyncHandler(
         const result = await hackathonService.createHackathon(data);
 
         if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code, []),
-            );
+            return next(new ErrorResponse(result.message, result.code, []));
         }
 
         res.status(201).json({
@@ -773,11 +771,7 @@ export const resendMentorInvite: RequestHandler = asyncHandler(
 
         if (resendResult.error) {
             return next(
-                new ErrorResponse(
-                    resendResult.message,
-                    resendResult.code,
-                    [],
-                ),
+                new ErrorResponse(resendResult.message, resendResult.code, []),
             );
         }
 
@@ -829,7 +823,9 @@ export const resendMentorInvite: RequestHandler = asyncHandler(
                 ...resendResult.data,
                 emailQueued: !emailResult.error,
             },
-            message: resendResult.message || 'Mentor invitation resent successfully.',
+            message:
+                resendResult.message ||
+                'Mentor invitation resent successfully.',
             status: 200,
         });
     },
@@ -866,11 +862,7 @@ export const resendJudgeInvite: RequestHandler = asyncHandler(
 
         if (resendResult.error) {
             return next(
-                new ErrorResponse(
-                    resendResult.message,
-                    resendResult.code,
-                    [],
-                ),
+                new ErrorResponse(resendResult.message, resendResult.code, []),
             );
         }
 
@@ -922,7 +914,8 @@ export const resendJudgeInvite: RequestHandler = asyncHandler(
                 ...resendResult.data,
                 emailQueued: !emailResult.error,
             },
-            message: resendResult.message || 'Judge invitation resent successfully.',
+            message:
+                resendResult.message || 'Judge invitation resent successfully.',
             status: 200,
         });
     },

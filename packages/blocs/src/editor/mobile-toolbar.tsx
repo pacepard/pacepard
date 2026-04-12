@@ -1,126 +1,126 @@
-"use client"
+'use client';
 
-import { cloneElement, useEffect, useMemo, useRef, useState } from "react"
-import { type Editor } from "@tiptap/react"
+import { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
+import { type Editor } from '@tiptap/react';
 
 // --- Hooks ---
-import { 
-  useIsBreakpoint,
-  useWindowSize,
-  useCursorVisibility,
-  getNodeDisplayName,
-} from "@pacepard/blocs"
-import { usePacepardEditor } from "@pacepard/blocs"
+import {
+    useIsBreakpoint,
+    useWindowSize,
+    useCursorVisibility,
+    getNodeDisplayName,
+} from '@pacepard/blocs';
+import { usePacepardEditor } from '@pacepard/blocs';
 
 // --- Tiptap UI ---
 import {
-  ColorHighlightPopover,
-  ColorHighlightPopoverButton,
-  ColorHighlightPopoverContent,
-} from "@pacepard/blocs/ui/color-highlight-popover"
-import { ImageUploadButton } from "@pacepard/blocs/ui/image-upload-button"
+    ColorHighlightPopover,
+    ColorHighlightPopoverButton,
+    ColorHighlightPopoverContent,
+} from '@pacepard/blocs/ui/color-highlight-popover';
+import { ImageUploadButton } from '@pacepard/blocs/ui/image-upload-button';
 import {
-  canSetLink,
-  LinkButton,
-  LinkContent,
-  LinkPopover,
-} from "@pacepard/blocs/ui/link-popover"
-import { MarkButton } from "@pacepard/blocs/ui/mark-button"
-import { TextAlignButton } from "@pacepard/blocs/ui/text-align-button"
-import { SlashCommandTriggerButton } from "@pacepard/blocs/ui/slash-command-trigger-button"
-import { ResetAllFormattingButton } from "@pacepard/blocs/ui/reset-all-formatting-button"
-import { DeleteNodeButton } from "@pacepard/blocs/ui/delete-node-button"
-import { ImproveDropdown } from "@pacepard/blocs/ui/improve-dropdown"
-import { CopyAnchorLinkButton } from "@pacepard/blocs/ui/copy-anchor-link-button"
-import { TurnIntoDropdownContent } from "@pacepard/blocs/ui/turn-into-dropdown"
-import { useRecentColors } from "@pacepard/blocs/ui/color-text-popover"
+    canSetLink,
+    LinkButton,
+    LinkContent,
+    LinkPopover,
+} from '@pacepard/blocs/ui/link-popover';
+import { MarkButton } from '@pacepard/blocs/ui/mark-button';
+import { TextAlignButton } from '@pacepard/blocs/ui/text-align-button';
+import { SlashCommandTriggerButton } from '@pacepard/blocs/ui/slash-command-trigger-button';
+import { ResetAllFormattingButton } from '@pacepard/blocs/ui/reset-all-formatting-button';
+import { DeleteNodeButton } from '@pacepard/blocs/ui/delete-node-button';
+import { ImproveDropdown } from '@pacepard/blocs/ui/improve-dropdown';
+import { CopyAnchorLinkButton } from '@pacepard/blocs/ui/copy-anchor-link-button';
+import { TurnIntoDropdownContent } from '@pacepard/blocs/ui/turn-into-dropdown';
+import { useRecentColors } from '@pacepard/blocs/ui/color-text-popover';
 import {
-  ColorTextButton,
-  TEXT_COLORS,
-} from "@pacepard/blocs/ui/color-text-button"
+    ColorTextButton,
+    TEXT_COLORS,
+} from '@pacepard/blocs/ui/color-text-button';
 import {
-  canColorHighlight,
-  ColorHighlightButton,
-  HIGHLIGHT_COLORS,
-} from "@pacepard/blocs/ui/color-highlight-button"
-import { AiAskButton } from "@pacepard/blocs/ui/ai-ask-button"
-import { DuplicateButton } from "@pacepard/blocs/ui/duplicate-button"
-import { CopyToClipboardButton } from "@pacepard/blocs/ui/copy-to-clipboard-button"
+    canColorHighlight,
+    ColorHighlightButton,
+    HIGHLIGHT_COLORS,
+} from '@pacepard/blocs/ui/color-highlight-button';
+import { AiAskButton } from '@pacepard/blocs/ui/ai-ask-button';
+import { DuplicateButton } from '@pacepard/blocs/ui/duplicate-button';
+import { CopyToClipboardButton } from '@pacepard/blocs/ui/copy-to-clipboard-button';
 
 // --- Utils ---
 
 // --- Icons ---
-import { PaintBucketIcon } from "@pacepard/blocs/icons/paint-bucket-icon"
-import { Repeat2Icon } from "@pacepard/blocs/icons/repeat-2-icon"
+import { PaintBucketIcon } from '@pacepard/blocs/icons/paint-bucket-icon';
+import { Repeat2Icon } from '@pacepard/blocs/icons/repeat-2-icon';
 
 // --- UI Primitives ---
 import {
-  Card,
-  CardBody,
-  CardGroupLabel,
-  CardItemGroup,
-} from "@pacepard/blocs/primitives/card"
-import { Spacer } from "@pacepard/blocs/primitives/spacer"
-import { Separator } from "@pacepard/blocs/primitives/separator"
+    Card,
+    CardBody,
+    CardGroupLabel,
+    CardItemGroup,
+} from '@pacepard/blocs/primitives/card';
+import { Spacer } from '@pacepard/blocs/primitives/spacer';
+import { Separator } from '@pacepard/blocs/primitives/separator';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@pacepard/blocs/primitives/dropdown-menu"
-import { ArrowLeftIcon } from "@pacepard/blocs/icons/arrow-left-icon"
-import { ChevronRightIcon } from "@pacepard/blocs/icons/chevron-right-icon"
-import { HighlighterIcon } from "@pacepard/blocs/icons/highlighter-icon"
-import { LinkIcon } from "@pacepard/blocs/icons/link-icon"
-import { MoreVerticalIcon } from "@pacepard/blocs/icons/more-vertical-icon"
-import { Button, ButtonGroup } from "@pacepard/blocs/primitives/button"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuPortal,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from '@pacepard/blocs/primitives/dropdown-menu';
+import { ArrowLeftIcon } from '@pacepard/blocs/icons/arrow-left-icon';
+import { ChevronRightIcon } from '@pacepard/blocs/icons/chevron-right-icon';
+import { HighlighterIcon } from '@pacepard/blocs/icons/highlighter-icon';
+import { LinkIcon } from '@pacepard/blocs/icons/link-icon';
+import { MoreVerticalIcon } from '@pacepard/blocs/icons/more-vertical-icon';
+import { Button, ButtonGroup } from '@pacepard/blocs/primitives/button';
 import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-} from "@pacepard/blocs/primitives/toolbar"
-import { MoveNodeButton } from "@pacepard/blocs/ui/move-node-button"
-import { ImageNodeFloating } from "@pacepard/blocs/node/image-node/image-node-floating"
-import { NodeSelection } from "@tiptap/pm/state"
-import type { ShortAnswerAttrs, InputType } from "@pacepard/blocs"
+    Toolbar,
+    ToolbarGroup,
+    ToolbarSeparator,
+} from '@pacepard/blocs/primitives/toolbar';
+import { MoveNodeButton } from '@pacepard/blocs/ui/move-node-button';
+import { ImageNodeFloating } from '@pacepard/blocs/node/image-node/image-node-floating';
+import { NodeSelection } from '@tiptap/pm/state';
+import type { ShortAnswerAttrs, InputType } from '@pacepard/blocs';
 
 // =============================================================================
 // Types & Constants
 // =============================================================================
 
 const TOOLBAR_VIEWS = {
-  MAIN: "main",
-  HIGHLIGHTER: "highlighter",
-  LINK: "link",
-} as const
+    MAIN: 'main',
+    HIGHLIGHTER: 'highlighter',
+    LINK: 'link',
+} as const;
 
-type ToolbarViewId = (typeof TOOLBAR_VIEWS)[keyof typeof TOOLBAR_VIEWS]
+type ToolbarViewId = (typeof TOOLBAR_VIEWS)[keyof typeof TOOLBAR_VIEWS];
 
 export type ToolbarViewType = {
-  id: string
-  title: string
-  icon: React.ReactNode
-  content: React.ReactNode
-  mobileButton?: (onClick: () => void) => React.ReactNode
-  desktopComponent?: React.ReactNode
-  shouldShow?: (editor: Editor | null) => boolean
-}
+    id: string;
+    title: string;
+    icon: React.ReactNode;
+    content: React.ReactNode;
+    mobileButton?: (onClick: () => void) => React.ReactNode;
+    desktopComponent?: React.ReactNode;
+    shouldShow?: (editor: Editor | null) => boolean;
+};
 
 type ToolbarViewRegistry = Record<
-  Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>,
-  ToolbarViewType
->
+    Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>,
+    ToolbarViewType
+>;
 
 interface ToolbarState {
-  viewId: ToolbarViewId
-  setViewId: (id: ToolbarViewId) => void
-  isMainView: boolean
-  showMainView: () => void
-  showView: (id: ToolbarViewId) => void
+    viewId: ToolbarViewId;
+    setViewId: (id: ToolbarViewId) => void;
+    isMainView: boolean;
+    showMainView: () => void;
+    showView: (id: ToolbarViewId) => void;
 }
 
 // =============================================================================
@@ -128,28 +128,28 @@ interface ToolbarState {
 // =============================================================================
 
 function useToolbarState(isMobile: boolean): ToolbarState {
-  const [viewId, setViewId] = useState<ToolbarViewId>(TOOLBAR_VIEWS.MAIN)
+    const [viewId, setViewId] = useState<ToolbarViewId>(TOOLBAR_VIEWS.MAIN);
 
-  useEffect(() => {
-    if (!isMobile && viewId !== TOOLBAR_VIEWS.MAIN) {
-      setViewId(TOOLBAR_VIEWS.MAIN)
-    }
-  }, [isMobile, viewId])
+    useEffect(() => {
+        if (!isMobile && viewId !== TOOLBAR_VIEWS.MAIN) {
+            setViewId(TOOLBAR_VIEWS.MAIN);
+        }
+    }, [isMobile, viewId]);
 
-  return {
-    viewId,
-    setViewId,
-    isMainView: viewId === TOOLBAR_VIEWS.MAIN,
-    showMainView: () => setViewId(TOOLBAR_VIEWS.MAIN),
-    showView: (id: ToolbarViewId) => setViewId(id),
-  }
+    return {
+        viewId,
+        setViewId,
+        isMainView: viewId === TOOLBAR_VIEWS.MAIN,
+        showMainView: () => setViewId(TOOLBAR_VIEWS.MAIN),
+        showView: (id: ToolbarViewId) => setViewId(id),
+    };
 }
 
 function hasTextSelection(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false
+    if (!editor || !editor.isEditable) return false;
 
-  const { selection } = editor.state
-  return !selection.empty
+    const { selection } = editor.state;
+    return !selection.empty;
 }
 
 // =============================================================================
@@ -157,34 +157,36 @@ function hasTextSelection(editor: Editor | null): boolean {
 // =============================================================================
 
 function createToolbarViewRegistry(): ToolbarViewRegistry {
-  return {
-    [TOOLBAR_VIEWS.HIGHLIGHTER]: {
-      id: TOOLBAR_VIEWS.HIGHLIGHTER,
-      title: "Text Highlighter",
-      icon: <HighlighterIcon className="tiptap-button-icon" />,
-      content: <ColorHighlightPopoverContent />,
-      mobileButton: (onClick: () => void) => (
-        <ColorHighlightPopoverButton onClick={onClick} />
-      ),
-      desktopComponent: (
-        <ColorHighlightPopover hideWhenUnavailable={false} />
-      ),
-      shouldShow(editor) {
-        return canColorHighlight(editor)
-      },
-    },
-    [TOOLBAR_VIEWS.LINK]: {
-      id: TOOLBAR_VIEWS.LINK,
-      title: "Link Editor",
-      icon: <LinkIcon className="tiptap-button-icon" />,
-      content: <LinkContent />,
-      mobileButton: (onClick: () => void) => <LinkButton onClick={onClick} />,
-      desktopComponent: <LinkPopover hideWhenUnavailable={false} />,
-      shouldShow(editor) {
-        return canSetLink(editor)
-      },
-    },
-  }
+    return {
+        [TOOLBAR_VIEWS.HIGHLIGHTER]: {
+            id: TOOLBAR_VIEWS.HIGHLIGHTER,
+            title: 'Text Highlighter',
+            icon: <HighlighterIcon className="tiptap-button-icon" />,
+            content: <ColorHighlightPopoverContent />,
+            mobileButton: (onClick: () => void) => (
+                <ColorHighlightPopoverButton onClick={onClick} />
+            ),
+            desktopComponent: (
+                <ColorHighlightPopover hideWhenUnavailable={false} />
+            ),
+            shouldShow(editor) {
+                return canColorHighlight(editor);
+            },
+        },
+        [TOOLBAR_VIEWS.LINK]: {
+            id: TOOLBAR_VIEWS.LINK,
+            title: 'Link Editor',
+            icon: <LinkIcon className="tiptap-button-icon" />,
+            content: <LinkContent />,
+            mobileButton: (onClick: () => void) => (
+                <LinkButton onClick={onClick} />
+            ),
+            desktopComponent: <LinkPopover hideWhenUnavailable={false} />,
+            shouldShow(editor) {
+                return canSetLink(editor);
+            },
+        },
+    };
 }
 
 // =============================================================================
@@ -192,209 +194,221 @@ function createToolbarViewRegistry(): ToolbarViewRegistry {
 // =============================================================================
 
 function AlignmentGroup() {
-  return (
-    <>
-      <ToolbarGroup>
-        <TextAlignButton align="left" hideWhenUnavailable />
-        <TextAlignButton align="center" hideWhenUnavailable />
-        <TextAlignButton align="right" hideWhenUnavailable />
-        <TextAlignButton align="justify" hideWhenUnavailable />
-      </ToolbarGroup>
+    return (
+        <>
+            <ToolbarGroup>
+                <TextAlignButton align="left" hideWhenUnavailable />
+                <TextAlignButton align="center" hideWhenUnavailable />
+                <TextAlignButton align="right" hideWhenUnavailable />
+                <TextAlignButton align="justify" hideWhenUnavailable />
+            </ToolbarGroup>
 
-      <ToolbarSeparator />
-    </>
-  )
+            <ToolbarSeparator />
+        </>
+    );
 }
 
 function ScriptGroup() {
-  return (
-    <>
-      <ToolbarGroup>
-        <MarkButton type="superscript" hideWhenUnavailable />
-        <MarkButton type="subscript" hideWhenUnavailable />
-      </ToolbarGroup>
+    return (
+        <>
+            <ToolbarGroup>
+                <MarkButton type="superscript" hideWhenUnavailable />
+                <MarkButton type="subscript" hideWhenUnavailable />
+            </ToolbarGroup>
 
-      <ToolbarSeparator />
-    </>
-  )
+            <ToolbarSeparator />
+        </>
+    );
 }
 
 function FormattingGroup() {
-  return (
-    <>
-      <ToolbarGroup>
-        <MarkButton type="bold" hideWhenUnavailable />
-        <MarkButton type="italic" hideWhenUnavailable />
-        <MarkButton type="strike" hideWhenUnavailable />
-        <MarkButton type="code" hideWhenUnavailable />
-      </ToolbarGroup>
+    return (
+        <>
+            <ToolbarGroup>
+                <MarkButton type="bold" hideWhenUnavailable />
+                <MarkButton type="italic" hideWhenUnavailable />
+                <MarkButton type="strike" hideWhenUnavailable />
+                <MarkButton type="code" hideWhenUnavailable />
+            </ToolbarGroup>
 
-      <ToolbarSeparator />
-    </>
-  )
+            <ToolbarSeparator />
+        </>
+    );
 }
 
 function ColorActionGroup() {
-  const { recentColors, isInitialized, addRecentColor } = useRecentColors()
+    const { recentColors, isInitialized, addRecentColor } = useRecentColors();
 
-  const renderRecentColors = () => {
-    if (!isInitialized || recentColors.length === 0) return null
+    const renderRecentColors = () => {
+        if (!isInitialized || recentColors.length === 0) return null;
+
+        return (
+            <>
+                <CardItemGroup>
+                    <CardGroupLabel>Recent colors</CardGroupLabel>
+                    <ButtonGroup>
+                        {recentColors.map((colorObj) => (
+                            <DropdownMenuItem
+                                key={`${colorObj.type}-${colorObj.value}`}
+                                asChild
+                            >
+                                {colorObj.type === 'text' ? (
+                                    <ColorTextButton
+                                        textColor={colorObj.value}
+                                        label={colorObj.label}
+                                        text={colorObj.label}
+                                        tooltip={colorObj.label}
+                                        onApplied={({
+                                            color,
+                                            label,
+                                        }: {
+                                            color: string;
+                                            label: string;
+                                        }) =>
+                                            addRecentColor({
+                                                type: 'text',
+                                                label,
+                                                value: color,
+                                            })
+                                        }
+                                    />
+                                ) : (
+                                    <ColorHighlightButton
+                                        highlightColor={colorObj.value}
+                                        text={colorObj.label}
+                                        tooltip={colorObj.label}
+                                        onApplied={({
+                                            color,
+                                            label,
+                                        }: {
+                                            color: string;
+                                            label: string;
+                                        }) =>
+                                            addRecentColor({
+                                                type: 'highlight',
+                                                label,
+                                                value: color,
+                                            })
+                                        }
+                                    />
+                                )}
+                            </DropdownMenuItem>
+                        ))}
+                    </ButtonGroup>
+                </CardItemGroup>
+                <Separator orientation="horizontal" />
+            </>
+        );
+    };
 
     return (
-      <>
-        <CardItemGroup>
-          <CardGroupLabel>Recent colors</CardGroupLabel>
-          <ButtonGroup>
-            {recentColors.map((colorObj) => (
-              <DropdownMenuItem
-                key={`${colorObj.type}-${colorObj.value}`}
-                asChild
-              >
-                {colorObj.type === "text" ? (
-                  <ColorTextButton
-                    textColor={colorObj.value}
-                    label={colorObj.label}
-                    text={colorObj.label}
-                    tooltip={colorObj.label}
-                    onApplied={({
-                      color,
-                      label,
-                    }: {
-                      color: string
-                      label: string
-                    }) =>
-                      addRecentColor({
-                        type: "text",
-                        label,
-                        value: color,
-                      })
-                    }
-                  />
-                ) : (
-                  <ColorHighlightButton
-                    highlightColor={colorObj.value}
-                    text={colorObj.label}
-                    tooltip={colorObj.label}
-                    onApplied={({
-                      color,
-                      label,
-                    }: {
-                      color: string
-                      label: string
-                    }) =>
-                      addRecentColor({
-                        type: "highlight",
-                        label,
-                        value: color,
-                      })
-                    }
-                  />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </ButtonGroup>
-        </CardItemGroup>
-        <Separator orientation="horizontal" />
-      </>
-    )
-  }
+        <DropdownMenuSub>
+            <DropdownMenuSubTrigger asChild>
+                <Button data-style="ghost">
+                    <PaintBucketIcon className="tiptap-button-icon" />
+                    <span className="tiptap-button-text">Color</span>
+                    <Spacer />
+                    <ChevronRightIcon className="tiptap-button-icon" />
+                </Button>
+            </DropdownMenuSubTrigger>
 
-  return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger asChild>
-        <Button data-style="ghost">
-          <PaintBucketIcon className="tiptap-button-icon" />
-          <span className="tiptap-button-text">Color</span>
-          <Spacer />
-          <ChevronRightIcon className="tiptap-button-icon" />
-        </Button>
-      </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                    <Card>
+                        <CardBody>
+                            {renderRecentColors()}
 
-      <DropdownMenuPortal>
-        <DropdownMenuSubContent>
-          <Card>
-            <CardBody>
-              {renderRecentColors()}
+                            <CardItemGroup>
+                                <CardGroupLabel>Text color</CardGroupLabel>
+                                <ButtonGroup>
+                                    {TEXT_COLORS.map((textColor) => (
+                                        <DropdownMenuItem
+                                            key={textColor.value}
+                                            asChild
+                                        >
+                                            <ColorTextButton
+                                                textColor={textColor.value}
+                                                label={textColor.label}
+                                                text={textColor.label}
+                                                tooltip={textColor.label}
+                                                onApplied={({
+                                                    color,
+                                                    label,
+                                                }: {
+                                                    color: string;
+                                                    label: string;
+                                                }) =>
+                                                    addRecentColor({
+                                                        type: 'text',
+                                                        label,
+                                                        value: color,
+                                                    })
+                                                }
+                                            />
+                                        </DropdownMenuItem>
+                                    ))}
+                                </ButtonGroup>
+                            </CardItemGroup>
 
-              <CardItemGroup>
-                <CardGroupLabel>Text color</CardGroupLabel>
-                <ButtonGroup>
-                  {TEXT_COLORS.map((textColor) => (
-                    <DropdownMenuItem key={textColor.value} asChild>
-                      <ColorTextButton
-                        textColor={textColor.value}
-                        label={textColor.label}
-                        text={textColor.label}
-                        tooltip={textColor.label}
-                        onApplied={({
-                          color,
-                          label,
-                        }: {
-                          color: string
-                          label: string
-                        }) =>
-                          addRecentColor({ type: "text", label, value: color })
-                        }
-                      />
-                    </DropdownMenuItem>
-                  ))}
-                </ButtonGroup>
-              </CardItemGroup>
+                            <Separator orientation="horizontal" />
 
-              <Separator orientation="horizontal" />
-
-              <CardItemGroup>
-                <CardGroupLabel>Highlight color</CardGroupLabel>
-                <ButtonGroup>
-                  {HIGHLIGHT_COLORS.map((highlightColor) => (
-                    <DropdownMenuItem key={highlightColor.value} asChild>
-                      <ColorHighlightButton
-                        highlightColor={highlightColor.value}
-                        text={highlightColor.label}
-                        tooltip={highlightColor.label}
-                        onApplied={({
-                          color,
-                          label,
-                        }: {
-                          color: string
-                          label: string
-                        }) =>
-                          addRecentColor({
-                            type: "highlight",
-                            label,
-                            value: color,
-                          })
-                        }
-                      />
-                    </DropdownMenuItem>
-                  ))}
-                </ButtonGroup>
-              </CardItemGroup>
-            </CardBody>
-          </Card>
-        </DropdownMenuSubContent>
-      </DropdownMenuPortal>
-    </DropdownMenuSub>
-  )
+                            <CardItemGroup>
+                                <CardGroupLabel>Highlight color</CardGroupLabel>
+                                <ButtonGroup>
+                                    {HIGHLIGHT_COLORS.map((highlightColor) => (
+                                        <DropdownMenuItem
+                                            key={highlightColor.value}
+                                            asChild
+                                        >
+                                            <ColorHighlightButton
+                                                highlightColor={
+                                                    highlightColor.value
+                                                }
+                                                text={highlightColor.label}
+                                                tooltip={highlightColor.label}
+                                                onApplied={({
+                                                    color,
+                                                    label,
+                                                }: {
+                                                    color: string;
+                                                    label: string;
+                                                }) =>
+                                                    addRecentColor({
+                                                        type: 'highlight',
+                                                        label,
+                                                        value: color,
+                                                    })
+                                                }
+                                            />
+                                        </DropdownMenuItem>
+                                    ))}
+                                </ButtonGroup>
+                            </CardItemGroup>
+                        </CardBody>
+                    </Card>
+                </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+        </DropdownMenuSub>
+    );
 }
 
 function TransformActionGroup() {
-  return (
-    <DropdownMenuSub>
-      <DropdownMenuSubTrigger asChild>
-        <Button data-style="ghost">
-          <Repeat2Icon className="tiptap-button-icon" />
-          <span className="tiptap-button-text">Turn into</span>
-          <Spacer />
-          <ChevronRightIcon className="tiptap-button-icon" />
-        </Button>
-      </DropdownMenuSubTrigger>
+    return (
+        <DropdownMenuSub>
+            <DropdownMenuSubTrigger asChild>
+                <Button data-style="ghost">
+                    <Repeat2Icon className="tiptap-button-icon" />
+                    <span className="tiptap-button-text">Turn into</span>
+                    <Spacer />
+                    <ChevronRightIcon className="tiptap-button-icon" />
+                </Button>
+            </DropdownMenuSubTrigger>
 
-      <DropdownMenuSubContent>
-        <TurnIntoDropdownContent />
-      </DropdownMenuSubContent>
-    </DropdownMenuSub>
-  )
+            <DropdownMenuSubContent>
+                <TurnIntoDropdownContent />
+            </DropdownMenuSubContent>
+        </DropdownMenuSub>
+    );
 }
 
 // =============================================================================
@@ -402,178 +416,193 @@ function TransformActionGroup() {
 // =============================================================================
 
 interface DropdownMenuActionsProps {
-  editor: Editor | null
+    editor: Editor | null;
 }
 
 const SHORT_ANSWER_INPUT_TYPES: { value: InputType; label: string }[] = [
-  { value: "text", label: "Text" },
-  { value: "email", label: "Email" },
-  { value: "number", label: "Number" },
-  { value: "url", label: "URL" },
-  { value: "tel", label: "Phone" },
-]
+    { value: 'text', label: 'Text' },
+    { value: 'email', label: 'Email' },
+    { value: 'number', label: 'Number' },
+    { value: 'url', label: 'URL' },
+    { value: 'tel', label: 'Phone' },
+];
 
 const SHORT_ANSWER_NODE_NAMES = [
-  "shortAnswer",
-  "shortAnswerText",
-  "shortAnswerEmail",
-  "shortAnswerNumber",
-  "shortAnswerUrl",
-  "shortAnswerTel",
-] as const
+    'shortAnswer',
+    'shortAnswerText',
+    'shortAnswerEmail',
+    'shortAnswerNumber',
+    'shortAnswerUrl',
+    'shortAnswerTel',
+] as const;
 
 const TYPED_NODE_TO_INPUT_TYPE: Record<string, InputType> = {
-  shortAnswerText: "text",
-  shortAnswerEmail: "email",
-  shortAnswerNumber: "number",
-  shortAnswerUrl: "url",
-  shortAnswerTel: "tel",
-}
+    shortAnswerText: 'text',
+    shortAnswerEmail: 'email',
+    shortAnswerNumber: 'number',
+    shortAnswerUrl: 'url',
+    shortAnswerTel: 'tel',
+};
 
 function ShortAnswerMobileGroup({ editor }: DropdownMenuActionsProps) {
-  if (!editor) return null
-  const { selection } = editor.state
-  if (!(selection instanceof NodeSelection)) return null
-  const nodeName = selection.node.type.name
-  if (!(SHORT_ANSWER_NODE_NAMES as readonly string[]).includes(nodeName)) return null
-  const attrs = selection.node.attrs as ShortAnswerAttrs
-  const inputType =
-    nodeName === "shortAnswer"
-      ? (attrs.inputType ?? "text") as InputType
-      : TYPED_NODE_TO_INPUT_TYPE[nodeName] ?? "text"
-  const update = (next: Partial<ShortAnswerAttrs>) => {
-    editor.chain().focus().updateAttributes(nodeName, next).run()
-  }
-  const convertTo = (targetType: InputType) => {
-    const targetNodeName =
-      targetType === "text"
-        ? "shortAnswerText"
-        : "shortAnswer" + targetType.charAt(0).toUpperCase() + targetType.slice(1)
-    const { state } = editor
-    const schema = state.schema
-    const targetNodeType = schema.nodes[targetNodeName]
-    if (!targetNodeType) return
-    const node = selection.node
-    const from = selection.from
-    const to = selection.to
-    const newNode = targetNodeType.create(
-      { ...node.attrs, inputType: targetType },
-      node.content
-    )
-    const tr = state.tr.replaceWith(from, to, newNode)
-    editor.view.dispatch(tr)
-  }
-  const isTypedNode = nodeName !== "shortAnswer"
-  return (
-    <>
-      <Separator orientation="horizontal" />
-      <CardItemGroup>
-        <CardGroupLabel>Short answer</CardGroupLabel>
-        <ButtonGroup>
-          {SHORT_ANSWER_INPUT_TYPES.map(({ value, label }) => (
-            <DropdownMenuItem key={value} asChild>
-              <Button
-                data-style="ghost"
-                data-active-state={inputType === value ? "on" : "off"}
-                onClick={() => {
-                  if (isTypedNode) convertTo(value)
-                  else update({ inputType: value })
-                }}
-              >
-                <span className="tiptap-button-text">{label}</span>
-              </Button>
-            </DropdownMenuItem>
-          ))}
-        </ButtonGroup>
-        <DropdownMenuItem asChild>
-          <Button
-            data-style="ghost"
-            data-active-state={attrs.required ? "on" : "off"}
-            onClick={() => update({ required: !attrs.required })}
-          >
-            <span className="tiptap-button-text">
-              {attrs.required ? "Required ✓" : "Required"}
-            </span>
-          </Button>
-        </DropdownMenuItem>
-      </CardItemGroup>
-    </>
-  )
+    if (!editor) return null;
+    const { selection } = editor.state;
+    if (!(selection instanceof NodeSelection)) return null;
+    const nodeName = selection.node.type.name;
+    if (!(SHORT_ANSWER_NODE_NAMES as readonly string[]).includes(nodeName))
+        return null;
+    const attrs = selection.node.attrs as ShortAnswerAttrs;
+    const inputType =
+        nodeName === 'shortAnswer'
+            ? ((attrs.inputType ?? 'text') as InputType)
+            : (TYPED_NODE_TO_INPUT_TYPE[nodeName] ?? 'text');
+    const update = (next: Partial<ShortAnswerAttrs>) => {
+        editor.chain().focus().updateAttributes(nodeName, next).run();
+    };
+    const convertTo = (targetType: InputType) => {
+        const targetNodeName =
+            targetType === 'text'
+                ? 'shortAnswerText'
+                : 'shortAnswer' +
+                  targetType.charAt(0).toUpperCase() +
+                  targetType.slice(1);
+        const { state } = editor;
+        const schema = state.schema;
+        const targetNodeType = schema.nodes[targetNodeName];
+        if (!targetNodeType) return;
+        const node = selection.node;
+        const from = selection.from;
+        const to = selection.to;
+        const newNode = targetNodeType.create(
+            { ...node.attrs, inputType: targetType },
+            node.content,
+        );
+        const tr = state.tr.replaceWith(from, to, newNode);
+        editor.view.dispatch(tr);
+    };
+    const isTypedNode = nodeName !== 'shortAnswer';
+    return (
+        <>
+            <Separator orientation="horizontal" />
+            <CardItemGroup>
+                <CardGroupLabel>Short answer</CardGroupLabel>
+                <ButtonGroup>
+                    {SHORT_ANSWER_INPUT_TYPES.map(({ value, label }) => (
+                        <DropdownMenuItem key={value} asChild>
+                            <Button
+                                data-style="ghost"
+                                data-active-state={
+                                    inputType === value ? 'on' : 'off'
+                                }
+                                onClick={() => {
+                                    if (isTypedNode) convertTo(value);
+                                    else update({ inputType: value });
+                                }}
+                            >
+                                <span className="tiptap-button-text">
+                                    {label}
+                                </span>
+                            </Button>
+                        </DropdownMenuItem>
+                    ))}
+                </ButtonGroup>
+                <DropdownMenuItem asChild>
+                    <Button
+                        data-style="ghost"
+                        data-active-state={attrs.required ? 'on' : 'off'}
+                        onClick={() => update({ required: !attrs.required })}
+                    >
+                        <span className="tiptap-button-text">
+                            {attrs.required ? 'Required ✓' : 'Required'}
+                        </span>
+                    </Button>
+                </DropdownMenuItem>
+            </CardItemGroup>
+        </>
+    );
 }
 
 function DropdownMenuActions({ editor }: DropdownMenuActionsProps) {
-  const isMobile = useIsBreakpoint()
+    const isMobile = useIsBreakpoint();
 
-  return (
-    <Card>
-      <CardBody>
-        <CardItemGroup>
-          <CardGroupLabel>{getNodeDisplayName(editor)}</CardGroupLabel>
-          <ButtonGroup>
-            <ColorActionGroup />
-            <TransformActionGroup />
+    return (
+        <Card>
+            <CardBody>
+                <CardItemGroup>
+                    <CardGroupLabel>
+                        {getNodeDisplayName(editor)}
+                    </CardGroupLabel>
+                    <ButtonGroup>
+                        <ColorActionGroup />
+                        <TransformActionGroup />
 
-            <DropdownMenuItem asChild>
-              <ResetAllFormattingButton text="Reset formatting" />
-            </DropdownMenuItem>
-          </ButtonGroup>
-        </CardItemGroup>
+                        <DropdownMenuItem asChild>
+                            <ResetAllFormattingButton text="Reset formatting" />
+                        </DropdownMenuItem>
+                    </ButtonGroup>
+                </CardItemGroup>
 
-        <ShortAnswerMobileGroup editor={editor} />
+                <ShortAnswerMobileGroup editor={editor} />
 
-        <Separator orientation="horizontal" />
+                <Separator orientation="horizontal" />
 
-        <ButtonGroup>
-          <DropdownMenuItem asChild>
-            <DuplicateButton text="Duplicate node" showShortcut={!isMobile} />
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <CopyToClipboardButton
-              text="Copy to clipboard"
-              showShortcut={!isMobile}
-            />
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <CopyAnchorLinkButton
-              text="Copy anchor link"
-              showShortcut={!isMobile}
-            />
-          </DropdownMenuItem>
-        </ButtonGroup>
+                <ButtonGroup>
+                    <DropdownMenuItem asChild>
+                        <DuplicateButton
+                            text="Duplicate node"
+                            showShortcut={!isMobile}
+                        />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <CopyToClipboardButton
+                            text="Copy to clipboard"
+                            showShortcut={!isMobile}
+                        />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <CopyAnchorLinkButton
+                            text="Copy anchor link"
+                            showShortcut={!isMobile}
+                        />
+                    </DropdownMenuItem>
+                </ButtonGroup>
 
-        <Separator orientation="horizontal" />
+                <Separator orientation="horizontal" />
 
-        <ButtonGroup>
-          <DropdownMenuItem asChild>
-            <AiAskButton text="Ask AI" showShortcut={!isMobile} />
-          </DropdownMenuItem>
-        </ButtonGroup>
+                <ButtonGroup>
+                    <DropdownMenuItem asChild>
+                        <AiAskButton text="Ask AI" showShortcut={!isMobile} />
+                    </DropdownMenuItem>
+                </ButtonGroup>
 
-        <Separator orientation="horizontal" />
+                <Separator orientation="horizontal" />
 
-        <ButtonGroup>
-          <DropdownMenuItem asChild>
-            <DeleteNodeButton text="Delete" showShortcut={!isMobile} />
-          </DropdownMenuItem>
-        </ButtonGroup>
-      </CardBody>
-    </Card>
-  )
+                <ButtonGroup>
+                    <DropdownMenuItem asChild>
+                        <DeleteNodeButton
+                            text="Delete"
+                            showShortcut={!isMobile}
+                        />
+                    </DropdownMenuItem>
+                </ButtonGroup>
+            </CardBody>
+        </Card>
+    );
 }
 
 function MoreActionsDropdown({ editor }: DropdownMenuActionsProps) {
-  return (
-    <DropdownMenu modal={true}>
-      <DropdownMenuTrigger asChild>
-        <Button data-style="ghost" data-appearance="subdued">
-          <MoreVerticalIcon className="tiptap-button-icon" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent portal={true}>
-        <DropdownMenuActions editor={editor} />
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
+    return (
+        <DropdownMenu modal={true}>
+            <DropdownMenuTrigger asChild>
+                <Button data-style="ghost" data-appearance="subdued">
+                    <MoreVerticalIcon className="tiptap-button-icon" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent portal={true}>
+                <DropdownMenuActions editor={editor} />
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }
 
 // =============================================================================
@@ -581,72 +610,74 @@ function MoreActionsDropdown({ editor }: DropdownMenuActionsProps) {
 // =============================================================================
 
 interface ToolbarViewButtonProps {
-  view: ToolbarViewType
-  isMobile: boolean
-  onViewChange: (viewId: ToolbarViewId) => void
+    view: ToolbarViewType;
+    isMobile: boolean;
+    onViewChange: (viewId: ToolbarViewId) => void;
 }
 
 function ToolbarViewButton({
-  view,
-  isMobile,
-  onViewChange,
+    view,
+    isMobile,
+    onViewChange,
 }: ToolbarViewButtonProps) {
-  const viewId = view.id as Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>
+    const viewId = view.id as Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>;
 
-  if (isMobile) {
-    return view.mobileButton ? (
-      cloneElement(
-        view.mobileButton(() => onViewChange(viewId)) as React.ReactElement,
-        { key: view.id }
-      )
-    ) : (
-      <Button key={view.id} onClick={() => onViewChange(viewId)}>
-        {view.icon}
-      </Button>
-    )
-  }
+    if (isMobile) {
+        return view.mobileButton ? (
+            cloneElement(
+                view.mobileButton(() =>
+                    onViewChange(viewId),
+                ) as React.ReactElement,
+                { key: view.id },
+            )
+        ) : (
+            <Button key={view.id} onClick={() => onViewChange(viewId)}>
+                {view.icon}
+            </Button>
+        );
+    }
 
-  return view.desktopComponent
-    ? cloneElement(view.desktopComponent as React.ReactElement, {
-        key: view.id,
-      })
-    : null
+    return view.desktopComponent
+        ? cloneElement(view.desktopComponent as React.ReactElement, {
+              key: view.id,
+          })
+        : null;
 }
 
 interface ToolbarViewsGroupProps {
-  toolbarViews: ToolbarViewRegistry
-  isMobile: boolean
-  onViewChange: (viewId: ToolbarViewId) => void
-  editor: Editor | null
+    toolbarViews: ToolbarViewRegistry;
+    isMobile: boolean;
+    onViewChange: (viewId: ToolbarViewId) => void;
+    editor: Editor | null;
 }
 
 function ToolbarViewsGroup({
-  toolbarViews,
-  isMobile,
-  onViewChange,
-  editor,
+    toolbarViews,
+    isMobile,
+    onViewChange,
+    editor,
 }: ToolbarViewsGroupProps) {
-  const visibleViews = Object.values(toolbarViews).filter((view) => {
-    if (!view.shouldShow) return true
-    return view.shouldShow(editor)
-  })
+    const visibleViews = Object.values(toolbarViews).filter((view) => {
+        if (!view.shouldShow) return true;
+        return view.shouldShow(editor);
+    });
 
-  if (visibleViews.length === 0) return null
+    if (visibleViews.length === 0) return null;
 
-  return (
-    <>
-      {visibleViews.map((view) => (
-        <ToolbarViewButton
-          key={view.id}
-          view={view}
-          isMobile={isMobile}
-          onViewChange={onViewChange}
-        />
-      ))}
+    return (
+        <>
+            {visibleViews.map((view) => (
+                <ToolbarViewButton
+                    key={view.id}
+                    view={view}
+                    isMobile={isMobile}
+                    onViewChange={onViewChange}
+                />
+            ))}
 
-      <ToolbarSeparator />
-    </>
-  )
+            <ToolbarSeparator />
+        </>
+    );
 }
 
 // =============================================================================
@@ -654,66 +685,66 @@ function ToolbarViewsGroup({
 // =============================================================================
 
 interface MainToolbarContentProps {
-  editor: Editor | null
-  isMobile: boolean
-  toolbarViews: ToolbarViewRegistry
-  onViewChange: (viewId: ToolbarViewId) => void
+    editor: Editor | null;
+    isMobile: boolean;
+    toolbarViews: ToolbarViewRegistry;
+    onViewChange: (viewId: ToolbarViewId) => void;
 }
 
 function MainToolbarContent({
-  editor,
-  isMobile,
-  toolbarViews,
-  onViewChange,
+    editor,
+    isMobile,
+    toolbarViews,
+    onViewChange,
 }: MainToolbarContentProps) {
-  const hasSelection = hasTextSelection(editor)
-  const hasContent = (editor?.getText().length ?? 0) > 0
+    const hasSelection = hasTextSelection(editor);
+    const hasContent = (editor?.getText().length ?? 0) > 0;
 
-  return (
-    <>
-      <ToolbarGroup>
-        <SlashCommandTriggerButton />
-        <MoreActionsDropdown editor={editor} />
-
-        <ToolbarSeparator />
-      </ToolbarGroup>
-
-      {(hasSelection || hasContent) && (
+    return (
         <>
-          <ToolbarGroup>
-            <ImproveDropdown portal={true} hideWhenUnavailable />
-          </ToolbarGroup>
+            <ToolbarGroup>
+                <SlashCommandTriggerButton />
+                <MoreActionsDropdown editor={editor} />
 
-          <ToolbarSeparator />
+                <ToolbarSeparator />
+            </ToolbarGroup>
 
-          <FormattingGroup />
+            {(hasSelection || hasContent) && (
+                <>
+                    <ToolbarGroup>
+                        <ImproveDropdown portal={true} hideWhenUnavailable />
+                    </ToolbarGroup>
 
-          <ToolbarViewsGroup
-            toolbarViews={toolbarViews}
-            isMobile={isMobile}
-            onViewChange={onViewChange}
-            editor={editor}
-          />
+                    <ToolbarSeparator />
 
-          <ImageNodeFloating />
+                    <FormattingGroup />
 
-          <ScriptGroup />
+                    <ToolbarViewsGroup
+                        toolbarViews={toolbarViews}
+                        isMobile={isMobile}
+                        onViewChange={onViewChange}
+                        editor={editor}
+                    />
 
-          <AlignmentGroup />
+                    <ImageNodeFloating />
 
-          <ToolbarGroup>
-            <ImageUploadButton text="Add" />
-            <ToolbarSeparator />
-          </ToolbarGroup>
+                    <ScriptGroup />
+
+                    <AlignmentGroup />
+
+                    <ToolbarGroup>
+                        <ImageUploadButton text="Add" />
+                        <ToolbarSeparator />
+                    </ToolbarGroup>
+                </>
+            )}
+
+            <ToolbarGroup>
+                <MoveNodeButton direction="down" />
+                <MoveNodeButton direction="up" />
+            </ToolbarGroup>
         </>
-      )}
-
-      <ToolbarGroup>
-        <MoveNodeButton direction="down" />
-        <MoveNodeButton direction="up" />
-      </ToolbarGroup>
-    </>
-  )
+    );
 }
 
 // =============================================================================
@@ -721,28 +752,28 @@ function MainToolbarContent({
 // =============================================================================
 
 interface SpecializedToolbarContentProps {
-  view: ToolbarViewType
-  onBack: () => void
+    view: ToolbarViewType;
+    onBack: () => void;
 }
 
 function SpecializedToolbarContent({
-  view,
-  onBack,
+    view,
+    onBack,
 }: SpecializedToolbarContentProps) {
-  return (
-    <>
-      <ToolbarGroup>
-        <Button data-style="ghost" onClick={onBack}>
-          <ArrowLeftIcon className="tiptap-button-icon" />
-          {view.icon}
-        </Button>
-      </ToolbarGroup>
+    return (
+        <>
+            <ToolbarGroup>
+                <Button data-style="ghost" onClick={onBack}>
+                    <ArrowLeftIcon className="tiptap-button-icon" />
+                    {view.icon}
+                </Button>
+            </ToolbarGroup>
 
-      <ToolbarSeparator />
+            <ToolbarSeparator />
 
-      {view.content}
-    </>
-  )
+            {view.content}
+        </>
+    );
 }
 
 // =============================================================================
@@ -750,58 +781,61 @@ function SpecializedToolbarContent({
 // =============================================================================
 
 export interface MobileToolbarProps {
-  editor?: Editor | null
+    editor?: Editor | null;
 }
 
 export function MobileToolbar({ editor: providedEditor }: MobileToolbarProps) {
-  const { editor } = usePacepardEditor(providedEditor)
-  const isMobile = useIsBreakpoint("max", 480)
-  const toolbarRef = useRef<HTMLDivElement>(null)
-  const toolbarState = useToolbarState(isMobile)
-  const toolbarViews = useMemo(() => createToolbarViewRegistry(), [])
+    const { editor } = usePacepardEditor(providedEditor);
+    const isMobile = useIsBreakpoint('max', 480);
+    const toolbarRef = useRef<HTMLDivElement>(null);
+    const toolbarState = useToolbarState(isMobile);
+    const toolbarViews = useMemo(() => createToolbarViewRegistry(), []);
 
-  const currentView = toolbarState.isMainView
-    ? null
-    : toolbarViews[
-        toolbarState.viewId as Exclude<ToolbarViewId, typeof TOOLBAR_VIEWS.MAIN>
-      ]
+    const currentView = toolbarState.isMainView
+        ? null
+        : toolbarViews[
+              toolbarState.viewId as Exclude<
+                  ToolbarViewId,
+                  typeof TOOLBAR_VIEWS.MAIN
+              >
+          ];
 
-  const { height } = useWindowSize()
-  const rect = useCursorVisibility({
-    editor,
-    overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-  })
+    const { height } = useWindowSize();
+    const rect = useCursorVisibility({
+        editor,
+        overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
+    });
 
-  if (!isMobile || !editor || !editor.isEditable) {
-    return null
-  }
+    if (!isMobile || !editor || !editor.isEditable) {
+        return null;
+    }
 
-  return (
-    <Toolbar
-      ref={toolbarRef}
-      style={{
-        ...(isMobile
-          ? {
-              bottom: `calc(100% - ${height - rect.y}px)`,
-            }
-          : {}),
-      }}
-    >
-      {toolbarState.isMainView ? (
-        <MainToolbarContent
-          editor={editor}
-          isMobile={isMobile}
-          toolbarViews={toolbarViews}
-          onViewChange={toolbarState.showView}
-        />
-      ) : (
-        currentView && (
-          <SpecializedToolbarContent
-            view={currentView}
-            onBack={toolbarState.showMainView}
-          />
-        )
-      )}
-    </Toolbar>
-  )
+    return (
+        <Toolbar
+            ref={toolbarRef}
+            style={{
+                ...(isMobile
+                    ? {
+                          bottom: `calc(100% - ${height - rect.y}px)`,
+                      }
+                    : {}),
+            }}
+        >
+            {toolbarState.isMainView ? (
+                <MainToolbarContent
+                    editor={editor}
+                    isMobile={isMobile}
+                    toolbarViews={toolbarViews}
+                    onViewChange={toolbarState.showView}
+                />
+            ) : (
+                currentView && (
+                    <SpecializedToolbarContent
+                        view={currentView}
+                        onBack={toolbarState.showMainView}
+                    />
+                )
+            )}
+        </Toolbar>
+    );
 }

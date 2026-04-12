@@ -5,42 +5,34 @@
 // import { OAuthProvider } from '../utils/enums.util';
 // import userRepository from '@/modules/user/user.repository';
 
-
-
-// const { 
-//   GOOGLE_CLIENT_ID, 
-//   GOOGLE_CLIENT_SECRET, 
-//   GOOGLE_REDIRECT_URI, 
-//   GITHUB_CLIENT_ID, 
+// const {
+//   GOOGLE_CLIENT_ID,
+//   GOOGLE_CLIENT_SECRET,
+//   GOOGLE_REDIRECT_URI,
+//   GITHUB_CLIENT_ID,
 //   GITHUB_CLIENT_SECRET,
 //   GITHUB_REDIRECT_URI,
-//   APPLE_CLIENT_ID, 
-//   APPLE_TEAM_ID, 
-//   APPLE_KEY_ID, 
+//   APPLE_CLIENT_ID,
+//   APPLE_TEAM_ID,
+//   APPLE_KEY_ID,
 //   APPLE_KEY_FILE,
 //   APPLE_REDIRECT_URI
 // } = process.env;
-
-
-
 
 // passport.serializeUser((user: any, done) => {
 //     // Stores only the user ID in the session
 //     done(null, user.id);
 // });
 
-
 // passport.deserializeUser(async (id: string, done) => {
 //     try {
 //         // Retrieves the full user object from the database using the ID from the session
-//         const user = await userRepository.findUser(id); 
+//         const user = await userRepository.findUser(id);
 //         done(null, user);
 //     } catch (err) {
 //         done(err, null);
 //     }
 // });
-
-
 
 // passport.use(new GoogleStrategy({
 //     clientID: GOOGLE_CLIENT_ID!,
@@ -62,7 +54,7 @@
 //           return done(null, user);
 //         } else {
 //           // Handle case where user creation/lookup failed
-//           return done(new Error('Social login failed.'), {}); 
+//           return done(new Error('Social login failed.'), {});
 //         }
 //     } catch (error) {
 //         done(error, {});
@@ -70,9 +62,7 @@
 //   }
 // ));
 
-
 // // --- 3. GitHub Strategy ---
-
 
 // passport.use(new GitHubStrategy({
 //     clientID: GITHUB_CLIENT_ID!,
@@ -101,18 +91,14 @@
 //   }
 // ));
 
-
-
-
 // // --- 4. Apple Sign-In Strategy ---
-
 
 // passport.use(new AppleStrategy({
 
 //   clientID: APPLE_CLIENT_ID!,
-//   teamID: APPLE_TEAM_ID!, 
+//   teamID: APPLE_TEAM_ID!,
 //   keyIdentifier: APPLE_KEY_ID!,
-//   privateKeyPath: APPLE_KEY_FILE!, 
+//   privateKeyPath: APPLE_KEY_FILE!,
 //   callbackURL: APPLE_REDIRECT_URI,
 //   scope: ['email', 'name'],
 //     passReqToCallback: true
@@ -136,9 +122,6 @@
 //     }
 //   }
 // ));
-
-
-
 
 // // Helper function to initialize passport
 // export default passport;//

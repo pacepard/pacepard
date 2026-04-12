@@ -5,7 +5,6 @@ import { IRoleDoc } from '../../authentication/role/role.interface';
 import { IPermissionDoc } from '../../authentication/permission/permission.interface';
 import { INotificationDoc } from '../../notifications/push/push.interface';
 
-
 type ObjectId = Types.ObjectId;
 
 export interface IUserDoc extends Document {
@@ -60,7 +59,7 @@ export interface IUserDoc extends Document {
     isBusiness: boolean;
     isTalent: boolean;
     isUser: boolean;
-    
+
     isActivated: boolean;
     isDeactivated: boolean;
     isSuspended: boolean;
@@ -71,9 +70,9 @@ export interface IUserDoc extends Document {
     twoFactorEnabled: boolean;
 
     devices: Array<IDevice>;
-    googleId: string 
-    appleId: string 
-    githubId: string  
+    googleId: string;
+    appleId: string;
+    githubId: string;
 
     // relationships
     roles: Array<IRoleDoc | any>;
@@ -130,10 +129,8 @@ export interface ILocation {
     phoneCode?: string;
 }
 
-export interface IDevice {
+export interface IDevice {}
 
-}
-    
 export enum OnboardStatus {
     NOT_STARTED = 'not-started',
     IN_PROGRESS = 'in-progress',
@@ -153,4 +150,3 @@ export enum LoginMethod {
     PHONE = 'phone',
     SOCIAL = 'social',
 }
-

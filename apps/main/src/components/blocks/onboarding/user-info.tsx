@@ -61,13 +61,34 @@ const discoveryOptions: Skill[] = [
 ];
 
 const UserIllustration = () => (
-    <svg width="1440" height="810" viewBox="0 0 1440 810" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+    <svg
+        width="1440"
+        height="810"
+        viewBox="0 0 1440 810"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+    >
         <rect width="1440" height="810" fill="url(#pattern0_201_13823)" />
         <defs>
-            <pattern id="pattern0_201_13823" patternContentUnits="objectBoundingBox" width="1" height="1">
-                <use xlinkHref="#image0_201_13823" transform="scale(0.000347222 0.000617284)" />
+            <pattern
+                id="pattern0_201_13823"
+                patternContentUnits="objectBoundingBox"
+                width="1"
+                height="1"
+            >
+                <use
+                    xlinkHref="#image0_201_13823"
+                    transform="scale(0.000347222 0.000617284)"
+                />
             </pattern>
-            <image id="image0_201_13823" width="2880" height="1620" preserveAspectRatio="none" xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAC0AAAAZUCAYAAABy34MtAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAXRrSURBVHgB7N0LtB1lfT/8hxDDxYMCIpIIKkoSEQENiFVrQkBRCGBRKyCC2jdy06rhoi4raBNvNEAiy0IWpEWEmEQEFEiqRQhJWxCFgIAtSbApKkms3CRH7g3v+Y3s8z9Jzt4ze5/rc87ns9ZeOXtm9uy5PM8zk7W+89tbPN8hAQAAAAAAAAAAAABkYEQCAAAAAAAAAAAAAMiEADQAAAAAAAAAAAAAkA0BaAAAAAAAAAAAAAAgGwLQAAAAAAAAAAAAAEA2BKABAAAAAAAAAAAAgGwIQAMAAAAAAAAAAAAA2RCABgAAAAAAAAAAAACyIQANAAAAAAAAAAAAAGRDABoAAAAAAAAAAAAAyIYANAAAAAAAAAAAAACQDQFoAAAAAAAAAAAAACAbAtAAAAAAAAAAAAAAQDYEoAEAAAAAAAAAAACAbAhAAwAAAAAAAAAAAADZEIAGAAAAAAAAAAAAALIhAA0AAAAAAAAAAAAAZEMAGgAAAAAAAAAAAADIhgA0AAAAAAAAAAAAAJANAWgAAAAAAAAAAAAAIBsC0AAAAAAAAAAAAABANgSgAQAAAAAAAAAAAIBsCEADAAAAAAAAAAAAANkQgAYAAAAAAAAAAAAAsiEADQAAAAAAAAAAAABkQwBaAAAAAAAAAAAAAMiGADQAAAAAAAAAAAAAkA0BaAAAAAAAAAAAAAAgGwLQAAAAAAAAAAAAAEA2BKABAAAAAAAAAAAAgGwIQAMAAAAAAAAAAAAA2RCABgAAAAAAAAAAAACyIQANAAAAAAAAAAAAAGRDABoAAAAAAAAAAAAAyIYANAAAAAAAAAAAAACQDQFoAAAAAAAAAAAAACAbAtAAAAAAAAAAAAAAQDYEoAEAAAAAAAAAAACAbAhAAwAAAAAAAAAAAADZEIAGAAAAAAAAAAAAALIhAA0AAAAAAAAAAAAAZGNkgkFmw4YNaeXKlcVr/PjxxQsAAAAAAAAAAAAAggD0IPHss8+mBx54IC1dujT97Gc/S694xSvSF7/4xbTtttumZsV6brvttnTrrbemRx55JM2ePTvtsMMOKRcXXHBBOvPMM9Nzzz2XRowYkWbMmFEcCwAAAAAAAAAAAADY4vkOiX4VFY7/8z//M/385z9P99xzT/rFL36R7rzzzvTEE090LtPW1pZWr16ddtppp7rriVMXVZIj7Hzvvfem22+/vVhXe3t7RsstWbIkHXjggSkHTz/9dNp5553T448/3jlt++23L47X6NGjEwAAAAAAAAAAAADD2/8P5V0Y0vq0Vl0AAAAASUVORK5CYII=" />
+            <image
+                id="image0_201_13823"
+                width="2880"
+                height="1620"
+                preserveAspectRatio="none"
+                xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAC0AAAAZUCAYAAABy34MtAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAXRrSURBVHgB7N0LtB1lfT/8hxDDxYMCIpIIKkoSEQENiFVrQkBRCGBRKyCC2jdy06rhoi4raBNvNEAiy0IWpEWEmEQEFEiqRQhJWxCFgIAtSbApKkms3CRH7g3v+Y3s8z9Jzt4ze5/rc87ns9ZeOXtm9uy5PM8zk7W+89tbPN8hAQAAAAAAAAAAAABkYEQCAAAAAAAAAAAAAMiEADQAAAAAAAAAAAAAkA0BaAAAAAAAAAAAAAAgGwLQAAAAAAAAAAAAAEA2BKABAAAAAAAAAAAAgGwIQAMAAAAAAAAAAAAA2RCABgAAAAAAAAAAAACyIQANAAAAAAAAAAAAAGRDABoAAAAAAAAAAAAAyIYANAAAAAAAAAAAAACQDQFoAAAAAAAAAAAAACAbAtAAAAAAAAAAAAAAQDYEoAEAAAAAAAAAAACAbAhAAwAAAAAAAAAAAADZEIAGAAAAAAAAAAAAALIhAA0AAAAAAAAAAAAAZEMAGgAAAAAAAAAAAADIhgA0AAAAAAAAAAAAAJANAWgAAAAAAAAAAAAAIBsC0AAAAAAAAAAAAABANgSgAQAAAAAAAAAAAIBsCEADAAAAAAAAAAAAANkQgAYAAAAAAAAAAAAAsiEADQAAAAAAAAAAAABkQwBaAAAAAAAAAAAAAMiGADQAAAAAAAAAAAAAkA0BaAAAAAAAAAAAAAAgGwLQAAAAAAAAAAAAAEA2BKABAAAAAAAAAAAAgGwIQAMAAAAAAAAAAAAA2RCABgAAAAAAAAAAAACyIQANAAAAAAAAAAAAAGRDABoAAAAAAAAAAAAAyIYANAAAAAAAAAAAAACQDQFoAAAAAAAAAAAAACAbAtAAAAAAAAAAAAAAQDYEoAEAAAAAAAAAAACAbAhAAwAAAAAAAAAAAADZEIAGAAAAAAAAAAAAALIhAA0AAAAAAAAAAAAAZGNkgkFmw4YNaeXKlcVr/PjxxQsAAAAAAAAAAAAAggD0IPHss8+mBx54IC1dujT97Gc/S694xSvSF7/4xbTtttumZsV6brvttnTrrbemRx55JM2ePTvtsMMOKRcXXHBBOvPMM9Nzzz2XRowYkWbMmFEcCwAAAAAAAAAAAADY4vkOiX4VFY7/8z//M/385z9P99xzT/rFL36R7rzzzvTEE090LtPW1pZWr16ddtppp7rriVMXVZIj7Hzvvfem22+/vVhXe3t7RsstWbIkHXjggSkHTz/9dNp5553T448/3jlt++23L47X6NGjEwAAAAAAAAAAAADD2/8P5V0Y0vq0Vl0AAAAASUVORK5CYII="
+            />
         </defs>
     </svg>
 );
@@ -90,8 +111,9 @@ const UserInfo: React.FC = () => {
             }
 
             try {
-                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
-                
+                const statusResponse =
+                    await PacepardAPI.user.getOnboardingStatus();
+
                 if (statusResponse.error === false && statusResponse.data) {
                     const statusData = statusResponse.data as any;
                     const step = statusData.step || 0;
@@ -104,7 +126,11 @@ const UserInfo: React.FC = () => {
                         navigate('/onboarding/basic-info');
                     } else if (step >= 3) {
                         // User has already completed this step, redirect to next appropriate step
-                        const route = getOnboardingRoute(step, status, userTypeFromStatus);
+                        const route = getOnboardingRoute(
+                            step,
+                            status,
+                            userTypeFromStatus,
+                        );
                         navigate(route);
                     }
                 }
@@ -128,18 +154,31 @@ const UserInfo: React.FC = () => {
                     discovery: discovery,
                 });
 
-                if (response.error === false && (response.status === 200 || response.status === 201)) {
+                if (
+                    response.error === false &&
+                    (response.status === 200 || response.status === 201)
+                ) {
                     // Route based on userType
                     let nextRoute = '/onboarding/create-workspace';
                     if (userType === UserType.TALENT) {
                         nextRoute = '/onboarding/create-workspace';
-                    } else if (userType === UserType.BUSINESS || userType === UserType.USER) {
+                    } else if (
+                        userType === UserType.BUSINESS ||
+                        userType === UserType.USER
+                    ) {
                         nextRoute = '/onboarding/business-info';
                     } else {
-                        const statusResponse = await PacepardAPI.user.getOnboardingStatus();
-                        if (statusResponse.error === false && statusResponse.data) {
+                        const statusResponse =
+                            await PacepardAPI.user.getOnboardingStatus();
+                        if (
+                            statusResponse.error === false &&
+                            statusResponse.data
+                        ) {
                             const status = statusResponse.data as any;
-                            if (status.userType === 'talent' || status.userType === 'TALENT') {
+                            if (
+                                status.userType === 'talent' ||
+                                status.userType === 'TALENT'
+                            ) {
                                 nextRoute = '/onboarding/create-workspace';
                             } else {
                                 nextRoute = '/onboarding/business-info';
@@ -148,13 +187,16 @@ const UserInfo: React.FC = () => {
                             nextRoute = '/onboarding/business-info';
                         }
                     }
-                    
+
                     // Navigate first, then show success toast
                     navigate(nextRoute);
                     toast.success('User information saved');
                 } else {
                     // Use inline error instead of toast
-                    setError(response.message || 'Failed to save information. Please try again.');
+                    setError(
+                        response.message ||
+                            'Failed to save information. Please try again.',
+                    );
                 }
             } catch (error) {
                 console.error('Error submitting User info:', error);
@@ -197,7 +239,10 @@ const UserInfo: React.FC = () => {
                 <div className="space-y-6">
                     {/* Work Type */}
                     <div className="space-y-2.5">
-                        <Label htmlFor="work-type" className="text-sm font-medium text-foreground">
+                        <Label
+                            htmlFor="work-type"
+                            className="text-sm font-medium text-foreground"
+                        >
                             What kind of work do you do?
                         </Label>
                         <Select value={workType} onValueChange={setWorkType}>
@@ -209,7 +254,10 @@ const UserInfo: React.FC = () => {
                             </SelectTrigger>
                             <SelectContent>
                                 {specialties.map((spec) => (
-                                    <SelectItem key={spec.value} value={spec.value}>
+                                    <SelectItem
+                                        key={spec.value}
+                                        value={spec.value}
+                                    >
                                         {spec.label}
                                     </SelectItem>
                                 ))}
@@ -219,7 +267,10 @@ const UserInfo: React.FC = () => {
 
                     {/* Role */}
                     <div className="space-y-2.5">
-                        <Label htmlFor="role" className="text-sm font-medium text-foreground">
+                        <Label
+                            htmlFor="role"
+                            className="text-sm font-medium text-foreground"
+                        >
                             What is your role?
                         </Label>
                         <Select value={role} onValueChange={setRole}>
@@ -241,7 +292,10 @@ const UserInfo: React.FC = () => {
 
                     {/* Discovery */}
                     <div className="space-y-2.5">
-                        <Label htmlFor="discovery" className="text-sm font-medium text-foreground">
+                        <Label
+                            htmlFor="discovery"
+                            className="text-sm font-medium text-foreground"
+                        >
                             How did you discover Pacepard?
                         </Label>
                         <Select value={discovery} onValueChange={setDiscovery}>
@@ -253,7 +307,10 @@ const UserInfo: React.FC = () => {
                             </SelectTrigger>
                             <SelectContent>
                                 {discoveryOptions.map((option) => (
-                                    <SelectItem key={option.value} value={option.value}>
+                                    <SelectItem
+                                        key={option.value}
+                                        value={option.value}
+                                    >
                                         {option.label}
                                     </SelectItem>
                                 ))}

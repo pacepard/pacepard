@@ -1,6 +1,11 @@
 import { FileType, UploadStatus } from '../../../utils/enums.util';
 import { IFile } from '../../../utils/interfaces.util';
-import { GuestStatusEnum, GuestVisibiltyEnum, GuestTypeEnum, MentorContextType } from './guest.interface';
+import {
+    GuestStatusEnum,
+    GuestVisibiltyEnum,
+    GuestTypeEnum,
+    MentorContextType,
+} from './guest.interface';
 
 export interface IGuestImage {
     fileName: string;

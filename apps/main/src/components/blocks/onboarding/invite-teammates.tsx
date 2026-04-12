@@ -32,11 +32,7 @@ const InviteTeammates: React.FC = () => {
     } = useForm({
         resolver: zodResolver(inviteTeammatesSchema),
         defaultValues: {
-            emails: [
-                { email: '' },
-                { email: '' },
-                { email: '' },
-            ],
+            emails: [{ email: '' }, { email: '' }, { email: '' }],
             allowDomainAccess: false,
         },
         mode: 'onChange',
@@ -59,8 +55,9 @@ const InviteTeammates: React.FC = () => {
             }
 
             try {
-                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
-                
+                const statusResponse =
+                    await PacepardAPI.user.getOnboardingStatus();
+
                 if (statusResponse.error === false && statusResponse.data) {
                     const statusData = statusResponse.data as any;
                     const step = statusData.step || 0;
@@ -89,7 +86,9 @@ const InviteTeammates: React.FC = () => {
     useEffect(() => {
         if (allowDomainAccess) {
             const firstValidEmail = watchedEmails?.find(
-                (e) => e.email.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email)
+                (e) =>
+                    e.email.trim() &&
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email),
             );
             if (firstValidEmail) {
                 const emailDomain = firstValidEmail.email.split('@')[1];
@@ -109,7 +108,7 @@ const InviteTeammates: React.FC = () => {
             // For now, generate a placeholder link
             const link = `${window.location.origin}/invite/${Date.now()}`;
             setShareableLink(link);
-            
+
             // Copy to clipboard - this is a non-blocking action, toast is appropriate
             await navigator.clipboard.writeText(link);
             toast.success('Link copied to clipboard');
@@ -125,7 +124,10 @@ const InviteTeammates: React.FC = () => {
         }
     };
 
-    const onSubmit = async (data: { emails: Array<{ email: string }>; allowDomainAccess: boolean }) => {
+    const onSubmit = async (data: {
+        emails: Array<{ email: string }>;
+        allowDomainAccess: boolean;
+    }) => {
         try {
             // Filter out empty emails and get the list
             const emailList = data.emails
@@ -193,7 +195,7 @@ const InviteTeammates: React.FC = () => {
                             'px-4 py-2 text-[14px] font-medium transition-colors relative',
                             'text-[#787774] dark:text-[#9b9a97]',
                             inviteMode === 'email' && 'text-foreground',
-                            'hover:text-foreground'
+                            'hover:text-foreground',
                         )}
                     >
                         Send invites
@@ -213,7 +215,7 @@ const InviteTeammates: React.FC = () => {
                             'px-4 py-2 text-[14px] font-medium transition-colors relative flex items-center gap-2',
                             'text-[#787774] dark:text-[#9b9a97]',
                             inviteMode === 'link' && 'text-foreground',
-                            'hover:text-foreground'
+                            'hover:text-foreground',
                         )}
                     >
                         <Link size={16} />
@@ -226,7 +228,10 @@ const InviteTeammates: React.FC = () => {
 
                 {/* Content based on mode */}
                 {inviteMode === 'email' ? (
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-6"
+                    >
                         {/* Email Inputs */}
                         <div className="space-y-3">
                             {fields.map((field, index) => (
@@ -249,7 +254,7 @@ const InviteTeammates: React.FC = () => {
                                             'focus-visible:shadow-[0_0_0_3px_rgba(35,131,226,0.1)]',
                                             'placeholder:text-[#9b9a97] dark:placeholder:text-[#6e6d69]',
                                             errors.emails?.[index]?.email &&
-                                                'border-[#eb5757] dark:border-[#eb5757] focus-visible:border-[#eb5757] focus-visible:ring-[#eb5757]/20'
+                                                'border-[#eb5757] dark:border-[#eb5757] focus-visible:border-[#eb5757] focus-visible:ring-[#eb5757]/20',
                                         )}
                                     />
                                     {fields.length > 1 && (
@@ -262,7 +267,7 @@ const InviteTeammates: React.FC = () => {
                                                 'flex items-center justify-center',
                                                 'text-[#787774] dark:text-[#9b9a97]',
                                                 'hover:bg-[#f7f6f3] dark:hover:bg-[#2e2e2e]',
-                                                'transition-colors'
+                                                'transition-colors',
                                             )}
                                         >
                                             <X size={14} />
@@ -270,7 +275,10 @@ const InviteTeammates: React.FC = () => {
                                     )}
                                     {errors.emails?.[index]?.email && (
                                         <p className="text-[13px] text-[#eb5757] dark:text-[#ff6b6b] mt-1">
-                                            {errors.emails[index]?.email?.message}
+                                            {
+                                                errors.emails[index]?.email
+                                                    ?.message
+                                            }
                                         </p>
                                     )}
                                 </div>
@@ -285,7 +293,7 @@ const InviteTeammates: React.FC = () => {
                                 'flex items-center gap-2',
                                 'text-[14px] text-[#2383e2]',
                                 'hover:text-[#1a73d1]',
-                                'transition-colors'
+                                'transition-colors',
                             )}
                         >
                             <Plus size={16} />
@@ -299,13 +307,16 @@ const InviteTeammates: React.FC = () => {
                                     id="domain-access"
                                     checked={allowDomainAccess}
                                     onCheckedChange={(checked) => {
-                                        setValue('allowDomainAccess', checked as boolean);
+                                        setValue(
+                                            'allowDomainAccess',
+                                            checked as boolean,
+                                        );
                                     }}
                                     className={cn(
                                         'mt-0.5',
                                         'border-[#e9e9e6] dark:border-[#404040]',
                                         'data-[state=checked]:bg-[#2383e2] data-[state=checked]:border-[#2383e2]',
-                                        'focus-visible:ring-[#2383e2]/20'
+                                        'focus-visible:ring-[#2383e2]/20',
                                     )}
                                 />
                                 <div className="flex-1">
@@ -313,7 +324,7 @@ const InviteTeammates: React.FC = () => {
                                         htmlFor="domain-access"
                                         className={cn(
                                             'text-[14px] leading-[1.5] text-foreground',
-                                            'cursor-pointer select-none'
+                                            'cursor-pointer select-none',
                                         )}
                                     >
                                         Allow anyone with a{' '}
@@ -327,11 +338,12 @@ const InviteTeammates: React.FC = () => {
                         </div>
 
                         {/* Form-level errors */}
-                        {errors.emails && typeof errors.emails.message === 'string' && (
-                            <p className="text-[13px] text-[#eb5757] dark:text-[#ff6b6b]">
-                                {errors.emails.message}
-                            </p>
-                        )}
+                        {errors.emails &&
+                            typeof errors.emails.message === 'string' && (
+                                <p className="text-[13px] text-[#eb5757] dark:text-[#ff6b6b]">
+                                    {errors.emails.message}
+                                </p>
+                            )}
                         {errors.root && (
                             <p className="text-[13px] text-[#eb5757] dark:text-[#ff6b6b]">
                                 {errors.root.message}
@@ -354,10 +366,12 @@ const InviteTeammates: React.FC = () => {
                                     'transition-all duration-150',
                                     'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#2383e2]',
                                     'active:scale-[0.98]',
-                                    'focus:outline-none focus:ring-2 focus:ring-[#2383e2]/20 focus:ring-offset-2'
+                                    'focus:outline-none focus:ring-2 focus:ring-[#2383e2]/20 focus:ring-offset-2',
                                 )}
                             >
-                                {isSubmitting ? 'Processing...' : 'Send invites'}
+                                {isSubmitting
+                                    ? 'Processing...'
+                                    : 'Send invites'}
                             </Button>
                         </div>
                     </form>
@@ -381,19 +395,25 @@ const InviteTeammates: React.FC = () => {
                                             'border-[#e9e9e6] dark:border-[#404040]',
                                             'rounded-[3px]',
                                             'px-[12px] py-[6px]',
-                                            'text-[#787774] dark:text-[#9b9a97]'
+                                            'text-[#787774] dark:text-[#9b9a97]',
                                         )}
                                     />
                                     <Button
                                         type="button"
                                         onClick={async () => {
                                             try {
-                                                await navigator.clipboard.writeText(shareableLink);
+                                                await navigator.clipboard.writeText(
+                                                    shareableLink,
+                                                );
                                                 // Toast for copy action - non-blocking, user doesn't need to fix anything
-                                                toast.success('Link copied to clipboard');
+                                                toast.success(
+                                                    'Link copied to clipboard',
+                                                );
                                             } catch (error) {
                                                 // Toast for copy failure - non-blocking
-                                                toast.error('Failed to copy link');
+                                                toast.error(
+                                                    'Failed to copy link',
+                                                );
                                             }
                                         }}
                                         className={cn(
@@ -404,14 +424,15 @@ const InviteTeammates: React.FC = () => {
                                             'text-foreground',
                                             'hover:bg-[#f7f6f3] dark:hover:bg-[#2e2e2e]',
                                             'rounded-[3px]',
-                                            'transition-colors'
+                                            'transition-colors',
                                         )}
                                     >
                                         Copy
                                     </Button>
                                 </div>
                                 <p className="text-[13px] text-[#787774] dark:text-[#9b9a97]">
-                                    Share this link with your teammates to invite them to your workspace.
+                                    Share this link with your teammates to
+                                    invite them to your workspace.
                                 </p>
                             </div>
                         ) : (
@@ -441,10 +462,12 @@ const InviteTeammates: React.FC = () => {
                                 'transition-all duration-150',
                                 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#2383e2]',
                                 'active:scale-[0.98]',
-                                'focus:outline-none focus:ring-2 focus:ring-[#2383e2]/20 focus:ring-offset-2'
+                                'focus:outline-none focus:ring-2 focus:ring-[#2383e2]/20 focus:ring-offset-2',
                             )}
                         >
-                            {isLoading ? 'Processing...' : 'Take me to Pacepard'}
+                            {isLoading
+                                ? 'Processing...'
+                                : 'Take me to Pacepard'}
                         </Button>
                     </div>
                 )}
@@ -460,7 +483,7 @@ const InviteTeammates: React.FC = () => {
                             'hover:text-foreground',
                             'transition-colors duration-150',
                             'py-2 rounded-[3px]',
-                            'hover:bg-[#f7f6f3] dark:hover:bg-[#2e2e2e]'
+                            'hover:bg-[#f7f6f3] dark:hover:bg-[#2e2e2e]',
                         )}
                     >
                         Back

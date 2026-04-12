@@ -107,7 +107,7 @@ class SubscriptionService {
 
             case SubscriptionIntentState.VALIDATING:
                 return this.handleValidatingState(intent, userProfile);
-            
+
             case SubscriptionIntentState.AWAITING_PAYMENT:
                 return this.handleAwaitingPayment(intent);
 
@@ -549,11 +549,12 @@ class SubscriptionService {
             // If trial is true, this is to show that subscription for the plan is on trial so we charge just for card tokenization and to save authorization
             const nairaAmount = 50;
             const cardAmount = Math.round(nairaAmount * 100); // kobo
-            const paymentResult = await transactionService.initializeTransaction({
-                email: dto.email,
-                amount: cardAmount,
-                currency: dto.currency,
-            });
+            const paymentResult =
+                await transactionService.initializeTransaction({
+                    email: dto.email,
+                    amount: cardAmount,
+                    currency: dto.currency,
+                });
 
             if (paymentResult.error) {
                 result.error = true;

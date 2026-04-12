@@ -46,7 +46,9 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
 
             let query = isObjectId
                 ? this.model.findById(inputStr)
-                : this.model.findOne({ code: inputStr } as FilterQuery<ITeamDoc>);
+                : this.model.findOne({
+                      code: inputStr,
+                  } as FilterQuery<ITeamDoc>);
 
             if (populate) {
                 const dataPop = Array.isArray(populate) ? populate : [];
@@ -107,9 +109,7 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
      * @returns {Promise<IResult>}
      * @description Create a new team
      */
-    public async createTeam(
-        teamData: Partial<ITeamDoc>,
-    ): Promise<IResult> {
+    public async createTeam(teamData: Partial<ITeamDoc>): Promise<IResult> {
         return this.create(teamData);
     }
 
@@ -206,7 +206,9 @@ class TeamRepository extends RepositoryService<ITeamDoc> {
                     'members.user': new mongoose.Types.ObjectId(userId),
                 },
                 {
-                    $pull: { members: { user: new mongoose.Types.ObjectId(userId) } },
+                    $pull: {
+                        members: { user: new mongoose.Types.ObjectId(userId) },
+                    },
                 },
             );
 

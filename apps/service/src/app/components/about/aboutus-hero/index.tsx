@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import NavigationLink from "../../shared/navigation-link";
+import Image from 'next/image';
+import NavigationLink from '../../shared/navigation-link';
 
 function AboutusHero() {
     return (
@@ -9,7 +9,7 @@ function AboutusHero() {
             <Image
                 className="absolute top-0 left-0 w-full h-full object-cover"
                 alt="Image"
-                src={"/images/about-us/banner/aboutus-banner.png"}
+                src={'/images/about-us/banner/aboutus-banner.png'}
                 height={694}
                 width={1800}
             />
@@ -20,7 +20,7 @@ function AboutusHero() {
                     <div className="flex items-start gap-2 md:gap-6">
                         <div className="w-11 h-11 flex-shrink-0">
                             <Image
-                                src={"/images/Icon/primary-leaf.svg"}
+                                src={'/images/Icon/primary-leaf.svg'}
                                 alt="icon"
                                 width={44}
                                 height={44}
@@ -28,14 +28,22 @@ function AboutusHero() {
                             />
                         </div>
                         <p className="text-white/70 max-w-md">
-                            We create <span className="text-primary">high-performing</span> digital designs
-                            that elevate brands and enhance conversions.
+                            We create{' '}
+                            <span className="text-primary">
+                                high-performing
+                            </span>{' '}
+                            digital designs that elevate brands and enhance
+                            conversions.
                         </p>
                     </div>
                     <div className="flex flex-col lg:flex-row items-start lg:items-end gap-4">
                         <h1 className="large-heading">Pacepard</h1>
                         <div>
-                            <NavigationLink navigationTitle="" navigationLink="/about-us" transform={false} />
+                            <NavigationLink
+                                navigationTitle=""
+                                navigationLink="/about-us"
+                                transform={false}
+                            />
                         </div>
                     </div>
                 </div>

@@ -32,12 +32,9 @@ export default function Footer() {
                     <div className="flex mt-6 flex-col md:flex-row md:flex-wrap lg:flex-row lg:justify-between gap-10 lg:gap-24">
                         {/* Brand Section (Uses BRAND_INFO) */}
                         <div className="space-y-4">
-                          
-
                             <div className="flex items-center ">
-                                  
                                 <Logo className="scale-170 md:scale-250 ml-8 md:ml-17" />
-                            
+
                                 {/* <Link
                                     href="/"
                                     className="flex shrink-0 items-center gap-2"

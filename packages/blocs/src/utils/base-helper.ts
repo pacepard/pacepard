@@ -1,72 +1,71 @@
-import type { Node as PMNode } from "@tiptap/pm/model"
-import type { Transaction } from "@tiptap/pm/state"
+import type { Node as PMNode } from '@tiptap/pm/model';
+import type { Transaction } from '@tiptap/pm/state';
 import {
-  AllSelection,
-  NodeSelection,
-  Selection,
-  TextSelection,
-} from "@tiptap/pm/state"
-import { cellAround, CellSelection } from "@tiptap/pm/tables"
+    AllSelection,
+    NodeSelection,
+    Selection,
+    TextSelection,
+} from '@tiptap/pm/state';
+import { cellAround, CellSelection } from '@tiptap/pm/tables';
 import {
-  findParentNodeClosestToPos,
-  type Editor,
-  type NodeWithPos,
-} from "@tiptap/react"
+    findParentNodeClosestToPos,
+    type Editor,
+    type NodeWithPos,
+} from '@tiptap/react';
 
- const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
- const MAC_SYMBOLS: Record<string, string> = {
-  mod: "⌘",
-  command: "⌘",
-  meta: "⌘",
-  ctrl: "⌃",
-  control: "⌃",
-  alt: "⌥",
-  option: "⌥",
-  shift: "⇧",
-  backspace: "Del",
-  delete: "⌦",
-  enter: "⏎",
-  escape: "⎋",
-  capslock: "⇪",
-} as const
+const MAC_SYMBOLS: Record<string, string> = {
+    mod: '⌘',
+    command: '⌘',
+    meta: '⌘',
+    ctrl: '⌃',
+    control: '⌃',
+    alt: '⌥',
+    option: '⌥',
+    shift: '⇧',
+    backspace: 'Del',
+    delete: '⌦',
+    enter: '⏎',
+    escape: '⎋',
+    capslock: '⇪',
+} as const;
 
- const SR_ONLY = {
-  position: "absolute",
-  width: "1px",
-  height: "1px",
-  padding: 0,
-  margin: "-1px",
-  overflow: "hidden",
-  clip: "rect(0, 0, 0, 0)",
-  whiteSpace: "nowrap",
-  borderWidth: 0,
-} as const
+const SR_ONLY = {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    padding: 0,
+    margin: '-1px',
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    whiteSpace: 'nowrap',
+    borderWidth: 0,
+} as const;
 
 /** Fetches AI token for Tiptap AI. In Vite apps uses VITE_TIPTAP_AI_TOKEN; otherwise empty so local-only works. */
 async function fetchAiToken(): Promise<string> {
-  if (typeof import.meta !== "undefined") {
-    const env = (import.meta as unknown as { env?: Record<string, string> }).env
-    if (env?.VITE_TIPTAP_AI_TOKEN) return env.VITE_TIPTAP_AI_TOKEN ?? ""
-  }
-  return ""
+    if (typeof import.meta !== 'undefined') {
+        const env = (import.meta as unknown as { env?: Record<string, string> })
+            .env;
+        if (env?.VITE_TIPTAP_AI_TOKEN) return env.VITE_TIPTAP_AI_TOKEN ?? '';
+    }
+    return '';
 }
 
- function cn(
-  ...classes: (string | boolean | undefined | null)[]
-): string {
-  return classes.filter(Boolean).join(" ")
+function cn(...classes: (string | boolean | undefined | null)[]): string {
+    return classes.filter(Boolean).join(' ');
 }
 
 /**
  * Determines if the current platform is macOS
  * @returns boolean indicating if the current platform is Mac
  */
- function isMac(): boolean {
-  return (
-    typeof navigator !== "undefined" &&
-    navigator.platform.toLowerCase().includes("mac")
-  )
+function isMac(): boolean {
+    return (
+        typeof navigator !== 'undefined' &&
+        navigator.platform.toLowerCase().includes('mac')
+    );
 }
 
 /**
@@ -76,18 +75,18 @@ async function fetchAiToken(): Promise<string> {
  * @param capitalize - Whether to capitalize the key (default: true)
  * @returns Formatted shortcut key symbol
  */
- const formatShortcutKey = (
-  key: string,
-  isMac: boolean,
-  capitalize: boolean = true
+const formatShortcutKey = (
+    key: string,
+    isMac: boolean,
+    capitalize: boolean = true,
 ) => {
-  if (isMac) {
-    const lowerKey = key.toLowerCase()
-    return MAC_SYMBOLS[lowerKey] || (capitalize ? key.toUpperCase() : key)
-  }
+    if (isMac) {
+        const lowerKey = key.toLowerCase();
+        return MAC_SYMBOLS[lowerKey] || (capitalize ? key.toUpperCase() : key);
+    }
 
-  return capitalize ? key.charAt(0).toUpperCase() + key.slice(1) : key
-}
+    return capitalize ? key.charAt(0).toUpperCase() + key.slice(1) : key;
+};
 
 /**
  * Parses a shortcut key string into an array of formatted key symbols
@@ -96,20 +95,20 @@ async function fetchAiToken(): Promise<string> {
  * @param capitalize - Whether to capitalize the keys (default: true)
  * @returns Array of formatted shortcut key symbols
  */
- const parseShortcutKeys = (props: {
-  shortcutKeys: string | undefined
-  delimiter?: string
-  capitalize?: boolean
+const parseShortcutKeys = (props: {
+    shortcutKeys: string | undefined;
+    delimiter?: string;
+    capitalize?: boolean;
 }) => {
-  const { shortcutKeys, delimiter = "+", capitalize = true } = props
+    const { shortcutKeys, delimiter = '+', capitalize = true } = props;
 
-  if (!shortcutKeys) return []
+    if (!shortcutKeys) return [];
 
-  return shortcutKeys
-    .split(delimiter)
-    .map((key) => key.trim())
-    .map((key) => formatShortcutKey(key, isMac(), capitalize))
-}
+    return shortcutKeys
+        .split(delimiter)
+        .map((key) => key.trim())
+        .map((key) => formatShortcutKey(key, isMac(), capitalize));
+};
 
 /**
  * Checks if a mark exists in the editor schema
@@ -117,13 +116,10 @@ async function fetchAiToken(): Promise<string> {
  * @param editor - The editor instance
  * @returns boolean indicating if the mark exists in the schema
  */
- const isMarkInSchema = (
-  markName: string,
-  editor: Editor | null
-): boolean => {
-  if (!editor?.schema) return false
-  return editor.schema.spec.marks.get(markName) !== undefined
-}
+const isMarkInSchema = (markName: string, editor: Editor | null): boolean => {
+    if (!editor?.schema) return false;
+    return editor.schema.spec.marks.get(markName) !== undefined;
+};
 
 /**
  * Checks if a node exists in the editor schema
@@ -131,44 +127,41 @@ async function fetchAiToken(): Promise<string> {
  * @param editor - The editor instance
  * @returns boolean indicating if the node exists in the schema
  */
- const isNodeInSchema = (
-  nodeName: string,
-  editor: Editor | null
-): boolean => {
-  if (!editor?.schema) return false
-  return editor.schema.spec.nodes.get(nodeName) !== undefined
-}
+const isNodeInSchema = (nodeName: string, editor: Editor | null): boolean => {
+    if (!editor?.schema) return false;
+    return editor.schema.spec.nodes.get(nodeName) !== undefined;
+};
 
 /**
  * Moves the focus to the next node in the editor
  * @param editor - The editor instance
  * @returns boolean indicating if the focus was moved
  */
- function focusNextNode(editor: Editor) {
-  const { state, view } = editor
-  const { doc, selection } = state
+function focusNextNode(editor: Editor) {
+    const { state, view } = editor;
+    const { doc, selection } = state;
 
-  const nextSel = Selection.findFrom(selection.$to, 1, true)
-  if (nextSel) {
-    view.dispatch(state.tr.setSelection(nextSel).scrollIntoView())
-    return true
-  }
+    const nextSel = Selection.findFrom(selection.$to, 1, true);
+    if (nextSel) {
+        view.dispatch(state.tr.setSelection(nextSel).scrollIntoView());
+        return true;
+    }
 
-  const paragraphType = state.schema.nodes.paragraph
-  if (!paragraphType) {
-    console.warn("No paragraph node type found in schema.")
-    return false
-  }
+    const paragraphType = state.schema.nodes.paragraph;
+    if (!paragraphType) {
+        console.warn('No paragraph node type found in schema.');
+        return false;
+    }
 
-  const end = doc.content.size
-  const para = paragraphType.create()
-  let tr = state.tr.insert(end, para)
+    const end = doc.content.size;
+    const para = paragraphType.create();
+    let tr = state.tr.insert(end, para);
 
-  // Place the selection inside the new paragraph
-  const $inside = tr.doc.resolve(end + 1)
-  tr = tr.setSelection(TextSelection.near($inside)).scrollIntoView()
-  view.dispatch(tr)
-  return true
+    // Place the selection inside the new paragraph
+    const $inside = tr.doc.resolve(end + 1);
+    tr = tr.setSelection(TextSelection.near($inside)).scrollIntoView();
+    view.dispatch(tr);
+    return true;
 }
 
 /**
@@ -176,8 +169,8 @@ async function fetchAiToken(): Promise<string> {
  * @param value - The value to check
  * @returns boolean indicating if the value is a valid number
  */
- function isValidPosition(pos: number | null | undefined): pos is number {
-  return typeof pos === "number" && pos >= 0
+function isValidPosition(pos: number | null | undefined): pos is number {
+    return typeof pos === 'number' && pos >= 0;
 }
 
 /**
@@ -186,27 +179,27 @@ async function fetchAiToken(): Promise<string> {
  * @param extensionNames - A single extension name or an array of names to check
  * @returns True if at least one of the extensions is available, false otherwise
  */
- function isExtensionAvailable(
-  editor: Editor | null,
-  extensionNames: string | string[]
+function isExtensionAvailable(
+    editor: Editor | null,
+    extensionNames: string | string[],
 ): boolean {
-  if (!editor) return false
+    if (!editor) return false;
 
-  const names = Array.isArray(extensionNames)
-    ? extensionNames
-    : [extensionNames]
+    const names = Array.isArray(extensionNames)
+        ? extensionNames
+        : [extensionNames];
 
-  const found = names.some((name) =>
-    editor.extensionManager.extensions.some((ext) => ext.name === name)
-  )
+    const found = names.some((name) =>
+        editor.extensionManager.extensions.some((ext) => ext.name === name),
+    );
 
-  if (!found) {
-    console.warn(
-      `None of the extensions [${names.join(", ")}] were found in the editor schema. Ensure they are included in the editor configuration.`
-    )
-  }
+    if (!found) {
+        console.warn(
+            `None of the extensions [${names.join(', ')}] were found in the editor schema. Ensure they are included in the editor configuration.`,
+        );
+    }
 
-  return found
+    return found;
 }
 
 /**
@@ -215,18 +208,18 @@ async function fetchAiToken(): Promise<string> {
  * @param position The position in the document to find the node
  * @returns The node at the specified position, or null if not found
  */
- function findNodeAtPosition(editor: Editor, position: number) {
-  try {
-    const node = editor.state.doc.nodeAt(position)
-    if (!node) {
-      console.warn(`No node found at position ${position}`)
-      return null
+function findNodeAtPosition(editor: Editor, position: number) {
+    try {
+        const node = editor.state.doc.nodeAt(position);
+        if (!node) {
+            console.warn(`No node found at position ${position}`);
+            return null;
+        }
+        return node;
+    } catch (error) {
+        console.error(`Error getting node at position ${position}:`, error);
+        return null;
     }
-    return node
-  } catch (error) {
-    console.error(`Error getting node at position ${position}:`, error)
-    return null
-  }
 }
 
 /**
@@ -237,53 +230,53 @@ async function fetchAiToken(): Promise<string> {
  * @param props.nodePos The position of the node to find (optional if node is provided)
  * @returns An object with the position and node, or null if not found
  */
- function findNodePosition(props: {
-  editor: Editor | null
-  node?: PMNode | null
-  nodePos?: number | null
+function findNodePosition(props: {
+    editor: Editor | null;
+    node?: PMNode | null;
+    nodePos?: number | null;
 }): { pos: number; node: PMNode } | null {
-  const { editor, node, nodePos } = props
+    const { editor, node, nodePos } = props;
 
-  if (!editor || !editor.state?.doc) return null
+    if (!editor || !editor.state?.doc) return null;
 
-  // Zero is valid position
-  const hasValidNode = node !== undefined && node !== null
-  const hasValidPos = isValidPosition(nodePos)
+    // Zero is valid position
+    const hasValidNode = node !== undefined && node !== null;
+    const hasValidPos = isValidPosition(nodePos);
 
-  if (!hasValidNode && !hasValidPos) {
-    return null
-  }
-
-  // First search for the node in the document if we have a node
-  if (hasValidNode) {
-    let foundPos = -1
-    let foundNode: PMNode | null = null
-
-    editor.state.doc.descendants((currentNode, pos) => {
-      // TODO: Needed?
-      // if (currentNode.type && currentNode.type.name === node!.type.name) {
-      if (currentNode === node) {
-        foundPos = pos
-        foundNode = currentNode
-        return false
-      }
-      return true
-    })
-
-    if (foundPos !== -1 && foundNode !== null) {
-      return { pos: foundPos, node: foundNode }
+    if (!hasValidNode && !hasValidPos) {
+        return null;
     }
-  }
 
-  // If we have a valid position, use findNodeAtPosition
-  if (hasValidPos) {
-    const nodeAtPos = findNodeAtPosition(editor, nodePos!)
-    if (nodeAtPos) {
-      return { pos: nodePos!, node: nodeAtPos }
+    // First search for the node in the document if we have a node
+    if (hasValidNode) {
+        let foundPos = -1;
+        let foundNode: PMNode | null = null;
+
+        editor.state.doc.descendants((currentNode, pos) => {
+            // TODO: Needed?
+            // if (currentNode.type && currentNode.type.name === node!.type.name) {
+            if (currentNode === node) {
+                foundPos = pos;
+                foundNode = currentNode;
+                return false;
+            }
+            return true;
+        });
+
+        if (foundPos !== -1 && foundNode !== null) {
+            return { pos: foundPos, node: foundNode };
+        }
     }
-  }
 
-  return null
+    // If we have a valid position, use findNodeAtPosition
+    if (hasValidPos) {
+        const nodeAtPos = findNodeAtPosition(editor, nodePos!);
+        if (nodeAtPos) {
+            return { pos: nodePos!, node: nodeAtPos };
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -293,34 +286,36 @@ async function fetchAiToken(): Promise<string> {
  * @param nodeTypeNames List of node type names to match against
  * @param checkAncestorNodes Whether to check ancestor node types up the depth chain
  */
- function isNodeTypeSelected(
-  editor: Editor | null,
-  nodeTypeNames: string[] = [],
-  checkAncestorNodes: boolean = false
+function isNodeTypeSelected(
+    editor: Editor | null,
+    nodeTypeNames: string[] = [],
+    checkAncestorNodes: boolean = false,
 ): boolean {
-  if (!editor || !editor.state.selection) return false
+    if (!editor || !editor.state.selection) return false;
 
-  const { selection } = editor.state
-  if (selection.empty) return false
+    const { selection } = editor.state;
+    if (selection.empty) return false;
 
-  // Direct node selection check
-  if (selection instanceof NodeSelection) {
-    const selectedNode = selection.node
-    return selectedNode ? nodeTypeNames.includes(selectedNode.type.name) : false
-  }
-
-  // Depth-based ancestor node check
-  if (checkAncestorNodes) {
-    const { $from } = selection
-    for (let depth = $from.depth; depth > 0; depth--) {
-      const ancestorNode = $from.node(depth)
-      if (nodeTypeNames.includes(ancestorNode.type.name)) {
-        return true
-      }
+    // Direct node selection check
+    if (selection instanceof NodeSelection) {
+        const selectedNode = selection.node;
+        return selectedNode
+            ? nodeTypeNames.includes(selectedNode.type.name)
+            : false;
     }
-  }
 
-  return false
+    // Depth-based ancestor node check
+    if (checkAncestorNodes) {
+        const { $from } = selection;
+        for (let depth = $from.depth; depth > 0; depth--) {
+            const ancestorNode = $from.node(depth);
+            if (nodeTypeNames.includes(ancestorNode.type.name)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -330,34 +325,37 @@ async function fetchAiToken(): Promise<string> {
  * - NodeSelection → checks the selected node.
  * - Text/AllSelection → ensures all textblocks within [from, to) are allowed.
  */
- function selectionWithinConvertibleTypes(
-  editor: Editor,
-  types: string[] = []
+function selectionWithinConvertibleTypes(
+    editor: Editor,
+    types: string[] = [],
 ): boolean {
-  if (!editor || types.length === 0) return false
+    if (!editor || types.length === 0) return false;
 
-  const { state } = editor
-  const { selection } = state
-  const allowed = new Set(types)
+    const { state } = editor;
+    const { selection } = state;
+    const allowed = new Set(types);
 
-  if (selection instanceof NodeSelection) {
-    const nodeType = selection.node?.type?.name
-    return !!nodeType && allowed.has(nodeType)
-  }
+    if (selection instanceof NodeSelection) {
+        const nodeType = selection.node?.type?.name;
+        return !!nodeType && allowed.has(nodeType);
+    }
 
-  if (selection instanceof TextSelection || selection instanceof AllSelection) {
-    let valid = true
-    state.doc.nodesBetween(selection.from, selection.to, (node) => {
-      if (node.isTextblock && !allowed.has(node.type.name)) {
-        valid = false
-        return false // stop early
-      }
-      return valid
-    })
-    return valid
-  }
+    if (
+        selection instanceof TextSelection ||
+        selection instanceof AllSelection
+    ) {
+        let valid = true;
+        state.doc.nodesBetween(selection.from, selection.to, (node) => {
+            if (node.isTextblock && !allowed.has(node.type.name)) {
+                valid = false;
+                return false; // stop early
+            }
+            return valid;
+        });
+        return valid;
+    }
 
-  return false
+    return false;
 }
 
 /**
@@ -367,113 +365,110 @@ async function fetchAiToken(): Promise<string> {
  * @param abortSignal Optional AbortSignal for cancelling the upload
  * @returns Promise resolving to the URL of the uploaded image
  */
- const handleImageUpload = async (
-  file: File,
-  onProgress?: (event: { progress: number }) => void,
-  abortSignal?: AbortSignal
+const handleImageUpload = async (
+    file: File,
+    onProgress?: (event: { progress: number }) => void,
+    abortSignal?: AbortSignal,
 ): Promise<string> => {
-  // Validate file
-  if (!file) {
-    throw new Error("No file provided")
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    throw new Error(
-      `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB)`
-    )
-  }
-
-  // For demo/testing: Simulate upload progress. In production, replace the following code
-  // with your own upload implementation.
-  for (let progress = 0; progress <= 100; progress += 10) {
-    if (abortSignal?.aborted) {
-      throw new Error("Upload cancelled")
+    // Validate file
+    if (!file) {
+        throw new Error('No file provided');
     }
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    onProgress?.({ progress })
-  }
 
-  return "/images/tiptap-ui-placeholder-image.jpg"
-}
+    if (file.size > MAX_FILE_SIZE) {
+        throw new Error(
+            `File size exceeds maximum allowed (${MAX_FILE_SIZE / (1024 * 1024)}MB)`,
+        );
+    }
+
+    // For demo/testing: Simulate upload progress. In production, replace the following code
+    // with your own upload implementation.
+    for (let progress = 0; progress <= 100; progress += 10) {
+        if (abortSignal?.aborted) {
+            throw new Error('Upload cancelled');
+        }
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        onProgress?.({ progress });
+    }
+
+    return '/images/tiptap-ui-placeholder-image.jpg';
+};
 
 type ProtocolOptions = {
-  /**
-   * The protocol scheme to be registered.
-   * @default '''
-   * @example 'ftp'
-   * @example 'git'
-   */
-  scheme: string
+    /**
+     * The protocol scheme to be registered.
+     * @default '''
+     * @example 'ftp'
+     * @example 'git'
+     */
+    scheme: string;
 
-  /**
-   * If enabled, it allows optional slashes after the protocol.
-   * @default false
-   * @example true
-   */
-  optionalSlashes?: boolean
-}
+    /**
+     * If enabled, it allows optional slashes after the protocol.
+     * @default false
+     * @example true
+     */
+    optionalSlashes?: boolean;
+};
 
-type ProtocolConfig = Array<ProtocolOptions | string>
+type ProtocolConfig = Array<ProtocolOptions | string>;
 
 const ATTR_WHITESPACE =
-  // eslint-disable-next-line no-control-regex
-  /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g
+    // eslint-disable-next-line no-control-regex
+    /[\u0000-\u0020\u00A0\u1680\u180E\u2000-\u2029\u205F\u3000]/g;
 
- function isAllowedUri(
-  uri: string | undefined,
-  protocols?: ProtocolConfig
-) {
-  const allowedProtocols: string[] = [
-    "http",
-    "https",
-    "ftp",
-    "ftps",
-    "mailto",
-    "tel",
-    "callto",
-    "sms",
-    "cid",
-    "xmpp",
-  ]
+function isAllowedUri(uri: string | undefined, protocols?: ProtocolConfig) {
+    const allowedProtocols: string[] = [
+        'http',
+        'https',
+        'ftp',
+        'ftps',
+        'mailto',
+        'tel',
+        'callto',
+        'sms',
+        'cid',
+        'xmpp',
+    ];
 
-  if (protocols) {
-    protocols.forEach((protocol) => {
-      const nextProtocol =
-        typeof protocol === "string" ? protocol : protocol.scheme
+    if (protocols) {
+        protocols.forEach((protocol) => {
+            const nextProtocol =
+                typeof protocol === 'string' ? protocol : protocol.scheme;
 
-      if (nextProtocol) {
-        allowedProtocols.push(nextProtocol)
-      }
-    })
-  }
+            if (nextProtocol) {
+                allowedProtocols.push(nextProtocol);
+            }
+        });
+    }
 
-  return (
-    !uri ||
-    uri.replace(ATTR_WHITESPACE, "").match(
-      new RegExp(
-        // eslint-disable-next-line no-useless-escape
-        `^(?:(?:${allowedProtocols.join("|")}):|[^a-z]|[a-z0-9+.\-]+(?:[^a-z+.\-:]|$))`,
-        "i"
-      )
-    )
-  )
+    return (
+        !uri ||
+        uri.replace(ATTR_WHITESPACE, '').match(
+            new RegExp(
+                // eslint-disable-next-line no-useless-escape
+                `^(?:(?:${allowedProtocols.join('|')}):|[^a-z]|[a-z0-9+.\-]+(?:[^a-z+.\-:]|$))`,
+                'i',
+            ),
+        )
+    );
 }
 
- function sanitizeUrl(
-  inputUrl: string,
-  baseUrl: string,
-  protocols?: ProtocolConfig
+function sanitizeUrl(
+    inputUrl: string,
+    baseUrl: string,
+    protocols?: ProtocolConfig,
 ): string {
-  try {
-    const url = new URL(inputUrl, baseUrl)
+    try {
+        const url = new URL(inputUrl, baseUrl);
 
-    if (isAllowedUri(url.href, protocols)) {
-      return url.href
+        if (isAllowedUri(url.href, protocols)) {
+            return url.href;
+        }
+    } catch {
+        // If URL creation fails, it's considered invalid
     }
-  } catch {
-    // If URL creation fails, it's considered invalid
-  }
-  return "#"
+    return '#';
 }
 
 /**
@@ -486,44 +481,44 @@ const ATTR_WHITESPACE =
  *               Pass `undefined` to remove the attribute.
  * @returns true if at least one node was updated, false otherwise
  */
- function updateNodesAttr<A extends string = string, V = unknown>(
-  tr: Transaction,
-  targets: readonly NodeWithPos[],
-  attrName: A,
-  next: V | ((prev: V | undefined) => V | undefined)
+function updateNodesAttr<A extends string = string, V = unknown>(
+    tr: Transaction,
+    targets: readonly NodeWithPos[],
+    attrName: A,
+    next: V | ((prev: V | undefined) => V | undefined),
 ): boolean {
-  if (!targets.length) return false
+    if (!targets.length) return false;
 
-  let changed = false
+    let changed = false;
 
-  for (const { pos } of targets) {
-    // Always re-read from the transaction's current doc
-    const currentNode = tr.doc.nodeAt(pos)
-    if (!currentNode) continue
+    for (const { pos } of targets) {
+        // Always re-read from the transaction's current doc
+        const currentNode = tr.doc.nodeAt(pos);
+        if (!currentNode) continue;
 
-    const prevValue = (currentNode.attrs as Record<string, unknown>)[
-      attrName
-    ] as V | undefined
-    const resolvedNext =
-      typeof next === "function"
-        ? (next as (p: V | undefined) => V | undefined)(prevValue)
-        : next
+        const prevValue = (currentNode.attrs as Record<string, unknown>)[
+            attrName
+        ] as V | undefined;
+        const resolvedNext =
+            typeof next === 'function'
+                ? (next as (p: V | undefined) => V | undefined)(prevValue)
+                : next;
 
-    if (prevValue === resolvedNext) continue
+        if (prevValue === resolvedNext) continue;
 
-    const nextAttrs: Record<string, unknown> = { ...currentNode.attrs }
-    if (resolvedNext === undefined) {
-      // Remove the key entirely instead of setting null
-      delete nextAttrs[attrName]
-    } else {
-      nextAttrs[attrName] = resolvedNext
+        const nextAttrs: Record<string, unknown> = { ...currentNode.attrs };
+        if (resolvedNext === undefined) {
+            // Remove the key entirely instead of setting null
+            delete nextAttrs[attrName];
+        } else {
+            nextAttrs[attrName] = resolvedNext;
+        }
+
+        tr.setNodeMarkup(pos, undefined, nextAttrs);
+        changed = true;
     }
 
-    tr.setNodeMarkup(pos, undefined, nextAttrs)
-    changed = true
-  }
-
-  return changed
+    return changed;
 }
 
 /**
@@ -531,40 +526,42 @@ const ATTR_WHITESPACE =
  * If the selection is not empty, it does nothing.
  * @param editor The Tiptap editor instance
  */
- function selectCurrentBlockContent(editor: Editor) {
-  const { selection, doc } = editor.state
+function selectCurrentBlockContent(editor: Editor) {
+    const { selection, doc } = editor.state;
 
-  if (!selection.empty) return
+    if (!selection.empty) return;
 
-  const $pos = selection.$from
-  let blockNode = null
-  let blockPos = -1
+    const $pos = selection.$from;
+    let blockNode = null;
+    let blockPos = -1;
 
-  for (let depth = $pos.depth; depth >= 0; depth--) {
-    const node = $pos.node(depth)
-    const pos = $pos.start(depth)
+    for (let depth = $pos.depth; depth >= 0; depth--) {
+        const node = $pos.node(depth);
+        const pos = $pos.start(depth);
 
-    if (node.isBlock && node.textContent.trim()) {
-      blockNode = node
-      blockPos = pos
-      break
+        if (node.isBlock && node.textContent.trim()) {
+            blockNode = node;
+            blockPos = pos;
+            break;
+        }
     }
-  }
 
-  if (blockNode && blockPos >= 0) {
-    const from = blockPos
-    const to = blockPos + blockNode.nodeSize - 2 // -2 to exclude the closing tag
+    if (blockNode && blockPos >= 0) {
+        const from = blockPos;
+        const to = blockPos + blockNode.nodeSize - 2; // -2 to exclude the closing tag
 
-    if (from < to) {
-      const $from = doc.resolve(from)
-      const $to = doc.resolve(to)
-      const newSelection = TextSelection.between($from, $to, 1)
+        if (from < to) {
+            const $from = doc.resolve(from);
+            const $to = doc.resolve(to);
+            const newSelection = TextSelection.between($from, $to, 1);
 
-      if (newSelection && !selection.eq(newSelection)) {
-        editor.view.dispatch(editor.state.tr.setSelection(newSelection))
-      }
+            if (newSelection && !selection.eq(newSelection)) {
+                editor.view.dispatch(
+                    editor.state.tr.setSelection(newSelection),
+                );
+            }
+        }
     }
-  }
 }
 
 /**
@@ -573,98 +570,97 @@ const ATTR_WHITESPACE =
  * @param allowedNodeTypes An array of node type names to look for (e.g., ["image", "table"])
  * @returns An array of objects containing the node and its position
  */
- function getSelectedNodesOfType(
-  selection: Selection,
-  allowedNodeTypes: string[]
+function getSelectedNodesOfType(
+    selection: Selection,
+    allowedNodeTypes: string[],
 ): NodeWithPos[] {
-  const results: NodeWithPos[] = []
-  const allowed = new Set(allowedNodeTypes)
+    const results: NodeWithPos[] = [];
+    const allowed = new Set(allowedNodeTypes);
 
-  if (selection instanceof CellSelection) {
-    selection.forEachCell((node: PMNode, pos: number) => {
-      if (allowed.has(node.type.name)) {
-        results.push({ node, pos })
-      }
-    })
-    return results
-  }
-
-  if (selection instanceof NodeSelection) {
-    const { node, from: pos } = selection
-    if (node && allowed.has(node.type.name)) {
-      results.push({ node, pos })
+    if (selection instanceof CellSelection) {
+        selection.forEachCell((node: PMNode, pos: number) => {
+            if (allowed.has(node.type.name)) {
+                results.push({ node, pos });
+            }
+        });
+        return results;
     }
-    return results
-  }
 
-  const { $anchor } = selection
-  const cell = cellAround($anchor)
-
-  if (cell) {
-    const cellNode = selection.$anchor.doc.nodeAt(cell.pos)
-    if (cellNode && allowed.has(cellNode.type.name)) {
-      results.push({ node: cellNode, pos: cell.pos })
-      return results
+    if (selection instanceof NodeSelection) {
+        const { node, from: pos } = selection;
+        if (node && allowed.has(node.type.name)) {
+            results.push({ node, pos });
+        }
+        return results;
     }
-  }
 
-  // Fallback: find parent nodes of allowed types
-  const parentNode = findParentNodeClosestToPos($anchor, (node) =>
-    allowed.has(node.type.name)
-  )
+    const { $anchor } = selection;
+    const cell = cellAround($anchor);
 
-  if (parentNode) {
-    results.push({ node: parentNode.node, pos: parentNode.pos })
-  }
+    if (cell) {
+        const cellNode = selection.$anchor.doc.nodeAt(cell.pos);
+        if (cellNode && allowed.has(cellNode.type.name)) {
+            results.push({ node: cellNode, pos: cell.pos });
+            return results;
+        }
+    }
 
-  return results
+    // Fallback: find parent nodes of allowed types
+    const parentNode = findParentNodeClosestToPos($anchor, (node) =>
+        allowed.has(node.type.name),
+    );
+
+    if (parentNode) {
+        results.push({ node: parentNode.node, pos: parentNode.pos });
+    }
+
+    return results;
 }
 
- function getSelectedBlockNodes(editor: Editor): PMNode[] {
-  const { doc } = editor.state
-  const { from, to } = editor.state.selection
+function getSelectedBlockNodes(editor: Editor): PMNode[] {
+    const { doc } = editor.state;
+    const { from, to } = editor.state.selection;
 
-  const blocks: PMNode[] = []
-  const seen = new Set<number>()
+    const blocks: PMNode[] = [];
+    const seen = new Set<number>();
 
-  doc.nodesBetween(from, to, (node, pos) => {
-    if (!node.isBlock) return
+    doc.nodesBetween(from, to, (node, pos) => {
+        if (!node.isBlock) return;
 
-    if (!seen.has(pos)) {
-      seen.add(pos)
-      blocks.push(node)
-    }
+        if (!seen.has(pos)) {
+            seen.add(pos);
+            blocks.push(node);
+        }
 
-    return false
-  })
+        return false;
+    });
 
-  return blocks
+    return blocks;
 }
-
 
 export {
-  MAX_FILE_SIZE,
-  MAC_SYMBOLS,
-  SR_ONLY,
-  fetchAiToken,
-  cn,
-  isMac,
-  formatShortcutKey,
-  parseShortcutKeys,
-  isMarkInSchema,
-  isNodeInSchema,
-  focusNextNode,
-  isValidPosition,
-  isExtensionAvailable,
-  findNodeAtPosition,
-  findNodePosition,
-  isNodeTypeSelected,
-  selectionWithinConvertibleTypes,
-  handleImageUpload,
-  sanitizeUrl,
-  updateNodesAttr,
-  selectCurrentBlockContent,
-  getSelectedNodesOfType,
-  getSelectedBlockNodes,
-  isAllowedUri,
-} 
+    MAX_FILE_SIZE,
+    MAC_SYMBOLS,
+    SR_ONLY,
+    fetchAiToken,
+    cn,
+    isMac,
+    formatShortcutKey,
+    parseShortcutKeys,
+    isMarkInSchema,
+    isNodeInSchema,
+    focusNextNode,
+    isValidPosition,
+    isExtensionAvailable,
+    findNodeAtPosition,
+    findNodePosition,
+    isNodeTypeSelected,
+    selectionWithinConvertibleTypes,
+    handleImageUpload,
+    sanitizeUrl,
+    updateNodesAttr,
+    selectCurrentBlockContent,
+    getSelectedNodesOfType,
+    getSelectedBlockNodes,
+    isAllowedUri,
+};

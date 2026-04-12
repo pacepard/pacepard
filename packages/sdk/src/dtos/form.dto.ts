@@ -1,45 +1,39 @@
-import Entry from "@/dtos/entry.dto";
-import type { IHackathon } from "@/dtos/hackathon.dto";
-import Submission from "@/dtos/submission.dto";
-import User from "@/dtos/user.dto";
+import Entry from '@/dtos/entry.dto';
+import type { IHackathon } from '@/dtos/hackathon.dto';
+import Submission from '@/dtos/submission.dto';
+import User from '@/dtos/user.dto';
 
 interface Form {
-
-    
     code: string;
 
     name: string;
-    status: FormStatusType
+    status: FormStatusType;
     hasDraftBlocks: boolean;
     index: number; // position of the form item in a list
     timeZone: string;
-    
+
     type: FormType; // type of form e.g. hackathon form, survey form etc.
-    blocks: Array<IBlock>; // UI Block layout 
+    blocks: Array<IBlock>; // UI Block layout
     questions: Array<IQuestion>; // logical answerable questions from UI Blocks
-    
+
     numberOfEntries: number;
     numberOfSubmissions: number;
 
-    settings: IFormSettings 
-    styles: Record<string, any>; // css 
-    
+    settings: IFormSettings;
+    styles: Record<string, any>; // css
+
     // relationships
     hackathon: IHackathon | any;
     entries: Array<Entry | any>;
-    submission: Array<Submission | any>;   
+    submission: Array<Submission | any>;
 
-
-       // time stamps
+    // time stamps
     createdAt: Date;
     updatedAt: Date;
     _version: number;
     _id: any;
     id: any;
-    
 }
-
-
 
 export interface IFormSettings {
     language: string;
@@ -50,8 +44,7 @@ export interface IFormSettings {
     closeMessageTitle: string;
     closeMessageDescription: string;
     submissionLimit: number;
-};
-
+}
 
 export enum FormStatusType {
     BLANK = 'blank',
@@ -59,10 +52,9 @@ export enum FormStatusType {
     DELETED = 'deleted',
     PUBLISHED = 'published',
     ARCHIVED = 'archived',
-    TEMPLATE = 'template'
+    TEMPLATE = 'template',
 }
 
-  
 export enum FormType {
     REGISTRATION = 'hackathon-registration',
     ENTRIES = 'hackathon-entries',
@@ -73,7 +65,6 @@ export enum FormType {
     JUDGING = 'hackathon-judging',
 }
 
-
 export interface IBlock {
     code: string; // id of the UI Block
     name: string;
@@ -83,13 +74,12 @@ export interface IBlock {
     groupType: BlockType; // what kind of container/group it belongs to
     question: IQuestion | any; // optional link if block is a question
 
-    payload: IBlockPayload
+    payload: IBlockPayload;
     styles: Record<string, any>;
 
-    isAnswerable: boolean
+    isAnswerable: boolean;
     isReadOnly: boolean;
     isHidden: boolean;
-    
 }
 
 export interface IBlockPayload {
@@ -107,17 +97,15 @@ export interface IBlockPayload {
     safeHTMLSchema: Array<[string, Array<[string, string]>] | [string]>;
     isThankYouPage: boolean;
     isQualifiedForThankYouPage: boolean;
-};
-
-
+}
 
 export interface IQuestion {
     code: string;
 
-    fields: Array<IBlock>;  // blocks that are part of this question (input fields)
-    
-    questionType: IBlock
-    
+    fields: Array<IBlock>; // blocks that are part of this question (input fields)
+
+    questionType: IBlock;
+
     options: Array<string>;
     isRequired: boolean;
     isFirst: boolean;
@@ -132,79 +120,79 @@ export interface IResponse {
     code: string; // code;
     answer: string;
     respondent: User; // user who answered the question
-    question: IQuestion; 
+    question: IQuestion;
     form: Form; // form that the question is part of
 }
 
 export enum BlockType {
     // layout and structure
-    FORM_TITLE = "form-title",
-    TITLE = "title",
-    LABEL = "label",
-    TEXT = "text",
-    HEADING_1 = "heading-1",
-    HEADING_2 = "heading-2",
-    HEADING_3 = "heading-3",
-    DIVIDER = "divider",
-    PAGE_BREAK = "page-break",
-    THANK_YOU_PAGE = "thank-you-page",
-  
+    FORM_TITLE = 'form-title',
+    TITLE = 'title',
+    LABEL = 'label',
+    TEXT = 'text',
+    HEADING_1 = 'heading-1',
+    HEADING_2 = 'heading-2',
+    HEADING_3 = 'heading-3',
+    DIVIDER = 'divider',
+    PAGE_BREAK = 'page-break',
+    THANK_YOU_PAGE = 'thank-you-page',
+
     // question container
-    QUESTION = "question",
-  
+    QUESTION = 'question',
+
     // input fields
-    INPUT_TEXT = "input-text",
-    INPUT_EMAIL = "input-email",
-    INPUT_PHONE_NUMBER = "input-phone-number",
-    INPUT_LINK = "input-link",
-    INPUT_DATE = "input-date",
-    INPUT_TIME = "input-time",
-    INPUT_DATETIME = "input-datetime",
-    TEXTAREA = "textarea",
-    BOOLEAN = "boolean",
-  
+    INPUT_TEXT = 'input-text',
+    INPUT_EMAIL = 'input-email',
+    INPUT_PHONE_NUMBER = 'input-phone-number',
+    INPUT_LINK = 'input-link',
+    INPUT_DATE = 'input-date',
+    INPUT_TIME = 'input-time',
+    INPUT_DATETIME = 'input-datetime',
+    TEXTAREA = 'textarea',
+    BOOLEAN = 'boolean',
+
     // selection fields
-    SELECT = "select",
-    DROPDOWN = "dropdown",
-    CHECKBOXES = "checkboxes",
-    RADIO = "radio",
-    MULTI_SELECT = "multi-select",
-    MULTIPLE_CHOICE = "multiple-choice",
-  
+    SELECT = 'select',
+    DROPDOWN = 'dropdown',
+    CHECKBOXES = 'checkboxes',
+    RADIO = 'radio',
+    MULTI_SELECT = 'multi-select',
+    MULTIPLE_CHOICE = 'multiple-choice',
+
     // advanced inputs
-    RATING = "rating",
-    LINEAR_SCALE = "linear-scale",
-    FILE_UPLOAD = "file-upload",
-    RESPONDENT_COUNTRY = "respondent-country",
-  
+    RATING = 'rating',
+    LINEAR_SCALE = 'linear-scale',
+    FILE_UPLOAD = 'file-upload',
+    RESPONDENT_COUNTRY = 'respondent-country',
+
     // embeds
-    EMBED = "embed",
-    EMBED_IMAGE = "embed-image",
-    EMBED_VIDEO = "embed-video",
-  
+    EMBED = 'embed',
+    EMBED_IMAGE = 'embed-image',
+    EMBED_VIDEO = 'embed-video',
+
     // logic and system blocks
-    CONDITIONAL_LOGIC = "conditional-logic",
-    HIDDEN_FIELDS = "hidden-fields",
-    CALCULATED_FIELDS = "calculated-fields",
+    CONDITIONAL_LOGIC = 'conditional-logic',
+    HIDDEN_FIELDS = 'hidden-fields',
+    CALCULATED_FIELDS = 'calculated-fields',
 
     // group blocks
-    
-    TABLE = "table",
-    FORM = "form",
-    SECTION = "section",
-    GROUP = "group",
-    COLUMN = "column",
-    ROW = "row",
-    GRID = "grid",
-    LIST = "list",
-    CARDS = "cards",
-    CARDS_LIST = "cards-list",
-    CARDS_GRID = "cards-grid",
-    CARDS_TABLE = "cards-table",
-    CARDS_FORM = "cards-form",
-    CARDS_SECTION = "cards-section",
-    CARDS_GROUP = "cards-group",
-    CARDS_COLUMN = "cards-column",
-  }
 
-export default Form;   
+    TABLE = 'table',
+    FORM = 'form',
+    SECTION = 'section',
+    GROUP = 'group',
+    COLUMN = 'column',
+    ROW = 'row',
+    GRID = 'grid',
+    LIST = 'list',
+    CARDS = 'cards',
+    CARDS_LIST = 'cards-list',
+    CARDS_GRID = 'cards-grid',
+    CARDS_TABLE = 'cards-table',
+    CARDS_FORM = 'cards-form',
+    CARDS_SECTION = 'cards-section',
+    CARDS_GROUP = 'cards-group',
+    CARDS_COLUMN = 'cards-column',
+}
+
+export default Form;

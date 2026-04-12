@@ -18,6 +18,7 @@ This document outlines the complete user journey and system behavior for talent 
 ## Create Talent Flow
 
 ### User Story
+
 **As a** user  
 **I want to** create talent  
 **So that** I can manage talent management
@@ -25,9 +26,11 @@ This document outlines the complete user journey and system behavior for talent 
 ### Algorithm: Create Talent Process
 
 **Step 1**: User submits create talent request
+
 - System receives create talent request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs create talent operation
 - System returns response
@@ -37,6 +40,7 @@ This document outlines the complete user journey and system behavior for talent 
 ## Update Profile Flow
 
 ### User Story
+
 **As a** user  
 **I want to** update profile  
 **So that** I can manage talent management
@@ -44,9 +48,11 @@ This document outlines the complete user journey and system behavior for talent 
 ### Algorithm: Update Profile Process
 
 **Step 1**: User submits update profile request
+
 - System receives update profile request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs update profile operation
 - System returns response
@@ -56,6 +62,7 @@ This document outlines the complete user journey and system behavior for talent 
 ## Get Talent Profile Flow
 
 ### User Story
+
 **As a** user  
 **I want to** get talent profile  
 **So that** I can manage talent management
@@ -63,9 +70,11 @@ This document outlines the complete user journey and system behavior for talent 
 ### Algorithm: Get Talent Profile Process
 
 **Step 1**: User submits get talent profile request
+
 - System receives get talent profile request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs get talent profile operation
 - System returns response
@@ -75,6 +84,7 @@ This document outlines the complete user journey and system behavior for talent 
 ## Update Interests Flow
 
 ### User Story
+
 **As a** user  
 **I want to** update interests  
 **So that** I can manage talent management
@@ -82,9 +92,11 @@ This document outlines the complete user journey and system behavior for talent 
 ### Algorithm: Update Interests Process
 
 **Step 1**: User submits update interests request
+
 - System receives update interests request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs update interests operation
 - System returns response
@@ -94,6 +106,7 @@ This document outlines the complete user journey and system behavior for talent 
 ## Add Skill Flow
 
 ### User Story
+
 **As a** user  
 **I want to** add skill  
 **So that** I can manage talent management
@@ -101,9 +114,11 @@ This document outlines the complete user journey and system behavior for talent 
 ### Algorithm: Add Skill Process
 
 **Step 1**: User submits add skill request
+
 - System receives add skill request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs add skill operation
 - System returns response
@@ -113,6 +128,7 @@ This document outlines the complete user journey and system behavior for talent 
 ## Remove Skill Flow
 
 ### User Story
+
 **As a** user  
 **I want to** remove skill  
 **So that** I can manage talent management
@@ -120,9 +136,11 @@ This document outlines the complete user journey and system behavior for talent 
 ### Algorithm: Remove Skill Process
 
 **Step 1**: User submits remove skill request
+
 - System receives remove skill request
 
 **Step 2**: System processes request
+
 - System validates input
 - System performs remove skill operation
 - System returns response
@@ -132,11 +150,13 @@ This document outlines the complete user journey and system behavior for talent 
 ## Error Handling
 
 ### Validation Errors
+
 - System validates all required fields
 - System returns specific error messages for validation failures
 - System stops process execution on validation errors
 
 ### System Errors
+
 - System handles unexpected errors gracefully
 - System returns error messages for system failures
 - System logs errors for system administrators

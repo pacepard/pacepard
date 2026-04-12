@@ -17,8 +17,6 @@ import {
 } from '@/dtos/auth.dto';
 import { BusinessType, UserType } from '@/utils/enums';
 
-
-
 const useAuth = () => {
     const { userContext } = useContextType();
     const { goTo, location, navigate, toMainRoute } = useGoTo();
@@ -48,7 +46,7 @@ const useAuth = () => {
             if (
                 location.pathname.includes('/invite') ||
                 location.pathname.includes('/register') ||
-                location.pathname.includes('/verify-otp') || 
+                location.pathname.includes('/verify-otp') ||
                 location.pathname.includes('/activate-account')
             ) {
                 goTo(location.pathname);
@@ -60,10 +58,7 @@ const useAuth = () => {
             setIsLoggedIn(true);
             currentSidebar(false);
 
-            if (
-                location.pathname === '/login' ||
-                location.pathname === '/'
-            ) {
+            if (location.pathname === '/login' || location.pathname === '/') {
                 goTo('/dashboard');
             }
         }
@@ -75,7 +70,6 @@ const useAuth = () => {
         setUserType(ut ? ut : '');
         setBusinessType(bt ? bt : '');
     }, [isLoggedIn]);
-
 
     /**
      * @name redirect
@@ -91,39 +85,39 @@ const useAuth = () => {
      * @param {string} roles.talent - The talent type of the user.
      * @returns {Promise<void>}
      */
-    const redirect = useCallback( (roles: Array<string>) => {
-
-        if (!storage.checkToken() || !storage.checkUserID()) {
-            pacepardAPIClient().auth.logout();
-            goTo('/login');
-        } else {
-            const userType = cookieService.getUserType();
-            //const businessType = cookieService.getBusinessType();
-            const token = storage.getToken();
-            
-
-            if (token) {
-                if (userType && !roles.includes(userType)) {
-                    goTo('/login');
-                    pacepardAPIClient().auth.logout();
-                } else {
-                    setIsLoggedIn(true);
-                    currentSidebar(false); // set sidebar
-
-                    if (
-                        location.pathname === '/login' ||
-                        location.pathname === '/'
-                    ) {
-                        toMainRoute(null, 'dashboard');
-                    }
-                }
-            } else {
+    const redirect = useCallback(
+        (roles: Array<string>) => {
+            if (!storage.checkToken() || !storage.checkUserID()) {
                 pacepardAPIClient().auth.logout();
                 goTo('/login');
-            }
-        }
-    }, [navigate])
+            } else {
+                const userType = cookieService.getUserType();
+                //const businessType = cookieService.getBusinessType();
+                const token = storage.getToken();
 
+                if (token) {
+                    if (userType && !roles.includes(userType)) {
+                        goTo('/login');
+                        pacepardAPIClient().auth.logout();
+                    } else {
+                        setIsLoggedIn(true);
+                        currentSidebar(false); // set sidebar
+
+                        if (
+                            location.pathname === '/login' ||
+                            location.pathname === '/'
+                        ) {
+                            toMainRoute(null, 'dashboard');
+                        }
+                    }
+                } else {
+                    pacepardAPIClient().auth.logout();
+                    goTo('/login');
+                }
+            }
+        },
+        [navigate],
+    );
 
     /**
      * @name login
@@ -134,7 +128,6 @@ const useAuth = () => {
      * @returns {Promise<Response<IAuthResponse>>} - The response from the API.
      */
     const login = async (data: LoginDTO) => {
-        
         const response = await pacepardAPIClient().auth.loginUser(data);
 
         if (!response.error) {
@@ -149,7 +142,6 @@ const useAuth = () => {
                         response.data._id,
                         response.data.userType,
                         response.data.email,
-
                     );
 
                     cookieService.setData({
@@ -208,14 +200,13 @@ const useAuth = () => {
                         expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
                         path: '/',
                     });
-                    
+
                     setUserType(response.data.userType);
                     setBusinessType(response.data.businessType);
 
                     setIsLoggedIn(true);
                 }
 
-                
                 if (response.data.userType === UserType.TALENT) {
                     // store auth credentials
                     storage.storeAuth(
@@ -231,7 +222,7 @@ const useAuth = () => {
                         expireAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
                         path: '/',
                     });
-                    
+
                     setUserType(response.data.userType);
 
                     setIsLoggedIn(true);
@@ -261,11 +252,10 @@ const useAuth = () => {
         cookieService.removeData({ key: 'businessType' });
 
         setUserType('');
-        setBusinessType(''); 
+        setBusinessType('');
 
         goTo('/login');
         setIsLoggedIn(false);
-
     };
 
     /**
@@ -471,7 +461,7 @@ const useAuth = () => {
         user,
         userType,
         businessType,
-        
+
         redirect,
         login,
         register,

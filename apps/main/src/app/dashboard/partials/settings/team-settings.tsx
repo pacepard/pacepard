@@ -5,7 +5,13 @@ import { z } from 'zod';
 import { Button } from '@pacepard/ui/components/button';
 import { Input } from '@pacepard/ui/components/input';
 import { Label } from '@pacepard/ui/components/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@pacepard/ui/components/card';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+} from '@pacepard/ui/components/card';
 import { Avatar, AvatarFallback } from '@pacepard/ui/components/avatar';
 import { toast } from '@pacepard/ui';
 import { PacepardAPI } from '@/config/pacepard';
@@ -92,7 +98,9 @@ const TeamSettings = () => {
                 //     type: 'server',
                 //     message: response.message || 'Failed to update team information. Please try again.',
                 // });
-                toast.error(response.message || 'Failed to update team information');
+                toast.error(
+                    response.message || 'Failed to update team information',
+                );
             }
         } catch (error) {
             console.error('Error updating team settings:', error);
@@ -104,7 +112,9 @@ const TeamSettings = () => {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-semibold text-foreground">Team Settings</h1>
+            <h1 className="text-3xl font-semibold text-foreground">
+                Team Settings
+            </h1>
 
             <Card>
                 <CardHeader>
@@ -114,12 +124,18 @@ const TeamSettings = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="space-y-6"
+                    >
                         {/* Owner Information */}
                         <div className="flex items-center gap-4 pb-4 border-b">
                             <Avatar className="h-12 w-12">
                                 <AvatarFallback className="bg-muted text-muted-foreground">
-                                    {getInitials(userObj?.firstName, userObj?.lastName)}
+                                    {getInitials(
+                                        userObj?.firstName,
+                                        userObj?.lastName,
+                                    )}
                                 </AvatarFallback>
                             </Avatar>
                             <div>

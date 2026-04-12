@@ -35,7 +35,12 @@ const seedUsers = async (): Promise<void> => {
         const superAdminFirstName = process.env.SUPERADMIN_FIRSTNAME;
         const superAdminLastName = process.env.SUPERADMIN_LASTNAME;
 
-        if (!superAdminEmail || !superAdminPassword || !superAdminFirstName || !superAdminLastName) {
+        if (
+            !superAdminEmail ||
+            !superAdminPassword ||
+            !superAdminFirstName ||
+            !superAdminLastName
+        ) {
             throw new ErrorResponse(
                 'SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD, SUPERADMIN_FIRSTNAME, and SUPERADMIN_LASTNAME environment variables are required for seeding',
                 400,
@@ -81,7 +86,7 @@ const seedUsers = async (): Promise<void> => {
             isAdmin: true,
             isActivated: true,
             isActive: true,
-            
+
             onboard: {
                 step: 0,
                 status: OnboardStatus.COMPLETED,

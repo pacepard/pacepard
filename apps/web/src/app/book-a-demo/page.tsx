@@ -1,15 +1,14 @@
-import React from "react";
+import React from 'react';
 
-import { Background } from "@/components/background";
-import Demo from "@/components/shared/sections/demo";
-
+import { Background } from '@/components/background';
+import Demo from '@/components/shared/sections/demo';
 
 const Page = () => {
-  return (
-    <Background>
-      <Demo />
-    </Background>
-  );
+    return (
+        <Background>
+            <Demo />
+        </Background>
+    );
 };
 
 export default Page;

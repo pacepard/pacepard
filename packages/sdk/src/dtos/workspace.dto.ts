@@ -30,21 +30,19 @@ interface Workspace {
 }
 
 export interface CreateWorkspaceDTO {
-  name: string;
-  description: string;
-  index?: number;
-  createdBy?: string;
-  user?: User;
+    name: string;
+    description: string;
+    index?: number;
+    createdBy?: string;
+    user?: User;
 }
 
 export interface UpdateWorkspaceDTO extends CreateWorkspaceDTO {
-  id: string;
+    id: string;
 }
 
-
 export interface GetWorkspaceDTO {
-  id: string;
-
+    id: string;
 }
 
 export default Workspace;

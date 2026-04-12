@@ -5,12 +5,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, ResetPasswordFormValues } from './validation';
-import {
-    Loader2,
-    Eye,
-    EyeOff,
-    Lock,
-} from 'lucide-react';
+import { Loader2, Eye, EyeOff, Lock } from 'lucide-react';
 import { PacepardAPI } from '@/config/pacepard';
 import { toast } from '@pacepard/ui';
 import { useNavigate } from 'react-router';
@@ -62,11 +57,12 @@ const ResetPasswordForm = () => {
 
     const onSubmit = async (data: ResetPasswordFormValues) => {
         const email = cleanEmail();
-        
+
         if (!email) {
             setError('root', {
                 type: 'server',
-                message: 'Email not found. Please start over from forgot password.',
+                message:
+                    'Email not found. Please start over from forgot password.',
             });
             return;
         }
@@ -80,12 +76,17 @@ const ResetPasswordForm = () => {
             if (resetResponse.error) {
                 setError('root', {
                     type: 'server',
-                    message: resetResponse.message || resetResponse.data?.message || 'Failed to reset password. Please try again.',
+                    message:
+                        resetResponse.message ||
+                        resetResponse.data?.message ||
+                        'Failed to reset password. Please try again.',
                 });
             } else {
                 // Navigate to login page
                 navigate('/login');
-                toast.success('Password reset successfully! Please login with your new password.');
+                toast.success(
+                    'Password reset successfully! Please login with your new password.',
+                );
             }
         } catch (error) {
             setError('root', {
@@ -166,7 +167,9 @@ const ResetPasswordForm = () => {
                             variant="ghost"
                             size="sm"
                             className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowConfirmPassword((prev) => !prev)}
+                            onClick={() =>
+                                setShowConfirmPassword((prev) => !prev)
+                            }
                         >
                             {showConfirmPassword ? (
                                 <EyeOff className="h-4 w-4 text-muted-foreground" />

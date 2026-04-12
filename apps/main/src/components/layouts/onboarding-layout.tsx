@@ -35,9 +35,7 @@ export const OnboardingLayout = ({
                 </div>
 
                 <div className="w-full min-h-screen flex items-center justify-center px-6 md:px-10 pt-20 pb-12">
-                    <div className={`${maxWidthClass} w-full`}>
-                        {children}
-                    </div>
+                    <div className={`${maxWidthClass} w-full`}>{children}</div>
                 </div>
             </div>
             <Toaster />

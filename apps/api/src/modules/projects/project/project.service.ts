@@ -95,7 +95,10 @@ class ProjectService {
         const existingProjectResult = await projectRepository.findOne({
             slug: slug,
         });
-        if (existingProjectResult.error === false && existingProjectResult.data) {
+        if (
+            existingProjectResult.error === false &&
+            existingProjectResult.data
+        ) {
             result.error = true;
             result.code = 400;
             result.message = 'Project with this title already exists';
@@ -114,15 +117,20 @@ class ProjectService {
         if (description.trim().length < 10) {
             result.error = true;
             result.code = 400;
-            result.message = 'Project description must be at least 10 characters long';
+            result.message =
+                'Project description must be at least 10 characters long';
             return result;
         }
 
         // Handle image upload if provided
-        let imageData: { fileName: string; s3Key: string } | undefined = undefined;
+        let imageData: { fileName: string; s3Key: string } | undefined =
+            undefined;
         if (data.image) {
             // If image is an IFile with stream, upload it
-            if (typeof data.image === 'object' && (data.image as IFile).stream) {
+            if (
+                typeof data.image === 'object' &&
+                (data.image as IFile).stream
+            ) {
                 const uploadResult = await storageService.uploadFile(
                     data.image as IFile,
                 );
@@ -130,8 +138,7 @@ class ProjectService {
                 if (uploadResult.error) {
                     result.error = true;
                     result.code = uploadResult.code || 500;
-                    result.message =
-                        uploadResult.message;
+                    result.message = uploadResult.message;
                     return result;
                 }
 
@@ -150,7 +157,8 @@ class ProjectService {
                 } else {
                     result.error = true;
                     result.code = 400;
-                    result.message = 'Image s3Key is required for already uploaded images';
+                    result.message =
+                        'Image s3Key is required for already uploaded images';
                     return result;
                 }
             } else if (typeof data.image === 'string') {
@@ -278,8 +286,7 @@ class ProjectService {
         if (queryResult.error) {
             result.error = true;
             result.code = queryResult.code || 500;
-            result.message =
-                queryResult.message;
+            result.message = queryResult.message;
             return result;
         }
 
@@ -372,7 +379,10 @@ class ProjectService {
         }
 
         // Validate status enum if provided
-        if (updateData.status !== undefined && !Object.values(ProjectStatus).includes(updateData.status)) {
+        if (
+            updateData.status !== undefined &&
+            !Object.values(ProjectStatus).includes(updateData.status)
+        ) {
             result.error = true;
             result.code = 400;
             result.message = 'Invalid project status';
@@ -380,10 +390,14 @@ class ProjectService {
         }
 
         // Validate description length if provided
-        if (updateData.description !== undefined && updateData.description.trim().length < 10) {
+        if (
+            updateData.description !== undefined &&
+            updateData.description.trim().length < 10
+        ) {
             result.error = true;
             result.code = 400;
-            result.message = 'Project description must be at least 10 characters long';
+            result.message =
+                'Project description must be at least 10 characters long';
             return result;
         }
 
@@ -404,12 +418,12 @@ class ProjectService {
         for (const key of allowed) {
             if (updateData[key as keyof UpdateProjectDTO] !== undefined) {
                 const value = updateData[key as keyof UpdateProjectDTO];
-                
+
                 // Skip image here, handle it separately
                 if (key === 'image') {
                     continue;
                 }
-                
+
                 (finalUpdate as any)[key] =
                     typeof value === 'string' ? value.trim() : value;
 
@@ -434,7 +448,10 @@ class ProjectService {
             }
 
             // If image is an IFile with stream, upload it
-            if (typeof updateData.image === 'object' && (updateData.image as IFile).stream) {
+            if (
+                typeof updateData.image === 'object' &&
+                (updateData.image as IFile).stream
+            ) {
                 const uploadResult = await storageService.uploadFile(
                     updateData.image as IFile,
                 );
@@ -442,8 +459,7 @@ class ProjectService {
                 if (uploadResult.error) {
                     result.error = true;
                     result.code = uploadResult.code || 500;
-                    result.message =
-                        uploadResult.message;
+                    result.message = uploadResult.message;
                     return result;
                 }
 
@@ -462,7 +478,8 @@ class ProjectService {
                 } else {
                     result.error = true;
                     result.code = 400;
-                    result.message = 'Image s3Key is required for already uploaded images';
+                    result.message =
+                        'Image s3Key is required for already uploaded images';
                     return result;
                 }
             } else if (typeof updateData.image === 'string') {
@@ -568,8 +585,7 @@ class ProjectService {
         if (updateResult.error) {
             result.error = true;
             result.code = updateResult.code || 500;
-            result.message =
-                updateResult.message;
+            result.message = updateResult.message;
             return result;
         }
 
@@ -681,8 +697,7 @@ class ProjectService {
             if (deleteResult.error) {
                 result.error = true;
                 result.code = deleteResult.code || 500;
-                result.message =
-                    deleteResult.message;
+                result.message = deleteResult.message;
                 return result;
             }
 
@@ -755,7 +770,11 @@ class ProjectService {
 
         // Validate member role enum
         const memberRole = role || ProjectMemberRole.CONTRIBUTOR;
-        if (!Object.values(ProjectMemberRole).includes(memberRole as ProjectMemberRole)) {
+        if (
+            !Object.values(ProjectMemberRole).includes(
+                memberRole as ProjectMemberRole,
+            )
+        ) {
             result.error = true;
             result.code = 400;
             result.message = 'Invalid member role';
@@ -784,8 +803,7 @@ class ProjectService {
         if (updateResult.error) {
             result.error = true;
             result.code = updateResult.code || 500;
-            result.message =
-                updateResult.message;
+            result.message = updateResult.message;
             return result;
         }
 
@@ -933,7 +951,12 @@ class ProjectService {
         }
 
         // Validate member role if provided
-        if (role && !Object.values(ProjectMemberRole).includes(role as ProjectMemberRole)) {
+        if (
+            role &&
+            !Object.values(ProjectMemberRole).includes(
+                role as ProjectMemberRole,
+            )
+        ) {
             result.error = true;
             result.code = 400;
             result.message = 'Invalid member role';
@@ -1004,7 +1027,11 @@ class ProjectService {
         }
 
         // Get user ID
-        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+        const userId =
+            typeof user === 'string'
+                ? user
+                : (user as IUserDoc)?._id?.toString() ||
+                  (user as IUserDoc)?.id?.toString();
 
         if (!userId) {
             result.error = true;

@@ -13,7 +13,7 @@ interface Guest {
     areasOfExpertise: Array<string>;
     yearsOfExperience: string;
     socials: Array<ISocials | any>;
-    
+
     image: {
         fileName: string;
         s3Key: string;
@@ -29,7 +29,7 @@ interface Guest {
 
     // ownership
     invitedBy: User | any;
-    
+
     settings: {
         // Additional settings can be added here
     };
@@ -52,7 +52,7 @@ interface Guest {
 export enum GuestType {
     MENTOR = 'mentor',
     JUDGE = 'judge',
-    GUEST = 'guest'
+    GUEST = 'guest',
 }
 
 export enum MentorContextType {

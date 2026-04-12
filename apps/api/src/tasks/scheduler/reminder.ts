@@ -1,12 +1,16 @@
 import schedulerService from '../../services/scheduler.service';
 import { ScheduledJobConfig } from '../../services/scheduler.service';
 import { QueueChannel, JobChannel } from '../../queues/channel.queue';
-import { CronPatterns, CronPatternBuilder, DayOfWeek } from '../cron/cron.patterns';
+import {
+    CronPatterns,
+    CronPatternBuilder,
+    DayOfWeek,
+} from '../cron/cron.patterns';
 
 /**
  * Reminder Scheduled Jobs
  * Define all reminder-related scheduled jobs here
- * 
+ *
  * Cron pattern format: "* * * * *"
  *  | | | | |
  *  | | | | └─── day of week (0-7, where 0 and 7 are Sunday)

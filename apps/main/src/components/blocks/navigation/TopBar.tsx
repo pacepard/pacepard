@@ -11,7 +11,11 @@ interface TopBarProps {
     sticky?: boolean;
 }
 
-const TopBar = ({ pageTitle, showBack = false, sticky = true }: TopBarProps) => {
+const TopBar = ({
+    pageTitle,
+    showBack = false,
+    sticky = true,
+}: TopBarProps) => {
     const navigate = useNavigate();
     const { toggleSidebar, open } = useSidebar();
 
@@ -21,10 +25,11 @@ const TopBar = ({ pageTitle, showBack = false, sticky = true }: TopBarProps) => 
 
     const topBarClasses = cn(
         'w-full h-20 max-h-20 border-b border-border bg-background',
-        sticky && 'sticky top-0 z-[800]'
+        sticky && 'sticky top-0 z-[800]',
     );
 
-    const wrapperClasses = 'w-full h-full max-h-full flex items-center px-4 py-0';
+    const wrapperClasses =
+        'w-full h-full max-h-full flex items-center px-4 py-0';
 
     return (
         <div className={topBarClasses}>
@@ -38,12 +43,14 @@ const TopBar = ({ pageTitle, showBack = false, sticky = true }: TopBarProps) => 
                         className="h-9 w-9"
                         title={open ? 'Collapse sidebar' : 'Expand sidebar'}
                     >
-                        <ChevronsLeft className={cn(
-                            "h-4 w-4 transition-transform duration-200",
-                            !open && "rotate-180" // When collapsed, rotate to point right (>>) to expand
-                        )} />
+                        <ChevronsLeft
+                            className={cn(
+                                'h-4 w-4 transition-transform duration-200',
+                                !open && 'rotate-180', // When collapsed, rotate to point right (>>) to expand
+                            )}
+                        />
                     </Button>
-                    
+
                     {/* Back Button - Only on sub-routes */}
                     {showBack && (
                         <Button
@@ -56,14 +63,14 @@ const TopBar = ({ pageTitle, showBack = false, sticky = true }: TopBarProps) => 
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
                     )}
-                    
+
                     {/* Page Title */}
                     {pageTitle && (
                         <h3 className="text-lg font-semibold text-foreground ml-2">
                             {pageTitle}
                         </h3>
                     )}
-               </div>
+                </div>
             </div>
         </div>
     );

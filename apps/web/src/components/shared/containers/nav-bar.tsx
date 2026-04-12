@@ -155,14 +155,19 @@ export const Navbar = () => {
                         <div className="flex items-center gap-2.5 max-lg:hidden">
                             {!scrolled && (
                                 <>
-                                    <Button asChild variant="link" size="lg" className="text-sm md:text-base">
+                                    <Button
+                                        asChild
+                                        variant="link"
+                                        size="lg"
+                                        className="text-sm md:text-base"
+                                    >
                                         <Link href="/login">
                                             <span className="text-foreground hover:text-accent-foreground relative z-10">
                                                 Login
                                             </span>
                                         </Link>
                                     </Button>
-                                        {/* 
+                                    {/* 
                                     <Button asChild size="sm">
                                         <Link href="/register">
                                             <span className="relative z-10">
@@ -170,7 +175,11 @@ export const Navbar = () => {
                                             </span>
                                         </Link>
                                     </Button> */}
-                                    <Button asChild size="lg" className="text-sm md:text-base">
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="text-sm md:text-base"
+                                    >
                                         <Link href="/apprenticeship">
                                             <span className="">
                                                 Get Started
@@ -182,7 +191,11 @@ export const Navbar = () => {
                             )}
 
                             {scrolled && (
-                                <Button asChild size="lg" className="text-sm md:text-base">
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    className="text-sm md:text-base"
+                                >
                                     <Link href="mailto:hello@pacepard.com">
                                         <span>Contact sales</span>
                                         <ArrowRightToLineIcon />
@@ -197,7 +210,9 @@ export const Navbar = () => {
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
                             <span className="sr-only">
-                                {isMenuOpen ? 'Close main menu' : 'Open main menu'}
+                                {isMenuOpen
+                                    ? 'Close main menu'
+                                    : 'Open main menu'}
                             </span>
                             <div className="absolute top-1/2 left-1/2 block w-[18px] -translate-x-1/2 -translate-y-1/2">
                                 <span
@@ -316,7 +331,7 @@ export const Navbar = () => {
                         <div className="mt-12 pt-4 border-t border-border/70">
                             {/* Tagline - Left aligned */}
                             <p className="text-left text-sm text-muted-foreground mb-4">
-                           The growth platform for AI-Native Product teams.
+                                The growth platform for AI-Native Product teams.
                             </p>
 
                             {/* 2. Social Icons Section - Changed to flex row and added items-center for vertical alignment */}

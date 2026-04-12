@@ -1,15 +1,13 @@
-import { IRoute } from "@/utils/interfaces";
-
+import { IRoute } from '@/utils/interfaces';
 
 const appRoutes: Array<IRoute> = [
-
     {
         name: 'home',
         url: '/',
         isAuth: false,
         redirect: '/login',
         params: [],
-        content: {}
+        content: {},
     },
 
     {
@@ -17,31 +15,30 @@ const appRoutes: Array<IRoute> = [
         url: '/preview',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
-    
+
     {
         name: 'no-network',
         url: '/no-network',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
     {
         name: 'not-found',
         url: '/not-found',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
-
 
     {
         name: 'login',
         url: '/login',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
 
     {
@@ -49,7 +46,7 @@ const appRoutes: Array<IRoute> = [
         url: '/register',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
 
     {
@@ -57,7 +54,7 @@ const appRoutes: Array<IRoute> = [
         url: '/verify-otp',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
 
     {
@@ -65,21 +62,21 @@ const appRoutes: Array<IRoute> = [
         url: '/activate-account',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
     {
         name: 'forgot-password',
         url: '/forgot-password',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
     {
         name: 'reset-password',
         url: '/reset-password',
         isAuth: false,
         params: [],
-        content: {}
+        content: {},
     },
 
     {
@@ -87,9 +84,8 @@ const appRoutes: Array<IRoute> = [
         url: '/editor',
         isAuth: false,
         params: [],
-        content: { backButton: false, collapsed: false }
+        content: { backButton: false, collapsed: false },
     },
-
-]
+];
 
 export default appRoutes;

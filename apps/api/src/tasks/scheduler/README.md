@@ -7,38 +7,38 @@ This directory contains the scheduler system implementation using Bull and node-
 The scheduler system consists of:
 
 1. **Bull Queue Manager** (`../../queues/queue.ts`)
-   - Manages Bull queues and workers
-   - Handles Redis connections
-   - Provides queue and worker lifecycle management
-   - Uses the existing Bull implementation
+    - Manages Bull queues and workers
+    - Handles Redis connections
+    - Provides queue and worker lifecycle management
+    - Uses the existing Bull implementation
 
 2. **Scheduler Service** (`scheduler.service.ts`)
-   - Manages cron-based job scheduling
-   - Validates cron patterns
-   - Adds jobs to Bull queues based on cron schedules
+    - Manages cron-based job scheduling
+    - Validates cron patterns
+    - Adds jobs to Bull queues based on cron schedules
 
 3. **Cron Patterns Utility** (`cron.patterns.ts`)
-   - Pre-defined reusable cron patterns
-   - Helper functions to build custom patterns
-   - Clear documentation of cron format structure
-   - Day of week and month constants
+    - Pre-defined reusable cron patterns
+    - Helper functions to build custom patterns
+    - Clear documentation of cron format structure
+    - Day of week and month constants
 
 4. **Scheduled Job Definitions**
-   - `reminder.ts` - Reminder-related scheduled jobs
-   - `tmp-cleanup.ts` - Cleanup-related scheduled jobs
+    - `reminder.ts` - Reminder-related scheduled jobs
+    - `tmp-cleanup.ts` - Cleanup-related scheduled jobs
 
 5. **Job Processors** (`jobs/`)
-   - `reminder.job.ts` - Processes reminder jobs (uses Bull Job and DoneCallback pattern)
-   - `cleanup.job.ts` - Processes cleanup jobs (uses Bull Job and DoneCallback pattern)
+    - `reminder.job.ts` - Processes reminder jobs (uses Bull Job and DoneCallback pattern)
+    - `cleanup.job.ts` - Processes cleanup jobs (uses Bull Job and DoneCallback pattern)
 
 6. **Workers** (`scheduler.worker.ts`)
-   - Creates and manages workers for scheduled job queues using `BullQueue.addProcessor`
-   - Follows the same pattern as existing workers (e.g., `email.worker.ts`)
+    - Creates and manages workers for scheduled job queues using `BullQueue.addProcessor`
+    - Follows the same pattern as existing workers (e.g., `email.worker.ts`)
 
 7. **Initialization** (`scheduler.init.ts`)
-   - Starts the entire scheduler system
-   - Handles graceful shutdown
-   - Integrates with existing Bull queue system
+    - Starts the entire scheduler system
+    - Handles graceful shutdown
+    - Integrates with existing Bull queue system
 
 ## Usage
 
@@ -110,15 +110,13 @@ const myWorkerConfig: CreateWorkerDTO = {
     concurrency: 5,
 };
 
-await BullQueue.addProcessor(
-    myWorkerConfig,
-    processMyJob as any,
-);
+await BullQueue.addProcessor(myWorkerConfig, processMyJob as any);
 ```
 
 ## Cron Pattern Format
 
 Cron pattern format: `"* * * * *"`
+
 ```
  | | | | |
  | | | | └─── day of week (0-7, where 0 and 7 are Sunday)
@@ -129,6 +127,7 @@ Cron pattern format: `"* * * * *"`
 ```
 
 Special characters:
+
 - `*` = any value
 - `,` = value list separator (e.g., `0,6` for Sunday and Saturday)
 - `-` = range of values (e.g., `1-5` for Monday to Friday)
@@ -144,11 +143,11 @@ Import and use pre-defined patterns from `cron.patterns.ts`:
 import { CronPatterns } from './cron.patterns';
 
 const job: ScheduledJobConfig = {
-    cronPattern: CronPatterns.DAILY_9AM,      // Every day at 9:00 AM
+    cronPattern: CronPatterns.DAILY_9AM, // Every day at 9:00 AM
     // or
-    cronPattern: CronPatterns.WEEKLY_MONDAY,   // Every Monday at midnight
+    cronPattern: CronPatterns.WEEKLY_MONDAY, // Every Monday at midnight
     // or
-    cronPattern: CronPatterns.EVERY_HOUR,     // Every hour
+    cronPattern: CronPatterns.EVERY_HOUR, // Every hour
     // etc.
 };
 ```
@@ -156,20 +155,25 @@ const job: ScheduledJobConfig = {
 ### Available Pre-defined Patterns
 
 **Time-based:**
+
 - `EVERY_MINUTE`, `EVERY_5_MINUTES`, `EVERY_10_MINUTES`, `EVERY_15_MINUTES`, `EVERY_30_MINUTES`
 - `EVERY_HOUR`, `EVERY_6_HOURS`, `EVERY_12_HOURS`
 
 **Daily:**
+
 - `DAILY_MIDNIGHT`, `DAILY_1AM`, `DAILY_2AM`, `DAILY_6AM`, `DAILY_8AM`, `DAILY_9AM`
 - `DAILY_NOON`, `DAILY_6PM`, `DAILY_9PM`, `DAILY_11PM`
 
 **Weekly:**
+
 - `WEEKLY_SUNDAY`, `WEEKLY_MONDAY`, `WEEKLY_MONDAY_8AM`, `WEEKLY_TUESDAY`, etc.
 
 **Monthly:**
+
 - `MONTHLY_1ST`, `MONTHLY_15TH`, `MONTHLY_LAST_DAY`
 
 **Other:**
+
 - `WEEKDAYS_9AM`, `WEEKDAYS_5PM`, `WEEKENDS_10AM`, `YEARLY_JAN_1ST`
 
 ### Building Custom Patterns
@@ -180,25 +184,25 @@ Use `CronPatternBuilder` for custom patterns:
 import { CronPatternBuilder, DayOfWeek } from './cron.patterns';
 
 // Daily at 2:30 PM
-CronPatternBuilder.dailyAt(14, 30)  // "30 14 * * *"
+CronPatternBuilder.dailyAt(14, 30); // "30 14 * * *"
 
 // Every 15 minutes
-CronPatternBuilder.everyNMinutes(15)  // "*/15 * * * *"
+CronPatternBuilder.everyNMinutes(15); // "*/15 * * * *"
 
 // Every 4 hours
-CronPatternBuilder.everyNHours(4)  // "0 */4 * * *"
+CronPatternBuilder.everyNHours(4); // "0 */4 * * *"
 
 // Weekly on Friday at 5 PM
-CronPatternBuilder.weeklyOn(DayOfWeek.FRIDAY, 17, 0)  // "0 17 * * 5"
+CronPatternBuilder.weeklyOn(DayOfWeek.FRIDAY, 17, 0); // "0 17 * * 5"
 
 // Monthly on the 15th at midnight
-CronPatternBuilder.monthlyOn(15)  // "0 0 15 * *"
+CronPatternBuilder.monthlyOn(15); // "0 0 15 * *"
 
 // Weekdays at 9 AM
-CronPatternBuilder.weekdaysAt(9)  // "0 9 * * 1-5"
+CronPatternBuilder.weekdaysAt(9); // "0 9 * * 1-5"
 
 // Custom pattern
-CronPatternBuilder.atTime(30, 14, '*', '*', '1-5')  // "30 14 * * 1-5"
+CronPatternBuilder.atTime(30, 14, '*', '*', '1-5'); // "30 14 * * 1-5"
 ```
 
 ### Direct Pattern Examples
@@ -230,6 +234,7 @@ Scheduled jobs can be configured with:
 ## Monitoring
 
 The scheduler logs all activities:
+
 - Job scheduling
 - Job execution
 - Job completion/failure

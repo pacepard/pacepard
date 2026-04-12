@@ -7,13 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterFormValues } from './validation';
 import zxcvbn from 'zxcvbn';
-import {
-    Loader2,
-    Mail,
-    Eye,
-    EyeOff,
-    Lock,
-} from 'lucide-react';
+import { Loader2, Mail, Eye, EyeOff, Lock } from 'lucide-react';
 import { strengthColors } from '@/utils/helpers';
 import { OAuthButtons } from './oauth-buttons';
 import { PacepardAPI } from '@/config/pacepard';
@@ -21,7 +15,6 @@ import { toast } from '@pacepard/ui';
 import { useNavigate } from 'react-router';
 import { persistAuthFromResponse } from '@pacepard/sdk';
 import { getOnboardingRoute } from '@/utils/onboarding';
-
 
 const LoginForm = () => {
     const navigate = useNavigate();
@@ -60,32 +53,43 @@ const LoginForm = () => {
                 email: data.email,
                 password: data.password,
             });
-            
+
             if (response.error) {
                 // Use React Hook Form's setError for server errors (inline, not toast)
                 setError('root', {
                     type: 'server',
-                    message: response.message || response.data?.message || 'Invalid email or password',
+                    message:
+                        response.message ||
+                        response.data?.message ||
+                        'Invalid email or password',
                 });
             } else {
                 if (response.data?.token) {
                     persistAuthFromResponse(response);
                 }
-                
+
                 // Check onboarding status and route accordingly
                 try {
-                    const onboardingStatus = await PacepardAPI.user.getOnboardingStatus();
-                    
-                    if (onboardingStatus.error === false && onboardingStatus.data) {
+                    const onboardingStatus =
+                        await PacepardAPI.user.getOnboardingStatus();
+
+                    if (
+                        onboardingStatus.error === false &&
+                        onboardingStatus.data
+                    ) {
                         const statusData = onboardingStatus.data as any;
                         const step = statusData.step || 0;
                         const status = statusData.status || 'not-started';
                         const userType = statusData.userType;
-                        
+
                         // Get the appropriate route based on onboarding status
-                        const route = getOnboardingRoute(step, status, userType);
+                        const route = getOnboardingRoute(
+                            step,
+                            status,
+                            userType,
+                        );
                         navigate(route);
-                        
+
                         // Only show success toast if going to dashboard (onboarding completed)
                         if (status === 'completed') {
                             toast.success('Login successful!');

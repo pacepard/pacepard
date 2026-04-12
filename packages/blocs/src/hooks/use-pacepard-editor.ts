@@ -1,6 +1,6 @@
-import type { Editor } from "@tiptap/react"
-import { useCurrentEditor, useEditorState } from "@tiptap/react"
-import { useMemo } from "react"
+import type { Editor } from '@tiptap/react';
+import { useCurrentEditor, useEditorState } from '@tiptap/react';
+import { useMemo } from 'react';
 
 /**
  * Hook that provides access to a Pacepard editor instance.
@@ -14,37 +14,37 @@ import { useMemo } from "react"
  * @returns The provided editor or the editor from context, whichever is available
  */
 export function usePacepardEditor(providedEditor?: Editor | null): {
-  editor: Editor | null
-  editorState?: Editor["state"]
-  canCommand?: Editor["can"]
-  schema?: Editor["schema"]
+    editor: Editor | null;
+    editorState?: Editor['state'];
+    canCommand?: Editor['can'];
+    schema?: Editor['schema'];
 } {
-  const { editor: coreEditor } = useCurrentEditor()
-  const mainEditor = useMemo(
-    () => providedEditor || coreEditor,
-    [providedEditor, coreEditor]
-  )
+    const { editor: coreEditor } = useCurrentEditor();
+    const mainEditor = useMemo(
+        () => providedEditor || coreEditor,
+        [providedEditor, coreEditor],
+    );
 
-  const editorState = useEditorState({
-    editor: mainEditor,
-    selector(context) {
-      if (!context.editor) {
-        return {
-          editor: null,
-          editorState: undefined,
-          canCommand: undefined,
-          schema: undefined,
-        }
-      }
+    const editorState = useEditorState({
+        editor: mainEditor,
+        selector(context) {
+            if (!context.editor) {
+                return {
+                    editor: null,
+                    editorState: undefined,
+                    canCommand: undefined,
+                    schema: undefined,
+                };
+            }
 
-      return {
-        editor: context.editor,
-        editorState: context.editor.state,
-        canCommand: context.editor.can,
-        schema: context.editor.schema,
-      }
-    },
-  })
+            return {
+                editor: context.editor,
+                editorState: context.editor.state,
+                canCommand: context.editor.can,
+                schema: context.editor.schema,
+            };
+        },
+    });
 
-  return editorState || { editor: null }
+    return editorState || { editor: null };
 }

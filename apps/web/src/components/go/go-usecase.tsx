@@ -97,8 +97,7 @@ const GoUsecase = () => {
         >
             <div className="">
                 <h2 className="container text-left text-4xl font-regular tracking-tight text-balance text-foreground md:text-center md:text-5xl lg:text-6xl">
-                    Everything you need to 
-                    run the best hackathons.
+                    Everything you need to run the best hackathons.
                 </h2>
 
                 <div className="mt-8 md:mt-12 lg:mt-20">

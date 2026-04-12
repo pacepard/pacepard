@@ -6,7 +6,7 @@ import { CronPatterns } from '../cron/cron.patterns';
 /**
  * Marketing Scheduled Jobs
  * Define all marketing-related scheduled jobs here
- * 
+ *
  * Cron pattern format: "* * * * *"
  *  | | | | |
  *  | | | | └─── day of week (0-7, where 0 and 7 are Sunday)

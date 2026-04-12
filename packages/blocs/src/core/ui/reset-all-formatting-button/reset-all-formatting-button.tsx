@@ -1,43 +1,42 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseResetAllFormattingConfig } from "@/core/ui/reset-all-formatting-button"
+import type { UseResetAllFormattingConfig } from '@/core/ui/reset-all-formatting-button';
 import {
-  RESET_ALL_FORMATTING_SHORTCUT_KEY,
-  useResetAllFormatting,
-} from "@/core/ui/reset-all-formatting-button"
+    RESET_ALL_FORMATTING_SHORTCUT_KEY,
+    useResetAllFormatting,
+} from '@/core/ui/reset-all-formatting-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface ResetAllFormattingButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseResetAllFormattingConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseResetAllFormattingConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function ResetAllFormattingShortcutBadge({
-  shortcutKeys = RESET_ALL_FORMATTING_SHORTCUT_KEY,
+    shortcutKeys = RESET_ALL_FORMATTING_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -47,78 +46,82 @@ export function ResetAllFormattingShortcutBadge({
  * For custom button implementations, use the `useResetAllFormatting` hook instead.
  */
 export const ResetAllFormattingButton = forwardRef<
-  HTMLButtonElement,
-  ResetAllFormattingButtonProps
+    HTMLButtonElement,
+    ResetAllFormattingButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      preserveMarks = ["inlineThread"],
-      onResetAllFormatting,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            text,
+            hideWhenUnavailable = false,
+            preserveMarks = ['inlineThread'],
+            onResetAllFormatting,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canReset,
+            handleResetFormatting,
+            label,
+            shortcutKeys,
+            Icon,
+        } = useResetAllFormatting({
+            editor,
+            preserveMarks,
+            hideWhenUnavailable,
+            onResetAllFormatting,
+        });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleResetFormatting();
+            },
+            [handleResetFormatting, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                disabled={!canReset}
+                data-disabled={!canReset}
+                data-active-state="off"
+                role="button"
+                tabIndex={-1}
+                aria-label={label}
+                tooltip="Reset formatting"
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <ResetAllFormattingShortcutBadge
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      canReset,
-      handleResetFormatting,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useResetAllFormatting({
-      editor,
-      preserveMarks,
-      hideWhenUnavailable,
-      onResetAllFormatting,
-    })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleResetFormatting()
-      },
-      [handleResetFormatting, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        disabled={!canReset}
-        data-disabled={!canReset}
-        data-active-state="off"
-        role="button"
-        tabIndex={-1}
-        aria-label={label}
-        tooltip="Reset formatting"
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <ResetAllFormattingShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-ResetAllFormattingButton.displayName = "ResetAllFormattingButton"
+ResetAllFormattingButton.displayName = 'ResetAllFormattingButton';

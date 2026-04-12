@@ -5,4 +5,3 @@ const FeatureRequests = () => {
 };
 
 export default FeatureRequests;
-

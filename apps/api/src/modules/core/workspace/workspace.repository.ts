@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import Workspace from './workspace.model';
 import { IWorkspaceDoc } from './workspace.interface';
 import RepositoryService from '../../../services/repository.service';
-import { IResult } from '../../../utils/interfaces.util';   
+import { IResult } from '../../../utils/interfaces.util';
 
 /**
  * Workspace Repository

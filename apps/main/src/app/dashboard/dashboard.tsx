@@ -8,7 +8,11 @@ import UserDashboard from '@/app/dashboard/user-dashboard';
 
 const Dashboard = () => {
     const userContext = useContext(UserContext);
-    const userType = (storage.getUserType() ?? userContext?.userType ?? '').toLowerCase();
+    const userType = (
+        storage.getUserType() ??
+        userContext?.userType ??
+        ''
+    ).toLowerCase();
 
     switch (userType) {
         case 'super-admin':

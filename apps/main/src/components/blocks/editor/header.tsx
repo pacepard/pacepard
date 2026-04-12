@@ -14,7 +14,7 @@ interface IEditorHeader {
 }
 
 const EditorHeader = ({
-    pageTitle = "Wema bank Hacakthon 2026",
+    pageTitle = 'Wema bank Hacakthon 2026',
     showBack = false,
     sticky = true,
 }: IEditorHeader) => {

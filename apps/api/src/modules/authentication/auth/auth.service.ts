@@ -47,7 +47,6 @@ class AuthService {
             code: 200,
             data: {},
         };
-       
 
         if (!data.email) {
             result.error = true;
@@ -581,7 +580,6 @@ class AuthService {
 
         return result;
     }
-
 }
 
 export default new AuthService();

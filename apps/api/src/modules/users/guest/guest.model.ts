@@ -1,5 +1,12 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { IGuestDoc, GuestTypeEnum, MentorContextType, GuestVisibiltyEnum, GuestStatusEnum, GuestInviteStatus } from './guest.interface';
+import {
+    IGuestDoc,
+    GuestTypeEnum,
+    MentorContextType,
+    GuestVisibiltyEnum,
+    GuestStatusEnum,
+    GuestInviteStatus,
+} from './guest.interface';
 import { DbModels } from '../../../utils/enums.util';
 
 const GuestSchema = new Schema<IGuestDoc>(
@@ -15,11 +22,13 @@ const GuestSchema = new Schema<IGuestDoc>(
         organization: { type: String },
         areasOfExpertise: { type: [String], default: [] },
         yearsOfExperience: { type: String },
-        socials: [{
-            name: { type: String, required: true },
-            url: { type: String, required: true },
-            username: { type: String },
-        }],
+        socials: [
+            {
+                name: { type: String, required: true },
+                url: { type: String, required: true },
+                username: { type: String },
+            },
+        ],
 
         image: {
             fileName: { type: String },

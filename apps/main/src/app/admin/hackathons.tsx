@@ -5,4 +5,3 @@ const AdminHackathons = () => {
 };
 
 export default AdminHackathons;
-

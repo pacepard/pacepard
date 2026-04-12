@@ -1,44 +1,43 @@
-"use client"
+'use client';
 
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { Mark, UseMarkConfig } from "@/core/ui/mark-button"
-import { MARK_SHORTCUT_KEYS, useMark } from "@/core/ui/mark-button"
+import type { Mark, UseMarkConfig } from '@/core/ui/mark-button';
+import { MARK_SHORTCUT_KEYS, useMark } from '@/core/ui/mark-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface MarkButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseMarkConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseMarkConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function MarkShortcutBadge({
-  type,
-  shortcutKeys = MARK_SHORTCUT_KEYS[type],
+    type,
+    shortcutKeys = MARK_SHORTCUT_KEYS[type],
 }: {
-  type: Mark
-  shortcutKeys?: string
+    type: Mark;
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -47,77 +46,82 @@ export function MarkShortcutBadge({
  * For custom button implementations, use the `useMark` hook instead.
  */
 export const MarkButton = forwardRef<HTMLButtonElement, MarkButtonProps>(
-  (
-    {
-      editor: providedEditor,
-      type,
-      text,
-      hideWhenUnavailable = false,
-      onToggled,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            type,
+            text,
+            hideWhenUnavailable = false,
+            onToggled,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            handleMark,
+            label,
+            canToggle,
+            isActive,
+            Icon,
+            shortcutKeys,
+        } = useMark({
+            editor,
+            type,
+            hideWhenUnavailable,
+            onToggled,
+        });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleMark();
+            },
+            [handleMark, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                disabled={!canToggle}
+                data-style="ghost"
+                data-active-state={isActive ? 'on' : 'off'}
+                data-disabled={!canToggle}
+                role="button"
+                tabIndex={-1}
+                aria-label={label}
+                aria-pressed={isActive}
+                tooltip={label}
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <MarkShortcutBadge
+                                type={type}
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      handleMark,
-      label,
-      canToggle,
-      isActive,
-      Icon,
-      shortcutKeys,
-    } = useMark({
-      editor,
-      type,
-      hideWhenUnavailable,
-      onToggled,
-    })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleMark()
-      },
-      [handleMark, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        disabled={!canToggle}
-        data-style="ghost"
-        data-active-state={isActive ? "on" : "off"}
-        data-disabled={!canToggle}
-        role="button"
-        tabIndex={-1}
-        aria-label={label}
-        aria-pressed={isActive}
-        tooltip={label}
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <MarkShortcutBadge type={type} shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-MarkButton.displayName = "MarkButton"
+MarkButton.displayName = 'MarkButton';

@@ -18,11 +18,13 @@ const BusinessSchema = new Schema<IBusinessDoc>(
         industry: { type: String },
         tags: { type: [String], default: [] },
         website: { type: String },
-        socials: [{
-            name: { type: String, required: true },
-            url: { type: String, required: true },
-            username: { type: String },
-        }],
+        socials: [
+            {
+                name: { type: String, required: true },
+                url: { type: String, required: true },
+                username: { type: String },
+            },
+        ],
 
         verification: {
             status: {
@@ -99,13 +101,16 @@ const BusinessSchema = new Schema<IBusinessDoc>(
     },
 );
 
-BusinessSchema.pre('save', async function (this: mongoose.Document & IBusinessDoc) {
-    if (this.verification?.status === VerificationType.VERIFIED) {
-        this.isPublic = true;
-    } else {
-        this.isPublic = false;
-    }
-});
+BusinessSchema.pre(
+    'save',
+    async function (this: mongoose.Document & IBusinessDoc) {
+        if (this.verification?.status === VerificationType.VERIFIED) {
+            this.isPublic = true;
+        } else {
+            this.isPublic = false;
+        }
+    },
+);
 
 BusinessSchema.index({ industry: 1 });
 BusinessSchema.index({ tags: 1 });

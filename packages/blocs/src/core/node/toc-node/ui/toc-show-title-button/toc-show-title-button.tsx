@@ -1,24 +1,24 @@
-import * as React from "react"
+import * as React from 'react';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseTocShowTitleConfig } from "@/core/node/toc-node/ui/toc-show-title-button/toc-show-title"
-import { useTocShowTitle } from "@/core/node/toc-node/ui/toc-show-title-button/toc-show-title"
+import type { UseTocShowTitleConfig } from '@/core/node/toc-node/ui/toc-show-title-button/toc-show-title';
+import { useTocShowTitle } from '@/core/node/toc-node/ui/toc-show-title-button/toc-show-title';
 
 // --- UI Primitives ---
 
-import type { ButtonProps } from "@/core/primitives/button"
+import type { ButtonProps } from '@/core/primitives/button';
 
-import { Button } from "@/core/primitives/button"
+import { Button } from '@/core/primitives/button';
 
 export interface TocShowTitleButtonProps
-  extends Omit<ButtonProps, "type" | "onToggle">, UseTocShowTitleConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
+    extends Omit<ButtonProps, 'type' | 'onToggle'>, UseTocShowTitleConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
 }
 
 /**
@@ -28,68 +28,70 @@ export interface TocShowTitleButtonProps
  * For custom button implementations, use the `useTocShowTitle` hook instead.
  */
 export const TocShowTitleButton = React.forwardRef<
-  HTMLButtonElement,
-  TocShowTitleButtonProps
+    HTMLButtonElement,
+    TocShowTitleButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      text,
-      hideWhenUnavailable = false,
-      onToggle,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            text,
+            hideWhenUnavailable = false,
+            onToggle,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+
+        const { isVisible, isActive, canToggle, handleToggle, label, Icon } =
+            useTocShowTitle({
+                editor,
+                hideWhenUnavailable,
+                onToggle,
+            });
+
+        const handleClick = React.useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleToggle();
+            },
+            [handleToggle, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                data-active-state={isActive ? 'on' : 'off'}
+                role="button"
+                tabIndex={-1}
+                disabled={!canToggle}
+                data-disabled={!canToggle}
+                aria-label={label}
+                tooltip={label}
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
+);
 
-    const { isVisible, isActive, canToggle, handleToggle, label, Icon } =
-      useTocShowTitle({
-        editor,
-        hideWhenUnavailable,
-        onToggle,
-      })
-
-    const handleClick = React.useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleToggle()
-      },
-      [handleToggle, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        data-active-state={isActive ? "on" : "off"}
-        role="button"
-        tabIndex={-1}
-        disabled={!canToggle}
-        data-disabled={!canToggle}
-        aria-label={label}
-        tooltip={label}
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-
-            {text && <span className="tiptap-button-text">{text}</span>}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-TocShowTitleButton.displayName = "TocShowTitleButton"
+TocShowTitleButton.displayName = 'TocShowTitleButton';

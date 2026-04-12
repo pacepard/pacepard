@@ -82,7 +82,10 @@ class AppEmailService {
                 templateFolder = 'authentication';
             } else if (data.template?.includes('generic')) {
                 templateFolder = 'authentication';
-            } else if (data.template?.includes('hackathons') || data.template?.includes('marketing')) {
+            } else if (
+                data.template?.includes('hackathons') ||
+                data.template?.includes('marketing')
+            ) {
                 templateFolder = 'marketing';
             }
 
@@ -102,11 +105,15 @@ class AppEmailService {
                         ? (data.options as any).expiry
                         : undefined) ||
                     '15 minutes',
-                salute: data.options?.salute || data.payload?.emailSalute || data.payload?.salute,
+                salute:
+                    data.options?.salute ||
+                    data.payload?.emailSalute ||
+                    data.payload?.salute,
                 bodyOne: data.options?.bodyOne || data.payload?.bodyOne,
                 bodyTwo: data.options?.bodyTwo || data.payload?.bodyTwo,
                 bodyThree: data.options?.bodyThree || data.payload?.bodyThree,
-                buttonText: data.options?.buttonText || data.payload?.buttonText,
+                buttonText:
+                    data.options?.buttonText || data.payload?.buttonText,
                 buttonUrl: data.options?.buttonUrl || data.payload?.buttonUrl,
                 name: data.user?.firstName || data.user?.email || 'there',
             });

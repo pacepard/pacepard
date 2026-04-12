@@ -11,7 +11,6 @@ import { FileInfo } from 'busboy';
 import { PassThrough } from 'stream';
 import { IUserDoc, OtpType } from '../modules/users/user/user.interface';
 
-
 export type Nullable<T> = T | null;
 
 // Use Mongoose's Types.ObjectId for interface compatibility
@@ -60,7 +59,6 @@ export interface IData {
 }
 
 export interface IResult<T = any> {
-   
     error: boolean;
     errors?: Array<T>;
     report?: IAPIReport;
@@ -82,7 +80,6 @@ export interface IPagination {
     };
     data: Array<any>;
 }
-
 
 export interface IAPIReport {
     format: string;
@@ -153,7 +150,6 @@ export interface ILogin {
     password: string;
     code: string;
 }
-
 
 export interface IAPIKeyUsage {
     keyHash: string;

@@ -2,10 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@pacepard/ui/components/button';
 import { Card, CardContent } from '@pacepard/ui/components/card';
-import {
-    CheckCircle2,
-    Circle,
-} from 'lucide-react';
+import { CheckCircle2, Circle } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { UserType, UserContext, storage } from '@pacepard/sdk';
 import { PacepardAPI } from '@/config/pacepard';
@@ -24,21 +21,24 @@ const userTypeOptions: UserTypeOption[] = [
     {
         id: UserType.BUSINESS,
         title: 'For workplace',
-        description: 'Run memorable hackthons, turn developers into loyal customers',
+        description:
+            'Run memorable hackthons, turn developers into loyal customers',
         image: '/items/Planning-A-Trip.png',
         alt: 'Workplace collaboration illustration',
     },
     {
         id: UserType.TALENT,
         title: 'For personal use',
-        description: 'Build mastery, work on real projects, and get paid for it',
+        description:
+            'Build mastery, work on real projects, and get paid for it',
         image: '/items/Peace.png',
         alt: 'Personal development illustration',
     },
     {
         id: UserType.USER,
         title: 'For Education',
-        description: 'Organise in-house internships, and scale learning outcomes',
+        description:
+            'Organise in-house internships, and scale learning outcomes',
         image: '/items/Affiliate-Program.png',
         alt: 'Education and learning illustration',
     },
@@ -60,8 +60,9 @@ const Onboard: React.FC = () => {
             }
 
             try {
-                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
-                
+                const statusResponse =
+                    await PacepardAPI.user.getOnboardingStatus();
+
                 if (statusResponse.error === false && statusResponse.data) {
                     const statusData = statusResponse.data as any;
                     const step = statusData.step || 0;
@@ -71,7 +72,11 @@ const Onboard: React.FC = () => {
                     // Allow only if step === 0 or status === 'not-started'
                     if (step > 0 || status !== 'not-started') {
                         // User has already started onboarding, redirect to appropriate step
-                        const route = getOnboardingRoute(step, status, userType);
+                        const route = getOnboardingRoute(
+                            step,
+                            status,
+                            userType,
+                        );
                         navigate(route);
                     }
                 }
@@ -89,24 +94,27 @@ const Onboard: React.FC = () => {
             setIsLoading(true);
             setError(''); // Clear any previous errors
             try {
-
                 const response = await PacepardAPI.user.setUserType({
                     userType: selectedType,
                 });
 
-                if (response.error === false && (response.status === 200 || response.status === 201)) {
+                if (
+                    response.error === false &&
+                    (response.status === 200 || response.status === 201)
+                ) {
                     // Store the selected user type in context
                     setUserType(selectedType);
 
                     // Navigate first, then show success toast
                     navigate('/onboarding/basic-info');
                     toast.success('User type selected');
-
                 } else {
                     // Use inline error instead of toast
-                    setError(response.message || 'Failed to set user type. Please try again.');
+                    setError(
+                        response.message ||
+                            'Failed to set user type. Please try again.',
+                    );
                 }
-
             } catch (error) {
                 console.error('Error setting user type:', error);
                 // Use inline error instead of toast
@@ -144,20 +152,16 @@ const Onboard: React.FC = () => {
                                 'max-w-[380px]', // Max width to prevent cards from getting too wide
                                 isSelected
                                     ? 'border-primary border-2 shadow-md'
-                                    : 'border-border hover:border-primary/50'
+                                    : 'border-border hover:border-primary/50',
                             )}
                             onClick={() => setSelectedType(option.id)}
                         >
                             {/* Selection Indicator */}
                             <div className="absolute top-4 right-4 z-10">
                                 {isSelected ? (
-                                    <CheckCircle2
-                                        className="size-6 text-primary fill-primary"
-                                    />
+                                    <CheckCircle2 className="size-6 text-primary fill-primary" />
                                 ) : (
-                                    <Circle
-                                        className="size-6 text-muted-foreground"
-                                    />
+                                    <Circle className="size-6 text-muted-foreground" />
                                 )}
                             </div>
 
@@ -169,7 +173,7 @@ const Onboard: React.FC = () => {
                                             'w-full flex items-center justify-center transition-all duration-200 flex-shrink-0',
                                             isSelected
                                                 ? 'scale-105'
-                                                : 'scale-100'
+                                                : 'scale-100',
                                         )}
                                     >
                                         <img
@@ -180,7 +184,7 @@ const Onboard: React.FC = () => {
                                                 'max-h-[180px] md:max-h-[200px]',
                                                 isSelected
                                                     ? 'opacity-100'
-                                                    : 'opacity-80'
+                                                    : 'opacity-80',
                                             )}
                                         />
                                     </div>
@@ -191,7 +195,7 @@ const Onboard: React.FC = () => {
                                             'text-xl font-semibold',
                                             isSelected
                                                 ? 'text-foreground'
-                                                : 'text-foreground'
+                                                : 'text-foreground',
                                         )}
                                     >
                                         {option.title}

@@ -44,9 +44,8 @@ router.get('/me', (req: Request, res: Response, next: NextFunction) => {
         },
         message: 'Pacepard api v1.0.0 is healthy',
         status: 200,
-    }); 
+    });
 });
-
 
 router.get('/', (req: Request, res: Response, next: NextFunction) => {
     let enviornemnt = ENVType.DEVELOPMENT;

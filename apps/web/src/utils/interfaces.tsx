@@ -1,8 +1,11 @@
-import { ComponentPropsWithoutRef } from "react"
+import { ComponentPropsWithoutRef } from 'react';
 
-import Link from "next/link"
+import Link from 'next/link';
 
-export interface ILogo extends Omit<ComponentPropsWithoutRef<typeof Link>, 'href'> {
-  large?: boolean
-  className?: string
+export interface ILogo extends Omit<
+    ComponentPropsWithoutRef<typeof Link>,
+    'href'
+> {
+    large?: boolean;
+    className?: string;
 }

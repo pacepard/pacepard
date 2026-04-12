@@ -89,8 +89,7 @@ class TalentService {
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message =
-                createResult.message;
+            result.message = createResult.message;
             return result;
         }
 

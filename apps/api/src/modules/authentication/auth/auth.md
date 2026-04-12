@@ -1,4 +1,4 @@
-what im thinking is 
+what im thinking is
 
 on reg a visitor gets the USER.
 
@@ -9,7 +9,7 @@ they get that profile.
 
 the only option on the UI is TALENT & BUSINESS
 
-A business cannot be a mentor or a judge. 
+A business cannot be a mentor or a judge.
 
 A user can be invited to be a mentor or judge or admin who then get the profile invited with
 then later become a talent. same applies to roles and permission being attached
@@ -18,9 +18,9 @@ a mentor can later go to create a talent account an dthen be onboarded
 
 each user type should have an accept inviation or revoke invitation
 
-when  a mentor or judge or admin profile is invited. its upon acceptance that 
+when a mentor or judge or admin profile is invited. its upon acceptance that
 will created user then the respective profile.
-the system will generate OTP, token, activate account, update login creates a user n mentor or judge or admin profile 
+the system will generate OTP, token, activate account, update login creates a user n mentor or judge or admin profile
 
 a user can register as a talent then be invited to be a mentor or judge
 

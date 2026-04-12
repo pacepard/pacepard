@@ -27,12 +27,13 @@ export default function PPCTA() {
                         <h2 className="text-4xl font-regular tracking-tight text-foreground  md:text-5xl">
                             <span className="text-muted-foreground">
                                 The world's best got{' '}
-                            </span><br />
+                            </span>
+                            <br />
                             better by doing.
                         </h2>
                         <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
-                            Join open hackathons, co-create with global companies,
-                            or host your own innovation challenges.
+                            Join open hackathons, co-create with global
+                            companies, or host your own innovation challenges.
                         </p>
                         <div className="flex flex-wrap items-center gap-4">
                             <Button

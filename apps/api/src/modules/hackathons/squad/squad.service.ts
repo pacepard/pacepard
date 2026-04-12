@@ -61,7 +61,8 @@ class SquadService {
         if (!userId) {
             result.error = true;
             result.code = 400;
-            result.message = 'Creator information is required to create a squad';
+            result.message =
+                'Creator information is required to create a squad';
             return result;
         }
 
@@ -309,7 +310,8 @@ class SquadService {
             if (!hasPermission) {
                 result.error = true;
                 result.code = 403;
-                result.message = 'You do not have permission to delete this squad';
+                result.message =
+                    'You do not have permission to delete this squad';
                 return result;
             }
         }
@@ -372,15 +374,17 @@ class SquadService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this squad';
+            result.message =
+                'You do not have permission to manage members in this squad';
             return result;
         }
 
         // Check if user is already a member
         const existingMember = (squad.members || []).find((m: any) => {
-            const memberUserId = typeof m.user === 'object'
-                ? String(m.user._id || m.user.id)
-                : String(m.user);
+            const memberUserId =
+                typeof m.user === 'object'
+                    ? String(m.user._id || m.user.id)
+                    : String(m.user);
             return memberUserId === userId;
         });
 
@@ -454,15 +458,17 @@ class SquadService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this squad';
+            result.message =
+                'You do not have permission to manage members in this squad';
             return result;
         }
 
         // Find and remove the member
         const members = (squad.members || []).filter((m: any) => {
-            const memberUserId = typeof m.user === 'object'
-                ? String(m.user._id || m.user.id)
-                : String(m.user);
+            const memberUserId =
+                typeof m.user === 'object'
+                    ? String(m.user._id || m.user.id)
+                    : String(m.user);
             return memberUserId !== userId;
         });
 

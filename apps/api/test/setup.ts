@@ -39,179 +39,193 @@ process.env.REDIS_TLS_REJECT_UNAUTHORIZED = 'false';
 
 // Mock email config - must be before any imports that use it
 jest.mock('../src/configs/email.config', () => {
-  return {
-    EMAIL_CONFIG: {
-      service: 'mailsend',
-      fromEmail: 'test@pacepard.com',
-      fromName: 'Pacepard Test',
-      replyTo: 'test@pacepard.com',
-      apiKey: 'test-api-key',
-      templateId: 'test-template-id',
-      sendingDomain: 'test.pacepard.com',
-      clientUrl: 'http://localhost:3000',
-      isTestMode: true,
-    },
-    getEmailConfig: () => ({
-      service: 'mailsend',
-      fromEmail: 'test@pacepard.com',
-      fromName: 'Pacepard Test',
-      replyTo: 'test@pacepard.com',
-      apiKey: 'test-api-key',
-      templateId: 'test-template-id',
-      sendingDomain: 'test.pacepard.com',
-      clientUrl: 'http://localhost:3000',
-      isTestMode: true,
-    }),
-  };
+    return {
+        EMAIL_CONFIG: {
+            service: 'mailsend',
+            fromEmail: 'test@pacepard.com',
+            fromName: 'Pacepard Test',
+            replyTo: 'test@pacepard.com',
+            apiKey: 'test-api-key',
+            templateId: 'test-template-id',
+            sendingDomain: 'test.pacepard.com',
+            clientUrl: 'http://localhost:3000',
+            isTestMode: true,
+        },
+        getEmailConfig: () => ({
+            service: 'mailsend',
+            fromEmail: 'test@pacepard.com',
+            fromName: 'Pacepard Test',
+            replyTo: 'test@pacepard.com',
+            apiKey: 'test-api-key',
+            templateId: 'test-template-id',
+            sendingDomain: 'test.pacepard.com',
+            clientUrl: 'http://localhost:3000',
+            isTestMode: true,
+        }),
+    };
 });
 
 // Mock email service
 jest.mock('../src/services/email.service', () => ({
-  default: emailServiceMock,
-  sendEmail: jest.fn<() => Promise<any>>().mockResolvedValue(true),
+    default: emailServiceMock,
+    sendEmail: jest.fn<() => Promise<any>>().mockResolvedValue(true),
 }));
 
 // Mock Redis service
 jest.mock('../src/middlewares/redis.mdw', () => ({
-  default: redisMock,
+    default: redisMock,
 }));
 
 // Mock storage service
 jest.mock('../src/services/storage.service', () => ({
-  default: storageServiceMock,
+    default: storageServiceMock,
 }));
 
 // Mock Paystack service (exports named functions)
 jest.mock('../src/modules/paystack/paystack.service', () => ({
-  initializePayment: paystackServiceMock.initializePayment,
-  verifyTransaction: paystackServiceMock.verifyTransaction,
-  paystackCreatePlan: paystackServiceMock.paystackCreatePlan,
-  paystackPlanUpdate: paystackServiceMock.paystackPlanUpdate,
-  verifyWebhookSignature: paystackServiceMock.verifyWebhookSignature,
+    initializePayment: paystackServiceMock.initializePayment,
+    verifyTransaction: paystackServiceMock.verifyTransaction,
+    paystackCreatePlan: paystackServiceMock.paystackCreatePlan,
+    paystackPlanUpdate: paystackServiceMock.paystackPlanUpdate,
+    verifyWebhookSignature: paystackServiceMock.verifyWebhookSignature,
 }));
 
 // Mock Bull library to prevent actual Redis connections
 const createMockQueueInstance = () => {
-  return {
-    add: jest.fn<() => Promise<any>>().mockResolvedValue({
-      id: 'mock-job-id',
-      data: {},
-    }),
-    addBulk: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
-    process: jest.fn(),
-    on: jest.fn(),
-    close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-    name: 'mock-queue',
-  };
+    return {
+        add: jest.fn<() => Promise<any>>().mockResolvedValue({
+            id: 'mock-job-id',
+            data: {},
+        }),
+        addBulk: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
+        process: jest.fn(),
+        on: jest.fn(),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+        name: 'mock-queue',
+    };
 };
 
 jest.mock('bull', () => {
-  const createMockQueue = (name: string) => {
-    const instance = createMockQueueInstance();
-    instance.name = name;
-    return instance;
-  };
-  
-  // Simple constructor function
-  function MockBull(this: any, name: string, options?: any) {
-    if (!(this instanceof MockBull)) {
-      return new (MockBull as any)(name, options);
+    const createMockQueue = (name: string) => {
+        const instance = createMockQueueInstance();
+        instance.name = name;
+        return instance;
+    };
+
+    // Simple constructor function
+    function MockBull(this: any, name: string, options?: any) {
+        if (!(this instanceof MockBull)) {
+            return new (MockBull as any)(name, options);
+        }
+        return createMockQueue(name);
     }
-    return createMockQueue(name);
-  }
-  
-  return MockBull;
+
+    return MockBull;
 });
 
 // Mock queue/worker services
 jest.mock('../src/tasks/workers/worker', () => ({
-  default: jest.fn<() => Promise<boolean>>().mockResolvedValue(true),
+    default: jest.fn<() => Promise<boolean>>().mockResolvedValue(true),
 }));
 
 // Create a mock queue instance
 const createMockQueue = () => {
-  const mockQueue = {
-    add: jest.fn<() => Promise<any>>().mockResolvedValue({
-      id: 'mock-job-id',
-      data: {},
-    }),
-    addBulk: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
-    process: jest.fn(),
-    on: jest.fn(),
-    close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-    name: 'mock-queue',
-  };
-  return mockQueue;
+    const mockQueue = {
+        add: jest.fn<() => Promise<any>>().mockResolvedValue({
+            id: 'mock-job-id',
+            data: {},
+        }),
+        addBulk: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
+        process: jest.fn(),
+        on: jest.fn(),
+        close: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+        name: 'mock-queue',
+    };
+    return mockQueue;
 };
 
 jest.mock('../src/queues/queue', () => {
-  const queues = new Map();
-  
-  const mockCreateQueue = jest.fn<(data: { name: string }) => Promise<any>>().mockImplementation((data: { name: string }) => {
-    const { name } = data;
-    if (!queues.has(name)) {
-      const queue = createMockQueue();
-      queue.name = name;
-      queues.set(name, queue);
-    }
-    return Promise.resolve(queues.get(name));
-  });
-  
-  const mockAddJobs = jest.fn<(data: { queueName: string; jobs: any[] }) => Promise<void>>().mockImplementation(async (data) => {
-    const { queueName, jobs } = data;
-    const queue = await mockCreateQueue({ name: queueName });
-    // Mock the addBulk call
-    const bulkJobs = jobs.map((job: any) => ({
-      name: job.name,
-      data: job.data,
-      opts: job.options,
-    }));
-    await queue.addBulk(bulkJobs);
-  });
-  
-  return {
-    __esModule: true,
-    default: {
-      createQueue: mockCreateQueue,
-      addJobs: mockAddJobs,
-      addProcessor: jest.fn<(data: { queueName: string }, callback: any) => Promise<any>>().mockImplementation(async (data, callback) => {
-        const { queueName } = data;
-        const queue = await mockCreateQueue({ name: queueName });
-        return Promise.resolve(queue);
-      }),
-      getQueue: jest.fn<(name: string) => any>().mockImplementation((name) => {
-        return queues.get(name) || createMockQueue();
-      }),
-      closeQueue: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-    },
-  };
+    const queues = new Map();
+
+    const mockCreateQueue = jest
+        .fn<(data: { name: string }) => Promise<any>>()
+        .mockImplementation((data: { name: string }) => {
+            const { name } = data;
+            if (!queues.has(name)) {
+                const queue = createMockQueue();
+                queue.name = name;
+                queues.set(name, queue);
+            }
+            return Promise.resolve(queues.get(name));
+        });
+
+    const mockAddJobs = jest
+        .fn<(data: { queueName: string; jobs: any[] }) => Promise<void>>()
+        .mockImplementation(async (data) => {
+            const { queueName, jobs } = data;
+            const queue = await mockCreateQueue({ name: queueName });
+            // Mock the addBulk call
+            const bulkJobs = jobs.map((job: any) => ({
+                name: job.name,
+                data: job.data,
+                opts: job.options,
+            }));
+            await queue.addBulk(bulkJobs);
+        });
+
+    return {
+        __esModule: true,
+        default: {
+            createQueue: mockCreateQueue,
+            addJobs: mockAddJobs,
+            addProcessor: jest
+                .fn<
+                    (data: { queueName: string }, callback: any) => Promise<any>
+                >()
+                .mockImplementation(async (data, callback) => {
+                    const { queueName } = data;
+                    const queue = await mockCreateQueue({ name: queueName });
+                    return Promise.resolve(queue);
+                }),
+            getQueue: jest
+                .fn<(name: string) => any>()
+                .mockImplementation((name) => {
+                    return queues.get(name) || createMockQueue();
+                }),
+            closeQueue: jest
+                .fn<() => Promise<void>>()
+                .mockResolvedValue(undefined),
+        },
+    };
 });
 
 // Mock AWS config
 jest.mock('../src/configs/aws.config', () => ({
-  s3: {
-    send: jest.fn<() => Promise<any>>().mockResolvedValue({}),
-  },
-  AWS_BUCKET_NAME: 'test-bucket',
+    s3: {
+        send: jest.fn<() => Promise<any>>().mockResolvedValue({}),
+    },
+    AWS_BUCKET_NAME: 'test-bucket',
 }));
 
 // Mock AWS S3
 jest.mock('@aws-sdk/client-s3', () => ({
-  S3Client: jest.fn().mockImplementation(() => ({
-    send: jest.fn<() => Promise<any>>().mockResolvedValue({}),
-  })),
-  PutObjectCommand: jest.fn(),
-  DeleteObjectCommand: jest.fn(),
-  GetObjectCommand: jest.fn(),
+    S3Client: jest.fn().mockImplementation(() => ({
+        send: jest.fn<() => Promise<any>>().mockResolvedValue({}),
+    })),
+    PutObjectCommand: jest.fn(),
+    DeleteObjectCommand: jest.fn(),
+    GetObjectCommand: jest.fn(),
 }));
 
 jest.mock('@aws-sdk/s3-request-presigner', () => ({
-  getSignedUrl: jest.fn<() => Promise<string>>().mockResolvedValue('https://test-signed-url.com'),
+    getSignedUrl: jest
+        .fn<() => Promise<string>>()
+        .mockResolvedValue('https://test-signed-url.com'),
 }));
 
 // Mock email job processor
 jest.mock('../src/tasks/jobs/email.job', () => ({
-  default: jest.fn<() => Promise<boolean>>().mockResolvedValue(true),
+    default: jest.fn<() => Promise<boolean>>().mockResolvedValue(true),
 }));
 
 let mongo: MongoMemoryServer;
@@ -221,13 +235,13 @@ let mongo: MongoMemoryServer;
  * Runs before all test suites
  */
 beforeAll(async () => {
-  // Create in-memory MongoDB instance
-  mongo = await MongoMemoryServer.create();
-  const mongoUri = mongo.getUri();
+    // Create in-memory MongoDB instance
+    mongo = await MongoMemoryServer.create();
+    const mongoUri = mongo.getUri();
 
-  // Connect to in-memory database
-  await mongoose.set('strictQuery', true);
-  await mongoose.connect(mongoUri);
+    // Connect to in-memory database
+    await mongoose.set('strictQuery', true);
+    await mongoose.connect(mongoUri);
 });
 
 /**
@@ -235,14 +249,14 @@ beforeAll(async () => {
  * Clears database collections to ensure test isolation
  */
 beforeEach(async () => {
-  // Clear all collections before each test
-  const collections = mongoose.connection.collections;
-  for (const key in collections) {
-    await collections[key].deleteMany({});
-  }
+    // Clear all collections before each test
+    const collections = mongoose.connection.collections;
+    for (const key in collections) {
+        await collections[key].deleteMany({});
+    }
 
-  // Clear all mocks
-  jest.clearAllMocks();
+    // Clear all mocks
+    jest.clearAllMocks();
 });
 
 /**
@@ -250,15 +264,25 @@ beforeEach(async () => {
  * Closes database connections and stops in-memory server
  */
 afterAll(async () => {
-  // Close mongoose connection
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
+    // Close mongoose connection
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
 
-  // Stop in-memory MongoDB server
-  await mongo.stop();
+    // Stop in-memory MongoDB server
+    await mongo.stop();
 });
 
 // Increase timeout for database operations
 jest.setTimeout(30000);
 // Export jest globals for use in test files
-export { jest, describe, it, test, expect, beforeAll, beforeEach, afterAll, afterEach } from '@jest/globals';
+export {
+    jest,
+    describe,
+    it,
+    test,
+    expect,
+    beforeAll,
+    beforeEach,
+    afterAll,
+    afterEach,
+} from '@jest/globals';

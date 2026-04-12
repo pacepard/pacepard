@@ -64,8 +64,8 @@ export function NavUser({
                                     </span>
 
                                     {/* caret is the only trigger */}
-                                    <DropdownMenuTrigger asChild >
-                                        <button 
+                                    <DropdownMenuTrigger asChild>
+                                        <button
                                             type="button"
                                             className="flex items-center justify-center"
                                         >

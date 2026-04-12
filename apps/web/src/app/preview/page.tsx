@@ -84,9 +84,12 @@ export default function PreviewPage() {
     return (
         <main className="min-w-0 pb-16">
             <div className="border-b border-border bg-background px-4 py-6">
-                <h1 className="text-2xl font-semibold tracking-tight">Component preview</h1>
+                <h1 className="text-2xl font-semibold tracking-tight">
+                    Component preview
+                </h1>
                 <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-                    Internal gallery of marketing sections. Layout footer still renders below this page.
+                    Internal gallery of marketing sections. Layout footer still
+                    renders below this page.
                 </p>
             </div>
 
@@ -99,18 +102,27 @@ export default function PreviewPage() {
             <Testimonials dashedLineClassName="hidden" />
             <PPCTA />
 
-            <PreviewBand id="pacepard-extras" label="Pacepard / funnel, FAQ, loved-by, pricing comparator" />
+            <PreviewBand
+                id="pacepard-extras"
+                label="Pacepard / funnel, FAQ, loved-by, pricing comparator"
+            />
             <PPFunnel />
             <FAQs />
             <PPLovedBy />
             <Comparator />
 
-            <PreviewBand id="pacepard-testimonials-marquee" label="Pacepard / testimonials (marquee)" />
+            <PreviewBand
+                id="pacepard-testimonials-marquee"
+                label="Pacepard / testimonials (marquee)"
+            />
             <TestimonialsSection />
 
             <PreviewBand id="collective" label="Collective" />
             <ClHero />
-            <PreviewBand id="collective-single-track" label="Collective / SingleTrack" />
+            <PreviewBand
+                id="collective-single-track"
+                label="Collective / SingleTrack"
+            />
             <div className="container mx-auto max-w-5xl px-4 py-8">
                 <SingleTrack />
             </div>
@@ -155,7 +167,9 @@ export default function PreviewPage() {
                 />
                 <Contact />
                 <div className="container mx-auto max-w-3xl px-4 py-12">
-                    <p className="mb-6 text-center text-sm font-medium text-muted-foreground">ContactForm</p>
+                    <p className="mb-6 text-center text-sm font-medium text-muted-foreground">
+                        ContactForm
+                    </p>
                     <ContactForm />
                 </div>
                 <Starter />
@@ -182,7 +196,10 @@ export default function PreviewPage() {
                 </div>
             </Background>
 
-            <PreviewBand id="hack-ogbomoso" label="Hack Ogbomoso (no duplicate header)" />
+            <PreviewBand
+                id="hack-ogbomoso"
+                label="Hack Ogbomoso (no duplicate header)"
+            />
             <div className="min-h-0 w-full overflow-hidden bg-green text-foreground">
                 <HackHeroSection />
                 <HackAboutUs />

@@ -15,7 +15,12 @@ interface DashboardLayoutProps {
     };
 }
 
-const DashboardContent = ({ component, title, back, sidebar }: DashboardLayoutProps) => {
+const DashboardContent = ({
+    component,
+    title,
+    back,
+    sidebar,
+}: DashboardLayoutProps) => {
     const userContext = useContext(UserContext);
     const { sidebar: sidebarState } = userContext || {};
     const isCollapsed = sidebarState?.collapsed || false;
@@ -54,7 +59,12 @@ const DashboardLayout = ({
             <SidebarProvider defaultOpen={defaultOpen}>
                 <div className="flex h-screen w-full">
                     <AppSidebar />
-                    <DashboardContent component={component} title={title} back={back} sidebar={sidebar} />
+                    <DashboardContent
+                        component={component}
+                        title={title}
+                        back={back}
+                        sidebar={sidebar}
+                    />
                 </div>
             </SidebarProvider>
             <Toaster />

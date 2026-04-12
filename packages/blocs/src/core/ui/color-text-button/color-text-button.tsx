@@ -1,46 +1,45 @@
-import { forwardRef, useCallback, useMemo } from "react"
+import { forwardRef, useCallback, useMemo } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseColorTextConfig } from "@/core/ui/color-text-button"
+import type { UseColorTextConfig } from '@/core/ui/color-text-button';
 import {
-  COLOR_TEXT_SHORTCUT_KEY,
-  useColorText,
-} from "@/core/ui/color-text-button"
+    COLOR_TEXT_SHORTCUT_KEY,
+    useColorText,
+} from '@/core/ui/color-text-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 // --- Styles ---
-import "@/core/ui/color-text-button/color-text-button.scss"
+import '@/core/ui/color-text-button/color-text-button.scss';
 
 export interface ColorTextButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseColorTextConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseColorTextConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function ColorTextShortcutBadge({
-  shortcutKeys = COLOR_TEXT_SHORTCUT_KEY,
+    shortcutKeys = COLOR_TEXT_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -49,100 +48,104 @@ export function ColorTextShortcutBadge({
  * For custom button implementations, use the `useColorText` hook instead.
  */
 export const ColorTextButton = forwardRef<
-  HTMLButtonElement,
-  ColorTextButtonProps
+    HTMLButtonElement,
+    ColorTextButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      textColor,
-      text,
-      hideWhenUnavailable = false,
-      onApplied,
-      showShortcut = false,
-      onClick,
-      children,
-      style,
-      ...buttonProps
-    },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const {
-      isVisible,
-      canColorText,
-      isActive,
-      handleColorText,
-      label,
-      shortcutKeys,
-      Icon,
-    } = useColorText({
-      editor,
-      textColor,
-      label: text || `Color text to ${textColor}`,
-      hideWhenUnavailable,
-      onApplied,
-    })
+    (
+        {
+            editor: providedEditor,
+            textColor,
+            text,
+            hideWhenUnavailable = false,
+            onApplied,
+            showShortcut = false,
+            onClick,
+            children,
+            style,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canColorText,
+            isActive,
+            handleColorText,
+            label,
+            shortcutKeys,
+            Icon,
+        } = useColorText({
+            editor,
+            textColor,
+            label: text || `Color text to ${textColor}`,
+            hideWhenUnavailable,
+            onApplied,
+        });
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleColorText()
-      },
-      [handleColorText, onClick]
-    )
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleColorText();
+            },
+            [handleColorText, onClick],
+        );
 
-    const buttonStyle = useMemo(
-      () =>
-        ({
-          ...style,
-          "--color-text-button-color": textColor,
-        }) as React.CSSProperties,
-      [textColor, style]
-    )
+        const buttonStyle = useMemo(
+            () =>
+                ({
+                    ...style,
+                    '--color-text-button-color': textColor,
+                }) as React.CSSProperties,
+            [textColor, style],
+        );
 
-    if (!isVisible) {
-      return null
-    }
+        if (!isVisible) {
+            return null;
+        }
 
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        data-active-state={isActive ? "on" : "off"}
-        role="button"
-        tabIndex={-1}
-        disabled={!canColorText}
-        data-disabled={!canColorText}
-        aria-label={label}
-        aria-pressed={isActive}
-        tooltip={label}
-        onClick={handleClick}
-        style={buttonStyle}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <span
-              className="tiptap-button-color-text"
-              style={{ color: textColor }}
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                data-active-state={isActive ? 'on' : 'off'}
+                role="button"
+                tabIndex={-1}
+                disabled={!canColorText}
+                data-disabled={!canColorText}
+                aria-label={label}
+                aria-pressed={isActive}
+                tooltip={label}
+                onClick={handleClick}
+                style={buttonStyle}
+                {...buttonProps}
+                ref={ref}
             >
-              <Icon
-                className="tiptap-button-icon"
-                style={{ color: textColor, flexGrow: 1 }}
-              />
-            </span>
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <ColorTextShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
+                {children ?? (
+                    <>
+                        <span
+                            className="tiptap-button-color-text"
+                            style={{ color: textColor }}
+                        >
+                            <Icon
+                                className="tiptap-button-icon"
+                                style={{ color: textColor, flexGrow: 1 }}
+                            />
+                        </span>
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <ColorTextShortcutBadge
+                                shortcutKeys={shortcutKeys}
+                            />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
+    },
+);
 
-ColorTextButton.displayName = "ColorTextButton"
+ColorTextButton.displayName = 'ColorTextButton';

@@ -10,16 +10,18 @@
 The node is `Frame 1618868642` (1152×920). It contains two sections:
 
 ### 1. Hackathon List Card
+
 - White card, `border-radius: 16`, border with 30% opacity
 - Header row with the Pacepard workspace logo
 - 5 list rows, each containing:
-  - Small thumbnail chip (45×25, `border-radius: 5`, muted `#bdbdbd/40` background) with workspace icon
-  - Two stacked text lines — primary (name) + secondary (description/date)
-  - Two status indicator chips on the right
+    - Small thumbnail chip (45×25, `border-radius: 5`, muted `#bdbdbd/40` background) with workspace icon
+    - Two stacked text lines — primary (name) + secondary (description/date)
+    - Two status indicator chips on the right
 
 ### 2. Empty State Section
+
 - Heading: **"Your hackathon journey starts here"** (DM Sans Bold 16px, `#2b2a2c`)
-- Body: *"Create your first hackathon to start accepting projects, managing teams, and tracking progress in one place."* (DM Sans Regular 16px, `#545454`, center-aligned)
+- Body: _"Create your first hackathon to start accepting projects, managing teams, and tracking progress in one place."_ (DM Sans Regular 16px, `#545454`, center-aligned)
 - CTA Button: **"New hackathon"** with `+` icon (background `#333234`, `151×40`, `border-radius: 6`, text `#eaeaea`)
 
 ---
@@ -28,14 +30,14 @@ The node is `Frame 1618868642` (1152×920). It contains two sections:
 
 ### Files to update
 
-| File | Status | Action |
-|---|---|---|
-| `apps/main/src/app/dashboard/workspaces/my-hackathons.tsx` | Stub (1 line) | Full implementation |
-| `packages/sdk/src/api/clients/pacepard.ts` | Missing hackathon module | Add `HackathonAPI` client |
-| `packages/sdk/src/api/clients/hackathon.ts` | Does not exist | Create new file |
-| `packages/sdk/src/utils/path.ts` | Missing hackathon URLs | Add `URL_HACKATHON`, `URL_HACKATHONS` |
-| `packages/sdk/src/dtos/hackathon.dto.ts` | Nearly empty (timestamps only) | Add full DTO + enums |
-| `packages/sdk/src/index.ts` | May not export new types | Verify exports |
+| File                                                       | Status                         | Action                                |
+| ---------------------------------------------------------- | ------------------------------ | ------------------------------------- |
+| `apps/main/src/app/dashboard/workspaces/my-hackathons.tsx` | Stub (1 line)                  | Full implementation                   |
+| `packages/sdk/src/api/clients/pacepard.ts`                 | Missing hackathon module       | Add `HackathonAPI` client             |
+| `packages/sdk/src/api/clients/hackathon.ts`                | Does not exist                 | Create new file                       |
+| `packages/sdk/src/utils/path.ts`                           | Missing hackathon URLs         | Add `URL_HACKATHON`, `URL_HACKATHONS` |
+| `packages/sdk/src/dtos/hackathon.dto.ts`                   | Nearly empty (timestamps only) | Add full DTO + enums                  |
+| `packages/sdk/src/index.ts`                                | May not export new types       | Verify exports                        |
 
 No route changes needed — `my-hackathons` is already registered in `AppRoutes.tsx` (line 192).
 
@@ -44,54 +46,59 @@ No route changes needed — `my-hackathons` is already registered in `AppRoutes.
 ### Render States
 
 #### A. Loading State
+
 - Show 3–5 `Skeleton` rows inside a `Card` while the API call is in-flight.
 
 #### B. Empty State _(no hackathons returned)_
+
 - Render the empty state from the Figma design:
-  - Heading + description text (centered, max-width ~435px)
-  - `Button` with `Plus` icon labeled **"New hackathon"** → `navigate('/create-hackathon')`
+    - Heading + description text (centered, max-width ~435px)
+    - `Button` with `Plus` icon labeled **"New hackathon"** → `navigate('/create-hackathon')`
 
 #### C. Populated State _(hackathons exist)_
+
 - `Card` with a header area containing:
-  - Title: "My Hackathons"
-  - **"New hackathon"** button (top-right, with `Plus` icon)
+    - Title: "My Hackathons"
+    - **"New hackathon"** button (top-right, with `Plus` icon)
 - List of hackathon rows, each showing:
-  - `Avatar` thumbnail (workspace logo or initials fallback)
-  - Hackathon name (bold) + date range or subtitle (muted text)
-  - `Badge` for status: `active` (green) / `draft` (muted) / `closed` (red)
-  - `MoreHorizontal` actions menu (dots icon)
+    - `Avatar` thumbnail (workspace logo or initials fallback)
+    - Hackathon name (bold) + date range or subtitle (muted text)
+    - `Badge` for status: `active` (green) / `draft` (muted) / `closed` (red)
+    - `MoreHorizontal` actions menu (dots icon)
 - Row click → `navigate('/hackathon-details')` with hackathon ID
 
 ---
 
 ### Data Fetching
+
 - `useEffect` on mount:
-  1. First call `PacepardAPI.workspace.getWorkspaces({ limit: 1, page: 1, order: 'desc' })` to get `workspaceId`
-  2. Then call `PacepardAPI.hackathon.getHackathons({ workspaceId, limit: 25, page: 1 })` _(needs to be built — see SDK gaps below)_
+    1. First call `PacepardAPI.workspace.getWorkspaces({ limit: 1, page: 1, order: 'desc' })` to get `workspaceId`
+    2. Then call `PacepardAPI.hackathon.getHackathons({ workspaceId, limit: 25, page: 1 })` _(needs to be built — see SDK gaps below)_
 - Store results in `useState<IHackathon[]>`
 - On error → `toast.error('Failed to load hackathons')`
 
 ### Navigation
-| Action | Route |
-|---|---|
-| "New hackathon" button | `/create-hackathon` |
-| Row click | `/hackathon-details` (pass hackathon `id`) |
+
+| Action                 | Route                                      |
+| ---------------------- | ------------------------------------------ |
+| "New hackathon" button | `/create-hackathon`                        |
+| Row click              | `/hackathon-details` (pass hackathon `id`) |
 
 ---
 
 ### UI Components
 
-| Component | Source |
-|---|---|
-| `Card`, `CardHeader`, `CardContent`, `CardTitle` | `@pacepard/ui/components/card` |
-| `Button` | `@pacepard/ui/components/button` |
-| `Badge` | `@pacepard/ui/components/badge` |
-| `Avatar`, `AvatarFallback` | `@pacepard/ui/components/avatar` |
-| `Skeleton` | `@pacepard/ui/components/skeleton` |
-| `Plus`, `MoreHorizontal` | `lucide-react` |
-| `toast` | `@pacepard/ui` |
-| `UserContext` | `@pacepard/sdk` |
-| `PacepardAPI` | `@/config/pacepard` |
+| Component                                        | Source                             |
+| ------------------------------------------------ | ---------------------------------- |
+| `Card`, `CardHeader`, `CardContent`, `CardTitle` | `@pacepard/ui/components/card`     |
+| `Button`                                         | `@pacepard/ui/components/button`   |
+| `Badge`                                          | `@pacepard/ui/components/badge`    |
+| `Avatar`, `AvatarFallback`                       | `@pacepard/ui/components/avatar`   |
+| `Skeleton`                                       | `@pacepard/ui/components/skeleton` |
+| `Plus`, `MoreHorizontal`                         | `lucide-react`                     |
+| `toast`                                          | `@pacepard/ui`                     |
+| `UserContext`                                    | `@pacepard/sdk`                    |
+| `PacepardAPI`                                    | `@/config/pacepard`                |
 
 ---
 
@@ -100,31 +107,34 @@ No route changes needed — `my-hackathons` is already registered in `AppRoutes.
 ## SDK Gaps — Must Be Built First
 
 ### 1. Add hackathon URL constants to `packages/sdk/src/utils/path.ts`
+
 ```ts
-export const URL_HACKATHONS = '/hackathons'
-export const URL_HACKATHON  = '/hackathon'
+export const URL_HACKATHONS = '/hackathons';
+export const URL_HACKATHON = '/hackathon';
 ```
 
 ### 2. Expand `packages/sdk/src/dtos/hackathon.dto.ts`
+
 The current DTO only has timestamps. Add:
+
 ```ts
 export enum HackStatusType {
-    DRAFT     = 'draft',
+    DRAFT = 'draft',
     PUBLISHED = 'published',
-    CLOSED    = 'closed',
-    ARCHIVED  = 'archived',
+    CLOSED = 'closed',
+    ARCHIVED = 'archived',
 }
 
 export enum HackathonType {
-    ONLINE        = 'online',
-    OFFLINE       = 'offline',
-    IN_PERSON     = 'in-person',
-    HYBRID        = 'hybrid',
-    GLOBAL        = 'global',
-    NATIONAL      = 'national',
+    ONLINE = 'online',
+    OFFLINE = 'offline',
+    IN_PERSON = 'in-person',
+    HYBRID = 'hybrid',
+    GLOBAL = 'global',
+    NATIONAL = 'national',
     INTERNATIONAL = 'international',
-    REGIONAL      = 'regional',
-    LOCAL         = 'local',
+    REGIONAL = 'regional',
+    LOCAL = 'local',
 }
 
 export interface IHackathon {
@@ -153,7 +163,9 @@ export interface GetHackathonsDTO {
 ```
 
 ### 3. Create `packages/sdk/src/api/clients/hackathon.ts`
+
 Backend endpoints (from `hackathon.router.ts`):
+
 - `GET /hackathon/list` — list hackathons (needs workspace filter via query param)
 - `GET /hackathon/:id` — get single hackathon
 - `POST /hackathon/` — create hackathon
@@ -171,6 +183,7 @@ class HackathonAPI {
 ```
 
 ### 4. Register in `packages/sdk/src/api/clients/pacepard.ts`
+
 ```ts
 import HackathonAPI from './hackathon'
 
@@ -181,6 +194,7 @@ class PacepardAPIClient {
 ```
 
 ### 5. Verify `Badge` component exists in `@pacepard/ui`
+
 The plan uses `Badge` for hackathon status. Confirm it's exported from `@pacepard/ui/components/badge` — if not, use a styled `span` instead.
 
 ---
@@ -188,10 +202,12 @@ The plan uses `Badge` for hackathon status. Confirm it's exported from `@pacepar
 ## Figma Design Clarification
 
 The Figma frame shows **both** the list section and the empty state in the same wireframe. These are two separate states:
+
 - **List section** → shown when `hackathons.length > 0`
 - **Empty state section** → shown when `hackathons.length === 0`
 
 The list rows in the Figma are placeholder wireframe bars (no real text). The actual fields to display per row are:
+
 - `hackathon.image` → thumbnail avatar (fallback: initials from `hackathon.name`)
 - `hackathon.name` → primary text (bold)
 - `hackathon.settings.startDate` – `hackathon.settings.closeDate` → secondary text (muted)
@@ -201,13 +217,13 @@ The list rows in the Figma are placeholder wireframe bars (no real text). The ac
 
 ### Styling Notes (from Figma)
 
-| Element | Class / Value |
-|---|---|
-| Page background | `bg-muted/30` or `bg-[#f8f7f7]` |
-| Card border | `rounded-2xl border border-border/30` |
-| Thumbnail chip | `rounded-md bg-muted/40 border border-border/20` |
-| Status — active | green `Badge` variant |
-| Status — draft | muted `Badge` variant |
-| Status — closed | destructive `Badge` variant |
-| CTA button background | `bg-[#333234] text-[#eaeaea]` |
-| Heading font | DM Sans Bold (loaded via CSS variables) |
+| Element               | Class / Value                                    |
+| --------------------- | ------------------------------------------------ |
+| Page background       | `bg-muted/30` or `bg-[#f8f7f7]`                  |
+| Card border           | `rounded-2xl border border-border/30`            |
+| Thumbnail chip        | `rounded-md bg-muted/40 border border-border/20` |
+| Status — active       | green `Badge` variant                            |
+| Status — draft        | muted `Badge` variant                            |
+| Status — closed       | destructive `Badge` variant                      |
+| CTA button background | `bg-[#333234] text-[#eaeaea]`                    |
+| Heading font          | DM Sans Bold (loaded via CSS variables)          |

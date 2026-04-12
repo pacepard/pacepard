@@ -100,8 +100,7 @@ class BusinessService {
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message =
-                createResult.message;
+            result.message = createResult.message;
             return result;
         }
 
@@ -119,7 +118,9 @@ class BusinessService {
 
                     // Initialize permissions for BUSINESS role
                     const permResult =
-                        await PermissionService.initiatePermissionData(updatedUser);
+                        await PermissionService.initiatePermissionData(
+                            updatedUser,
+                        );
                     if (!permResult.error && permResult.data) {
                         updatedUser = permResult.data as IUserDoc;
                     }
@@ -146,14 +147,19 @@ class BusinessService {
                         const updatedUser = roleAttachResult.data as IUserDoc;
                         const userId = updatedUser?._id || user._id;
                         if (userId) {
-                            await PermissionService.clearUserCache(String(userId));
+                            await PermissionService.clearUserCache(
+                                String(userId),
+                            );
                         }
                     }
                 }
             }
         } catch (error) {
             // Log error but don't fail business creation
-            console.error('Failed to initialize roles/permissions for business:', error);
+            console.error(
+                'Failed to initialize roles/permissions for business:',
+                error,
+            );
         }
 
         result.message = 'Business profile created successfully';

@@ -49,24 +49,24 @@ const ActivateUserForm = (data: IForm) => {
 
     const cleanEmail = (): string => {
         let e = storage.getUserEmail() as string;
-        if (!e) return email || "";
+        if (!e) return email || '';
         if (e.startsWith('"') && e.endsWith('"')) {
             try {
                 e = JSON.parse(e);
             } catch {
-                e = e.replace(/^"(.*)"$/, "$1");
+                e = e.replace(/^"(.*)"$/, '$1');
             }
         }
-        return e || email || "";
+        return e || email || '';
     };
 
     const maskEmail = (value: string): string => {
-        const at = value.indexOf("@");
+        const at = value.indexOf('@');
         if (at < 1) return value;
         const local = value.slice(0, at);
         const domain = value.slice(at + 1);
         if (local.length <= 2) return value;
-        return `${local[0]}${"*".repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
+        return `${local[0]}${'*'.repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
     };
 
     const handleOtpChange = (index: number, value: string) => {
@@ -137,7 +137,9 @@ const ActivateUserForm = (data: IForm) => {
                         {Array.from({ length: 6 }).map((_, index) => (
                             <Input
                                 key={index}
-                                ref={(el) => { otpRefs.current[index] = el; }}
+                                ref={(el) => {
+                                    otpRefs.current[index] = el;
+                                }}
                                 inputMode="numeric"
                                 maxLength={1}
                                 value={otpValue[index] || ''}

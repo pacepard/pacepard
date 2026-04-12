@@ -1,31 +1,32 @@
-import { forwardRef } from "react"
-import "@/core/primitives/separator/separator.scss"
-import { cn } from "@/utils/base-helper"
+import { forwardRef } from 'react';
+import '@/core/primitives/separator/separator.scss';
+import { cn } from '@/utils/base-helper';
 
-export type Orientation = "horizontal" | "vertical"
+export type Orientation = 'horizontal' | 'vertical';
 
 export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
-  orientation?: Orientation
-  decorative?: boolean
+    orientation?: Orientation;
+    decorative?: boolean;
 }
 
 export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
-  ({ decorative, orientation = "vertical", className, ...divProps }, ref) => {
-    const ariaOrientation = orientation === "vertical" ? orientation : undefined
-    const semanticProps = decorative
-      ? { role: "none" }
-      : { "aria-orientation": ariaOrientation, role: "separator" }
+    ({ decorative, orientation = 'vertical', className, ...divProps }, ref) => {
+        const ariaOrientation =
+            orientation === 'vertical' ? orientation : undefined;
+        const semanticProps = decorative
+            ? { role: 'none' }
+            : { 'aria-orientation': ariaOrientation, role: 'separator' };
 
-    return (
-      <div
-        className={cn("tiptap-separator", className)}
-        data-orientation={orientation}
-        {...semanticProps}
-        {...divProps}
-        ref={ref}
-      />
-    )
-  }
-)
+        return (
+            <div
+                className={cn('tiptap-separator', className)}
+                data-orientation={orientation}
+                {...semanticProps}
+                {...divProps}
+                ref={ref}
+            />
+        );
+    },
+);
 
-Separator.displayName = "Separator"
+Separator.displayName = 'Separator';

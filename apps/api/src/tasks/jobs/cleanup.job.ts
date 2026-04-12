@@ -8,7 +8,10 @@ import * as path from 'path';
  * This is the worker function that processes cleanup jobs from the queue
  * Follows the Bull pattern with Job and DoneCallback
  */
-const processCleanupJob = async (job: Job, done: DoneCallback): Promise<void> => {
+const processCleanupJob = async (
+    job: Job,
+    done: DoneCallback,
+): Promise<void> => {
     const { type, maxAge } = job.data;
 
     logger.log({
@@ -24,7 +27,7 @@ const processCleanupJob = async (job: Job, done: DoneCallback): Promise<void> =>
             // TODO: Implement temporary file cleanup logic
             // Example: Clean up files older than maxAge in temp directory
             const tempDir = path.join(process.cwd(), 'tmp');
-            
+
             try {
                 const files = await fs.readdir(tempDir);
                 const now = Date.now();

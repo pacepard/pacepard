@@ -2,7 +2,16 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { ArrowRight, ArrowRightToLineIcon, CalendarDaysIcon, ChevronRight, CornerDownRight, PlusIcon, PlusSquare, Sparkle } from 'lucide-react';
+import {
+    ArrowRight,
+    ArrowRightToLineIcon,
+    CalendarDaysIcon,
+    ChevronRight,
+    CornerDownRight,
+    PlusIcon,
+    PlusSquare,
+    Sparkle,
+} from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { siteConfig } from '@/_data/site-config';
 
@@ -33,13 +42,14 @@ export default function CCHeroSection() {
                                         </span>
                                     </Link>
                                     <h1 className="mt-8 max-w-4xl text-balance text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                                        Everyone needs a Superpower, Get the perfect
-                                        one.
+                                        Everyone needs a Superpower, Get the
+                                        perfect one.
                                     </h1>
                                     <p className="text-muted-foreground my-6 max-w-2xl text-balance text-lg md:text-xl">
-                                        Pacepard is where talents learn and grow by
-                                        doing, and organisations drive long-term
-                                        product adoption, engagement and loyalty.
+                                        Pacepard is where talents learn and grow
+                                        by doing, and organisations drive
+                                        long-term product adoption, engagement
+                                        and loyalty.
                                     </p>
 
                                     <div className="flex flex-wrap items-center gap-3">

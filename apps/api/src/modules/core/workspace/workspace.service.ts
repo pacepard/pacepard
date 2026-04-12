@@ -163,8 +163,7 @@ class WorkspaceService {
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message =
-                createResult.message;
+            result.message = createResult.message;
             return result;
         }
 
@@ -214,7 +213,8 @@ class WorkspaceService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to update this workspace';
+            result.message =
+                'You do not have permission to update this workspace';
             return result;
         }
 
@@ -361,7 +361,8 @@ class WorkspaceService {
             if (!hasPermission) {
                 result.error = true;
                 result.code = 403;
-                result.message = 'You do not have permission to delete this workspace';
+                result.message =
+                    'You do not have permission to delete this workspace';
                 return result;
             }
         }
@@ -426,15 +427,17 @@ class WorkspaceService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this workspace';
+            result.message =
+                'You do not have permission to manage members in this workspace';
             return result;
         }
 
         // Check if user is already a member
         const existingMember = (workspace.members || []).find((m: any) => {
-            const memberUserId = typeof m.user === 'object' 
-                ? String(m.user._id || m.user.id) 
-                : String(m.user);
+            const memberUserId =
+                typeof m.user === 'object'
+                    ? String(m.user._id || m.user.id)
+                    : String(m.user);
             return memberUserId === userId;
         });
 
@@ -512,15 +515,17 @@ class WorkspaceService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this workspace';
+            result.message =
+                'You do not have permission to manage members in this workspace';
             return result;
         }
 
         // Find and remove the member
         const members = (workspace.members || []).filter((m: any) => {
-            const memberUserId = typeof m.user === 'object' 
-                ? String(m.user._id || m.user.id) 
-                : String(m.user);
+            const memberUserId =
+                typeof m.user === 'object'
+                    ? String(m.user._id || m.user.id)
+                    : String(m.user);
             return memberUserId !== userId;
         });
 
@@ -587,7 +592,8 @@ class WorkspaceService {
         if (guest.type !== GuestTypeEnum.MENTOR) {
             result.error = true;
             result.code = 400;
-            result.message = 'Guest must be of type MENTOR to be added as a mentor';
+            result.message =
+                'Guest must be of type MENTOR to be added as a mentor';
             return result;
         }
 
@@ -607,15 +613,15 @@ class WorkspaceService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage mentors in this workspace';
+            result.message =
+                'You do not have permission to manage mentors in this workspace';
             return result;
         }
 
         // Check if mentor is already in workspace
         const existingMentor = (workspace.mentors || []).find((m: any) => {
-            const mentorIdStr = typeof m === 'object' 
-                ? String(m._id || m.id) 
-                : String(m);
+            const mentorIdStr =
+                typeof m === 'object' ? String(m._id || m.id) : String(m);
             return mentorIdStr === mentorId;
         });
 
@@ -688,15 +694,15 @@ class WorkspaceService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage mentors in this workspace';
+            result.message =
+                'You do not have permission to manage mentors in this workspace';
             return result;
         }
 
         // Find and remove the mentor
         const mentors = (workspace.mentors || []).filter((m: any) => {
-            const mentorIdStr = typeof m === 'object' 
-                ? String(m._id || m.id) 
-                : String(m);
+            const mentorIdStr =
+                typeof m === 'object' ? String(m._id || m.id) : String(m);
             return mentorIdStr !== mentorId;
         });
 
@@ -794,7 +800,8 @@ class WorkspaceService {
         if (guest.type !== GuestTypeEnum.JUDGE) {
             result.error = true;
             result.code = 400;
-            result.message = 'Guest must be of type JUDGE to be added as a judge';
+            result.message =
+                'Guest must be of type JUDGE to be added as a judge';
             return result;
         }
 
@@ -814,15 +821,15 @@ class WorkspaceService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage judges in this workspace';
+            result.message =
+                'You do not have permission to manage judges in this workspace';
             return result;
         }
 
         // Check if judge is already in workspace
         const existingJudge = (workspace.judges || []).find((j: any) => {
-            const judgeIdStr = typeof j === 'object' 
-                ? String(j._id || j.id) 
-                : String(j);
+            const judgeIdStr =
+                typeof j === 'object' ? String(j._id || j.id) : String(j);
             return judgeIdStr === judgeId;
         });
 
@@ -895,15 +902,15 @@ class WorkspaceService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage judges in this workspace';
+            result.message =
+                'You do not have permission to manage judges in this workspace';
             return result;
         }
 
         // Find and remove the judge
         const judges = (workspace.judges || []).filter((j: any) => {
-            const judgeIdStr = typeof j === 'object' 
-                ? String(j._id || j.id) 
-                : String(j);
+            const judgeIdStr =
+                typeof j === 'object' ? String(j._id || j.id) : String(j);
             return judgeIdStr !== judgeId;
         });
 
@@ -1029,10 +1036,13 @@ class WorkspaceService {
         if (allowDomainAccess && domain) {
             const normalizedDomain = domain.trim().toLowerCase();
             const currentDomains = workspace.allowedDomains || [];
-            
+
             // Add domain if not already present
             if (!currentDomains.includes(normalizedDomain)) {
-                updateData.allowedDomains = [...currentDomains, normalizedDomain];
+                updateData.allowedDomains = [
+                    ...currentDomains,
+                    normalizedDomain,
+                ];
             } else {
                 updateData.allowedDomains = currentDomains;
             }
@@ -1121,7 +1131,11 @@ class WorkspaceService {
         }
 
         // Get user ID (handle both string and IUserDoc)
-        const userId = typeof user === 'string' ? user : (user as IUserDoc)?._id?.toString() || (user as IUserDoc)?.id?.toString();
+        const userId =
+            typeof user === 'string'
+                ? user
+                : (user as IUserDoc)?._id?.toString() ||
+                  (user as IUserDoc)?.id?.toString();
 
         if (!userId) {
             result.error = true;
@@ -1195,11 +1209,13 @@ class WorkspaceService {
         const workspace = workspaceResult.data as IWorkspaceDoc;
 
         // Validate shareable link using the service
-        const validateResult = await shareableLinkService.validateShareableLink({
-            token,
-            resourceId: workspaceId,
-            linkType: ShareableLinkType.WORKSPACE,
-        });
+        const validateResult = await shareableLinkService.validateShareableLink(
+            {
+                token,
+                resourceId: workspaceId,
+                linkType: ShareableLinkType.WORKSPACE,
+            },
+        );
 
         if (validateResult.error) {
             result.error = true;
@@ -1210,8 +1226,10 @@ class WorkspaceService {
 
         // Get metadata from validated link
         const linkMetadata = (validateResult.data as any).metadata || {};
-        const allowDomainAccess = linkMetadata.allowDomainAccess || workspace.allowDomainAccess;
-        const allowedDomains = linkMetadata.allowedDomains || workspace.allowedDomains || [];
+        const allowDomainAccess =
+            linkMetadata.allowDomainAccess || workspace.allowDomainAccess;
+        const allowedDomains =
+            linkMetadata.allowedDomains || workspace.allowedDomains || [];
 
         // If domain access is enabled, validate user email domain
         if (allowDomainAccess && userEmail) {

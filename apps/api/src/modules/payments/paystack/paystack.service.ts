@@ -21,7 +21,9 @@ const paystack = new Paystack(secretKey);
  * Initialize a Paystack transaction.
  * Does NOT confirm payment.
  */
-export const initializePayment = async (dto: initializePaymentDTO): Promise<any> => {
+export const initializePayment = async (
+    dto: initializePaymentDTO,
+): Promise<any> => {
     try {
         const response = await paystack.transaction.initialize({
             email: dto.email,

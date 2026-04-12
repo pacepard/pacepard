@@ -1,8 +1,8 @@
-import Contact from "@/app/components/home/contact";
-import Herobanner from "@/app/components/shared/hero-banner";
-import { Metadata } from "next";
+import Contact from '@/app/components/home/contact';
+import Herobanner from '@/app/components/shared/hero-banner';
+import { Metadata } from 'next';
 export const metadata: Metadata = {
-    title: "Contact | Pacepard",
+    title: 'Contact | Pacepard',
 };
 
 export default function Page() {
@@ -11,8 +11,9 @@ export default function Page() {
             <Herobanner
                 bannerimage="/images/contact/banner/contact-banner.png"
                 heading="Contact"
-                desc="Ready to <span>start something</span> great? Reach out  we’d love to hear from you." />
-            <Contact contactdataNumber="01"/>
+                desc="Ready to <span>start something</span> great? Reach out  we’d love to hear from you."
+            />
+            <Contact contactdataNumber="01" />
         </main>
     );
-};
+}

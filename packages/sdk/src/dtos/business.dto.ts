@@ -1,18 +1,17 @@
-import type Admin from "@/dtos/admin.dto";
-import Entry from "@/dtos/entry.dto";
-import type { IHackathon } from "@/dtos/hackathon.dto";
-import Project from "@/dtos/project.dto";
-import Squad from "@/dtos/squad.dto";
-import Submission from "@/dtos/submission.dto";
-import Subscription from "@/dtos/subscription";
-import Task from "@/dtos/task.dto";
-import Team from "@/dtos/team.dto";
-import Template from "@/dtos/template.dto";
-import Transaction from "@/dtos/transaction.dto";
-import User from "@/dtos/user.dto";
-import Workspace from "@/dtos/workspace.dto";
+import type Admin from '@/dtos/admin.dto';
+import Entry from '@/dtos/entry.dto';
+import type { IHackathon } from '@/dtos/hackathon.dto';
+import Project from '@/dtos/project.dto';
+import Squad from '@/dtos/squad.dto';
+import Submission from '@/dtos/submission.dto';
+import Subscription from '@/dtos/subscription';
+import Task from '@/dtos/task.dto';
+import Team from '@/dtos/team.dto';
+import Template from '@/dtos/template.dto';
+import Transaction from '@/dtos/transaction.dto';
+import User from '@/dtos/user.dto';
+import Workspace from '@/dtos/workspace.dto';
 interface Business {
-
     code: string; // business public ID
     firstName: string;
     lastName: string;
@@ -21,7 +20,7 @@ interface Business {
 
     //isBusinessOwner or isWorkpace owner
     // timeZone = "Africa/Lagos"
-    
+
     businessName: string;
     businessType: string;
     description: string;
@@ -33,10 +32,8 @@ interface Business {
 
     verification: IVerification;
     registration: IBusinessRegistration;
-    verifiedBy: Admin | any    
+    verifiedBy: Admin | any;
     isPublic: boolean; // Only set to true AFTER verification
-
-    
 
     createdBy: User | any;
     settings: string | any;
@@ -45,11 +42,10 @@ interface Business {
     user: User | any;
     roles: Array<any>;
 
-
     workspaces: Array<Workspace | any>;
     subscription: Subscription | any;
     transactions: Array<Transaction | any>;
-    templates: Array<Template | any>
+    templates: Array<Template | any>;
 
     hackathons: Array<IHackathon | any>;
     entries: Array<Entry | any>;
@@ -60,13 +56,12 @@ interface Business {
     teams: Array<Team | any>;
     tasks: Array<Task | any>;
 
-       // time stamps
+    // time stamps
     createdAt: Date;
     updatedAt: Date;
     _version: number;
     _id: any;
     id: any;
-    
 }
 
 interface ISocials {
@@ -75,18 +70,18 @@ interface ISocials {
     username: string;
 }
 
- interface IBusinessRegistration {
-    RegisteredBusinessName: string
-    registrationNumber: string
-    registrationDate: Date
-    registrationCountry: string
+interface IBusinessRegistration {
+    RegisteredBusinessName: string;
+    registrationNumber: string;
+    registrationDate: Date;
+    registrationCountry: string;
 }
 
- interface IVerification {
-    status: string
-    verifiedBy: Admin | any
-    verifiedAt: Date
-    reason: string
+interface IVerification {
+    status: string;
+    verifiedBy: Admin | any;
+    verifiedAt: Date;
+    reason: string;
 }
 
 export default Business;

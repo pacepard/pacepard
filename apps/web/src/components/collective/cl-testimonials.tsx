@@ -124,17 +124,27 @@ export default function ClTestimonials() {
                             className="[--duration:55s] [--gap:1.5rem] sm:[--gap:1.75rem] md:[--gap:1rem] md:[--duration:50s]"
                             repeat={4}
                         >
-                            {testimonials.slice(3, 6).map(({ quote, author, role, company, image }) => (
-                                <TestimonialCard
-                                    key={author}
-                                    quote={quote}
-                                    author={author}
-                                    role={role}
-                                    company={company}
-                                    image={image}
-                                    className="me-[var(--gap)] last:me-0"
-                                />
-                            ))}
+                            {testimonials
+                                .slice(3, 6)
+                                .map(
+                                    ({
+                                        quote,
+                                        author,
+                                        role,
+                                        company,
+                                        image,
+                                    }) => (
+                                        <TestimonialCard
+                                            key={author}
+                                            quote={quote}
+                                            author={author}
+                                            role={role}
+                                            company={company}
+                                            image={image}
+                                            className="me-[var(--gap)] last:me-0"
+                                        />
+                                    ),
+                                )}
                         </Marquee>
                         {/* Bottom row — inverse: first 3 cards, scrolls left */}
                         <Marquee
@@ -143,17 +153,27 @@ export default function ClTestimonials() {
                             className="[--duration:50s] [--gap:1.5rem] sm:[--gap:1.75rem] md:[--gap:1rem] md:[--duration:45s]"
                             repeat={4}
                         >
-                            {testimonials.slice(0, 3).map(({ quote, author, role, company, image }) => (
-                                <TestimonialCard
-                                    key={author}
-                                    quote={quote}
-                                    author={author}
-                                    role={role}
-                                    company={company}
-                                    image={image}
-                                    className="me-[var(--gap)] last:me-0"
-                                />
-                            ))}
+                            {testimonials
+                                .slice(0, 3)
+                                .map(
+                                    ({
+                                        quote,
+                                        author,
+                                        role,
+                                        company,
+                                        image,
+                                    }) => (
+                                        <TestimonialCard
+                                            key={author}
+                                            quote={quote}
+                                            author={author}
+                                            role={role}
+                                            company={company}
+                                            image={image}
+                                            className="me-[var(--gap)] last:me-0"
+                                        />
+                                    ),
+                                )}
                         </Marquee>
                     </div>
                 </div>

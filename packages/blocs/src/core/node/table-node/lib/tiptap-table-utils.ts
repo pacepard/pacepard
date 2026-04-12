@@ -1,75 +1,79 @@
-import type { Editor } from "@tiptap/react"
-import type { Node } from "@tiptap/pm/model"
-import type { Command } from "@tiptap/pm/state"
-import { Selection, type EditorState, type Transaction } from "@tiptap/pm/state"
-import type { FindNodeResult, Rect } from "@tiptap/pm/tables"
+import type { Editor } from '@tiptap/react';
+import type { Node } from '@tiptap/pm/model';
+import type { Command } from '@tiptap/pm/state';
 import {
-  TableMap,
-  CellSelection,
-  findTable,
-  selectedRect,
-  cellAround,
-  selectionCell,
-  isInTable,
-} from "@tiptap/pm/tables"
-import { Mapping } from "@tiptap/pm/transform"
+    Selection,
+    type EditorState,
+    type Transaction,
+} from '@tiptap/pm/state';
+import type { FindNodeResult, Rect } from '@tiptap/pm/tables';
+import {
+    TableMap,
+    CellSelection,
+    findTable,
+    selectedRect,
+    cellAround,
+    selectionCell,
+    isInTable,
+} from '@tiptap/pm/tables';
+import { Mapping } from '@tiptap/pm/transform';
 
-export const RESIZE_MIN_WIDTH = 35
-export const EMPTY_CELL_WIDTH = 120
-export const EMPTY_CELL_HEIGHT = 40
+export const RESIZE_MIN_WIDTH = 35;
+export const EMPTY_CELL_WIDTH = 120;
+export const EMPTY_CELL_HEIGHT = 40;
 
-export type Orientation = "row" | "column"
+export type Orientation = 'row' | 'column';
 export interface CellInfo extends FindNodeResult {
-  row: number
-  column: number
+    row: number;
+    column: number;
 }
 
 export type CellCoordinates = {
-  row: number
-  col: number
-}
+    row: number;
+    col: number;
+};
 
-export type SelectionReturnMode = "state" | "transaction" | "dispatch"
+export type SelectionReturnMode = 'state' | 'transaction' | 'dispatch';
 
-export type BaseSelectionOptions = { mode?: SelectionReturnMode }
+export type BaseSelectionOptions = { mode?: SelectionReturnMode };
 export type DispatchSelectionOptions = {
-  mode: "dispatch"
-  dispatch: (tr: Transaction) => void
-}
-export type TransactionSelectionOptions = { mode: "transaction" }
-export type StateSelectionOptions = { mode?: "state" }
+    mode: 'dispatch';
+    dispatch: (tr: Transaction) => void;
+};
+export type TransactionSelectionOptions = { mode: 'transaction' };
+export type StateSelectionOptions = { mode?: 'state' };
 
 export type TableInfo = {
-  map: TableMap
-} & FindNodeResult
+    map: TableMap;
+} & FindNodeResult;
 
 // ============================================================================
 // HELPER CONSTANTS & UTILITIES
 // ============================================================================
 
-const EMPTY_CELLS_RESULT = { cells: [], mergedCells: [] }
+const EMPTY_CELLS_RESULT = { cells: [], mergedCells: [] };
 
 export function isHTMLElement(n: unknown): n is HTMLElement {
-  return n instanceof HTMLElement
+    return n instanceof HTMLElement;
 }
 
 export type DomCellAroundResult =
-  | {
-      type: "cell"
-      domNode: HTMLElement
-      tbodyNode: HTMLTableSectionElement | null
-    }
-  | {
-      type: "wrapper"
-      domNode: HTMLElement
-      tbodyNode: HTMLTableSectionElement | null
-    }
+    | {
+          type: 'cell';
+          domNode: HTMLElement;
+          tbodyNode: HTMLTableSectionElement | null;
+      }
+    | {
+          type: 'wrapper';
+          domNode: HTMLElement;
+          tbodyNode: HTMLTableSectionElement | null;
+      };
 
 export function safeClosest<T extends Element>(
-  start: Element | null,
-  selector: string
+    start: Element | null,
+    selector: string,
 ): T | null {
-  return (start?.closest?.(selector) as T | null) ?? null
+    return (start?.closest?.(selector) as T | null) ?? null;
 }
 
 /**
@@ -77,219 +81,219 @@ export function safeClosest<T extends Element>(
  * Returns the found element plus its tbody (if present).
  */
 export function domCellAround(
-  target: Element
+    target: Element,
 ): DomCellAroundResult | undefined {
-  let current: Element | null = target
+    let current: Element | null = target;
 
-  while (
-    current &&
-    current.tagName !== "TD" &&
-    current.tagName !== "TH" &&
-    !current.classList.contains("tableWrapper")
-  ) {
-    if (current.classList.contains("ProseMirror")) return undefined
-    current = isHTMLElement(current.parentNode)
-      ? (current.parentNode as Element)
-      : null
-  }
-
-  if (!current) return undefined
-
-  if (current.tagName === "TD" || current.tagName === "TH") {
-    return {
-      type: "cell",
-      domNode: current as HTMLElement,
-      tbodyNode: safeClosest<HTMLTableSectionElement>(current, "tbody"),
+    while (
+        current &&
+        current.tagName !== 'TD' &&
+        current.tagName !== 'TH' &&
+        !current.classList.contains('tableWrapper')
+    ) {
+        if (current.classList.contains('ProseMirror')) return undefined;
+        current = isHTMLElement(current.parentNode)
+            ? (current.parentNode as Element)
+            : null;
     }
-  }
 
-  return {
-    type: "wrapper",
-    domNode: current as HTMLElement,
-    tbodyNode: (current as HTMLElement).querySelector("tbody"),
-  }
+    if (!current) return undefined;
+
+    if (current.tagName === 'TD' || current.tagName === 'TH') {
+        return {
+            type: 'cell',
+            domNode: current as HTMLElement,
+            tbodyNode: safeClosest<HTMLTableSectionElement>(current, 'tbody'),
+        };
+    }
+
+    return {
+        type: 'wrapper',
+        domNode: current as HTMLElement,
+        tbodyNode: (current as HTMLElement).querySelector('tbody'),
+    };
 }
 
 /**
  * Clamps a value between min and max bounds
  */
 export function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(value, max))
+    return Math.max(min, Math.min(value, max));
 }
 
 /**
  * Validates if row/col indices are within table bounds
  */
 function isWithinBounds(row: number, col: number, map: TableMap): boolean {
-  return row >= 0 && row < map.height && col >= 0 && col < map.width
+    return row >= 0 && row < map.height && col >= 0 && col < map.width;
 }
 
 /**
  * Resolves the index for a row or column based on current selection or provided value
  */
 function resolveOrientationIndex(
-  state: EditorState,
-  table: TableInfo,
-  orientation: Orientation,
-  providedIndex?: number
+    state: EditorState,
+    table: TableInfo,
+    orientation: Orientation,
+    providedIndex?: number,
 ): number | null {
-  if (typeof providedIndex === "number") {
-    return providedIndex
-  }
+    if (typeof providedIndex === 'number') {
+        return providedIndex;
+    }
 
-  if (state.selection instanceof CellSelection) {
-    const rect = selectedRect(state)
-    return orientation === "row" ? rect.top : rect.left
-  }
+    if (state.selection instanceof CellSelection) {
+        const rect = selectedRect(state);
+        return orientation === 'row' ? rect.top : rect.left;
+    }
 
-  const $cell = cellAround(state.selection.$anchor) ?? selectionCell(state)
-  if (!$cell) return null
+    const $cell = cellAround(state.selection.$anchor) ?? selectionCell(state);
+    if (!$cell) return null;
 
-  const rel = $cell.pos - table.start
-  const rect = table.map.findCell(rel)
-  return orientation === "row" ? rect.top : rect.left
+    const rel = $cell.pos - table.start;
+    const rect = table.map.findCell(rel);
+    return orientation === 'row' ? rect.top : rect.left;
 }
 
 /**
  * Creates a CellInfo object from position data
  */
 function createCellInfo(
-  row: number,
-  column: number,
-  cellPos: number,
-  cellNode: Node
+    row: number,
+    column: number,
+    cellPos: number,
+    cellNode: Node,
 ): CellInfo {
-  return {
-    row,
-    column,
-    pos: cellPos,
-    node: cellNode,
-    start: cellPos + 1,
-    depth: cellNode ? cellNode.content.size : 0,
-  }
+    return {
+        row,
+        column,
+        pos: cellPos,
+        node: cellNode,
+        start: cellPos + 1,
+        depth: cellNode ? cellNode.content.size : 0,
+    };
 }
 
 /**
  * Checks if a cell is merged (has colspan or rowspan > 1)
  */
 export function isCellMerged(node: Node | null): boolean {
-  if (!node) return false
-  const colspan = node.attrs.colspan ?? 1
-  const rowspan = node.attrs.rowspan ?? 1
-  return colspan > 1 || rowspan > 1
+    if (!node) return false;
+    const colspan = node.attrs.colspan ?? 1;
+    const rowspan = node.attrs.rowspan ?? 1;
+    return colspan > 1 || rowspan > 1;
 }
 
 /**
  * Generic function to collect cells along a row or column
  */
 function collectCells(
-  editor: Editor | null,
-  orientation: Orientation,
-  index?: number,
-  tablePos?: number
+    editor: Editor | null,
+    orientation: Orientation,
+    index?: number,
+    tablePos?: number,
 ): { cells: CellInfo[]; mergedCells: CellInfo[] } {
-  if (!editor) return EMPTY_CELLS_RESULT
+    if (!editor) return EMPTY_CELLS_RESULT;
 
-  const { state } = editor
-  const table = getTable(editor, tablePos)
-  if (!table) return EMPTY_CELLS_RESULT
+    const { state } = editor;
+    const table = getTable(editor, tablePos);
+    if (!table) return EMPTY_CELLS_RESULT;
 
-  const tableStart = table.start
-  const tableNode = table.node
-  const map = table.map
+    const tableStart = table.start;
+    const tableNode = table.node;
+    const map = table.map;
 
-  const resolvedIndex = resolveOrientationIndex(
-    state,
-    table,
-    orientation,
-    index
-  )
-  if (resolvedIndex === null) return EMPTY_CELLS_RESULT
+    const resolvedIndex = resolveOrientationIndex(
+        state,
+        table,
+        orientation,
+        index,
+    );
+    if (resolvedIndex === null) return EMPTY_CELLS_RESULT;
 
-  // Bounds check
-  const maxIndex = orientation === "row" ? map.height : map.width
-  if (resolvedIndex < 0 || resolvedIndex >= maxIndex) {
-    return EMPTY_CELLS_RESULT
-  }
-
-  const cells: CellInfo[] = []
-  const mergedCells: CellInfo[] = []
-  const seenMerged = new Set<number>()
-
-  const iterationCount = orientation === "row" ? map.width : map.height
-
-  for (let i = 0; i < iterationCount; i++) {
-    const row = orientation === "row" ? resolvedIndex : i
-    const col = orientation === "row" ? i : resolvedIndex
-    const cellIndex = row * map.width + col
-    const mapCell = map.map[cellIndex]
-
-    if (mapCell === undefined) continue
-
-    const cellPos = tableStart + mapCell
-    const cellNode = tableNode.nodeAt(mapCell)
-    if (!cellNode) continue
-
-    const cell = createCellInfo(row, col, cellPos, cellNode)
-
-    if (isCellMerged(cellNode)) {
-      if (!seenMerged.has(cellPos)) {
-        mergedCells.push(cell)
-        seenMerged.add(cellPos)
-      }
+    // Bounds check
+    const maxIndex = orientation === 'row' ? map.height : map.width;
+    if (resolvedIndex < 0 || resolvedIndex >= maxIndex) {
+        return EMPTY_CELLS_RESULT;
     }
 
-    cells.push(cell)
-  }
+    const cells: CellInfo[] = [];
+    const mergedCells: CellInfo[] = [];
+    const seenMerged = new Set<number>();
 
-  return { cells, mergedCells }
+    const iterationCount = orientation === 'row' ? map.width : map.height;
+
+    for (let i = 0; i < iterationCount; i++) {
+        const row = orientation === 'row' ? resolvedIndex : i;
+        const col = orientation === 'row' ? i : resolvedIndex;
+        const cellIndex = row * map.width + col;
+        const mapCell = map.map[cellIndex];
+
+        if (mapCell === undefined) continue;
+
+        const cellPos = tableStart + mapCell;
+        const cellNode = tableNode.nodeAt(mapCell);
+        if (!cellNode) continue;
+
+        const cell = createCellInfo(row, col, cellPos, cellNode);
+
+        if (isCellMerged(cellNode)) {
+            if (!seenMerged.has(cellPos)) {
+                mergedCells.push(cell);
+                seenMerged.add(cellPos);
+            }
+        }
+
+        cells.push(cell);
+    }
+
+    return { cells, mergedCells };
 }
 
 /**
  * Generic function to count empty cells from the end of a row or column
  */
 function countEmptyCellsFromEnd(
-  editor: Editor,
-  tablePos: number,
-  orientation: Orientation
+    editor: Editor,
+    tablePos: number,
+    orientation: Orientation,
 ): number {
-  const table = getTable(editor, tablePos)
-  if (!table) return 0
+    const table = getTable(editor, tablePos);
+    if (!table) return 0;
 
-  const { doc } = editor.state
-  const maxIndex = orientation === "row" ? table.map.height : table.map.width
+    const { doc } = editor.state;
+    const maxIndex = orientation === 'row' ? table.map.height : table.map.width;
 
-  let emptyCount = 0
-  for (let idx = maxIndex - 1; idx >= 0; idx--) {
-    const seen = new Set<number>()
-    let isLineEmpty = true
+    let emptyCount = 0;
+    for (let idx = maxIndex - 1; idx >= 0; idx--) {
+        const seen = new Set<number>();
+        let isLineEmpty = true;
 
-    const iterationCount =
-      orientation === "row" ? table.map.width : table.map.height
+        const iterationCount =
+            orientation === 'row' ? table.map.width : table.map.height;
 
-    for (let i = 0; i < iterationCount; i++) {
-      const row = orientation === "row" ? idx : i
-      const col = orientation === "row" ? i : idx
-      const rel = table.map.positionAt(row, col, table.node)
+        for (let i = 0; i < iterationCount; i++) {
+            const row = orientation === 'row' ? idx : i;
+            const col = orientation === 'row' ? i : idx;
+            const rel = table.map.positionAt(row, col, table.node);
 
-      if (seen.has(rel)) continue
-      seen.add(rel)
+            if (seen.has(rel)) continue;
+            seen.add(rel);
 
-      const abs = tablePos + 1 + rel
-      const cell = doc.nodeAt(abs)
-      if (!cell) continue
+            const abs = tablePos + 1 + rel;
+            const cell = doc.nodeAt(abs);
+            if (!cell) continue;
 
-      if (!isCellEmpty(cell)) {
-        isLineEmpty = false
-        break
-      }
+            if (!isCellEmpty(cell)) {
+                isLineEmpty = false;
+                break;
+            }
+        }
+
+        if (isLineEmpty) emptyCount++;
+        else break;
     }
 
-    if (isLineEmpty) emptyCount++
-    else break
-  }
-
-  return emptyCount
+    return emptyCount;
 }
 
 /**
@@ -307,34 +311,34 @@ function countEmptyCellsFromEnd(
  * If no table is found, returns null.
  */
 export function getTable(editor: Editor | null, tablePos?: number) {
-  if (!editor) return null
+    if (!editor) return null;
 
-  let table = null
+    let table = null;
 
-  if (typeof tablePos === "number") {
-    const tableNode = editor.state.doc.nodeAt(tablePos)
-    if (tableNode?.type.name === "table") {
-      table = {
-        node: tableNode,
-        pos: tablePos,
-        start: tablePos + 1,
-        depth: editor.state.doc.resolve(tablePos).depth,
-      }
+    if (typeof tablePos === 'number') {
+        const tableNode = editor.state.doc.nodeAt(tablePos);
+        if (tableNode?.type.name === 'table') {
+            table = {
+                node: tableNode,
+                pos: tablePos,
+                start: tablePos + 1,
+                depth: editor.state.doc.resolve(tablePos).depth,
+            };
+        }
     }
-  }
 
-  if (!table) {
-    const { state } = editor
-    const $from = state.doc.resolve(state.selection.from)
-    table = findTable($from)
-  }
+    if (!table) {
+        const { state } = editor;
+        const $from = state.doc.resolve(state.selection.from);
+        table = findTable($from);
+    }
 
-  if (!table) return null
+    if (!table) return null;
 
-  const tableMap = TableMap.get(table.node)
-  if (!tableMap) return null
+    const tableMap = TableMap.get(table.node);
+    if (!tableMap) return null;
 
-  return { ...table, map: tableMap }
+    return { ...table, map: tableMap };
 }
 
 /**
@@ -343,17 +347,20 @@ export function getTable(editor: Editor | null, tablePos?: number) {
  * @returns true if the selection is inside a table cell; false otherwise
  */
 export function isSelectionInCell(state: EditorState): boolean {
-  const { selection } = state
-  const $from = selection.$from
+    const { selection } = state;
+    const $from = selection.$from;
 
-  for (let depth = $from.depth; depth > 0; depth--) {
-    const node = $from.node(depth)
-    if (node.type.name === "tableCell" || node.type.name === "tableHeader") {
-      return true
+    for (let depth = $from.depth; depth > 0; depth--) {
+        const node = $from.node(depth);
+        if (
+            node.type.name === 'tableCell' ||
+            node.type.name === 'tableHeader'
+        ) {
+            return true;
+        }
     }
-  }
 
-  return false
+    return false;
 }
 
 /**
@@ -361,32 +368,33 @@ export function isSelectionInCell(state: EditorState): boolean {
  * with cells outside the rectangle.
  */
 export function cellsOverlapRectangle(
-  { width, height, map }: TableMap,
-  rect: Rect
+    { width, height, map }: TableMap,
+    rect: Rect,
 ) {
-  let indexTop = rect.top * width + rect.left,
-    indexLeft = indexTop
-  let indexBottom = (rect.bottom - 1) * width + rect.left,
-    indexRight = indexTop + (rect.right - rect.left - 1)
-  for (let i = rect.top; i < rect.bottom; i++) {
-    if (
-      (rect.left > 0 && map[indexLeft] == map[indexLeft - 1]) ||
-      (rect.right < width && map[indexRight] == map[indexRight + 1])
-    )
-      return true
-    indexLeft += width
-    indexRight += width
-  }
-  for (let i = rect.left; i < rect.right; i++) {
-    if (
-      (rect.top > 0 && map[indexTop] == map[indexTop - width]) ||
-      (rect.bottom < height && map[indexBottom] == map[indexBottom + width])
-    )
-      return true
-    indexTop++
-    indexBottom++
-  }
-  return false
+    let indexTop = rect.top * width + rect.left,
+        indexLeft = indexTop;
+    let indexBottom = (rect.bottom - 1) * width + rect.left,
+        indexRight = indexTop + (rect.right - rect.left - 1);
+    for (let i = rect.top; i < rect.bottom; i++) {
+        if (
+            (rect.left > 0 && map[indexLeft] == map[indexLeft - 1]) ||
+            (rect.right < width && map[indexRight] == map[indexRight + 1])
+        )
+            return true;
+        indexLeft += width;
+        indexRight += width;
+    }
+    for (let i = rect.left; i < rect.right; i++) {
+        if (
+            (rect.top > 0 && map[indexTop] == map[indexTop - width]) ||
+            (rect.bottom < height &&
+                map[indexBottom] == map[indexBottom + width])
+        )
+            return true;
+        indexTop++;
+        indexBottom++;
+    }
+    return false;
 }
 
 /**
@@ -396,37 +404,37 @@ export function cellsOverlapRectangle(
  * @returns True if the selection was successfully restored, false otherwise
  */
 export function runPreservingCursor(editor: Editor, fn: () => void): boolean {
-  const view = editor.view
-  const startSel = view.state.selection
-  const bookmark = startSel.getBookmark()
+    const view = editor.view;
+    const startSel = view.state.selection;
+    const bookmark = startSel.getBookmark();
 
-  const mapping = new Mapping()
-  const originalDispatch = view.dispatch
+    const mapping = new Mapping();
+    const originalDispatch = view.dispatch;
 
-  view.dispatch = (tr) => {
-    mapping.appendMapping(tr.mapping)
-    originalDispatch(tr)
-  }
+    view.dispatch = (tr) => {
+        mapping.appendMapping(tr.mapping);
+        originalDispatch(tr);
+    };
 
-  try {
-    fn()
-  } finally {
-    view.dispatch = originalDispatch
-  }
+    try {
+        fn();
+    } finally {
+        view.dispatch = originalDispatch;
+    }
 
-  try {
-    const sel = bookmark.map(mapping).resolve(view.state.doc)
-    view.dispatch(view.state.tr.setSelection(sel))
-    return true
-  } catch {
-    // Fallback: if the exact spot vanished (e.g., cell deleted),
-    // go to the nearest valid position.
-    const mappedPos = mapping.map(startSel.from, -1)
-    const clamped = clamp(mappedPos, 0, view.state.doc.content.size)
-    const near = Selection.near(view.state.doc.resolve(clamped), -1)
-    view.dispatch(view.state.tr.setSelection(near))
-    return false
-  }
+    try {
+        const sel = bookmark.map(mapping).resolve(view.state.doc);
+        view.dispatch(view.state.tr.setSelection(sel));
+        return true;
+    } catch {
+        // Fallback: if the exact spot vanished (e.g., cell deleted),
+        // go to the nearest valid position.
+        const mappedPos = mapping.map(startSel.from, -1);
+        const clamped = clamp(mappedPos, 0, view.state.doc.content.size);
+        const near = Selection.near(view.state.doc.resolve(clamped), -1);
+        view.dispatch(view.state.tr.setSelection(near));
+        return false;
+    }
 }
 
 /**
@@ -443,22 +451,22 @@ export function runPreservingCursor(editor: Editor, fn: () => void): boolean {
  * @returns true if the cell is empty; false otherwise
  */
 export function isCellEmpty(cellNode: Node): boolean {
-  if (cellNode.childCount === 0) return true
+    if (cellNode.childCount === 0) return true;
 
-  let isEmpty = true
-  cellNode.descendants((n) => {
-    if (n.isText && n.text?.trim()) {
-      isEmpty = false
-      return false
-    }
-    if (n.isLeaf && !n.isText) {
-      isEmpty = false
-      return false
-    }
-    return true
-  })
+    let isEmpty = true;
+    cellNode.descendants((n) => {
+        if (n.isText && n.text?.trim()) {
+            isEmpty = false;
+            return false;
+        }
+        if (n.isLeaf && !n.isText) {
+            isEmpty = false;
+            return false;
+        }
+        return true;
+    });
 
-  return isEmpty
+    return isEmpty;
 }
 
 /**
@@ -472,39 +480,39 @@ export function isCellEmpty(cellNode: Node): boolean {
  * If the selection is not a full row/column, or if no table is found, returns null.
  */
 export function getTableSelectionType(
-  editor: Editor | null,
-  index?: number,
-  orientation?: Orientation,
-  tablePos?: number
+    editor: Editor | null,
+    index?: number,
+    orientation?: Orientation,
+    tablePos?: number,
 ): { orientation: Orientation; index: number } | null {
-  if (typeof index === "number" && orientation) {
-    return { orientation, index }
-  }
-
-  if (!editor) return null
-
-  const { state } = editor
-
-  const table = getTable(editor, tablePos)
-  if (!table) return null
-
-  if (state.selection instanceof CellSelection) {
-    const rect = selectedRect(state)
-    const width = rect.right - rect.left
-    const height = rect.bottom - rect.top
-
-    if (height === 1 && width >= 1) {
-      return { orientation: "row", index: rect.top }
+    if (typeof index === 'number' && orientation) {
+        return { orientation, index };
     }
 
-    if (width === 1 && height >= 1) {
-      return { orientation: "column", index: rect.left }
+    if (!editor) return null;
+
+    const { state } = editor;
+
+    const table = getTable(editor, tablePos);
+    if (!table) return null;
+
+    if (state.selection instanceof CellSelection) {
+        const rect = selectedRect(state);
+        const width = rect.right - rect.left;
+        const height = rect.bottom - rect.top;
+
+        if (height === 1 && width >= 1) {
+            return { orientation: 'row', index: rect.top };
+        }
+
+        if (width === 1 && height >= 1) {
+            return { orientation: 'column', index: rect.left };
+        }
+
+        return null;
     }
 
-    return null
-  }
-
-  return null
+    return null;
 }
 
 /**
@@ -520,53 +528,53 @@ export function getTableSelectionType(
  * If no valid selection or index is found, returns empty arrays.
  */
 export function getRowOrColumnCells(
-  editor: Editor | null,
-  index?: number,
-  orientation?: Orientation,
-  tablePos?: number
+    editor: Editor | null,
+    index?: number,
+    orientation?: Orientation,
+    tablePos?: number,
 ): {
-  cells: CellInfo[]
-  mergedCells: CellInfo[]
-  index?: number
-  orientation?: Orientation
-  tablePos?: number
+    cells: CellInfo[];
+    mergedCells: CellInfo[];
+    index?: number;
+    orientation?: Orientation;
+    tablePos?: number;
 } {
-  const emptyResult = {
-    cells: [],
-    mergedCells: [],
-    index: undefined,
-    orientation: undefined,
-    tablePos: undefined,
-  }
+    const emptyResult = {
+        cells: [],
+        mergedCells: [],
+        index: undefined,
+        orientation: undefined,
+        tablePos: undefined,
+    };
 
-  if (!editor) {
-    return emptyResult
-  }
+    if (!editor) {
+        return emptyResult;
+    }
 
-  if (
-    typeof index !== "number" &&
-    !(editor.state.selection instanceof CellSelection)
-  ) {
-    return emptyResult
-  }
+    if (
+        typeof index !== 'number' &&
+        !(editor.state.selection instanceof CellSelection)
+    ) {
+        return emptyResult;
+    }
 
-  let finalIndex = index
-  let finalOrientation = orientation
+    let finalIndex = index;
+    let finalOrientation = orientation;
 
-  if (
-    typeof finalIndex !== "number" ||
-    !finalOrientation ||
-    !["row", "column"].includes(finalOrientation)
-  ) {
-    const selectionType = getTableSelectionType(editor)
-    if (!selectionType) return emptyResult
+    if (
+        typeof finalIndex !== 'number' ||
+        !finalOrientation ||
+        !['row', 'column'].includes(finalOrientation)
+    ) {
+        const selectionType = getTableSelectionType(editor);
+        if (!selectionType) return emptyResult;
 
-    finalIndex = selectionType.index
-    finalOrientation = selectionType.orientation
-  }
+        finalIndex = selectionType.index;
+        finalOrientation = selectionType.orientation;
+    }
 
-  const result = collectCells(editor, finalOrientation, finalIndex, tablePos)
-  return { ...result, index: finalIndex, orientation: finalOrientation }
+    const result = collectCells(editor, finalOrientation, finalIndex, tablePos);
+    return { ...result, index: finalIndex, orientation: finalOrientation };
 }
 
 /**
@@ -575,11 +583,11 @@ export function getRowOrColumnCells(
  * - If omitted, uses the first (topmost) selected row based on the current selection.
  */
 export function getRowCells(
-  editor: Editor | null,
-  rowIndex?: number,
-  tablePos?: number
+    editor: Editor | null,
+    rowIndex?: number,
+    tablePos?: number,
 ): { cells: CellInfo[]; mergedCells: CellInfo[] } {
-  return collectCells(editor, "row", rowIndex, tablePos)
+    return collectCells(editor, 'row', rowIndex, tablePos);
 }
 
 /**
@@ -588,11 +596,11 @@ export function getRowCells(
  * - If omitted, uses the first (leftmost) selected column based on the current selection.
  */
 export function getColumnCells(
-  editor: Editor | null,
-  columnIndex?: number,
-  tablePos?: number
+    editor: Editor | null,
+    columnIndex?: number,
+    tablePos?: number,
 ): { cells: CellInfo[]; mergedCells: CellInfo[] } {
-  return collectCells(editor, "column", columnIndex, tablePos)
+    return collectCells(editor, 'column', columnIndex, tablePos);
 }
 
 /**
@@ -607,64 +615,66 @@ export function getColumnCells(
  * @param tablePos - Optional position of the table in the document
  */
 export function updateSelectionAfterAction(
-  editor: Editor,
-  orientation: Orientation,
-  newIndex: number,
-  tablePos?: number
+    editor: Editor,
+    orientation: Orientation,
+    newIndex: number,
+    tablePos?: number,
 ): void {
-  try {
-    const table = getTable(editor, tablePos)
-    if (!table) return
+    try {
+        const table = getTable(editor, tablePos);
+        if (!table) return;
 
-    const { state } = editor
-    const { map } = table
+        const { state } = editor;
+        const { map } = table;
 
-    if (orientation === "row") {
-      if (newIndex >= 0 && newIndex < map.height) {
-        const startCol = 0
-        const endCol = map.width - 1
+        if (orientation === 'row') {
+            if (newIndex >= 0 && newIndex < map.height) {
+                const startCol = 0;
+                const endCol = map.width - 1;
 
-        const startCellPos =
-          table.start + map.positionAt(newIndex, startCol, table.node)
-        const endCellPos =
-          table.start + map.positionAt(newIndex, endCol, table.node)
+                const startCellPos =
+                    table.start +
+                    map.positionAt(newIndex, startCol, table.node);
+                const endCellPos =
+                    table.start + map.positionAt(newIndex, endCol, table.node);
 
-        const $start = state.doc.resolve(startCellPos)
-        const $end = state.doc.resolve(endCellPos)
+                const $start = state.doc.resolve(startCellPos);
+                const $end = state.doc.resolve(endCellPos);
 
-        const newSelection = CellSelection.create(
-          state.doc,
-          $start.pos,
-          $end.pos
-        )
-        const tr = state.tr.setSelection(newSelection)
-        editor.view.dispatch(tr)
-      }
-    } else if (orientation === "column") {
-      if (newIndex >= 0 && newIndex < map.width) {
-        const startRow = 0
-        const endRow = map.height - 1
+                const newSelection = CellSelection.create(
+                    state.doc,
+                    $start.pos,
+                    $end.pos,
+                );
+                const tr = state.tr.setSelection(newSelection);
+                editor.view.dispatch(tr);
+            }
+        } else if (orientation === 'column') {
+            if (newIndex >= 0 && newIndex < map.width) {
+                const startRow = 0;
+                const endRow = map.height - 1;
 
-        const startCellPos =
-          table.start + map.positionAt(startRow, newIndex, table.node)
-        const endCellPos =
-          table.start + map.positionAt(endRow, newIndex, table.node)
+                const startCellPos =
+                    table.start +
+                    map.positionAt(startRow, newIndex, table.node);
+                const endCellPos =
+                    table.start + map.positionAt(endRow, newIndex, table.node);
 
-        const $start = state.doc.resolve(startCellPos)
-        const $end = state.doc.resolve(endCellPos)
+                const $start = state.doc.resolve(startCellPos);
+                const $end = state.doc.resolve(endCellPos);
 
-        const newSelection = CellSelection.create(
-          state.doc,
-          $start.pos,
-          $end.pos
-        )
-        const tr = state.tr.setSelection(newSelection)
-        editor.view.dispatch(tr)
-      }
+                const newSelection = CellSelection.create(
+                    state.doc,
+                    $start.pos,
+                    $end.pos,
+                );
+                const tr = state.tr.setSelection(newSelection);
+                editor.view.dispatch(tr);
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to update selection after move:', error);
     }
-  } catch (error) {
-    console.warn("Failed to update selection after move:", error)
-  }
 }
 
 /**
@@ -674,50 +684,52 @@ export function updateSelectionAfterAction(
  *
  * @public
  */
-export function setCellAttr(attrs: Record<string, unknown>): Command
-export function setCellAttr(name: string, value: unknown): Command
+export function setCellAttr(attrs: Record<string, unknown>): Command;
+export function setCellAttr(name: string, value: unknown): Command;
 export function setCellAttr(
-  nameOrAttrs: string | Record<string, unknown>,
-  value?: unknown
+    nameOrAttrs: string | Record<string, unknown>,
+    value?: unknown,
 ): Command {
-  return function (state, dispatch) {
-    if (!isInTable(state)) return false
-    const $cell = selectionCell(state)
+    return function (state, dispatch) {
+        if (!isInTable(state)) return false;
+        const $cell = selectionCell(state);
 
-    const attrs =
-      typeof nameOrAttrs === "string" ? { [nameOrAttrs]: value } : nameOrAttrs
+        const attrs =
+            typeof nameOrAttrs === 'string'
+                ? { [nameOrAttrs]: value }
+                : nameOrAttrs;
 
-    if (dispatch) {
-      const tr = state.tr
-      if (state.selection instanceof CellSelection) {
-        state.selection.forEachCell((node, pos) => {
-          const needsUpdate = Object.entries(attrs).some(
-            ([name, val]) => node.attrs[name] !== val
-          )
+        if (dispatch) {
+            const tr = state.tr;
+            if (state.selection instanceof CellSelection) {
+                state.selection.forEachCell((node, pos) => {
+                    const needsUpdate = Object.entries(attrs).some(
+                        ([name, val]) => node.attrs[name] !== val,
+                    );
 
-          if (needsUpdate) {
-            tr.setNodeMarkup(pos, null, {
-              ...node.attrs,
-              ...attrs,
-            })
-          }
-        })
-      } else {
-        const needsUpdate = Object.entries(attrs).some(
-          ([name, val]) => $cell.nodeAfter!.attrs[name] !== val
-        )
+                    if (needsUpdate) {
+                        tr.setNodeMarkup(pos, null, {
+                            ...node.attrs,
+                            ...attrs,
+                        });
+                    }
+                });
+            } else {
+                const needsUpdate = Object.entries(attrs).some(
+                    ([name, val]) => $cell.nodeAfter!.attrs[name] !== val,
+                );
 
-        if (needsUpdate) {
-          tr.setNodeMarkup($cell.pos, null, {
-            ...$cell.nodeAfter!.attrs,
-            ...attrs,
-          })
+                if (needsUpdate) {
+                    tr.setNodeMarkup($cell.pos, null, {
+                        ...$cell.nodeAfter!.attrs,
+                        ...attrs,
+                    });
+                }
+            }
+            dispatch(tr);
         }
-      }
-      dispatch(tr)
-    }
-    return true
-  }
+        return true;
+    };
 }
 
 /**
@@ -734,10 +746,10 @@ export function setCellAttr(
  * @returns The number of trailing empty rows (0 if table not found)
  */
 export function countEmptyRowsFromEnd(
-  editor: Editor,
-  tablePos: number
+    editor: Editor,
+    tablePos: number,
 ): number {
-  return countEmptyCellsFromEnd(editor, tablePos, "row")
+    return countEmptyCellsFromEnd(editor, tablePos, 'row');
 }
 
 /**
@@ -753,10 +765,10 @@ export function countEmptyRowsFromEnd(
  * @returns The number of trailing empty columns (0 if table not found)
  */
 export function countEmptyColumnsFromEnd(
-  editor: Editor,
-  tablePos: number
+    editor: Editor,
+    tablePos: number,
 ): number {
-  return countEmptyCellsFromEnd(editor, tablePos, "column")
+    return countEmptyCellsFromEnd(editor, tablePos, 'column');
 }
 
 /**
@@ -773,14 +785,14 @@ export function countEmptyColumnsFromEnd(
  * @returns The rounded value using the dead-zone heuristic
  */
 export function marginRound(num: number, margin = 0.3): number {
-  const floor = Math.floor(num)
-  const ceil = Math.ceil(num)
-  const lowerBound = floor + margin
-  const upperBound = ceil - margin
+    const floor = Math.floor(num);
+    const ceil = Math.ceil(num);
+    const lowerBound = floor + margin;
+    const upperBound = ceil - margin;
 
-  if (num < lowerBound) return floor
-  if (num > upperBound) return ceil
-  return Math.round(num)
+    if (num < lowerBound) return floor;
+    if (num > upperBound) return ceil;
+    return Math.round(num);
 }
 
 /**
@@ -794,41 +806,41 @@ export function marginRound(num: number, margin = 0.3): number {
  * @returns true if both rects are equal or both are undefined; false otherwise
  */
 export function rectEq(a?: DOMRect | null, b?: DOMRect | null): boolean {
-  if (!a && !b) return true
-  if (!a || !b) return false
-  return (
-    a.left === b.left &&
-    a.top === b.top &&
-    a.width === b.width &&
-    a.height === b.height
-  )
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+    return (
+        a.left === b.left &&
+        a.top === b.top &&
+        a.width === b.width &&
+        a.height === b.height
+    );
 }
 
 /**
  * Applies the transaction based on the specified mode
  */
 function applySelectionWithMode(
-  state: EditorState,
-  transaction: Transaction,
-  options: BaseSelectionOptions | DispatchSelectionOptions
+    state: EditorState,
+    transaction: Transaction,
+    options: BaseSelectionOptions | DispatchSelectionOptions,
 ): EditorState | Transaction | void {
-  const mode: SelectionReturnMode = options.mode ?? "state"
+    const mode: SelectionReturnMode = options.mode ?? 'state';
 
-  switch (mode) {
-    case "dispatch": {
-      const dispatchOptions = options as DispatchSelectionOptions
-      if (typeof dispatchOptions.dispatch === "function") {
-        dispatchOptions.dispatch(transaction)
-      }
-      return
+    switch (mode) {
+        case 'dispatch': {
+            const dispatchOptions = options as DispatchSelectionOptions;
+            if (typeof dispatchOptions.dispatch === 'function') {
+                dispatchOptions.dispatch(transaction);
+            }
+            return;
+        }
+
+        case 'transaction':
+            return transaction;
+
+        default: // "state"
+            return state.apply(transaction);
     }
-
-    case "transaction":
-      return transaction
-
-    default: // "state"
-      return state.apply(transaction)
-  }
 }
 
 /**
@@ -856,46 +868,48 @@ function applySelectionWithMode(
  * ```
  */
 export function createTableCellSelection(
-  state: EditorState,
-  tablePosition: number,
-  startCell: CellCoordinates,
-  endCell?: CellCoordinates,
-  options?: StateSelectionOptions
-): EditorState
+    state: EditorState,
+    tablePosition: number,
+    startCell: CellCoordinates,
+    endCell?: CellCoordinates,
+    options?: StateSelectionOptions,
+): EditorState;
 export function createTableCellSelection(
-  state: EditorState,
-  tablePosition: number,
-  startCell: CellCoordinates,
-  endCell: CellCoordinates | undefined,
-  options: TransactionSelectionOptions
-): Transaction
+    state: EditorState,
+    tablePosition: number,
+    startCell: CellCoordinates,
+    endCell: CellCoordinates | undefined,
+    options: TransactionSelectionOptions,
+): Transaction;
 export function createTableCellSelection(
-  state: EditorState,
-  tablePosition: number,
-  startCell: CellCoordinates,
-  endCell: CellCoordinates | undefined,
-  options: DispatchSelectionOptions
-): void
+    state: EditorState,
+    tablePosition: number,
+    startCell: CellCoordinates,
+    endCell: CellCoordinates | undefined,
+    options: DispatchSelectionOptions,
+): void;
 
 export function createTableCellSelection(
-  state: EditorState,
-  tablePosition: number,
-  startCell: CellCoordinates,
-  endCell: CellCoordinates = startCell,
-  options: BaseSelectionOptions | DispatchSelectionOptions = { mode: "state" }
+    state: EditorState,
+    tablePosition: number,
+    startCell: CellCoordinates,
+    endCell: CellCoordinates = startCell,
+    options: BaseSelectionOptions | DispatchSelectionOptions = {
+        mode: 'state',
+    },
 ): EditorState | Transaction | void {
-  const startCellPosition = getCellPosition(state, tablePosition, startCell)
-  const endCellPosition = getCellPosition(state, tablePosition, endCell)
+    const startCellPosition = getCellPosition(state, tablePosition, startCell);
+    const endCellPosition = getCellPosition(state, tablePosition, endCell);
 
-  if (!startCellPosition || !endCellPosition) {
-    return
-  }
+    if (!startCellPosition || !endCellPosition) {
+        return;
+    }
 
-  const transaction = state.tr.setSelection(
-    new CellSelection(startCellPosition, endCellPosition)
-  )
+    const transaction = state.tr.setSelection(
+        new CellSelection(startCellPosition, endCellPosition),
+    );
 
-  return applySelectionWithMode(state, transaction, options)
+    return applySelectionWithMode(state, transaction, options);
 }
 
 /**
@@ -903,22 +917,22 @@ export function createTableCellSelection(
  * Returns the position *before* the cell, which is what `CellSelection` expects.
  */
 export function getCellPosition(
-  state: EditorState,
-  tablePosition: number,
-  cellCoordinates: CellCoordinates
+    state: EditorState,
+    tablePosition: number,
+    cellCoordinates: CellCoordinates,
 ) {
-  const resolvedTablePosition = state.doc.resolve(tablePosition)
-  const resolvedRowPosition = state.doc.resolve(
-    resolvedTablePosition.posAtIndex(cellCoordinates.row) + 1
-  )
-  const resolvedColPosition = state.doc.resolve(
-    resolvedRowPosition.posAtIndex(cellCoordinates.col)
-  )
+    const resolvedTablePosition = state.doc.resolve(tablePosition);
+    const resolvedRowPosition = state.doc.resolve(
+        resolvedTablePosition.posAtIndex(cellCoordinates.row) + 1,
+    );
+    const resolvedColPosition = state.doc.resolve(
+        resolvedRowPosition.posAtIndex(cellCoordinates.col),
+    );
 
-  const $cell = cellAround(resolvedColPosition)
-  if (!$cell) return null
+    const $cell = cellAround(resolvedColPosition);
+    if (!$cell) return null;
 
-  return resolvedColPosition
+    return resolvedColPosition;
 }
 
 /**
@@ -935,112 +949,121 @@ export function getCellPosition(
  * @param options - Mode and dispatch options
  */
 export function selectCellsByCoords(
-  editor: Editor | null,
-  tablePos: number,
-  coords: { row: number; col: number }[],
-  options?: StateSelectionOptions
-): EditorState
+    editor: Editor | null,
+    tablePos: number,
+    coords: { row: number; col: number }[],
+    options?: StateSelectionOptions,
+): EditorState;
 export function selectCellsByCoords(
-  editor: Editor | null,
-  tablePos: number,
-  coords: { row: number; col: number }[],
-  options: TransactionSelectionOptions
-): Transaction
+    editor: Editor | null,
+    tablePos: number,
+    coords: { row: number; col: number }[],
+    options: TransactionSelectionOptions,
+): Transaction;
 export function selectCellsByCoords(
-  editor: Editor | null,
-  tablePos: number,
-  coords: { row: number; col: number }[],
-  options: DispatchSelectionOptions
-): void
+    editor: Editor | null,
+    tablePos: number,
+    coords: { row: number; col: number }[],
+    options: DispatchSelectionOptions,
+): void;
 export function selectCellsByCoords(
-  editor: Editor | null,
-  tablePos: number,
-  coords: { row: number; col: number }[],
-  options: BaseSelectionOptions | DispatchSelectionOptions = { mode: "state" }
+    editor: Editor | null,
+    tablePos: number,
+    coords: { row: number; col: number }[],
+    options: BaseSelectionOptions | DispatchSelectionOptions = {
+        mode: 'state',
+    },
 ): EditorState | Transaction | void {
-  if (!editor) return
+    if (!editor) return;
 
-  const table = getTable(editor, tablePos)
-  if (!table) return
+    const table = getTable(editor, tablePos);
+    if (!table) return;
 
-  const { state } = editor
-  const tableMap = table.map
+    const { state } = editor;
+    const tableMap = table.map;
 
-  const cleanedCoords = coords
-    .map((coord) => ({
-      row: clamp(coord.row, 0, tableMap.height - 1),
-      col: clamp(coord.col, 0, tableMap.width - 1),
-    }))
-    .filter((coord) => isWithinBounds(coord.row, coord.col, tableMap))
+    const cleanedCoords = coords
+        .map((coord) => ({
+            row: clamp(coord.row, 0, tableMap.height - 1),
+            col: clamp(coord.col, 0, tableMap.width - 1),
+        }))
+        .filter((coord) => isWithinBounds(coord.row, coord.col, tableMap));
 
-  if (cleanedCoords.length === 0) {
-    return
-  }
-
-  // --- Find the smallest rectangle that contains all our coordinates ---
-  const allRows = cleanedCoords.map((coord) => coord.row)
-  const topRow = Math.min(...allRows)
-  const bottomRow = Math.max(...allRows)
-
-  const allCols = cleanedCoords.map((coord) => coord.col)
-  const leftCol = Math.min(...allCols)
-  const rightCol = Math.max(...allCols)
-
-  // --- Convert visual coordinates to document positions ---
-  // Use TableMap.map array directly to handle merged cells correctly
-  const getCellPositionFromMap = (row: number, col: number): number | null => {
-    // TableMap.map is a flat array where each entry represents a cell
-    // For merged cells, the same offset appears multiple times
-    const cellOffset = tableMap.map[row * tableMap.width + col]
-    if (cellOffset === undefined) return null
-
-    // Convert the relative offset to an absolute position in the document
-    // tablePos + 1 skips the table opening tag
-    return tablePos + 1 + cellOffset
-  }
-
-  // Anchor = where the selection starts (top-left of bounding box)
-  const anchorPosition = getCellPositionFromMap(topRow, leftCol)
-  if (anchorPosition === null) return
-
-  // Head = where the selection ends (usually bottom-right of bounding box)
-  let headPosition = getCellPositionFromMap(bottomRow, rightCol)
-  if (headPosition === null) return
-
-  // --- Handle edge case with merged cells ---
-  // If anchor and head point to the same cell, we need to find a different head
-  // This happens when selecting a single merged cell or when all coords point to one cell
-  if (headPosition === anchorPosition) {
-    let foundDifferentCell = false
-
-    // Search backwards from bottom-right to find a cell with a different position
-    for (let row = bottomRow; row >= topRow && !foundDifferentCell; row--) {
-      for (let col = rightCol; col >= leftCol && !foundDifferentCell; col--) {
-        const candidatePosition = getCellPositionFromMap(row, col)
-
-        if (
-          candidatePosition !== null &&
-          candidatePosition !== anchorPosition
-        ) {
-          headPosition = candidatePosition
-          foundDifferentCell = true
-        }
-      }
+    if (cleanedCoords.length === 0) {
+        return;
     }
-  }
 
-  try {
-    const anchorRef = state.doc.resolve(anchorPosition)
-    const headRef = state.doc.resolve(headPosition)
+    // --- Find the smallest rectangle that contains all our coordinates ---
+    const allRows = cleanedCoords.map((coord) => coord.row);
+    const topRow = Math.min(...allRows);
+    const bottomRow = Math.max(...allRows);
 
-    const cellSelection = new CellSelection(anchorRef, headRef)
-    const transaction = state.tr.setSelection(cellSelection)
+    const allCols = cleanedCoords.map((coord) => coord.col);
+    const leftCol = Math.min(...allCols);
+    const rightCol = Math.max(...allCols);
 
-    return applySelectionWithMode(state, transaction, options)
-  } catch (error) {
-    console.error("Failed to create cell selection:", error)
-    return
-  }
+    // --- Convert visual coordinates to document positions ---
+    // Use TableMap.map array directly to handle merged cells correctly
+    const getCellPositionFromMap = (
+        row: number,
+        col: number,
+    ): number | null => {
+        // TableMap.map is a flat array where each entry represents a cell
+        // For merged cells, the same offset appears multiple times
+        const cellOffset = tableMap.map[row * tableMap.width + col];
+        if (cellOffset === undefined) return null;
+
+        // Convert the relative offset to an absolute position in the document
+        // tablePos + 1 skips the table opening tag
+        return tablePos + 1 + cellOffset;
+    };
+
+    // Anchor = where the selection starts (top-left of bounding box)
+    const anchorPosition = getCellPositionFromMap(topRow, leftCol);
+    if (anchorPosition === null) return;
+
+    // Head = where the selection ends (usually bottom-right of bounding box)
+    let headPosition = getCellPositionFromMap(bottomRow, rightCol);
+    if (headPosition === null) return;
+
+    // --- Handle edge case with merged cells ---
+    // If anchor and head point to the same cell, we need to find a different head
+    // This happens when selecting a single merged cell or when all coords point to one cell
+    if (headPosition === anchorPosition) {
+        let foundDifferentCell = false;
+
+        // Search backwards from bottom-right to find a cell with a different position
+        for (let row = bottomRow; row >= topRow && !foundDifferentCell; row--) {
+            for (
+                let col = rightCol;
+                col >= leftCol && !foundDifferentCell;
+                col--
+            ) {
+                const candidatePosition = getCellPositionFromMap(row, col);
+
+                if (
+                    candidatePosition !== null &&
+                    candidatePosition !== anchorPosition
+                ) {
+                    headPosition = candidatePosition;
+                    foundDifferentCell = true;
+                }
+            }
+        }
+    }
+
+    try {
+        const anchorRef = state.doc.resolve(anchorPosition);
+        const headRef = state.doc.resolve(headPosition);
+
+        const cellSelection = new CellSelection(anchorRef, headRef);
+        const transaction = state.tr.setSelection(cellSelection);
+
+        return applySelectionWithMode(state, transaction, options);
+    } catch (error) {
+        console.error('Failed to create cell selection:', error);
+        return;
+    }
 }
 
 /**
@@ -1053,43 +1076,43 @@ export function selectCellsByCoords(
  * @param dispatch  Optional dispatch; defaults to editor.view.dispatch
  */
 export function selectCellAt({
-  editor,
-  row,
-  col,
-  tablePos,
-  dispatch,
+    editor,
+    row,
+    col,
+    tablePos,
+    dispatch,
 }: {
-  editor: Editor | null
-  row: number
-  col: number
-  tablePos?: number
-  dispatch?: (tr: Transaction) => void
+    editor: Editor | null;
+    row: number;
+    col: number;
+    tablePos?: number;
+    dispatch?: (tr: Transaction) => void;
 }): boolean {
-  if (!editor) return false
+    if (!editor) return false;
 
-  const { state, view } = editor
-  const found = getTable(editor, tablePos)
-  if (!found) return false
+    const { state, view } = editor;
+    const found = getTable(editor, tablePos);
+    if (!found) return false;
 
-  // Bounds check
-  if (!isWithinBounds(row, col, found.map)) {
-    return false
-  }
+    // Bounds check
+    if (!isWithinBounds(row, col, found.map)) {
+        return false;
+    }
 
-  const relCellPos = found.map.positionAt(row, col, found.node)
-  const absCellPos = found.start + relCellPos
+    const relCellPos = found.map.positionAt(row, col, found.node);
+    const absCellPos = found.start + relCellPos;
 
-  const $abs = state.doc.resolve(absCellPos)
-  const $cell = cellAround($abs)
-  const cellPos = $cell ? $cell.pos : absCellPos
+    const $abs = state.doc.resolve(absCellPos);
+    const $cell = cellAround($abs);
+    const cellPos = $cell ? $cell.pos : absCellPos;
 
-  const sel = CellSelection.create(state.doc, cellPos)
+    const sel = CellSelection.create(state.doc, cellPos);
 
-  const doDispatch = dispatch ?? view?.dispatch
-  if (!doDispatch) return false
+    const doDispatch = dispatch ?? view?.dispatch;
+    if (!doDispatch) return false;
 
-  doDispatch(state.tr.setSelection(sel))
-  return true
+    doDispatch(state.tr.setSelection(sel));
+    return true;
 }
 
 /**
@@ -1107,45 +1130,45 @@ export function selectCellAt({
  * @returns true if the selection was successful; false otherwise
  */
 export function selectLastCell(
-  editor: Editor,
-  tableNode: Node,
-  tablePos: number,
-  orientation: Orientation
+    editor: Editor,
+    tableNode: Node,
+    tablePos: number,
+    orientation: Orientation,
 ) {
-  const map = TableMap.get(tableNode)
-  const isRow = orientation === "row"
+    const map = TableMap.get(tableNode);
+    const isRow = orientation === 'row';
 
-  // For rows, select bottom-left cell; for columns, select top-right cell
-  const row = isRow ? map.height - 1 : 0
-  const col = isRow ? 0 : map.width - 1
+    // For rows, select bottom-left cell; for columns, select top-right cell
+    const row = isRow ? map.height - 1 : 0;
+    const col = isRow ? 0 : map.width - 1;
 
-  // Calculate the index in the table map
-  const index = row * map.width + col
+    // Calculate the index in the table map
+    const index = row * map.width + col;
 
-  // Get the actual cell position from the map (handles merged cells)
-  const cellPos = map.map[index]
-  if (!cellPos && cellPos !== 0) {
-    console.warn("selectLastCell: cell position not found in map", {
-      index,
-      row,
-      col,
-      map,
-    })
-    return false
-  }
+    // Get the actual cell position from the map (handles merged cells)
+    const cellPos = map.map[index];
+    if (!cellPos && cellPos !== 0) {
+        console.warn('selectLastCell: cell position not found in map', {
+            index,
+            row,
+            col,
+            map,
+        });
+        return false;
+    }
 
-  // Find the row and column of the actual cell
-  const cellIndex = map.map.indexOf(cellPos)
-  const actualRow = cellIndex >= 0 ? Math.floor(cellIndex / map.width) : 0
-  const actualCol = cellIndex >= 0 ? cellIndex % map.width : 0
+    // Find the row and column of the actual cell
+    const cellIndex = map.map.indexOf(cellPos);
+    const actualRow = cellIndex >= 0 ? Math.floor(cellIndex / map.width) : 0;
+    const actualCol = cellIndex >= 0 ? cellIndex % map.width : 0;
 
-  return selectCellAt({
-    editor,
-    row: actualRow,
-    col: actualCol,
-    tablePos,
-    dispatch: editor.view.dispatch.bind(editor.view),
-  })
+    return selectCellAt({
+        editor,
+        row: actualRow,
+        col: actualCol,
+        tablePos,
+        dispatch: editor.view.dispatch.bind(editor.view),
+    });
 }
 
 /**
@@ -1165,31 +1188,31 @@ export function selectLastCell(
  * @returns Array of {row, col} objects or null if invalid
  */
 export function getIndexCoordinates({
-  editor,
-  index,
-  orientation,
-  tablePos,
+    editor,
+    index,
+    orientation,
+    tablePos,
 }: {
-  editor: Editor | null
-  index: number
-  orientation?: Orientation
-  tablePos?: number
+    editor: Editor | null;
+    index: number;
+    orientation?: Orientation;
+    tablePos?: number;
 }): { row: number; col: number }[] | null {
-  if (!editor) return null
+    if (!editor) return null;
 
-  const table = getTable(editor, tablePos)
-  if (!table) return null
+    const table = getTable(editor, tablePos);
+    if (!table) return null;
 
-  const { map } = table
-  const { width, height } = map
+    const { map } = table;
+    const { width, height } = map;
 
-  if (index < 0) return null
-  if (orientation === "row" && index >= height) return null
-  if (orientation === "column" && index >= width) return null
+    if (index < 0) return null;
+    if (orientation === 'row' && index >= height) return null;
+    if (orientation === 'column' && index >= width) return null;
 
-  return orientation === "row"
-    ? Array.from({ length: map.width }, (_, col) => ({ row: index, col }))
-    : Array.from({ length: map.height }, (_, row) => ({ row, col: index }))
+    return orientation === 'row'
+        ? Array.from({ length: map.width }, (_, col) => ({ row: index, col }))
+        : Array.from({ length: map.height }, (_, row) => ({ row, col: index }));
 }
 
 /**
@@ -1211,35 +1234,38 @@ export function getIndexCoordinates({
  * @returns An object with { rowIndex, colIndex } or null if not found
  */
 export function getCellIndicesFromDOM(
-  cell: HTMLTableCellElement,
-  tableNode: Node | null,
-  editor: Editor
+    cell: HTMLTableCellElement,
+    tableNode: Node | null,
+    editor: Editor,
 ): { rowIndex: number; colIndex: number } | null {
-  if (!tableNode) return null
+    if (!tableNode) return null;
 
-  try {
-    const cellPos = editor.view.posAtDOM(cell, 0)
-    const $cellPos = editor.view.state.doc.resolve(cellPos)
+    try {
+        const cellPos = editor.view.posAtDOM(cell, 0);
+        const $cellPos = editor.view.state.doc.resolve(cellPos);
 
-    for (let d = $cellPos.depth; d > 0; d--) {
-      const node = $cellPos.node(d)
-      if (node.type.name === "tableCell" || node.type.name === "tableHeader") {
-        const tableMap = TableMap.get(tableNode)
-        const cellNodePos = $cellPos.before(d)
-        const tableStart = $cellPos.start(d - 2)
-        const cellOffset = cellNodePos - tableStart
-        const cellIndex = tableMap.map.indexOf(cellOffset)
+        for (let d = $cellPos.depth; d > 0; d--) {
+            const node = $cellPos.node(d);
+            if (
+                node.type.name === 'tableCell' ||
+                node.type.name === 'tableHeader'
+            ) {
+                const tableMap = TableMap.get(tableNode);
+                const cellNodePos = $cellPos.before(d);
+                const tableStart = $cellPos.start(d - 2);
+                const cellOffset = cellNodePos - tableStart;
+                const cellIndex = tableMap.map.indexOf(cellOffset);
 
-        return {
-          rowIndex: Math.floor(cellIndex / tableMap.width),
-          colIndex: cellIndex % tableMap.width,
+                return {
+                    rowIndex: Math.floor(cellIndex / tableMap.width),
+                    colIndex: cellIndex % tableMap.width,
+                };
+            }
         }
-      }
+    } catch (error) {
+        console.warn('Could not get cell position:', error);
     }
-  } catch (error) {
-    console.warn("Could not get cell position:", error)
-  }
-  return null
+    return null;
 }
 
 /**
@@ -1259,31 +1285,31 @@ export function getCellIndicesFromDOM(
  * @returns An object with { node: tableNode, pos: tablePos } or null if not found
  */
 export function getTableFromDOM(
-  tableElement: HTMLElement,
-  editor: Editor
+    tableElement: HTMLElement,
+    editor: Editor,
 ): { node: Node; pos: number } | null {
-  try {
-    const pos = editor.view.posAtDOM(tableElement, 0)
-    const $pos = editor.view.state.doc.resolve(pos)
+    try {
+        const pos = editor.view.posAtDOM(tableElement, 0);
+        const $pos = editor.view.state.doc.resolve(pos);
 
-    for (let d = $pos.depth; d >= 0; d--) {
-      const node = $pos.node(d)
-      if (isTableNode(node)) {
-        return { node, pos: d === 0 ? 0 : $pos.before(d) }
-      }
+        for (let d = $pos.depth; d >= 0; d--) {
+            const node = $pos.node(d);
+            if (isTableNode(node)) {
+                return { node, pos: d === 0 ? 0 : $pos.before(d) };
+            }
+        }
+    } catch (error) {
+        console.warn('Could not get table from DOM:', error);
     }
-  } catch (error) {
-    console.warn("Could not get table from DOM:", error)
-  }
-  return null
+    return null;
 }
 
 /**
  * Checks if a node is a table node
  */
 export function isTableNode(node: Node | null | undefined): node is Node {
-  return (
-    !!node &&
-    (node.type.name === "table" || node.type.spec.tableRole === "table")
-  )
+    return (
+        !!node &&
+        (node.type.name === 'table' || node.type.spec.tableRole === 'table')
+    );
 }

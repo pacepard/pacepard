@@ -359,7 +359,8 @@ class EntryService {
             if (!hasPermission) {
                 result.error = true;
                 result.code = 403;
-                result.message = 'You do not have permission to delete this entry';
+                result.message =
+                    'You do not have permission to delete this entry';
                 return result;
             }
         }
@@ -417,15 +418,15 @@ class EntryService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this entry';
+            result.message =
+                'You do not have permission to manage members in this entry';
             return result;
         }
 
         // Check if user is already a member
         const existingMember = (entry.members || []).find((m: any) => {
-            const memberUserId = typeof m === 'object'
-                ? String(m._id || m.id)
-                : String(m);
+            const memberUserId =
+                typeof m === 'object' ? String(m._id || m.id) : String(m);
             return memberUserId === userId;
         });
 
@@ -495,15 +496,15 @@ class EntryService {
         if (!hasPermission) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to manage members in this entry';
+            result.message =
+                'You do not have permission to manage members in this entry';
             return result;
         }
 
         // Find and remove the member
         const members = (entry.members || []).filter((m: any) => {
-            const memberUserId = typeof m === 'object'
-                ? String(m._id || m.id)
-                : String(m);
+            const memberUserId =
+                typeof m === 'object' ? String(m._id || m.id) : String(m);
             return memberUserId !== userId;
         });
 

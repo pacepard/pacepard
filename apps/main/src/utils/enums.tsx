@@ -1,8 +1,8 @@
-export enum CurrencyType{
+export enum CurrencyType {
     NGN = 'NGN',
-    USD = 'USD'
+    USD = 'USD',
 }
-export enum CurrencySymbol{
+export enum CurrencySymbol {
     NGN = '₦',
-    USD = '$'
+    USD = '$',
 }

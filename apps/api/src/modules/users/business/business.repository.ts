@@ -1,10 +1,9 @@
-import { FilterQuery } from "mongoose";
+import { FilterQuery } from 'mongoose';
 import { UpdateQuery } from 'mongoose';
 import Business from './business.model';
 import { IBusinessDoc } from './business.interface';
 import RepositoryService from '../../../services/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
-
 
 /**
  * Business Repository

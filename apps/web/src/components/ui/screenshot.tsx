@@ -1,56 +1,56 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import Image from "next/image";
+import Image from 'next/image';
 
-import { useTheme } from "next-themes";
+import { useTheme } from 'next-themes';
 
-import { cn } from "@pacepard/ui/lib/utils";
+import { cn } from '@pacepard/ui/lib/utils';
 
 interface ScreenshotProps {
-  srcLight: string;
-  srcDark?: string;
-  alt: string;
-  width: number;
-  height: number;
-  className?: string;
+    srcLight: string;
+    srcDark?: string;
+    alt: string;
+    width: number;
+    height: number;
+    className?: string;
 }
 
 export default function Screenshot({
-  srcLight,
-  srcDark,
-  alt,
-  width,
-  height,
-  className,
+    srcLight,
+    srcDark,
+    alt,
+    width,
+    height,
+    className,
 }: ScreenshotProps) {
-  const { resolvedTheme } = useTheme();
-  const [src, setSrc] = useState<string | null>(null);
+    const { resolvedTheme } = useTheme();
+    const [src, setSrc] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (resolvedTheme) {
-      setSrc(resolvedTheme === "light" ? srcLight : srcDark || srcLight);
+    useEffect(() => {
+        if (resolvedTheme) {
+            setSrc(resolvedTheme === 'light' ? srcLight : srcDark || srcLight);
+        }
+    }, [resolvedTheme, srcLight, srcDark]);
+
+    if (!src) {
+        return (
+            <div
+                style={{ width, height }}
+                className={cn('bg-muted', className)}
+                aria-label={alt}
+            />
+        );
     }
-  }, [resolvedTheme, srcLight, srcDark]);
 
-  if (!src) {
     return (
-      <div
-        style={{ width, height }}
-        className={cn("bg-muted", className)}
-        aria-label={alt}
-      />
+        <Image
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            className={className}
+        />
     );
-  }
-
-  return (
-    <Image
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      className={className}
-    />
-  );
 }

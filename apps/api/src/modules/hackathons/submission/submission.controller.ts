@@ -48,7 +48,9 @@ export const getSubmission: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
         if (!id)
-            return next(new ErrorResponse('Submission ID is required', 400, []));
+            return next(
+                new ErrorResponse('Submission ID is required', 400, []),
+            );
 
         const cacheKey = `submission:${id}`;
         const cacheTTL = 300; // 5 minutes

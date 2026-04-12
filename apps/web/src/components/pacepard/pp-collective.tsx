@@ -91,13 +91,13 @@ export default function PPCollective() {
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
                 {/* Top section: text and image on same line */}
                 <div className="space-y-4">
-                                <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                                    <span>Custom Agents</span>
-                                    <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white">
-                                        New
-                                    </span>
-                                </p>                            
-                            </div>
+                    <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                        <span>Custom Agents</span>
+                        <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white">
+                            New
+                        </span>
+                    </p>
+                </div>
                 <div className="flex flex-col items-stretch justify-start gap-6 lg:flex-row lg:flex-wrap lg:items-center lg:gap-8 xl:gap-10">
                     <div className="order-2 min-w-0 max-w-xl shrink space-y-4 lg:order-1 lg:max-w-2xl">
                         <h2 className="max-w-xl text-balance font-regular tracking-tight text-foreground text-4xl md:text-5xl">
@@ -171,7 +171,6 @@ export default function PPCollective() {
                                 </Link>
                             </Button>
                         </div>
-
                     </div>
                     <div className="relative order-1 mx-auto flex w-full max-w-[280px] shrink-0 items-left justify-left sm:max-w-[360px] lg:order-2 lg:mx-0 lg:max-w-[400px]">
                         <Image
@@ -187,33 +186,31 @@ export default function PPCollective() {
 
                 {/* Use case cards grid: 2 rows × 4 columns */}
                 <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:mt-[-20px] lg:grid-cols-4">
-                    {useCases.map(
-                        ({ icon: Icon, label, iconWrapClass }) => (
-                            <div
-                                key={label}
+                    {useCases.map(({ icon: Icon, label, iconWrapClass }) => (
+                        <div
+                            key={label}
+                            className={cn(
+                                'group flex flex-col rounded-lg border border-border bg-card p-5 text-left shadow-sm transition-colors',
+                                'hover:border-primary/30 hover:bg-muted/50',
+                            )}
+                        >
+                            <span
                                 className={cn(
-                                    'group flex flex-col rounded-lg border border-border bg-card p-5 text-left shadow-sm transition-colors',
-                                    'hover:border-primary/30 hover:bg-muted/50',
+                                    'mb-3 inline-flex size-9 items-center justify-center rounded-md transition-colors',
+                                    iconWrapClass,
+                                    'group-hover:bg-primary/15 group-hover:text-primary dark:group-hover:bg-primary/20',
                                 )}
                             >
-                                <span
-                                    className={cn(
-                                        'mb-3 inline-flex size-9 items-center justify-center rounded-md transition-colors',
-                                        iconWrapClass,
-                                        'group-hover:bg-primary/15 group-hover:text-primary dark:group-hover:bg-primary/20',
-                                    )}
-                                >
-                                    <Icon className="size-5" aria-hidden />
-                                </span>
-                                <span className="font-medium text-lg text-foreground">
-                                    {label}
-                                </span>
-                                {/* <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
+                                <Icon className="size-5" aria-hidden />
+                            </span>
+                            <span className="font-medium text-lg text-foreground">
+                                {label}
+                            </span>
+                            {/* <p className="mt-2 text-lg leading-relaxed text-muted-foreground">
                                     {label}
                                 </p> */}
-                            </div>
-                        ),
-                    )}
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>

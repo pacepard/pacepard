@@ -71,7 +71,7 @@ export function SocialProofTestimonials({
                                         '[--duration:60s]': i === 0,
                                         '[--duration:35s]': i === 1,
                                         '[--duration:50s]': i === 2,
-                                    }
+                                    },
                                 )}
                             >
                                 {testimonials

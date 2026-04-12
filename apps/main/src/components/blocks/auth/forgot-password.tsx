@@ -4,11 +4,13 @@ import { Label } from '@pacepard/ui/components/label';
 import { useRef, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { forgotPasswordSchema, ForgotPasswordFormValues, verifyOtpSchema, VerifyOtpFormValues } from './validation';
 import {
-    Loader2,
-    Mail,
-} from 'lucide-react';
+    forgotPasswordSchema,
+    ForgotPasswordFormValues,
+    verifyOtpSchema,
+    VerifyOtpFormValues,
+} from './validation';
+import { Loader2, Mail } from 'lucide-react';
 import { PacepardAPI } from '@/config/pacepard';
 import { toast } from '@pacepard/ui';
 import { useNavigate } from 'react-router';
@@ -19,7 +21,10 @@ interface ForgotPasswordFormProps {
     className?: string;
 }
 
-const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordFormProps) => {
+const ForgotPasswordForm = ({
+    onStepChange,
+    className = '',
+}: ForgotPasswordFormProps) => {
     const navigate = useNavigate();
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const [step, setStep] = useState<'email' | 'otp' | 'success'>('email');
@@ -81,7 +86,10 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
             if (response.error) {
                 emailForm.setError('root', {
                     type: 'server',
-                    message: response.message || response.data?.message || 'Failed to send OTP. Please try again.',
+                    message:
+                        response.message ||
+                        response.data?.message ||
+                        'Failed to send OTP. Please try again.',
                 });
             } else {
                 setEmail(data.email);
@@ -94,10 +102,11 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
         } catch (error: any) {
             console.error('Forgot password error:', error);
             // Handle different error types
-            const errorMessage = error?.response?.data?.message 
-                || error?.message 
-                || 'An unexpected error occurred. Please try again.';
-            
+            const errorMessage =
+                error?.response?.data?.message ||
+                error?.message ||
+                'An unexpected error occurred. Please try again.';
+
             emailForm.setError('root', {
                 type: 'server',
                 message: errorMessage,
@@ -165,7 +174,10 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
             if (response.error) {
                 otpForm.setError('otp', {
                     type: 'server',
-                    message: response.message || response.data || 'Invalid OTP. Please try again.',
+                    message:
+                        response.message ||
+                        response.data ||
+                        'Invalid OTP. Please try again.',
                 });
             } else {
                 updateStep('success');
@@ -196,7 +208,10 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
             if (response.error) {
                 otpForm.setError('root', {
                     type: 'server',
-                    message: response.message || response.data || 'Failed to resend OTP. Please try again.',
+                    message:
+                        response.message ||
+                        response.data ||
+                        'Failed to resend OTP. Please try again.',
                 });
             } else {
                 toast.success('OTP resent successfully');
@@ -204,7 +219,8 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
         } catch (error) {
             otpForm.setError('root', {
                 type: 'server',
-                message: 'An error occurred while resending OTP. Please try again.',
+                message:
+                    'An error occurred while resending OTP. Please try again.',
             });
             console.error('Resend OTP error:', error);
         }
@@ -236,7 +252,9 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                                 placeholder="yourname@email.com"
                                 className="pl-9 h-11 ring-foreground/15 border-transparent ring-1"
                                 {...emailForm.register('email')}
-                                aria-invalid={!!emailForm.formState.errors.email}
+                                aria-invalid={
+                                    !!emailForm.formState.errors.email
+                                }
                             />
                         </div>
                         {emailForm.formState.errors.email && (
@@ -259,7 +277,9 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                         {emailForm.formState.isSubmitting && (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         )}
-                        {emailForm.formState.isSubmitting ? 'Sending OTP...' : 'Request OTP'}
+                        {emailForm.formState.isSubmitting
+                            ? 'Sending OTP...'
+                            : 'Request OTP'}
                     </Button>
 
                     <div className="text-center text-sm">
@@ -287,7 +307,9 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                 <div className="space-y-4">
                     <div className="text-center text-sm text-muted-foreground">
                         <p>We sent a verification code to</p>
-                        <p className="font-medium text-foreground">{maskedEmail}</p>
+                        <p className="font-medium text-foreground">
+                            {maskedEmail}
+                        </p>
                     </div>
 
                     <div className="flex flex-col gap-2 space-y-1">
@@ -301,18 +323,30 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                                     inputMode="numeric"
                                     maxLength={1}
                                     value={otpValue[index] || ''}
-                                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                                    onPaste={index === 0 ? handlePaste : undefined}
+                                    onChange={(e) =>
+                                        handleOtpChange(index, e.target.value)
+                                    }
+                                    onPaste={
+                                        index === 0 ? handlePaste : undefined
+                                    }
                                     onFocus={(e) => e.currentTarget.select()}
                                     onKeyDown={(e) => {
-                                        if (e.key === 'Backspace' && !otpValue[index] && index > 0) {
+                                        if (
+                                            e.key === 'Backspace' &&
+                                            !otpValue[index] &&
+                                            index > 0
+                                        ) {
                                             otpRefs.current[index - 1]?.focus();
                                         }
                                     }}
                                     className={`w-12 h-12 text-center text-lg font-semibold ${
-                                        otpForm.formState.errors.otp ? 'border-destructive' : ''
+                                        otpForm.formState.errors.otp
+                                            ? 'border-destructive'
+                                            : ''
                                     }`}
-                                    aria-invalid={!!otpForm.formState.errors.otp}
+                                    aria-invalid={
+                                        !!otpForm.formState.errors.otp
+                                    }
                                 />
                             ))}
                         </div>
@@ -355,7 +389,9 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                         {otpForm.formState.isSubmitting && (
                             <Loader2 className="h-4 w-4 animate-spin" />
                         )}
-                        {otpForm.formState.isSubmitting ? 'Verifying...' : 'Verify code'}
+                        {otpForm.formState.isSubmitting
+                            ? 'Verifying...'
+                            : 'Verify code'}
                     </Button>
 
                     <Button
@@ -363,7 +399,10 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                         variant="ghost"
                         className="w-full"
                         onClick={handleBackToEmail}
-                        disabled={otpForm.formState.isSubmitting || emailForm.formState.isSubmitting}
+                        disabled={
+                            otpForm.formState.isSubmitting ||
+                            emailForm.formState.isSubmitting
+                        }
                     >
                         Back to email
                     </Button>
@@ -394,7 +433,8 @@ const ForgotPasswordForm = ({ onStepChange, className = '' }: ForgotPasswordForm
                 </div>
                 <h2 className="text-lg font-semibold">Email verified!</h2>
                 <p className="text-sm text-muted-foreground">
-                    Your identity has been verified. You can now create a new password.
+                    Your identity has been verified. You can now create a new
+                    password.
                 </p>
             </div>
 

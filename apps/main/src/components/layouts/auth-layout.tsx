@@ -55,7 +55,9 @@ export const AuthLayout = (props: IAuthLayout) => {
 
                     {children}
 
-                    {showTermsAndPrivacy && <TermsAndPrivacy authType={authType} />}
+                    {showTermsAndPrivacy && (
+                        <TermsAndPrivacy authType={authType} />
+                    )}
                 </div>
             </div>
             <Toaster />

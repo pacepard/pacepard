@@ -2,7 +2,6 @@ import { AuthLayout } from '@/components/layouts/auth-layout';
 import LoginForm from '@/components/blocks/auth/login-form';
 import { useNavigate } from 'react-router';
 
-
 const Login = () => {
     const navigate = useNavigate();
 

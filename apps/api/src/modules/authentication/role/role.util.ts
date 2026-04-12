@@ -1,17 +1,31 @@
 import { Types } from 'mongoose';
-import { WorkspaceMemberRole, IWorkspaceDoc, IWorkspaceMember } from '../../core/workspace/workspace.interface';
-import { ProjectMemberRole, IProjectDoc, IProjectMember } from '../../projects/project/project.interface';
-import { HackathonMemberRole, IHackathonDoc, IHackathonMember } from '../../hackathons/hackathon/hackathon.interface';
+import {
+    WorkspaceMemberRole,
+    IWorkspaceDoc,
+    IWorkspaceMember,
+} from '../../core/workspace/workspace.interface';
+import {
+    ProjectMemberRole,
+    IProjectDoc,
+    IProjectMember,
+} from '../../projects/project/project.interface';
+import {
+    HackathonMemberRole,
+    IHackathonDoc,
+    IHackathonMember,
+} from '../../hackathons/hackathon/hackathon.interface';
 import { IUserDoc } from '../../users/user/user.interface';
 import { IGuestDoc, GuestTypeEnum } from '../../users/guest/guest.interface';
 
 type ObjectId = Types.ObjectId;
 
-
 /**
  * Workspace-level permission mapping
  */
-export const workspaceMemberPermissionMap: Record<WorkspaceMemberRole, string[]> = {
+export const workspaceMemberPermissionMap: Record<
+    WorkspaceMemberRole,
+    string[]
+> = {
     [WorkspaceMemberRole.OWNER]: ['*:*'], // Full access (BUSINESS userType)
     [WorkspaceMemberRole.MANAGER]: [
         'workspace:read',
@@ -59,7 +73,10 @@ export const projectMemberPermissionMap: Record<ProjectMemberRole, string[]> = {
 /**
  * Hackathon-level permission mapping
  */
-export const hackathonMemberPermissionMap: Record<HackathonMemberRole, string[]> = {
+export const hackathonMemberPermissionMap: Record<
+    HackathonMemberRole,
+    string[]
+> = {
     [HackathonMemberRole.OWNER]: ['*:*'], // Full access (can delete hackathon)
     [HackathonMemberRole.ORGANIZER]: [
         'hackathon:read',
@@ -77,18 +94,17 @@ export const hackathonMemberPermissionMap: Record<HackathonMemberRole, string[]>
 /**
  * Functional role permission mapping (judges, mentors, participants)
  */
-export const hackathonFunctionalRoleMap: Record<'JUDGE' | 'MENTOR' | 'PARTICIPANT', string[]> = {
+export const hackathonFunctionalRoleMap: Record<
+    'JUDGE' | 'MENTOR' | 'PARTICIPANT',
+    string[]
+> = {
     JUDGE: [
         'hackathon:read',
         'entry:read',
         'submission:read',
         'submission:evaluate',
     ],
-    MENTOR: [
-        'hackathon:read',
-        'entry:read',
-        'submission:read',
-    ],
+    MENTOR: ['hackathon:read', 'entry:read', 'submission:read'],
     PARTICIPANT: [
         'hackathon:read',
         'entry:create',
@@ -149,11 +165,12 @@ export const workspaceJudgePermissionMap: string[] = [
     'submission:evaluate',
 ];
 
-
 /**
  * Get contextual permissions for a workspace member role
  */
-export function getWorkspaceMemberPermissions(role: WorkspaceMemberRole): string[] {
+export function getWorkspaceMemberPermissions(
+    role: WorkspaceMemberRole,
+): string[] {
     return workspaceMemberPermissionMap[role] || [];
 }
 
@@ -167,14 +184,18 @@ export function getProjectMemberPermissions(role: ProjectMemberRole): string[] {
 /**
  * Get contextual permissions for a hackathon member role
  */
-export function getHackathonMemberPermissions(role: HackathonMemberRole): string[] {
+export function getHackathonMemberPermissions(
+    role: HackathonMemberRole,
+): string[] {
     return hackathonMemberPermissionMap[role] || [];
 }
 
 /**
  * Get contextual permissions for a hackathon functional role
  */
-export function getHackathonFunctionalPermissions(role: 'JUDGE' | 'MENTOR' | 'PARTICIPANT'): string[] {
+export function getHackathonFunctionalPermissions(
+    role: 'JUDGE' | 'MENTOR' | 'PARTICIPANT',
+): string[] {
     return hackathonFunctionalRoleMap[role] || [];
 }
 
@@ -197,7 +218,12 @@ function extractUserId(user: IUserDoc | ObjectId | string): string {
  */
 function extractUserIdFromField(userField: any): string | null {
     if (!userField) return null;
-    return (userField as any)?._id?.toString() || (userField as any)?.toString() || userField?.toString() || null;
+    return (
+        (userField as any)?._id?.toString() ||
+        (userField as any)?.toString() ||
+        userField?.toString() ||
+        null
+    );
 }
 
 /**
@@ -208,7 +234,7 @@ function extractUserIdFromField(userField: any): string | null {
  */
 function findMemberInArray<T extends { user: any }>(
     members: T[],
-    userId: string
+    userId: string,
 ): T | undefined {
     return members.find((member) => {
         const memberUserId = extractUserIdFromField(member.user);
@@ -216,18 +242,20 @@ function findMemberInArray<T extends { user: any }>(
     });
 }
 
-
 /**
  * Get member role from a workspace resource
  */
 export function getWorkspaceMemberRole(
     user: IUserDoc | ObjectId | string,
-    workspace: IWorkspaceDoc | any
+    workspace: IWorkspaceDoc | any,
 ): WorkspaceMemberRole | null {
     if (!workspace?.members || !Array.isArray(workspace.members)) return null;
 
     const userId = extractUserId(user);
-    const member = findMemberInArray<IWorkspaceMember>(workspace.members, userId);
+    const member = findMemberInArray<IWorkspaceMember>(
+        workspace.members,
+        userId,
+    );
 
     return member?.role || null;
 }
@@ -237,7 +265,7 @@ export function getWorkspaceMemberRole(
  */
 export function getProjectMemberRole(
     user: IUserDoc | ObjectId | string,
-    project: IProjectDoc | any
+    project: IProjectDoc | any,
 ): ProjectMemberRole | null {
     if (!project?.members || !Array.isArray(project.members)) return null;
 
@@ -252,12 +280,15 @@ export function getProjectMemberRole(
  */
 export function getHackathonMemberRole(
     user: IUserDoc | ObjectId | string,
-    hackathon: IHackathonDoc | any
+    hackathon: IHackathonDoc | any,
 ): HackathonMemberRole | null {
     if (!hackathon?.members || !Array.isArray(hackathon.members)) return null;
 
     const userId = extractUserId(user);
-    const member = findMemberInArray<IHackathonMember>(hackathon.members, userId);
+    const member = findMemberInArray<IHackathonMember>(
+        hackathon.members,
+        userId,
+    );
 
     return member?.role || null;
 }
@@ -268,7 +299,7 @@ export function getHackathonMemberRole(
  */
 export function isHackathonJudge(
     user: IUserDoc | ObjectId | string,
-    hackathon: IHackathonDoc | any
+    hackathon: IHackathonDoc | any,
 ): boolean {
     if (!hackathon?.judges || !Array.isArray(hackathon.judges)) return false;
 
@@ -278,16 +309,20 @@ export function isHackathonJudge(
         // judge.user is now a Guest reference
         const judgeGuestId = extractUserIdFromField(judge.user);
         if (!judgeGuestId) return false;
-        
+
         // Check if the guest's user matches the userId and type is JUDGE
         // If judge.user is populated, check directly; otherwise we'd need to query
         const judgeGuest = judge.user;
         if (judgeGuest && typeof judgeGuest === 'object') {
             // If populated, check user and type
             const guestUserId = extractUserIdFromField(judgeGuest.user);
-            return guestUserId === userId && judgeGuest.type === GuestTypeEnum.JUDGE && judge.status !== 'inactive';
+            return (
+                guestUserId === userId &&
+                judgeGuest.type === GuestTypeEnum.JUDGE &&
+                judge.status !== 'inactive'
+            );
         }
-        
+
         // If not populated, we can't verify without a query, so return false
         // The permission service will handle the actual check via database query
         return false;
@@ -300,7 +335,7 @@ export function isHackathonJudge(
  */
 export function isHackathonMentor(
     user: IUserDoc | ObjectId | string,
-    hackathon: IHackathonDoc | any
+    hackathon: IHackathonDoc | any,
 ): boolean {
     if (!hackathon?.mentors || !Array.isArray(hackathon.mentors)) return false;
 
@@ -310,16 +345,20 @@ export function isHackathonMentor(
         // mentor.user is now a Guest reference
         const mentorGuestId = extractUserIdFromField(mentor.user);
         if (!mentorGuestId) return false;
-        
+
         // Check if the guest's user matches the userId and type is MENTOR
         // If mentor.user is populated, check directly; otherwise we'd need to query
         const mentorGuest = mentor.user;
         if (mentorGuest && typeof mentorGuest === 'object') {
             // If populated, check user and type
             const guestUserId = extractUserIdFromField(mentorGuest.user);
-            return guestUserId === userId && mentorGuest.type === GuestTypeEnum.MENTOR && mentor.status !== 'inactive';
+            return (
+                guestUserId === userId &&
+                mentorGuest.type === GuestTypeEnum.MENTOR &&
+                mentor.status !== 'inactive'
+            );
         }
-        
+
         // If not populated, we can't verify without a query, so return false
         // The permission service will handle the actual check via database query
         return false;
@@ -332,12 +371,15 @@ export function isHackathonMentor(
  */
 export function isProjectMentor(
     user: IUserDoc | ObjectId | string,
-    project: IProjectDoc | any
+    project: IProjectDoc | any,
 ): boolean {
     if (!project?._id) return false;
 
     const userId = extractUserId(user);
-    const projectId = (project._id as any)?.toString() || project._id?.toString() || String(project._id);
+    const projectId =
+        (project._id as any)?.toString() ||
+        project._id?.toString() ||
+        String(project._id);
 
     // Check if user has a guest profile (type: MENTOR) with this project
     // This will be checked via database query in permission service
@@ -352,12 +394,15 @@ export function isProjectMentor(
  */
 export function isProjectJudge(
     user: IUserDoc | ObjectId | string,
-    project: IProjectDoc | any
+    project: IProjectDoc | any,
 ): boolean {
     if (!project?._id) return false;
 
     const userId = extractUserId(user);
-    const projectId = (project._id as any)?.toString() || project._id?.toString() || String(project._id);
+    const projectId =
+        (project._id as any)?.toString() ||
+        project._id?.toString() ||
+        String(project._id);
 
     // Check if user has a guest profile (type: JUDGE) with this project
     // This will be checked via database query in permission service
@@ -372,7 +417,7 @@ export function isProjectJudge(
  */
 export function isWorkspaceMentor(
     user: IUserDoc | ObjectId | string,
-    workspace: IWorkspaceDoc | any
+    workspace: IWorkspaceDoc | any,
 ): boolean {
     if (!workspace?.mentors || !Array.isArray(workspace.mentors)) return false;
 
@@ -382,13 +427,13 @@ export function isWorkspaceMentor(
         // mentor is now a Guest reference
         const mentorGuestId = extractUserIdFromField(mentor);
         if (!mentorGuestId) return false;
-        
+
         // If mentor is populated, check user and type
         if (mentor && typeof mentor === 'object' && mentor.user) {
             const guestUserId = extractUserIdFromField(mentor.user);
             return guestUserId === userId && mentor.type === 'mentor';
         }
-        
+
         // If not populated, we can't verify without a query
         // The permission service will handle the actual check via database query
         return false;
@@ -401,7 +446,7 @@ export function isWorkspaceMentor(
  */
 export function isWorkspaceJudge(
     user: IUserDoc | ObjectId | string,
-    workspace: IWorkspaceDoc | any
+    workspace: IWorkspaceDoc | any,
 ): boolean {
     if (!workspace?.judges || !Array.isArray(workspace.judges)) return false;
 
@@ -411,13 +456,13 @@ export function isWorkspaceJudge(
         // judge is now a Guest reference
         const judgeGuestId = extractUserIdFromField(judge);
         if (!judgeGuestId) return false;
-        
+
         // If judge is populated, check user and type
         if (judge && typeof judge === 'object' && judge.user) {
             const guestUserId = extractUserIdFromField(judge.user);
             return guestUserId === userId && judge.type === GuestTypeEnum.JUDGE;
         }
-        
+
         // If not populated, we can't verify without a query
         // The permission service will handle the actual check via database query
         return false;
@@ -458,17 +503,25 @@ export function getWorkspaceJudgePermissions(): string[] {
  */
 export function getContextualPermissions(
     resourceType: 'workspace' | 'project' | 'hackathon',
-    memberRole: WorkspaceMemberRole | ProjectMemberRole | HackathonMemberRole | null
+    memberRole:
+        | WorkspaceMemberRole
+        | ProjectMemberRole
+        | HackathonMemberRole
+        | null,
 ): string[] {
     if (!memberRole) return [];
 
     switch (resourceType) {
         case 'workspace':
-            return getWorkspaceMemberPermissions(memberRole as WorkspaceMemberRole);
+            return getWorkspaceMemberPermissions(
+                memberRole as WorkspaceMemberRole,
+            );
         case 'project':
             return getProjectMemberPermissions(memberRole as ProjectMemberRole);
         case 'hackathon':
-            return getHackathonMemberPermissions(memberRole as HackathonMemberRole);
+            return getHackathonMemberPermissions(
+                memberRole as HackathonMemberRole,
+            );
         default:
             return [];
     }
@@ -478,8 +531,14 @@ export function getContextualPermissions(
  * Check if a permission matches any of the permissions in the set
  * Supports wildcard matching (entity:* or *:action)
  */
-export function matchPermission(requested: string, perms: Set<string> | string[]): boolean {
-    const permSet = perms instanceof Set ? perms : new Set(perms.map(p => p.toLowerCase()));
+export function matchPermission(
+    requested: string,
+    perms: Set<string> | string[],
+): boolean {
+    const permSet =
+        perms instanceof Set
+            ? perms
+            : new Set(perms.map((p) => p.toLowerCase()));
     requested = requested.toLowerCase();
 
     if (permSet.has('*:*')) return true; // global wildcard

@@ -60,7 +60,8 @@ export const createSquad: RequestHandler = asyncHandler(
 export const getSquad: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
         const { id } = req.params;
-        if (!id) return next(new ErrorResponse('Squad ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Squad ID is required', 400, []));
 
         const cacheKey = `squad:${id}`;
         const cacheTTL = 300; // 5 minutes
@@ -196,7 +197,8 @@ export const updateSquad: RequestHandler = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
-        if (!id) return next(new ErrorResponse('Squad ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Squad ID is required', 400, []));
 
         const squadResult = await squadRepository.findById(id);
         if (squadResult.error || !squadResult.data) {
@@ -245,7 +247,8 @@ export const deleteSquad: RequestHandler = asyncHandler(
         if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
 
         const { id } = req.params;
-        if (!id) return next(new ErrorResponse('Squad ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Squad ID is required', 400, []));
 
         const squadResult = await squadRepository.findById(id);
         if (squadResult.error || !squadResult.data) {
@@ -290,7 +293,8 @@ export const addMember: RequestHandler = asyncHandler(
         const { id } = req.params;
         const { userId: memberUserId, role } = req.body;
 
-        if (!id) return next(new ErrorResponse('Squad ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Squad ID is required', 400, []));
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 
@@ -339,7 +343,8 @@ export const removeMember: RequestHandler = asyncHandler(
 
         const { id, userId: memberUserId } = req.params;
 
-        if (!id) return next(new ErrorResponse('Squad ID is required', 400, []));
+        if (!id)
+            return next(new ErrorResponse('Squad ID is required', 400, []));
         if (!memberUserId)
             return next(new ErrorResponse('User ID is required', 400, []));
 

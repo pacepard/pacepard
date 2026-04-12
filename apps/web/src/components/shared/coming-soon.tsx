@@ -40,7 +40,12 @@ export type ComingSoonPanelProps = {
 };
 
 function ComingSoonCountdown() {
-    const [countdown, setCountdown] = useState<Countdown>({ days: 30, hours: 0, minutes: 0, seconds: 0 });
+    const [countdown, setCountdown] = useState<Countdown>({
+        days: 30,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+    });
 
     useEffect(() => {
         const targetDate = new Date();
@@ -53,8 +58,12 @@ function ComingSoonCountdown() {
             if (distance > 0) {
                 setCountdown({
                     days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-                    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                    hours: Math.floor(
+                        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+                    ),
+                    minutes: Math.floor(
+                        (distance % (1000 * 60 * 60)) / (1000 * 60),
+                    ),
                     seconds: Math.floor((distance % (1000 * 60)) / 1000),
                 });
             } else {
@@ -103,7 +112,11 @@ export function ComingSoonPanel({
     imageWidth = 560,
     imageHeight = 420,
     primaryAction = { label: 'Back to home', href: '/' },
-    secondaryAction = { label: 'Request a demo', href: CALENDLY, external: true },
+    secondaryAction = {
+        label: 'Request a demo',
+        href: CALENDLY,
+        external: true,
+    },
     className,
 }: ComingSoonPanelProps) {
     return (
@@ -114,8 +127,12 @@ export function ComingSoonPanel({
                         <div className="inline-flex items-center rounded-md border border-border bg-muted/50 px-3 py-1 text-sm font-medium text-muted-foreground">
                             {badgeLabel}
                         </div>
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">{title}</h1>
-                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">{description}</p>
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+                            {title}
+                        </h1>
+                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
+                            {description}
+                        </p>
                         {showCountdown ? <ComingSoonCountdown /> : null}
                         <div className="flex flex-wrap items-center gap-4">
                             <Button
@@ -131,11 +148,18 @@ export function ComingSoonPanel({
                                     href={primaryAction.href}
                                     className="inline-flex items-center gap-2"
                                     {...(primaryAction.external
-                                        ? { target: '_blank', rel: 'noopener noreferrer' }
+                                        ? {
+                                              target: '_blank',
+                                              rel: 'noopener noreferrer',
+                                          }
                                         : {})}
                                 >
                                     {primaryAction.label}
-                                    <ArrowRightToLineIcon className="size-4" strokeWidth={2.5} aria-hidden />
+                                    <ArrowRightToLineIcon
+                                        className="size-4"
+                                        strokeWidth={2.5}
+                                        aria-hidden
+                                    />
                                 </Link>
                             </Button>
                             {secondaryAction ? (
@@ -154,13 +178,28 @@ export function ComingSoonPanel({
                                         href={secondaryAction.href}
                                         className="inline-flex items-center gap-2"
                                         {...(secondaryAction.external
-                                            ? { target: '_blank', rel: 'noopener noreferrer' }
+                                            ? {
+                                                  target: '_blank',
+                                                  rel: 'noopener noreferrer',
+                                              }
                                             : {})}
                                     >
-                                        {secondaryAction.href.startsWith('mailto:') ? (
-                                            <Mail className="size-4" strokeWidth={2.5} aria-hidden />
-                                        ) : secondaryAction.href.includes('calendly') ? (
-                                            <Calendar className="size-4" strokeWidth={2.5} aria-hidden />
+                                        {secondaryAction.href.startsWith(
+                                            'mailto:',
+                                        ) ? (
+                                            <Mail
+                                                className="size-4"
+                                                strokeWidth={2.5}
+                                                aria-hidden
+                                            />
+                                        ) : secondaryAction.href.includes(
+                                              'calendly',
+                                          ) ? (
+                                            <Calendar
+                                                className="size-4"
+                                                strokeWidth={2.5}
+                                                aria-hidden
+                                            />
                                         ) : null}
                                         {secondaryAction.label}
                                     </Link>

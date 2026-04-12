@@ -5,4 +5,3 @@ const AdminSettingsGeneral = () => {
 };
 
 export default AdminSettingsGeneral;
-

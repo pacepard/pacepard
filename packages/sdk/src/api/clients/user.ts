@@ -55,7 +55,9 @@ class UserAPI {
      * @returns {Promise<IAPIResponse>} Server response with user data.
      */
     getUser(userId?: string): Promise<IAPIResponse> {
-        const path = userId ? `${URL_LOGGEDIN_USER}/${userId}` : URL_LOGGEDIN_USER;
+        const path = userId
+            ? `${URL_LOGGEDIN_USER}/${userId}`
+            : URL_LOGGEDIN_USER;
 
         return this.axiosService.call({
             type: 'default',
@@ -274,4 +276,3 @@ class UserAPI {
 }
 
 export default UserAPI;
-

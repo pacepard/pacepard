@@ -161,7 +161,9 @@ class ShareableLinkRepository {
         );
     }
 
-    public async deleteExpiredLinks(olderThanDays: number = 30): Promise<IResult> {
+    public async deleteExpiredLinks(
+        olderThanDays: number = 30,
+    ): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',

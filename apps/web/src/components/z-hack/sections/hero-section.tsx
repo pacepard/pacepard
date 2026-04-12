@@ -1,41 +1,36 @@
-import React from 'react'
+import React from 'react';
 
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from 'next/image';
+import Link from 'next/link';
 
-import type { Transition } from "motion/react";
+import type { Transition } from 'motion/react';
 
-import { HackHeroData } from '@/_data/hack/hack-ogbomoso'
-import { AnimatedGroup } from '@/components/ui/animated-group'
-import { Button } from '@/components/ui/button'
-import { TextEffect } from '@/components/ui/text-effect'
-
-
-
-
+import { HackHeroData } from '@/_data/hack/hack-ogbomoso';
+import { AnimatedGroup } from '@/components/ui/animated-group';
+import { Button } from '@/components/ui/button';
+import { TextEffect } from '@/components/ui/text-effect';
 
 const springTransition: Transition = {
-  type: "spring",
-  bounce: 0.3,
-  duration: 1.5,
+    type: 'spring',
+    bounce: 0.3,
+    duration: 1.5,
 };
 
 const transitionVariants = {
-  item: {
-    hidden: {
-      opacity: 0,
-      filter: "blur(12px)",
-      y: 12,
+    item: {
+        hidden: {
+            opacity: 0,
+            filter: 'blur(12px)',
+            y: 12,
+        },
+        visible: {
+            opacity: 1,
+            filter: 'blur(0px)',
+            y: 0,
+            transition: springTransition,
+        },
     },
-    visible: {
-      opacity: 1,
-      filter: "blur(0px)",
-      y: 0,
-      transition: springTransition,
-    },
-  },
 };
-
 
 export default function HeroSection() {
     return (
@@ -43,7 +38,8 @@ export default function HeroSection() {
             <main className="overflow-hidden">
                 <div
                     aria-hidden
-                    className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block">
+                    className="absolute inset-0 isolate hidden opacity-65 contain-strict lg:block"
+                >
                     <div className="w-140 h-320 -translate-y-87.5 absolute left-0 top-0 -rotate-45 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,hsla(0,0%,85%,.08)_0,hsla(0,0%,55%,.02)_50%,hsla(0,0%,45%,0)_80%)]" />
                     <div className="h-320 absolute left-0 top-0 w-60 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.06)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)] [translate:5%_-50%]" />
                     <div className="h-320 -translate-y-87.5 absolute left-0 top-0 w-60 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
@@ -76,7 +72,8 @@ export default function HeroSection() {
                                     },
                                 },
                             }}
-                            className="mask-b-from-35% mask-b-to-90% absolute inset-0 top-56 -z-20 lg:top-32">
+                            className="mask-b-from-35% mask-b-to-90% absolute inset-0 top-56 -z-20 lg:top-32"
+                        >
                             <Image
                                 src="/"
                                 alt="background"
@@ -93,12 +90,14 @@ export default function HeroSection() {
 
                         <div className="mx-auto max-w-7xl px-6">
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
-
-                                      <AnimatedGroup variants={transitionVariants}>
+                                <AnimatedGroup variants={transitionVariants}>
                                     <Link
                                         href="#link"
-                                        className="bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 pr-4 shadow-md shadow-zinc-950/5 transition-colors duration-300 dark:border-t-white/5 dark:shadow-zinc-950">
-                                        <span className="text-foreground text-sm">{HackHeroData.date}</span>
+                                        className="bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 pr-4 shadow-md shadow-zinc-950/5 transition-colors duration-300 dark:border-t-white/5 dark:shadow-zinc-950"
+                                    >
+                                        <span className="text-foreground text-sm">
+                                            {HackHeroData.date}
+                                        </span>
                                     </Link>
                                 </AnimatedGroup>
 
@@ -106,7 +105,8 @@ export default function HeroSection() {
                                     preset="fade-in-blur"
                                     speedSegment={0.3}
                                     as="h1"
-                                    className="mx-auto mt-8 max-w-4xl text-balance text-5xl max-md:font-semibold md:text-7xl lg:mt-8 xl:text-[5.25rem]">
+                                    className="mx-auto mt-8 max-w-4xl text-balance text-5xl max-md:font-semibold md:text-7xl lg:mt-8 xl:text-[5.25rem]"
+                                >
                                     {HackHeroData.heading}
                                 </TextEffect>
                                 <TextEffect
@@ -115,7 +115,8 @@ export default function HeroSection() {
                                     speedSegment={0.3}
                                     delay={0.5}
                                     as="p"
-                                    className="mx-auto mt-8 max-w-2xl text-balance text-lg">
+                                    className="mx-auto mt-8 max-w-2xl text-balance text-lg"
+                                >
                                     {HackHeroData.tagline}
                                 </TextEffect>
 
@@ -131,16 +132,23 @@ export default function HeroSection() {
                                         },
                                         ...transitionVariants,
                                     }}
-                                    className="mt-8 flex items-center justify-center gap-2 md:flex-row">
+                                    className="mt-8 flex items-center justify-center gap-2 md:flex-row"
+                                >
                                     <div
                                         key={1}
-                                        className=" rounded-md border p-0.5">
+                                        className=" rounded-md border p-0.5"
+                                    >
                                         <Button
                                             asChild
                                             size="lg"
-                                            className="rounded-md px-5 text-black bg-brand hover:bg-brand/90">
-                                            <Link href={HackHeroData.button.href}>
-                                                <span className="text-nowrap">{HackHeroData.button.text}</span>
+                                            className="rounded-md px-5 text-black bg-brand hover:bg-brand/90"
+                                        >
+                                            <Link
+                                                href={HackHeroData.button.href}
+                                            >
+                                                <span className="text-nowrap">
+                                                    {HackHeroData.button.text}
+                                                </span>
                                             </Link>
                                         </Button>
                                     </div>
@@ -149,9 +157,12 @@ export default function HeroSection() {
                                         asChild
                                         size="lg"
                                         variant="outline"
-                                        className="h-10.5 rounded-md px-5 border-brand bg-background dark:bg-white text-black">
+                                        className="h-10.5 rounded-md px-5 border-brand bg-background dark:bg-white text-black"
+                                    >
                                         <Link href="#link">
-                                            <span className="text-nowrap">Become a mentor</span>
+                                            <span className="text-nowrap">
+                                                Become a mentor
+                                            </span>
                                         </Link>
                                     </Button>
                                 </AnimatedGroup>
@@ -169,7 +180,8 @@ export default function HeroSection() {
                                     },
                                 },
                                 ...transitionVariants,
-                            }}>
+                            }}
+                        >
                             <div className="mask-b-from-55% relative -mr-56 mt-8 overflow-hidden px-2 sm:mr-0 sm:mt-12 md:mt-20">
                                 <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
                                     <Image
@@ -193,5 +205,5 @@ export default function HeroSection() {
                 </section>
             </main>
         </>
-    )
+    );
 }

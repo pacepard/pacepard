@@ -20,7 +20,6 @@ const Collective = () => {
                 <ClCta />
                 <ClTestimonials />
                 <ClFAQ />
-
             </Background>
 
             <ClPricing />

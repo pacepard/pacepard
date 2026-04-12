@@ -9,7 +9,10 @@ import {
 } from './shareable-link.dto';
 import shareableLinkRepository from './shareable-link.repository';
 import ShareableLink from './shareable-link.model';
-import { IShareableLinkDoc, ShareableLinkType } from './shareable-link.interface';
+import {
+    IShareableLinkDoc,
+    ShareableLinkType,
+} from './shareable-link.interface';
 import systemService from '../../../services/system.service';
 import mongoose from 'mongoose';
 
@@ -68,14 +71,16 @@ class ShareableLinkService {
         if (!this.validateObjectId(resourceId)) {
             result.error = true;
             result.code = 400;
-            result.message = 'Invalid resourceId format (must be valid ObjectId)';
+            result.message =
+                'Invalid resourceId format (must be valid ObjectId)';
             return result;
         }
 
         if (!this.validateObjectId(createdBy)) {
             result.error = true;
             result.code = 400;
-            result.message = 'Invalid createdBy format (must be valid ObjectId)';
+            result.message =
+                'Invalid createdBy format (must be valid ObjectId)';
             return result;
         }
 
@@ -130,7 +135,9 @@ class ShareableLinkService {
         result.code = 201;
         result.data = {
             token: rawToken, // Return raw token for immediate use
-            linkId: (createResult.data as IShareableLinkDoc)?._id || (createResult.data as IShareableLinkDoc)?.id,
+            linkId:
+                (createResult.data as IShareableLinkDoc)?._id ||
+                (createResult.data as IShareableLinkDoc)?.id,
             expiresAt,
             linkName,
             linkType,
@@ -187,9 +194,10 @@ class ShareableLinkService {
         }
 
         // Find the link
-        const link = await shareableLinkRepository.findShareableLinkByToken(
-            encryptedToken,
-        );
+        const link =
+            await shareableLinkRepository.findShareableLinkByToken(
+                encryptedToken,
+            );
 
         if (!link) {
             result.error = true;
@@ -325,7 +333,12 @@ class ShareableLinkService {
             data: {},
         };
 
-        const { resourceId, linkType, includeRevoked = false, includeExpired = false } = dto;
+        const {
+            resourceId,
+            linkType,
+            includeRevoked = false,
+            includeExpired = false,
+        } = dto;
 
         if (!resourceId || !linkType) {
             result.error = true;
@@ -342,14 +355,15 @@ class ShareableLinkService {
             return result;
         }
 
-        const links = await shareableLinkRepository.findShareableLinksByResource(
-            resourceId,
-            linkType,
-            {
-                includeRevoked,
-                includeExpired,
-            },
-        );
+        const links =
+            await shareableLinkRepository.findShareableLinksByResource(
+                resourceId,
+                linkType,
+                {
+                    includeRevoked,
+                    includeExpired,
+                },
+            );
 
         result.message = `Found ${links.length} shareable link(s)`;
         result.data = links.map((link) => ({
@@ -457,9 +471,7 @@ class ShareableLinkService {
      * @param daysOld - Number of days old (default: 30)
      * @returns Promise<IResult>
      */
-    public async cleanupExpiredLinks(
-        daysOld: number = 30,
-    ): Promise<IResult> {
+    public async cleanupExpiredLinks(daysOld: number = 30): Promise<IResult> {
         let result: IResult = {
             error: false,
             message: '',
@@ -467,9 +479,8 @@ class ShareableLinkService {
             data: {},
         };
 
-        const cleanupResult = await shareableLinkRepository.deleteExpiredLinks(
-            daysOld,
-        );
+        const cleanupResult =
+            await shareableLinkRepository.deleteExpiredLinks(daysOld);
 
         result.message = cleanupResult.message;
         result.data = cleanupResult.data;

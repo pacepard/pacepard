@@ -5,4 +5,3 @@ const WhatsNew = () => {
 };
 
 export default WhatsNew;
-

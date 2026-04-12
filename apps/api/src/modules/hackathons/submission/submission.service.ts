@@ -133,8 +133,7 @@ class SubmissionService {
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message =
-                createResult.message;
+            result.message = createResult.message;
             return result;
         }
 
@@ -171,16 +170,21 @@ class SubmissionService {
         const submission = findResult.data as ISubmissionDoc;
 
         // Check permissions - only the respondent can update their submission
-        const respondentId = typeof submission.respondent === 'object'
-            ? String(submission.respondent._id || submission.respondent.id)
-            : String(submission.respondent);
+        const respondentId =
+            typeof submission.respondent === 'object'
+                ? String(submission.respondent._id || submission.respondent.id)
+                : String(submission.respondent);
 
-        const userId = typeof user === 'object' ? String(user._id || user.id) : String(user);
+        const userId =
+            typeof user === 'object'
+                ? String(user._id || user.id)
+                : String(user);
 
         if (respondentId !== userId) {
             result.error = true;
             result.code = 403;
-            result.message = 'You do not have permission to update this submission';
+            result.message =
+                'You do not have permission to update this submission';
             return result;
         }
 
@@ -317,16 +321,23 @@ class SubmissionService {
 
         // Check permissions if user is provided - only respondent can delete
         if (user) {
-            const respondentId = typeof submission.respondent === 'object'
-                ? String(submission.respondent._id || submission.respondent.id)
-                : String(submission.respondent);
+            const respondentId =
+                typeof submission.respondent === 'object'
+                    ? String(
+                          submission.respondent._id || submission.respondent.id,
+                      )
+                    : String(submission.respondent);
 
-            const userId = typeof user === 'object' ? String(user._id || user.id) : String(user);
+            const userId =
+                typeof user === 'object'
+                    ? String(user._id || user.id)
+                    : String(user);
 
             if (respondentId !== userId) {
                 result.error = true;
                 result.code = 403;
-                result.message = 'You do not have permission to delete this submission';
+                result.message =
+                    'You do not have permission to delete this submission';
                 return result;
             }
         }

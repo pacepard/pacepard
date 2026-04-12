@@ -91,9 +91,7 @@ export const Testimonials = ({
 }) => {
     return (
         <>
-            <section
-                className={cn('overflow-hidden py-24', className)}
-            >
+            <section className={cn('overflow-hidden py-24', className)}>
                 <div className="container">
                     <div className="space-y-4">
                         <h2 className="text-4xl font-regular tracking-tight md:text-5xl">

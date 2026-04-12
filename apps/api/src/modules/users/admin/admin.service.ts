@@ -63,7 +63,14 @@ class AdminService {
             return result;
         }
 
-        if (!firstName || !lastName || !email || !adminType || !department || !position) {
+        if (
+            !firstName ||
+            !lastName ||
+            !email ||
+            !adminType ||
+            !department ||
+            !position
+        ) {
             result.error = true;
             result.code = 400;
             result.message =
@@ -156,8 +163,7 @@ class AdminService {
         if (createResult.error || !createResult.data) {
             result.error = true;
             result.code = 500;
-            result.message =
-                createResult.message;
+            result.message = createResult.message;
             return result;
         }
 

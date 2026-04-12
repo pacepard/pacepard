@@ -5,4 +5,3 @@ const HowToGuides = () => {
 };
 
 export default HowToGuides;
-

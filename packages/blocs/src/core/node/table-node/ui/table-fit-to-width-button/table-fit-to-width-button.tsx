@@ -1,18 +1,17 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Hooks ---
-import { useTableFitToWidth } from "@/core/node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width"
-import type { UseTableFitToWidthConfig } from "@/core/node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width"
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { useTableFitToWidth } from '@/core/node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width';
+import type { UseTableFitToWidthConfig } from '@/core/node/table-node/ui/table-fit-to-width-button/use-table-fit-to-width';
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
 
 export interface TableFitToWidthButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseTableFitToWidthConfig {
-  text?: string
+    extends Omit<ButtonProps, 'type'>, UseTableFitToWidthConfig {
+    text?: string;
 }
 
 /**
@@ -31,66 +30,68 @@ export interface TableFitToWidthButtonProps
  * ```
  */
 export const TableFitToWidthButton = forwardRef<
-  HTMLButtonElement,
-  TableFitToWidthButtonProps
+    HTMLButtonElement,
+    TableFitToWidthButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      hideWhenUnavailable = false,
-      onWidthAdjusted,
-      text,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            hideWhenUnavailable = false,
+            onWidthAdjusted,
+            text,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const { isVisible, canFitToWidth, label, Icon, handleFitToWidth } =
+            useTableFitToWidth({
+                editor,
+                hideWhenUnavailable,
+                onWidthAdjusted,
+            });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleFitToWidth();
+            },
+            [handleFitToWidth, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                disabled={!canFitToWidth}
+                data-style="ghost"
+                data-active-state="off"
+                data-disabled={!canFitToWidth}
+                role="button"
+                tabIndex={-1}
+                aria-label={label}
+                tooltip={label}
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const { isVisible, canFitToWidth, label, Icon, handleFitToWidth } =
-      useTableFitToWidth({
-        editor,
-        hideWhenUnavailable,
-        onWidthAdjusted,
-      })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleFitToWidth()
-      },
-      [handleFitToWidth, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        disabled={!canFitToWidth}
-        data-style="ghost"
-        data-active-state="off"
-        data-disabled={!canFitToWidth}
-        role="button"
-        tabIndex={-1}
-        aria-label={label}
-        tooltip={label}
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-TableFitToWidthButton.displayName = "TableFitToWidthButton"
+TableFitToWidthButton.displayName = 'TableFitToWidthButton';

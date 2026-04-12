@@ -5,4 +5,3 @@ const AdminSettingsInvitations = () => {
 };
 
 export default AdminSettingsInvitations;
-

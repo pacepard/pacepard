@@ -1,15 +1,15 @@
-import { Button } from "@pacepard/ui/components/button";
-import { Input } from "@pacepard/ui/components/input";
-import { Label } from "@pacepard/ui/components/label";
-import { useRef, useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { verifyOtpSchema, VerifyOtpFormValues } from "./validation";
-import { toast } from "@pacepard/ui";
-import { useNavigate } from "react-router";
-import { OtpType, persistAuthFromResponse, storage } from "@pacepard/sdk";
-import { PacepardAPI } from "@/config/pacepard";
-import { Loader2 } from "lucide-react";
+import { Button } from '@pacepard/ui/components/button';
+import { Input } from '@pacepard/ui/components/input';
+import { Label } from '@pacepard/ui/components/label';
+import { useRef, useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { verifyOtpSchema, VerifyOtpFormValues } from './validation';
+import { toast } from '@pacepard/ui';
+import { useNavigate } from 'react-router';
+import { OtpType, persistAuthFromResponse, storage } from '@pacepard/sdk';
+import { PacepardAPI } from '@/config/pacepard';
+import { Loader2 } from 'lucide-react';
 
 interface OtpFormProps {
     className?: string;
@@ -22,10 +22,10 @@ interface OtpFormProps {
 }
 
 const OtpForm = ({
-    className = "",
+    className = '',
     email,
     otpType,
-    successMessage = "OTP verified successfully",
+    successMessage = 'OTP verified successfully',
     redirectTo,
     onSuccess,
     onResend,
@@ -44,10 +44,10 @@ const OtpForm = ({
         formState: { errors, isSubmitting },
     } = useForm<VerifyOtpFormValues>({
         resolver: zodResolver(verifyOtpSchema),
-        defaultValues: { otp: "" },
+        defaultValues: { otp: '' },
     });
 
-    const otpValue = watch("otp", "");
+    const otpValue = watch('otp', '');
 
     useEffect(() => {
         if (resendCountdown <= 0) return;
@@ -61,43 +61,43 @@ const OtpForm = ({
 
     const cleanEmail = (): string => {
         let e = storage.getUserEmail() as string;
-        if (!e) return email || "";
+        if (!e) return email || '';
         if (e.startsWith('"') && e.endsWith('"')) {
             try {
                 e = JSON.parse(e);
             } catch {
-                e = e.replace(/^"(.*)"$/, "$1");
+                e = e.replace(/^"(.*)"$/, '$1');
             }
         }
-        return e || email || "";
+        return e || email || '';
     };
 
     const maskEmail = (value: string): string => {
-        const at = value.indexOf("@");
+        const at = value.indexOf('@');
         if (at < 1) return value;
         const local = value.slice(0, at);
         const domain = value.slice(at + 1);
         if (local.length <= 2) return value;
-        return `${local[0]}${"*".repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
+        return `${local[0]}${'*'.repeat(local.length - 2)}${local[local.length - 1]}@${domain}`;
     };
 
     const handleOtpChange = (index: number, value: string) => {
-        const digits = value.replace(/\D/g, "");
-        const otpArray = otpValue.padEnd(6, " ").split("");
+        const digits = value.replace(/\D/g, '');
+        const otpArray = otpValue.padEnd(6, ' ').split('');
 
         if (!digits) {
-            otpArray[index] = "";
-            const newOtp = otpArray.join("").trim();
-            setValue("otp", newOtp);
+            otpArray[index] = '';
+            const newOtp = otpArray.join('').trim();
+            setValue('otp', newOtp);
             return;
         }
 
-        digits.split("").forEach((d, i) => {
+        digits.split('').forEach((d, i) => {
             if (index + i < 6) otpArray[index + i] = d;
         });
 
-        const newOtp = otpArray.join("").trim();
-        setValue("otp", newOtp);
+        const newOtp = otpArray.join('').trim();
+        setValue('otp', newOtp);
 
         const nextIndex = Math.min(index + digits.length, 5);
         otpRefs.current[nextIndex]?.focus();
@@ -106,12 +106,12 @@ const OtpForm = ({
     const handlePaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
         const pasted = e.clipboardData
-            .getData("text")
-            .replace(/\D/g, "")
+            .getData('text')
+            .replace(/\D/g, '')
             .slice(0, 6);
-        
+
         if (pasted) {
-            setValue("otp", pasted);
+            setValue('otp', pasted);
             const focusIndex = Math.min(pasted.length - 1, 5);
             otpRefs.current[focusIndex]?.focus();
         }
@@ -137,7 +137,10 @@ const OtpForm = ({
                 // Use React Hook Form's setError for server errors (inline, not toast)
                 setError('otp', {
                     type: 'server',
-                    message: response.message || response.data || "Invalid OTP. Please try again.",
+                    message:
+                        response.message ||
+                        response.data ||
+                        'Invalid OTP. Please try again.',
                 });
             } else {
                 if (response.data?.token) {
@@ -153,23 +156,25 @@ const OtpForm = ({
             // Use React Hook Form's setError for unexpected errors
             setError('otp', {
                 type: 'server',
-                message: "An error occurred during OTP verification. Please try again.",
+                message:
+                    'An error occurred during OTP verification. Please try again.',
             });
-            console.error("OTP verification error:", error);
+            console.error('OTP verification error:', error);
         }
     };
 
     const handleResend = async () => {
-        const resendEmail = (email ?? cleanEmail() ?? "").toString().trim();
+        const resendEmail = (email ?? cleanEmail() ?? '').toString().trim();
         if (!resendEmail) {
-            setError("root", {
-                type: "server",
-                message: "Email is required to resend the code. Please go back and enter your email.",
+            setError('root', {
+                type: 'server',
+                message:
+                    'Email is required to resend the code. Please go back and enter your email.',
             });
             return;
         }
 
-        setValue("otp", "");
+        setValue('otp', '');
         setResendCountdown(60);
         otpRefs.current[0]?.focus();
 
@@ -180,23 +185,24 @@ const OtpForm = ({
             });
 
             if (response.error) {
-                setError("root", {
-                    type: "server",
+                setError('root', {
+                    type: 'server',
                     message:
                         response.message ||
                         response.data ||
-                        "Failed to resend OTP. Please try again.",
+                        'Failed to resend OTP. Please try again.',
                 });
             } else {
-                clearErrors("root");
-                toast.success("OTP resent successfully");
+                clearErrors('root');
+                toast.success('OTP resent successfully');
             }
         } catch (error) {
-            setError("root", {
-                type: "server",
-                message: "An error occurred while resending OTP. Please try again.",
+            setError('root', {
+                type: 'server',
+                message:
+                    'An error occurred while resending OTP. Please try again.',
             });
-            console.error("Resend OTP error:", error);
+            console.error('Resend OTP error:', error);
         }
 
         onResend?.();
@@ -227,14 +233,14 @@ const OtpForm = ({
                                 ref={(el) => (otpRefs.current[index] = el)}
                                 inputMode="numeric"
                                 maxLength={1}
-                                value={otpValue[index] || ""}
+                                value={otpValue[index] || ''}
                                 onChange={(e) =>
                                     handleOtpChange(index, e.target.value)
                                 }
                                 onPaste={index === 0 ? handlePaste : undefined}
                                 onFocus={(e) => e.currentTarget.select()}
                                 className={`w-12 h-12 text-center text-lg font-semibold ${
-                                    errors.otp ? "border-destructive" : ""
+                                    errors.otp ? 'border-destructive' : ''
                                 }`}
                                 aria-invalid={!!errors.otp}
                             />
@@ -277,7 +283,7 @@ const OtpForm = ({
                     {isSubmitting && (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     )}
-                    {isSubmitting ? "Verifying..." : "Verify code"}
+                    {isSubmitting ? 'Verifying...' : 'Verify code'}
                 </Button>
             </div>
         </form>

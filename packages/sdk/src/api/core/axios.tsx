@@ -23,10 +23,13 @@ class AxiosService {
         const { isAuth = false, method, path, type, payload } = params;
 
         let urlpath = `${this.baseUrl}${path}`;
-        
+
         // Debug logging in development
         if (process.env.NODE_ENV === 'development') {
-            console.log(`[API] ${method} ${urlpath}`, { isAuth, payload: payload instanceof FormData ? 'FormData' : payload });
+            console.log(`[API] ${method} ${urlpath}`, {
+                isAuth,
+                payload: payload instanceof FormData ? 'FormData' : payload,
+            });
         }
 
         // Check if payload is FormData - if so, don't set Content-Type (let browser set it with boundary)
@@ -34,7 +37,7 @@ class AxiosService {
         const baseHeaders = isAuth
             ? storage.getConfigWithBearer().headers
             : storage.getConfig().headers;
-        
+
         // If FormData, exclude Content-Type to let browser set it automatically with boundary
         let headers: any;
         if (isFormData) {
@@ -61,7 +64,10 @@ class AxiosService {
                             ...err.response.data,
                             status: err.response.status,
                             // Ensure error flag is set for non-2xx status codes
-                            error: err.response.status >= 400 ? true : (err.response.data.error ?? false),
+                            error:
+                                err.response.status >= 400
+                                    ? true
+                                    : (err.response.data.error ?? false),
                         };
                     } else {
                         // Fallback if no response data
@@ -75,12 +81,14 @@ class AxiosService {
                     }
                 } else if (err.request) {
                     // Request was made but no response received (network error)
-                    const isConnectionRefused = err.code === 'ERR_CONNECTION_REFUSED' || err.message?.includes('ERR_CONNECTION_REFUSED');
+                    const isConnectionRefused =
+                        err.code === 'ERR_CONNECTION_REFUSED' ||
+                        err.message?.includes('ERR_CONNECTION_REFUSED');
                     result = {
                         error: true,
                         status: 0,
                         errors: ['Network error'],
-                        message: isConnectionRefused 
+                        message: isConnectionRefused
                             ? `Unable to connect to the API server at ${urlpath}. Please ensure the API server is running.`
                             : 'Unable to connect to the server. Please check your internet connection.',
                         data: null,

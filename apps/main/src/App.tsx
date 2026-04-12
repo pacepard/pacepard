@@ -7,13 +7,9 @@ function App() {
         <>
             <Router>
                 <UserState>
-
                     <AppState>
-
                         <AppRoutes />
-
                     </AppState>
-                
                 </UserState>
             </Router>
         </>

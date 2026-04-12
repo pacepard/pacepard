@@ -1,43 +1,42 @@
-import { forwardRef, useCallback } from "react"
+import { forwardRef, useCallback } from 'react';
 
 // --- Lib ---
-import { parseShortcutKeys } from "@/utils/base-helper"
+import { parseShortcutKeys } from '@/utils/base-helper';
 
 // --- Hooks ---
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 // --- Tiptap UI ---
-import type { UseMentionTriggerConfig } from "@/core/ui/mention-trigger-button"
+import type { UseMentionTriggerConfig } from '@/core/ui/mention-trigger-button';
 import {
-  MENTION_TRIGGER_SHORTCUT_KEY,
-  useMentionTrigger,
-} from "@/core/ui/mention-trigger-button"
+    MENTION_TRIGGER_SHORTCUT_KEY,
+    useMentionTrigger,
+} from '@/core/ui/mention-trigger-button';
 
 // --- UI Primitives ---
-import type { ButtonProps } from "@/core/primitives/button"
-import { Button } from "@/core/primitives/button"
-import { Badge } from "@/core/primitives/badge"
+import type { ButtonProps } from '@/core/primitives/button';
+import { Button } from '@/core/primitives/button';
+import { Badge } from '@/core/primitives/badge';
 
 export interface MentionTriggerButtonProps
-  extends Omit<ButtonProps, "type">,
-    UseMentionTriggerConfig {
-  /**
-   * Optional text to display alongside the icon.
-   */
-  text?: string
-  /**
-   * Optional show shortcut keys in the button.
-   * @default false
-   */
-  showShortcut?: boolean
+    extends Omit<ButtonProps, 'type'>, UseMentionTriggerConfig {
+    /**
+     * Optional text to display alongside the icon.
+     */
+    text?: string;
+    /**
+     * Optional show shortcut keys in the button.
+     * @default false
+     */
+    showShortcut?: boolean;
 }
 
 export function MentionShortcutBadge({
-  shortcutKeys = MENTION_TRIGGER_SHORTCUT_KEY,
+    shortcutKeys = MENTION_TRIGGER_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+    shortcutKeys?: string;
 }) {
-  return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>
+    return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
 
 /**
@@ -46,75 +45,83 @@ export function MentionShortcutBadge({
  * For custom button implementations, use the `useMention` hook instead.
  */
 export const MentionTriggerButton = forwardRef<
-  HTMLButtonElement,
-  MentionTriggerButtonProps
+    HTMLButtonElement,
+    MentionTriggerButtonProps
 >(
-  (
-    {
-      editor: providedEditor,
-      node,
-      nodePos,
-      text,
-      trigger = "@",
-      hideWhenUnavailable = false,
-      onTriggered,
-      showShortcut = false,
-      onClick,
-      children,
-      ...buttonProps
+    (
+        {
+            editor: providedEditor,
+            node,
+            nodePos,
+            text,
+            trigger = '@',
+            hideWhenUnavailable = false,
+            onTriggered,
+            showShortcut = false,
+            onClick,
+            children,
+            ...buttonProps
+        },
+        ref,
+    ) => {
+        const { editor } = usePacepardEditor(providedEditor);
+        const {
+            isVisible,
+            canInsert,
+            handleMention,
+            label,
+            shortcutKeys,
+            Icon,
+        } = useMentionTrigger({
+            editor,
+            node,
+            nodePos,
+            trigger,
+            hideWhenUnavailable,
+            onTriggered,
+        });
+
+        const handleClick = useCallback(
+            (event: React.MouseEvent<HTMLButtonElement>) => {
+                onClick?.(event);
+                if (event.defaultPrevented) return;
+                handleMention();
+            },
+            [handleMention, onClick],
+        );
+
+        if (!isVisible) {
+            return null;
+        }
+
+        return (
+            <Button
+                type="button"
+                data-style="ghost"
+                role="button"
+                tabIndex={-1}
+                disabled={!canInsert}
+                data-disabled={!canInsert}
+                aria-label={label}
+                tooltip={label}
+                onClick={handleClick}
+                {...buttonProps}
+                ref={ref}
+            >
+                {children ?? (
+                    <>
+                        <Icon className="tiptap-button-icon" />
+                        {text && (
+                            <span className="tiptap-button-text">{text}</span>
+                        )}
+                        {showShortcut && (
+                            <MentionShortcutBadge shortcutKeys={shortcutKeys} />
+                        )}
+                    </>
+                )}
+            </Button>
+        );
     },
-    ref
-  ) => {
-    const { editor } = usePacepardEditor(providedEditor)
-    const { isVisible, canInsert, handleMention, label, shortcutKeys, Icon } =
-      useMentionTrigger({
-        editor,
-        node,
-        nodePos,
-        trigger,
-        hideWhenUnavailable,
-        onTriggered,
-      })
+);
 
-    const handleClick = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event)
-        if (event.defaultPrevented) return
-        handleMention()
-      },
-      [handleMention, onClick]
-    )
-
-    if (!isVisible) {
-      return null
-    }
-
-    return (
-      <Button
-        type="button"
-        data-style="ghost"
-        role="button"
-        tabIndex={-1}
-        disabled={!canInsert}
-        data-disabled={!canInsert}
-        aria-label={label}
-        tooltip={label}
-        onClick={handleClick}
-        {...buttonProps}
-        ref={ref}
-      >
-        {children ?? (
-          <>
-            <Icon className="tiptap-button-icon" />
-            {text && <span className="tiptap-button-text">{text}</span>}
-            {showShortcut && (
-              <MentionShortcutBadge shortcutKeys={shortcutKeys} />
-            )}
-          </>
-        )}
-      </Button>
-    )
-  }
-)
-
-MentionTriggerButton.displayName = "MentionTriggerButton"
+MentionTriggerButton.displayName = 'MentionTriggerButton';

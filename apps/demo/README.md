@@ -13,6 +13,7 @@ This demo app provides working examples of how to use the `@pacepard/tiptap` pac
 A straightforward editor implementation with basic formatting tools, suitable for simple content editing needs.
 
 **Features:**
+
 - Basic text formatting (bold, italic, strike, code, underline)
 - Headings and lists
 - Blockquotes and code blocks
@@ -27,6 +28,7 @@ A straightforward editor implementation with basic formatting tools, suitable fo
 A comprehensive editor implementation inspired by Notion, with advanced features and collaboration support.
 
 **Features:**
+
 - All features from Simple Editor
 - Advanced collaboration support
 - AI-powered features

@@ -28,82 +28,132 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@pacepard/ui/components/dropdown-menu';
-import { ChevronRight, ChevronDown, Plus, TrendingUp, Trophy, Zap, Folder, List, HelpCircle, Circle, Box, FileText, Sparkles, Map, Lightbulb, Play, Book, LifeBuoy, Trash2, MoreHorizontal, Share2, Home, Mail, Users, User, Briefcase, Building2, Settings, CreditCard, ShoppingBag, Gift, Star, Shield, Bell, Search, Contact, Code, Pencil, Globe, type LucideIcon } from 'lucide-react';
-import { routes, routil, type IRoute, type IRouteItem, type IInRoute, UserType, UserContext, AppContext } from '@pacepard/sdk';
+import {
+    ChevronRight,
+    ChevronDown,
+    Plus,
+    TrendingUp,
+    Trophy,
+    Zap,
+    Folder,
+    List,
+    HelpCircle,
+    Circle,
+    Box,
+    FileText,
+    Sparkles,
+    Map,
+    Lightbulb,
+    Play,
+    Book,
+    LifeBuoy,
+    Trash2,
+    MoreHorizontal,
+    Share2,
+    Home,
+    Mail,
+    Users,
+    User,
+    Briefcase,
+    Building2,
+    Settings,
+    CreditCard,
+    ShoppingBag,
+    Gift,
+    Star,
+    Shield,
+    Bell,
+    Search,
+    Contact,
+    Code,
+    Pencil,
+    Globe,
+    type LucideIcon,
+} from 'lucide-react';
+import {
+    routes,
+    routil,
+    type IRoute,
+    type IRouteItem,
+    type IInRoute,
+    UserType,
+    UserContext,
+    AppContext,
+} from '@pacepard/sdk';
 import { NavUser } from '@/components/blocks/navigation/nav-user';
 import { cn } from '@pacepard/ui/lib/utils';
 
 // Icon mapping helper
 const getIcon = (iconName?: string): LucideIcon | null => {
     if (!iconName) return null;
-    
+
     const iconMap: Record<string, LucideIcon> = {
-        'chart': TrendingUp,
-        'trophy': Trophy,
-        'zap': Zap,
-        'lightning': Zap,
-        'folder': Folder,
-        'nav': List,
-        'list': List,
-        'question': HelpCircle,
-        'help': HelpCircle,
-        'circle': Circle,
+        chart: TrendingUp,
+        trophy: Trophy,
+        zap: Zap,
+        lightning: Zap,
+        folder: Folder,
+        nav: List,
+        list: List,
+        question: HelpCircle,
+        help: HelpCircle,
+        circle: Circle,
         'layout-right': Box,
-        'product': Box,
+        product: Box,
         // Product route icons
-        'templates': FileText,
-        'filetext': FileText,
+        templates: FileText,
+        filetext: FileText,
         'whats-new': Sparkles,
-        'sparkle': Sparkles,
-        'roadmap': Map,
-        'maptrifold': Map,
-        'map': Map,
+        sparkle: Sparkles,
+        roadmap: Map,
+        maptrifold: Map,
+        map: Map,
         'feature-requests': Lightbulb,
-        'lightbulb': Lightbulb,
+        lightbulb: Lightbulb,
         // Help route icons
         'get-started': Play,
-        'play': Play,
+        play: Play,
         'how-to-guides': Book,
-        'book': Book,
+        book: Book,
         'help-center': LifeBuoy,
-        'lifebuoy': LifeBuoy,
-        'trash': Trash2,
+        lifebuoy: LifeBuoy,
+        trash: Trash2,
         // Common navigation icons
-        'home': Home,
-        'house': Home,
-        'inbox': Mail,
-        'envelope': Mail,
-        'message': Mail,
-        'messages': Mail,
-        'users': Users,
-        'user': User,
-        'briefcase': Briefcase,
-        'buildings': Building2,
-        'building': Building2,
-        'settings': Settings,
-        'gear': Settings,
+        home: Home,
+        house: Home,
+        inbox: Mail,
+        envelope: Mail,
+        message: Mail,
+        messages: Mail,
+        users: Users,
+        user: User,
+        briefcase: Briefcase,
+        buildings: Building2,
+        building: Building2,
+        settings: Settings,
+        gear: Settings,
         'credit-card': CreditCard,
-        'creditcard': CreditCard,
+        creditcard: CreditCard,
         'shopping-bag': ShoppingBag,
-        'shoppingbag': ShoppingBag,
-        'gift': Gift,
-        'star': Star,
-        'shield': Shield,
-        'bell': Bell,
-        'search': Search,
-        'magnifyingglass': Search,
-        'workshops': Code,
-        'workshop': Code,
-        'challenges': Zap,
-        'mentors': Users,
+        shoppingbag: ShoppingBag,
+        gift: Gift,
+        star: Star,
+        shield: Shield,
+        bell: Bell,
+        search: Search,
+        magnifyingglass: Search,
+        workshops: Code,
+        workshop: Code,
+        challenges: Zap,
+        mentors: Users,
         'upgrade-plan': Trophy,
-        'domains': Globe,
-        'members': Contact,
-        'edit': Pencil,
-        'pencil': Pencil,
-        'create': Plus,
+        domains: Globe,
+        members: Contact,
+        edit: Pencil,
+        pencil: Pencil,
+        create: Plus,
     };
-    
+
     const IconComponent = iconMap[iconName.toLowerCase()];
     return IconComponent || null;
 };
@@ -141,27 +191,33 @@ const AppSidebar = (data: ISideBar) => {
         'referrals',
         'payments',
         'account',
-        'support'
+        'support',
     ]);
 
     // Filter routes based on user type - get routes that match current user type
     const filteredRoutes = useMemo(() => {
         return routes.filter((route: IRoute) => {
             if (!route.isAuth) return false;
-            
+
             // Filter by route name matching user type
             const routeName = route.name.toLowerCase();
             const userTypeString = String(currentUserType).toLowerCase();
-            
+
             // Match talent routes for talent users
-            if (routeName === 'talent' && userTypeString === 'talent') return true;
-            
+            if (routeName === 'talent' && userTypeString === 'talent')
+                return true;
+
             // Match admin routes for admin users (include all admin routes)
-            if (currentUserType === UserType.ADMIN && adminRouteNames.has(routeName)) return true;
-            
+            if (
+                currentUserType === UserType.ADMIN &&
+                adminRouteNames.has(routeName)
+            )
+                return true;
+
             // Match business routes for business users
-            if (routeName === 'business' && userTypeString === 'business') return true;
-            
+            if (routeName === 'business' && userTypeString === 'business')
+                return true;
+
             return false;
         });
     }, [currentUserType]);
@@ -193,12 +249,15 @@ const AppSidebar = (data: ISideBar) => {
         // Split name if only full name is available
         const fullName = userObj?.name || userObj?.email || 'Damola Oladipo';
         const nameParts = fullName.split(' ');
-        
+
         return {
             firstName: userObj?.firstName || nameParts[0] || 'Damola Oladipo',
             lastName: userObj?.lastName || nameParts.slice(1).join(' ') || '',
             email: userObj?.email || '',
-            avatar: userObj?.avatar || userObj?.profilePicture || '/blocks/pacepard-icon.svg',
+            avatar:
+                userObj?.avatar ||
+                userObj?.profilePicture ||
+                '/blocks/pacepard-icon.svg',
         };
     }, [user]);
 
@@ -221,15 +280,18 @@ const AppSidebar = (data: ISideBar) => {
         const currentPath = location.pathname;
         if (subroute) {
             const subPath = routil.computeSubPath(route, subroute);
-            return currentPath === subPath || currentPath.startsWith(subPath + '/');
+            return (
+                currentPath === subPath || currentPath.startsWith(subPath + '/')
+            );
         }
         const routePath = routil.computePath(route.url);
-        return currentPath === routePath || currentPath.startsWith(routePath + '/');
+        return (
+            currentPath === routePath || currentPath.startsWith(routePath + '/')
+        );
     };
 
     return (
         <Sidebar collapsible="icon" className="overflow-hidden" {...props}>
-            
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -260,28 +322,63 @@ const AppSidebar = (data: ISideBar) => {
                                         <CollapsibleContent>
                                             <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-0 pl-0 translate-x-0">
                                                 {route.subroutes
-                                                    ?.filter((sr) => sr.name !== 'divider')
+                                                    ?.filter(
+                                                        (sr) =>
+                                                            sr.name !==
+                                                            'divider',
+                                                    )
                                                     .map((subroute) => (
-                                                        <SidebarMenuSubItem key={subroute.name}>
+                                                        <SidebarMenuSubItem
+                                                            key={subroute.name}
+                                                        >
                                                             <SidebarMenuSubButton
                                                                 asChild
-                                                                onClick={() => handleRouteClick(route, subroute)}
-                                                                isActive={isRouteActive(route, subroute)}
-                                                                className={isRouteActive(route, subroute) ? "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700" : ""}
+                                                                onClick={() =>
+                                                                    handleRouteClick(
+                                                                        route,
+                                                                        subroute,
+                                                                    )
+                                                                }
+                                                                isActive={isRouteActive(
+                                                                    route,
+                                                                    subroute,
+                                                                )}
+                                                                className={
+                                                                    isRouteActive(
+                                                                        route,
+                                                                        subroute,
+                                                                    )
+                                                                        ? 'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700'
+                                                                        : ''
+                                                                }
                                                             >
                                                                 <a
-                                                                    href={routil.computeSubPath(route, subroute)}
-                                                                    onClick={(e) => {
+                                                                    href={routil.computeSubPath(
+                                                                        route,
+                                                                        subroute,
+                                                                    )}
+                                                                    onClick={(
+                                                                        e,
+                                                                    ) => {
                                                                         e.preventDefault();
-                                                                        handleRouteClick(route, subroute);
+                                                                        handleRouteClick(
+                                                                            route,
+                                                                            subroute,
+                                                                        );
                                                                     }}
                                                                 >
                                                                     {(() => {
-                                                                        const IconComponent = getIcon(subroute.iconName);
-                                                                        return IconComponent ? <IconComponent className="h-4 w-4" /> : null;
+                                                                        const IconComponent =
+                                                                            getIcon(
+                                                                                subroute.iconName,
+                                                                            );
+                                                                        return IconComponent ? (
+                                                                            <IconComponent className="h-4 w-4" />
+                                                                        ) : null;
                                                                     })()}
                                                                     <span>
-                                                                        {subroute.title || subroute.name}
+                                                                        {subroute.title ||
+                                                                            subroute.name}
                                                                     </span>
                                                                 </a>
                                                             </SidebarMenuSubButton>
@@ -299,7 +396,11 @@ const AppSidebar = (data: ISideBar) => {
                                         asChild
                                         onClick={() => handleRouteClick(route)}
                                         isActive={isRouteActive(route)}
-                                        className={isRouteActive(route) ? "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700" : ""}
+                                        className={
+                                            isRouteActive(route)
+                                                ? 'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700'
+                                                : ''
+                                        }
                                     >
                                         <a
                                             href={routil.computePath(route.url)}
@@ -308,7 +409,9 @@ const AppSidebar = (data: ISideBar) => {
                                                 handleRouteClick(route);
                                             }}
                                         >
-                                            <span>{route.title || route.name}</span>
+                                            <span>
+                                                {route.title || route.name}
+                                            </span>
                                         </a>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -321,29 +424,40 @@ const AppSidebar = (data: ISideBar) => {
                 {workspaceRoutes.map((route: IRoute) => {
                     // Get inroutes for this workspace route
                     const routeInroutes = route.inroutes || [];
-                    
+
                     // Create dynamic inroutes from state collections
                     const dynamicInroutes: IInRoute[] = useMemo(() => {
                         const dynamic: IInRoute[] = [];
-                        
+
                         // Add hackathons
-                        if (hackathons?.data && Array.isArray(hackathons.data)) {
+                        if (
+                            hackathons?.data &&
+                            Array.isArray(hackathons.data)
+                        ) {
                             hackathons.data.forEach((hackathon: any) => {
                                 dynamic.push({
                                     route: 'workspace',
                                     parent: 'my-hackathons',
                                     name: `hackathon-${hackathon.slug || hackathon._id}`,
-                                    title: hackathon.name || 'Untitled Hackathon',
+                                    title:
+                                        hackathon.name || 'Untitled Hackathon',
                                     url: `/${hackathon.slug || hackathon._id}`,
                                     action: 'navigate',
                                     isAuth: true,
-                                    params: [{ type: 'url', name: 'slug', value: hackathon.slug || hackathon._id }],
+                                    params: [
+                                        {
+                                            type: 'url',
+                                            name: 'slug',
+                                            value:
+                                                hackathon.slug || hackathon._id,
+                                        },
+                                    ],
                                     content: { collapsed: false },
-                                    iconName: 'trophy'
+                                    iconName: 'trophy',
                                 });
                             });
                         }
-                        
+
                         // Add projects/apprenticeships (non-challenge projects)
                         if (projects?.data && Array.isArray(projects.data)) {
                             projects.data
@@ -353,251 +467,446 @@ const AppSidebar = (data: ISideBar) => {
                                         route: 'workspace',
                                         parent: 'my-projects',
                                         name: `project-${project.slug || project._id}`,
-                                        title: project.title || project.name || 'Untitled Project',
+                                        title:
+                                            project.title ||
+                                            project.name ||
+                                            'Untitled Project',
                                         url: `/${project.slug || project._id}`,
                                         action: 'navigate',
                                         isAuth: true,
-                                        params: [{ type: 'url', name: 'slug', value: project.slug || project._id }],
+                                        params: [
+                                            {
+                                                type: 'url',
+                                                name: 'slug',
+                                                value:
+                                                    project.slug || project._id,
+                                            },
+                                        ],
                                         content: { collapsed: false },
-                                        iconName: 'folder'
+                                        iconName: 'folder',
                                     });
                                 });
                         }
-                        
+
                         // Add challenges (projects with isChallenge flag)
                         if (projects?.data && Array.isArray(projects.data)) {
                             projects.data
-                                .filter((project: any) => project.isChallenge === true)
+                                .filter(
+                                    (project: any) =>
+                                        project.isChallenge === true,
+                                )
                                 .forEach((challenge: any) => {
                                     dynamic.push({
                                         route: 'workspace',
                                         parent: 'my-challenges',
                                         name: `challenge-${challenge.slug || challenge._id}`,
-                                        title: challenge.title || challenge.name || 'Untitled Challenge',
+                                        title:
+                                            challenge.title ||
+                                            challenge.name ||
+                                            'Untitled Challenge',
                                         url: `/${challenge.slug || challenge._id}`,
                                         action: 'navigate',
                                         isAuth: true,
-                                        params: [{ type: 'url', name: 'slug', value: challenge.slug || challenge._id }],
+                                        params: [
+                                            {
+                                                type: 'url',
+                                                name: 'slug',
+                                                value:
+                                                    challenge.slug ||
+                                                    challenge._id,
+                                            },
+                                        ],
                                         content: { collapsed: false },
-                                        iconName: 'zap'
+                                        iconName: 'zap',
                                     });
                                 });
                         }
-                        
+
                         return dynamic;
                     }, [hackathons, projects]);
-                    
+
                     return (
                         <SidebarGroup key={route.name}>
                             {route.subroutes && route.subroutes.length > 0 ? (
-                                    <SidebarMenu>
-                                        <SidebarMenuItem className="group/workspace-item">
+                                <SidebarMenu>
+                                    <SidebarMenuItem className="group/workspace-item">
                                         <div className="flex items-center w-full group/workspace-button">
-                                                <SidebarMenuButton
-                                                    onClick={() => handleRouteClick(route)}
-                                                    isActive={isRouteActive(route)}
-                                                className={cn("flex-1", isRouteActive(route) && "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700")}
+                                            <SidebarMenuButton
+                                                onClick={() =>
+                                                    handleRouteClick(route)
+                                                }
+                                                isActive={isRouteActive(route)}
+                                                className={cn(
+                                                    'flex-1',
+                                                    isRouteActive(route) &&
+                                                        'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700',
+                                                )}
                                             >
-                                                <span>{route.title || route.name}</span>
+                                                <span>
+                                                    {route.title || route.name}
+                                                </span>
                                             </SidebarMenuButton>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <SidebarMenuAction className="opacity-0 group-hover/workspace-button:opacity-100 transition-opacity duration-200">
                                                         <Plus className="h-4 w-4" />
-                                                        <span className="sr-only">Workspace options</span>
+                                                        <span className="sr-only">
+                                                            Workspace options
+                                                        </span>
                                                     </SidebarMenuAction>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent
                                                     className="w-48"
-                                                    side={isMobile ? 'bottom' : 'right'}
-                                                    align={isMobile ? 'end' : 'start'}
+                                                    side={
+                                                        isMobile
+                                                            ? 'bottom'
+                                                            : 'right'
+                                                    }
+                                                    align={
+                                                        isMobile
+                                                            ? 'end'
+                                                            : 'start'
+                                                    }
                                                 >
                                                     <DropdownMenuItem>
-                                                                                        <Pencil className="text-muted-foreground h-4 w-4" />
+                                                        <Pencil className="text-muted-foreground h-4 w-4" />
                                                         <span>Rename</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem>
-                                                                                        <Contact className="text-muted-foreground h-4 w-4" />
+                                                        <Contact className="text-muted-foreground h-4 w-4" />
                                                         <span>Members</span>
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
-                                                <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-0 pl-0 translate-x-0">
-                                                    {route.subroutes
-                                                        ?.filter((sr) => sr.name !== 'divider')
-                                                        .map((subroute) => {
-                                                            // Get only dynamic inroutes (actual created items), exclude static route templates
-                                                            const dynamicItemsForSubroute = dynamicInroutes.filter(
-                                                                (inr: IInRoute) => inr.parent === subroute.name
-                                                            );
-                                                            
-                                                            // Always show the section, but only show collapsible dropdown if there are items
-                                                            if (dynamicItemsForSubroute.length > 0) {
-                                                                return (
-                                                                    <Collapsible
-                                                                        key={subroute.name}
-                                                                        defaultOpen={false}
-                                                                        className="group/sub-collapsible"
-                                                                        asChild
-                                                                    >
-                                                                        <SidebarMenuSubItem className="group/subroute-item">
-                                                                            <div className="group/subroute-button flex items-center w-full">
-                                                                                <CollapsibleTrigger asChild>
-                                                                                    <SidebarMenuSubButton
-                                                                                        isActive={isRouteActive(route, subroute)}
-                                                                                        className={cn("flex-1", isRouteActive(route, subroute) && "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700")}
+                                        <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-0 pl-0 translate-x-0">
+                                            {route.subroutes
+                                                ?.filter(
+                                                    (sr) =>
+                                                        sr.name !== 'divider',
+                                                )
+                                                .map((subroute) => {
+                                                    // Get only dynamic inroutes (actual created items), exclude static route templates
+                                                    const dynamicItemsForSubroute =
+                                                        dynamicInroutes.filter(
+                                                            (inr: IInRoute) =>
+                                                                inr.parent ===
+                                                                subroute.name,
+                                                        );
+
+                                                    // Always show the section, but only show collapsible dropdown if there are items
+                                                    if (
+                                                        dynamicItemsForSubroute.length >
+                                                        0
+                                                    ) {
+                                                        return (
+                                                            <Collapsible
+                                                                key={
+                                                                    subroute.name
+                                                                }
+                                                                defaultOpen={
+                                                                    false
+                                                                }
+                                                                className="group/sub-collapsible"
+                                                                asChild
+                                                            >
+                                                                <SidebarMenuSubItem className="group/subroute-item">
+                                                                    <div className="group/subroute-button flex items-center w-full">
+                                                                        <CollapsibleTrigger
+                                                                            asChild
+                                                                        >
+                                                                            <SidebarMenuSubButton
+                                                                                isActive={isRouteActive(
+                                                                                    route,
+                                                                                    subroute,
+                                                                                )}
+                                                                                className={cn(
+                                                                                    'flex-1',
+                                                                                    isRouteActive(
+                                                                                        route,
+                                                                                        subroute,
+                                                                                    ) &&
+                                                                                        'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700',
+                                                                                )}
+                                                                            >
+                                                                                <ChevronDown className="h-4 w-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/sub-collapsible:rotate-0 flex-shrink-0" />
+                                                                                <span className="flex-1">
+                                                                                    {subroute.title ||
+                                                                                        subroute.name}
+                                                                                </span>
+                                                                            </SidebarMenuSubButton>
+                                                                        </CollapsibleTrigger>
+                                                                        <DropdownMenu>
+                                                                            <DropdownMenuTrigger
+                                                                                asChild
+                                                                            >
+                                                                                <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/subroute-button:opacity-100 group-hover/subroute-button:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
+                                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                                    <span className="sr-only">
+                                                                                        More
+                                                                                    </span>
+                                                                                </SidebarMenuAction>
+                                                                            </DropdownMenuTrigger>
+                                                                            <DropdownMenuContent
+                                                                                className="w-48"
+                                                                                side={
+                                                                                    isMobile
+                                                                                        ? 'bottom'
+                                                                                        : 'right'
+                                                                                }
+                                                                                align={
+                                                                                    isMobile
+                                                                                        ? 'end'
+                                                                                        : 'start'
+                                                                                }
+                                                                            >
+                                                                                <DropdownMenuItem>
+                                                                                    <Folder className="text-muted-foreground h-4 w-4" />
+                                                                                    <span>
+                                                                                        View
+                                                                                    </span>
+                                                                                </DropdownMenuItem>
+                                                                                <DropdownMenuItem>
+                                                                                    <Share2 className="text-muted-foreground h-4 w-4" />
+                                                                                    <span>
+                                                                                        Share
+                                                                                    </span>
+                                                                                </DropdownMenuItem>
+                                                                                <DropdownMenuSeparator />
+                                                                                <DropdownMenuItem>
+                                                                                    <Trash2 className="text-muted-foreground h-4 w-4" />
+                                                                                    <span>
+                                                                                        Delete
+                                                                                    </span>
+                                                                                </DropdownMenuItem>
+                                                                            </DropdownMenuContent>
+                                                                        </DropdownMenu>
+                                                                    </div>
+                                                                    <CollapsibleContent>
+                                                                        <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-4 pl-4 translate-x-0">
+                                                                            {dynamicItemsForSubroute.map(
+                                                                                (
+                                                                                    inroute: IInRoute,
+                                                                                ) => (
+                                                                                    <SidebarMenuSubItem
+                                                                                        key={
+                                                                                            inroute.name
+                                                                                        }
+                                                                                        className="group/item"
                                                                                     >
-                                                                                        <ChevronDown className="h-4 w-4 transition-transform duration-200 -rotate-90 group-data-[state=open]/sub-collapsible:rotate-0 flex-shrink-0" />
-                                                                                        <span className="flex-1">
-                                                                                            {subroute.title || subroute.name}
-                                                                                        </span>
-                                                                                    </SidebarMenuSubButton>
-                                                                                </CollapsibleTrigger>
-                                                                                <DropdownMenu>
-                                                                                    <DropdownMenuTrigger asChild>
-                                                                                        <SidebarMenuAction className="peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/subroute-button:opacity-100 group-hover/subroute-button:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
-                                                                                            <MoreHorizontal className="h-4 w-4" />
-                                                                                            <span className="sr-only">More</span>
-                                                                                        </SidebarMenuAction>
-                                                                                    </DropdownMenuTrigger>
-                                                                                    <DropdownMenuContent
-                                                                                        className="w-48"
-                                                                                        side={isMobile ? 'bottom' : 'right'}
-                                                                                        align={isMobile ? 'end' : 'start'}
-                                                                                    >
-                                                                                        <DropdownMenuItem>
-                                                                                            <Folder className="text-muted-foreground h-4 w-4" />
-                                                                                            <span>View</span>
-                                                                                        </DropdownMenuItem>
-                                                                                        <DropdownMenuItem>
-                                                                                            <Share2 className="text-muted-foreground h-4 w-4" />
-                                                                                            <span>Share</span>
-                                                                                        </DropdownMenuItem>
-                                                                                        <DropdownMenuSeparator />
-                                                                                        <DropdownMenuItem>
-                                                                                            <Trash2 className="text-muted-foreground h-4 w-4" />
-                                                                                            <span>Delete</span>
-                                                                                        </DropdownMenuItem>
-                                                                                    </DropdownMenuContent>
-                                                                                </DropdownMenu>
-                                                                            </div>
-                                                                            <CollapsibleContent>
-                                                                                <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-4 pl-4 translate-x-0">
-                                                                                    {dynamicItemsForSubroute.map((inroute: IInRoute) => (
-                                                                                    <SidebarMenuSubItem key={inroute.name} className="group/item">
                                                                                         <SidebarMenuSubButton
                                                                                             asChild
                                                                                             onClick={() => {
-                                                                                                const path = routil.computeInPath(inroute);
-                                                                                                navigate(path);
+                                                                                                const path =
+                                                                                                    routil.computeInPath(
+                                                                                                        inroute,
+                                                                                                    );
+                                                                                                navigate(
+                                                                                                    path,
+                                                                                                );
                                                                                             }}
-                                                                                            isActive={location.pathname === routil.computeInPath(inroute) || location.pathname.startsWith(routil.computeInPath(inroute) + '/')}
-                                                                                            className={cn("peer/item-button", (location.pathname === routil.computeInPath(inroute) || location.pathname.startsWith(routil.computeInPath(inroute) + '/')) && "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700")}
+                                                                                            isActive={
+                                                                                                location.pathname ===
+                                                                                                    routil.computeInPath(
+                                                                                                        inroute,
+                                                                                                    ) ||
+                                                                                                location.pathname.startsWith(
+                                                                                                    routil.computeInPath(
+                                                                                                        inroute,
+                                                                                                    ) +
+                                                                                                        '/',
+                                                                                                )
+                                                                                            }
+                                                                                            className={cn(
+                                                                                                'peer/item-button',
+                                                                                                (location.pathname ===
+                                                                                                    routil.computeInPath(
+                                                                                                        inroute,
+                                                                                                    ) ||
+                                                                                                    location.pathname.startsWith(
+                                                                                                        routil.computeInPath(
+                                                                                                            inroute,
+                                                                                                        ) +
+                                                                                                            '/',
+                                                                                                    )) &&
+                                                                                                    'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700',
+                                                                                            )}
                                                                                         >
                                                                                             <a
-                                                                                                href={routil.computeInPath(inroute)}
-                                                                                                onClick={(e) => {
+                                                                                                href={routil.computeInPath(
+                                                                                                    inroute,
+                                                                                                )}
+                                                                                                onClick={(
+                                                                                                    e,
+                                                                                                ) => {
                                                                                                     e.preventDefault();
-                                                                                                    const path = routil.computeInPath(inroute);
-                                                                                                    navigate(path);
+                                                                                                    const path =
+                                                                                                        routil.computeInPath(
+                                                                                                            inroute,
+                                                                                                        );
+                                                                                                    navigate(
+                                                                                                        path,
+                                                                                                    );
                                                                                                 }}
                                                                                             >
                                                                                                 {(() => {
-                                                                                                    const IconComponent = getIcon(inroute.iconName);
-                                                                                                    return IconComponent ? <IconComponent className="h-4 w-4" /> : null;
+                                                                                                    const IconComponent =
+                                                                                                        getIcon(
+                                                                                                            inroute.iconName,
+                                                                                                        );
+                                                                                                    return IconComponent ? (
+                                                                                                        <IconComponent className="h-4 w-4" />
+                                                                                                    ) : null;
                                                                                                 })()}
                                                                                                 <span>
-                                                                                                    {inroute.title || inroute.name}
+                                                                                                    {inroute.title ||
+                                                                                                        inroute.name}
                                                                                                 </span>
                                                                                             </a>
                                                                                         </SidebarMenuSubButton>
                                                                                         <DropdownMenu>
-                                                                                            <DropdownMenuTrigger asChild>
+                                                                                            <DropdownMenuTrigger
+                                                                                                asChild
+                                                                                            >
                                                                                                 <SidebarMenuAction className="peer-data-[active=true]/item-button:text-sidebar-accent-foreground group-focus-within/item:opacity-100 group-hover/item:opacity-100 data-[state=open]:opacity-100 md:opacity-0">
                                                                                                     <MoreHorizontal className="h-4 w-4" />
-                                                                                                    <span className="sr-only">More</span>
+                                                                                                    <span className="sr-only">
+                                                                                                        More
+                                                                                                    </span>
                                                                                                 </SidebarMenuAction>
                                                                                             </DropdownMenuTrigger>
                                                                                             <DropdownMenuContent
                                                                                                 className="w-48"
-                                                                                                side={isMobile ? 'bottom' : 'right'}
-                                                                                                align={isMobile ? 'end' : 'start'}
+                                                                                                side={
+                                                                                                    isMobile
+                                                                                                        ? 'bottom'
+                                                                                                        : 'right'
+                                                                                                }
+                                                                                                align={
+                                                                                                    isMobile
+                                                                                                        ? 'end'
+                                                                                                        : 'start'
+                                                                                                }
                                                                                             >
                                                                                                 <DropdownMenuItem>
                                                                                                     <Folder className="text-muted-foreground h-4 w-4" />
-                                                                                                    <span>View</span>
+                                                                                                    <span>
+                                                                                                        View
+                                                                                                    </span>
                                                                                                 </DropdownMenuItem>
                                                                                                 <DropdownMenuItem>
                                                                                                     <Share2 className="text-muted-foreground h-4 w-4" />
-                                                                                                    <span>Share</span>
+                                                                                                    <span>
+                                                                                                        Share
+                                                                                                    </span>
                                                                                                 </DropdownMenuItem>
                                                                                                 <DropdownMenuSeparator />
                                                                                                 <DropdownMenuItem>
                                                                                                     <Trash2 className="text-muted-foreground h-4 w-4" />
-                                                                                                    <span>Delete</span>
+                                                                                                    <span>
+                                                                                                        Delete
+                                                                                                    </span>
                                                                                                 </DropdownMenuItem>
                                                                                             </DropdownMenuContent>
                                                                                         </DropdownMenu>
                                                                                     </SidebarMenuSubItem>
-                                                                                ))}
-                                                                            </SidebarMenuSub>
-                                                                        </CollapsibleContent>
-                                                                    </SidebarMenuSubItem>
-                                                                </Collapsible>
-                                                            );
-                                                            } else {
-                                                                // Show section without dropdown when no items exist
-                                                                return (
-                                                                <SidebarMenuSubItem key={subroute.name}>
-                                                                    <SidebarMenuSubButton
-                                                                        asChild
-                                                                        onClick={() => handleRouteClick(route, subroute)}
-                                                                        isActive={isRouteActive(route, subroute)}
-                                                                        className={isRouteActive(route, subroute) ? "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700" : ""}
-                                                                    >
-                                                                        <a
-                                                                            href={routil.computeSubPath(route, subroute)}
-                                                                            onClick={(e) => {
-                                                                                e.preventDefault();
-                                                                                handleRouteClick(route, subroute);
-                                                                            }}
-                                                                        >
-                                                                            <span>
-                                                                                {subroute.title || subroute.name}
-                                                                            </span>
-                                                                        </a>
-                                                                    </SidebarMenuSubButton>
+                                                                                ),
+                                                                            )}
+                                                                        </SidebarMenuSub>
+                                                                    </CollapsibleContent>
                                                                 </SidebarMenuSubItem>
-                                                                );
-                                                            }
-                                                        })}
-                                                </SidebarMenuSub>
-                                        </SidebarMenuItem>
-                                    </SidebarMenu>
-                        ) : (
-                            <SidebarMenu>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton
-                                        asChild
-                                        onClick={() => handleRouteClick(route)}
-                                        isActive={isRouteActive(route)}
-                                        className={isRouteActive(route) ? "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700" : ""}
-                                    >
-                                        <a
-                                            href={routil.computePath(route.url)}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleRouteClick(route);
-                                            }}
+                                                            </Collapsible>
+                                                        );
+                                                    } else {
+                                                        // Show section without dropdown when no items exist
+                                                        return (
+                                                            <SidebarMenuSubItem
+                                                                key={
+                                                                    subroute.name
+                                                                }
+                                                            >
+                                                                <SidebarMenuSubButton
+                                                                    asChild
+                                                                    onClick={() =>
+                                                                        handleRouteClick(
+                                                                            route,
+                                                                            subroute,
+                                                                        )
+                                                                    }
+                                                                    isActive={isRouteActive(
+                                                                        route,
+                                                                        subroute,
+                                                                    )}
+                                                                    className={
+                                                                        isRouteActive(
+                                                                            route,
+                                                                            subroute,
+                                                                        )
+                                                                            ? 'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700'
+                                                                            : ''
+                                                                    }
+                                                                >
+                                                                    <a
+                                                                        href={routil.computeSubPath(
+                                                                            route,
+                                                                            subroute,
+                                                                        )}
+                                                                        onClick={(
+                                                                            e,
+                                                                        ) => {
+                                                                            e.preventDefault();
+                                                                            handleRouteClick(
+                                                                                route,
+                                                                                subroute,
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <span>
+                                                                            {subroute.title ||
+                                                                                subroute.name}
+                                                                        </span>
+                                                                    </a>
+                                                                </SidebarMenuSubButton>
+                                                            </SidebarMenuSubItem>
+                                                        );
+                                                    }
+                                                })}
+                                        </SidebarMenuSub>
+                                    </SidebarMenuItem>
+                                </SidebarMenu>
+                            ) : (
+                                <SidebarMenu>
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton
+                                            asChild
+                                            onClick={() =>
+                                                handleRouteClick(route)
+                                            }
+                                            isActive={isRouteActive(route)}
+                                            className={
+                                                isRouteActive(route)
+                                                    ? 'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700'
+                                                    : ''
+                                            }
                                         >
-                                            <span>{route.title || route.name}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            </SidebarMenu>
-                        )}
-                    </SidebarGroup>
+                                            <a
+                                                href={routil.computePath(
+                                                    route.url,
+                                                )}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleRouteClick(route);
+                                                }}
+                                            >
+                                                <span>
+                                                    {route.title || route.name}
+                                                </span>
+                                            </a>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                </SidebarMenu>
+                            )}
+                        </SidebarGroup>
                     );
                 })}
 
@@ -615,28 +924,59 @@ const AppSidebar = (data: ISideBar) => {
                                     </SidebarMenuButton>
                                     <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-0 pl-0 translate-x-0">
                                         {route.subroutes
-                                            ?.filter((sr) => sr.name !== 'divider')
+                                            ?.filter(
+                                                (sr) => sr.name !== 'divider',
+                                            )
                                             .map((subroute) => (
-                                                <SidebarMenuSubItem key={subroute.name}>
+                                                <SidebarMenuSubItem
+                                                    key={subroute.name}
+                                                >
                                                     <SidebarMenuSubButton
                                                         asChild
-                                                        onClick={() => handleRouteClick(route, subroute)}
-                                                        isActive={isRouteActive(route, subroute)}
-                                                        className={isRouteActive(route, subroute) ? "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700" : ""}
+                                                        onClick={() =>
+                                                            handleRouteClick(
+                                                                route,
+                                                                subroute,
+                                                            )
+                                                        }
+                                                        isActive={isRouteActive(
+                                                            route,
+                                                            subroute,
+                                                        )}
+                                                        className={
+                                                            isRouteActive(
+                                                                route,
+                                                                subroute,
+                                                            )
+                                                                ? 'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700'
+                                                                : ''
+                                                        }
                                                     >
                                                         <a
-                                                            href={routil.computeSubPath(route, subroute)}
+                                                            href={routil.computeSubPath(
+                                                                route,
+                                                                subroute,
+                                                            )}
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                handleRouteClick(route, subroute);
+                                                                handleRouteClick(
+                                                                    route,
+                                                                    subroute,
+                                                                );
                                                             }}
                                                         >
                                                             {(() => {
-                                                                const IconComponent = getIcon(subroute.iconName);
-                                                                return IconComponent ? <IconComponent className="h-4 w-4" /> : null;
+                                                                const IconComponent =
+                                                                    getIcon(
+                                                                        subroute.iconName,
+                                                                    );
+                                                                return IconComponent ? (
+                                                                    <IconComponent className="h-4 w-4" />
+                                                                ) : null;
                                                             })()}
                                                             <span>
-                                                                {subroute.title || subroute.name}
+                                                                {subroute.title ||
+                                                                    subroute.name}
                                                             </span>
                                                         </a>
                                                     </SidebarMenuSubButton>
@@ -670,32 +1010,65 @@ const AppSidebar = (data: ISideBar) => {
                                         disabled
                                         className="cursor-default"
                                     >
-                                        <span className="">{route.title || route.name}</span>
+                                        <span className="">
+                                            {route.title || route.name}
+                                        </span>
                                     </SidebarMenuButton>
                                     <SidebarMenuSub className="border-l-0 mx-0 px-0 ml-0 pl-0 translate-x-0">
                                         {route.subroutes
-                                            ?.filter((sr) => sr.name !== 'divider')
+                                            ?.filter(
+                                                (sr) => sr.name !== 'divider',
+                                            )
                                             .map((subroute) => (
-                                                <SidebarMenuSubItem key={subroute.name}>
+                                                <SidebarMenuSubItem
+                                                    key={subroute.name}
+                                                >
                                                     <SidebarMenuSubButton
                                                         asChild
-                                                        onClick={() => handleRouteClick(route, subroute)}
-                                                        isActive={isRouteActive(route, subroute)}
-                                                        className={isRouteActive(route, subroute) ? "data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700" : ""}
+                                                        onClick={() =>
+                                                            handleRouteClick(
+                                                                route,
+                                                                subroute,
+                                                            )
+                                                        }
+                                                        isActive={isRouteActive(
+                                                            route,
+                                                            subroute,
+                                                        )}
+                                                        className={
+                                                            isRouteActive(
+                                                                route,
+                                                                subroute,
+                                                            )
+                                                                ? 'data-[active=true]:text-green-700 [&>span]:data-[active=true]:text-green-700'
+                                                                : ''
+                                                        }
                                                     >
                                                         <a
-                                                            href={routil.computeSubPath(route, subroute)}
+                                                            href={routil.computeSubPath(
+                                                                route,
+                                                                subroute,
+                                                            )}
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                handleRouteClick(route, subroute);
+                                                                handleRouteClick(
+                                                                    route,
+                                                                    subroute,
+                                                                );
                                                             }}
                                                         >
                                                             {(() => {
-                                                                const IconComponent = getIcon(subroute.iconName);
-                                                                return IconComponent ? <IconComponent className="h-4 w-4" /> : null;
+                                                                const IconComponent =
+                                                                    getIcon(
+                                                                        subroute.iconName,
+                                                                    );
+                                                                return IconComponent ? (
+                                                                    <IconComponent className="h-4 w-4" />
+                                                                ) : null;
                                                             })()}
                                                             <span>
-                                                                {subroute.title || subroute.name}
+                                                                {subroute.title ||
+                                                                    subroute.name}
                                                             </span>
                                                         </a>
                                                     </SidebarMenuSubButton>

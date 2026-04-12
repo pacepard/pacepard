@@ -64,9 +64,7 @@ class SchedulerService {
         }
 
         // Create cron task
-        const taskOptions = timezone
-            ? { timezone }
-            : undefined;
+        const taskOptions = timezone ? { timezone } : undefined;
 
         const task = cron.schedule(
             cronPattern,
@@ -75,7 +73,9 @@ class SchedulerService {
                     // Ensure queue exists (create if needed)
                     let queue = this.queues.get(queueName);
                     if (!queue) {
-                        queue = await BullQueue.createQueue({ name: queueName });
+                        queue = await BullQueue.createQueue({
+                            name: queueName,
+                        });
                         this.queues.set(queueName, queue);
                     }
 
@@ -92,7 +92,9 @@ class SchedulerService {
                 } catch (error) {
                     logger.log({
                         data: `Failed to execute scheduled job '${name}': ${
-                            error instanceof Error ? error.message : String(error)
+                            error instanceof Error
+                                ? error.message
+                                : String(error)
                         }`,
                         label: 'Scheduler',
                         type: 'error',

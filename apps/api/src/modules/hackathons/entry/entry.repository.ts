@@ -60,9 +60,7 @@ class EntryRepository extends RepositoryService<IEntryDoc> {
      * @returns {Promise<IResult>}
      * @description Create a new entry
      */
-    public async createEntry(
-        entryData: Partial<IEntryDoc>,
-    ): Promise<IResult> {
+    public async createEntry(entryData: Partial<IEntryDoc>): Promise<IResult> {
         return this.create(entryData);
     }
 

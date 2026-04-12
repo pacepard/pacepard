@@ -21,9 +21,12 @@ import { getOnboardingRoute } from '@/utils/onboarding';
 
 const businessInfoSchema = z.object({
     businessName: z.string().min(1, 'Business name is required').trim(),
-    businessType: z.enum(['COMPANY', 'NONPROFIT', 'GOVERNMENT', 'EDUCATION', 'PARTNER', 'OTHER'], {
-        required_error: 'Business type is required',
-    }),
+    businessType: z.enum(
+        ['COMPANY', 'NONPROFIT', 'GOVERNMENT', 'EDUCATION', 'PARTNER', 'OTHER'],
+        {
+            required_error: 'Business type is required',
+        },
+    ),
     industry: z.string().min(1, 'Industry is required'),
 });
 
@@ -65,8 +68,9 @@ const BusinessInfo: React.FC = () => {
             }
 
             try {
-                const statusResponse = await PacepardAPI.user.getOnboardingStatus();
-                
+                const statusResponse =
+                    await PacepardAPI.user.getOnboardingStatus();
+
                 if (statusResponse.error === false && statusResponse.data) {
                     const statusData = statusResponse.data as any;
                     const step = statusData.step || 0;
@@ -79,9 +83,16 @@ const BusinessInfo: React.FC = () => {
                         navigate('/onboarding/basic-info');
                     } else if (step >= 3) {
                         // User has already completed this step, redirect to next appropriate step
-                        const route = getOnboardingRoute(step, status, userTypeFromStatus);
+                        const route = getOnboardingRoute(
+                            step,
+                            status,
+                            userTypeFromStatus,
+                        );
                         navigate(route);
-                    } else if (userTypeFromStatus !== 'business' && userTypeFromStatus !== UserType.BUSINESS) {
+                    } else if (
+                        userTypeFromStatus !== 'business' &&
+                        userTypeFromStatus !== UserType.BUSINESS
+                    ) {
                         // Not a business user, redirect to appropriate route (should be user-info for talent/user types)
                         navigate('/onboarding/user-info');
                     }
@@ -123,7 +134,10 @@ const BusinessInfo: React.FC = () => {
                 industry: data.industry,
             });
 
-            if (response.error === false && (response.status === 200 || response.status === 201)) {
+            if (
+                response.error === false &&
+                (response.status === 200 || response.status === 201)
+            ) {
                 // Persist business name for workspace creation
                 storage.keepLegacy('businessName', data.businessName);
                 // Navigate first, then show success toast
@@ -132,7 +146,9 @@ const BusinessInfo: React.FC = () => {
             } else {
                 setError('root', {
                     type: 'server',
-                    message: response.message || 'Failed to save information. Please try again.',
+                    message:
+                        response.message ||
+                        'Failed to save information. Please try again.',
                 });
             }
         } catch (error) {
@@ -169,7 +185,10 @@ const BusinessInfo: React.FC = () => {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Business Name */}
                     <div className="space-y-2">
-                        <Label htmlFor="businessName" className="text-sm font-medium text-foreground">
+                        <Label
+                            htmlFor="businessName"
+                            className="text-sm font-medium text-foreground"
+                        >
                             Business Name *
                         </Label>
                         <Input
@@ -178,7 +197,7 @@ const BusinessInfo: React.FC = () => {
                             placeholder="Acme Inc."
                             {...register('businessName')}
                             className={cn(
-                                errors.businessName && 'border-destructive'
+                                errors.businessName && 'border-destructive',
                             )}
                         />
                         {errors.businessName && (
@@ -190,18 +209,23 @@ const BusinessInfo: React.FC = () => {
 
                     {/* Business Type */}
                     <div className="space-y-2">
-                        <Label htmlFor="businessType" className="text-sm font-medium text-foreground">
+                        <Label
+                            htmlFor="businessType"
+                            className="text-sm font-medium text-foreground"
+                        >
                             Business Type *
                         </Label>
                         <Select
                             value={businessType}
-                            onValueChange={(value) => setValue('businessType', value as any)}
+                            onValueChange={(value) =>
+                                setValue('businessType', value as any)
+                            }
                         >
                             <SelectTrigger
                                 id="businessType"
                                 className={cn(
                                     'w-full',
-                                    errors.businessType && 'border-destructive'
+                                    errors.businessType && 'border-destructive',
                                 )}
                             >
                                 <SelectValue placeholder="Select business type" />
@@ -223,25 +247,33 @@ const BusinessInfo: React.FC = () => {
 
                     {/* Industry */}
                     <div className="space-y-2">
-                        <Label htmlFor="industry" className="text-sm font-medium text-foreground">
+                        <Label
+                            htmlFor="industry"
+                            className="text-sm font-medium text-foreground"
+                        >
                             Industry *
                         </Label>
                         <Select
                             value={industry}
-                            onValueChange={(value) => setValue('industry', value)}
+                            onValueChange={(value) =>
+                                setValue('industry', value)
+                            }
                         >
                             <SelectTrigger
                                 id="industry"
                                 className={cn(
                                     'w-full',
-                                    errors.industry && 'border-destructive'
+                                    errors.industry && 'border-destructive',
                                 )}
                             >
                                 <SelectValue placeholder="Select industry" />
                             </SelectTrigger>
                             <SelectContent>
                                 {industries.map((ind) => (
-                                    <SelectItem key={ind.value} value={ind.value}>
+                                    <SelectItem
+                                        key={ind.value}
+                                        value={ind.value}
+                                    >
                                         {ind.label}
                                     </SelectItem>
                                 ))}

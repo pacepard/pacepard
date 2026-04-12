@@ -5,4 +5,3 @@ const Workshops = () => {
 };
 
 export default Workshops;
-

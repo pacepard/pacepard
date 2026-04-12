@@ -37,90 +37,92 @@ export default function PPFunnel() {
                     className="container scale-x-105"
                 />
                 <div className="container mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-20">
-                <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
-                    {/* Left: Stay in the loop — email signup */}
-                    <div className="space-y-4">
-                        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                            Stay in the loop
-                        </h2>
-                        <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
-                            Get the latest on hackathons, product updates,
-                            and community news.
-                        </p>
-                        <form
-                            onSubmit={handleSubmit}
-                            className="mt-6 flex w-full max-w-md"
-                        >
-                            <div
+                    <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
+                        {/* Left: Stay in the loop — email signup */}
+                        <div className="space-y-4">
+                            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                                Stay in the loop
+                            </h2>
+                            <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+                                Get the latest on hackathons, product updates,
+                                and community news.
+                            </p>
+                            <form
+                                onSubmit={handleSubmit}
+                                className="mt-6 flex w-full max-w-md"
+                            >
+                                <div
+                                    className={cn(
+                                        'flex w-full items-center gap-0 overflow-hidden rounded-md',
+                                        'border border-border bg-background shadow-sm',
+                                        'focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/20',
+                                    )}
+                                >
+                                    <Input
+                                        type="email"
+                                        placeholder="Enter your email"
+                                        value={email}
+                                        onChange={(e) =>
+                                            setEmail(e.target.value)
+                                        }
+                                        className={cn(
+                                            'h-12 flex-1 rounded-md border-0 bg-background px-5 text-foreground',
+                                            'placeholder:text-muted-foreground',
+                                            'focus-visible:ring-0 focus-visible:ring-offset-0',
+                                        )}
+                                        aria-label="Email address"
+                                    />
+                                    <Button
+                                        type="submit"
+                                        size="icon"
+                                        className={cn(
+                                            'size-12 shrink-0 rounded-md',
+                                            'bg-foreground text-background hover:bg-foreground/80',
+                                        )}
+                                        aria-label="Subscribe"
+                                    >
+                                        <ArrowRight
+                                            className="size-5"
+                                            strokeWidth={2.5}
+                                            aria-hidden
+                                        />
+                                    </Button>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* Right: Join the community — Slack CTA */}
+                        <div className="space-y-4">
+                            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                                Join the community
+                            </h2>
+                            <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+                                Connect with other participants, share projects,
+                                and get help from the team.
+                            </p>
+                            <Button
+                                asChild
+                                size="lg"
                                 className={cn(
-                                    'flex w-full items-center gap-0 overflow-hidden rounded-md',
-                                    'border border-border bg-background shadow-sm',
-                                    'focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/20',
+                                    'mt-6 h-12 rounded-md px-6',
+                                    'bg-foreground text-background hover:bg-foreground/90',
+                                    'border border-border',
                                 )}
                             >
-                                <Input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className={cn(
-                                        'h-12 flex-1 rounded-md border-0 bg-background px-5 text-foreground',
-                                        'placeholder:text-muted-foreground',
-                                        'focus-visible:ring-0 focus-visible:ring-offset-0',
-                                    )}
-                                    aria-label="Email address"
-                                />
-                                <Button
-                                    type="submit"
-                                    size="icon"
-                                    className={cn(
-                                        'size-12 shrink-0 rounded-md',
-                                        'bg-foreground text-background hover:bg-foreground/80',
-                                    )}
-                                    aria-label="Subscribe"
+                                <a
+                                    href="#"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-3"
                                 >
-                                    <ArrowRight
-                                        className="size-5"
-                                        strokeWidth={2.5}
-                                        aria-hidden
-                                    />
-                                </Button>
-                            </div>
-                        </form>
-                    </div>
-
-                    {/* Right: Join the community — Slack CTA */}
-                    <div className="space-y-4">
-                        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                            Join the community
-                        </h2>
-                        <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
-                            Connect with other participants, share projects, and
-                            get help from the team.
-                        </p>
-                        <Button
-                            asChild
-                            size="lg"
-                            className={cn(
-                                'mt-6 h-12 rounded-md px-6',
-                                'bg-foreground text-background hover:bg-foreground/90',
-                                'border border-border',
-                            )}
-                        >
-                            <a
-                                href="#"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-3"
-                            >
-                                <SlackIcon className="size-5 shrink-0" />
-                                Join our Slack
-                            </a>
-                        </Button>
+                                    <SlackIcon className="size-5 shrink-0" />
+                                    Join our Slack
+                                </a>
+                            </Button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
         </Background>
     );
 }

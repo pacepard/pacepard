@@ -20,8 +20,7 @@ export default function PPHeroSection() {
                     {/* Left: headline, description, CTAs */}
                     <div className="min-w-0 max-w-xl shrink space-y-6 text-left lg:max-w-2xl">
                         <h1 className="font-bold tracking-tight text-foreground text-4xl md:text-5xl">
-                            The growth platform for AI-native
-                            product teams.
+                            The growth platform for AI-native product teams.
                         </h1>
                         <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
                             {/* Your projects, wikis and docs, all side by side. For

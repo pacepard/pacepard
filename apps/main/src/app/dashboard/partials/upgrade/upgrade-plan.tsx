@@ -5,4 +5,3 @@ const UpgradePlan = () => {
 };
 
 export default UpgradePlan;
-

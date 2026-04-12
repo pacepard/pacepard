@@ -35,14 +35,23 @@ function CtaIllustration({ className }: { className?: string }) {
                 fill="white"
                 className="text-foreground"
             />
-            <circle cx="155" cy="75" r="4" fill="currentColor" className="text-foreground" />
-            <circle cx="305" cy="75" r="4" fill="currentColor" className="text-foreground" />
+            <circle
+                cx="155"
+                cy="75"
+                r="4"
+                fill="currentColor"
+                className="text-foreground"
+            />
+            <circle
+                cx="305"
+                cy="75"
+                r="4"
+                fill="currentColor"
+                className="text-foreground"
+            />
 
             {/* Red triangle - top left */}
-            <path
-                d="M165 95 L205 95 L185 135 Z"
-                fill="#E05D5D"
-            />
+            <path d="M165 95 L205 95 L185 135 Z" fill="#E05D5D" />
 
             {/* Yellow crescent - bottom left */}
             <path
@@ -51,10 +60,7 @@ function CtaIllustration({ className }: { className?: string }) {
             />
 
             {/* Blue diamond / polygon - bottom right */}
-            <path
-                d="M260 195 L290 165 L320 195 L290 225 Z"
-                fill="#4A90E2"
-            />
+            <path d="M260 195 L290 165 L320 195 L290 225 Z" fill="#4A90E2" />
 
             {/* Person: head */}
             <circle
@@ -97,12 +103,7 @@ export default function ClCta() {
     const showImage = USE_CTA_IMAGE && !imageError;
 
     return (
-        <section
-            className={cn(
-                'w-full py-16 md:py-24',
-                'bg-neutral-50',
-            )}
-        >
+        <section className={cn('w-full py-16 md:py-24', 'bg-neutral-50')}>
             <div className="container mx-auto max-w-5xl px-4 md:px-6">
                 <div className="flex flex-col items-center gap-12 md:flex-row md:items-center md:justify-between md:gap-16">
                     {/* Left: illustration — put screenshot at public/blocks/cta-creator.png and set USE_CTA_IMAGE true to use it */}
@@ -147,7 +148,7 @@ export default function ClCta() {
                                     href="#"
                                     className="inline-flex items-center gap-2"
                                 >
-                                   Choose program
+                                    Choose program
                                     <ArrowRightToLineIcon
                                         className="size-4"
                                         strokeWidth={2.5}
@@ -170,13 +171,12 @@ export default function ClCta() {
                                     href="#"
                                     className="inline-flex items-center gap-2"
                                 >
-                                      <Calendar
+                                    <Calendar
                                         className="size-4"
                                         strokeWidth={2.5}
                                         aria-hidden
                                     />
                                     Clarity session
-                                  
                                 </Link>
                             </Button>
                         </div>

@@ -9,12 +9,13 @@ This package is part of the Pacepard monorepo and is automatically included in t
 ## Usage
 
 ```typescript
-import { /* your exports */ } from '@pacepard/blocs'
+import {} from /* your exports */ '@pacepard/blocs';
 ```
 
 ## Development
 
 This package uses:
+
 - TypeScript with React library configuration
 - ESLint with React internal rules
 - Shared workspace configurations

@@ -15,7 +15,8 @@ const HackathonDetails = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const activeTab: TabSlug = tab && TABS.includes(tab as TabSlug) ? (tab as TabSlug) : 'overview';
+    const activeTab: TabSlug =
+        tab && TABS.includes(tab as TabSlug) ? (tab as TabSlug) : 'overview';
 
     useEffect(() => {
         if (!slug) return;
@@ -23,7 +24,9 @@ const HackathonDetails = () => {
             setIsLoading(true);
             setError(null);
             try {
-                const res = await PacepardAPI.hackathon.getHackathon({ id: slug });
+                const res = await PacepardAPI.hackathon.getHackathon({
+                    id: slug,
+                });
                 if (res.data?.data) {
                     setHackathon(res.data.data as IHackathon);
                 } else {
@@ -59,7 +62,9 @@ const HackathonDetails = () => {
     if (error || !hackathon) {
         return (
             <div className="p-6">
-                <p className="text-destructive">{error ?? 'Hackathon not found'}</p>
+                <p className="text-destructive">
+                    {error ?? 'Hackathon not found'}
+                </p>
             </div>
         );
     }
@@ -69,11 +74,16 @@ const HackathonDetails = () => {
             <header className="mb-6">
                 <h1 className="text-2xl font-semibold">{hackathon.name}</h1>
                 {hackathon.description && (
-                    <p className="text-muted-foreground mt-1">{hackathon.description}</p>
+                    <p className="text-muted-foreground mt-1">
+                        {hackathon.description}
+                    </p>
                 )}
             </header>
 
-            <nav className="flex gap-1 border-b border-border mb-6" role="tablist">
+            <nav
+                className="flex gap-1 border-b border-border mb-6"
+                role="tablist"
+            >
                 {TABS.map((t) => (
                     <button
                         key={t}
@@ -82,7 +92,9 @@ const HackathonDetails = () => {
                         aria-selected={activeTab === t}
                         onClick={() => handleTabChange(t)}
                         className={`px-4 py-2 text-sm font-medium capitalize border-b-2 -mb-px transition-colors hover:text-foreground border-transparent ${
-                            activeTab === t ? 'border-primary text-foreground' : 'text-muted-foreground'
+                            activeTab === t
+                                ? 'border-primary text-foreground'
+                                : 'text-muted-foreground'
                         }`}
                     >
                         {t}
@@ -93,19 +105,28 @@ const HackathonDetails = () => {
             <section aria-label={`${activeTab} content`}>
                 {activeTab === 'overview' && (
                     <div>
-                        <p className="text-muted-foreground">Status: {hackathon.status}</p>
+                        <p className="text-muted-foreground">
+                            Status: {hackathon.status}
+                        </p>
                         {hackathon.settings?.startDate && (
                             <p className="text-muted-foreground mt-1">
-                                Starts: {new Date(hackathon.settings.startDate).toLocaleDateString()}
+                                Starts:{' '}
+                                {new Date(
+                                    hackathon.settings.startDate,
+                                ).toLocaleDateString()}
                             </p>
                         )}
                     </div>
                 )}
                 {activeTab === 'submission' && (
-                    <div className="text-muted-foreground">Submission tab content.</div>
+                    <div className="text-muted-foreground">
+                        Submission tab content.
+                    </div>
                 )}
                 {activeTab === 'share' && (
-                    <div className="text-muted-foreground">Share tab content.</div>
+                    <div className="text-muted-foreground">
+                        Share tab content.
+                    </div>
                 )}
                 {activeTab === 'edit' && (
                     <div className="text-muted-foreground">

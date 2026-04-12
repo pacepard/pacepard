@@ -1,131 +1,130 @@
-import type { Editor } from "@tiptap/react"
+import type { Editor } from '@tiptap/react';
 
 // Primitive UI Components
-import { Button } from "@/core/primitives/button"
-import { Spacer } from "@/core/primitives/spacer"
+import { Button } from '@/core/primitives/button';
+import { Spacer } from '@/core/primitives/spacer';
 import {
-  Menu,
-  MenuContent,
-  MenuItem,
-  MenuGroup,
-  MenuGroupLabel,
-  MenuButton,
-} from "@/core/primitives/menu"
-import { ComboboxList } from "@/core/primitives/combobox"
-import { Separator } from "@/core/primitives/separator"
+    Menu,
+    MenuContent,
+    MenuItem,
+    MenuGroup,
+    MenuGroupLabel,
+    MenuButton,
+} from '@/core/primitives/menu';
+import { ComboboxList } from '@/core/primitives/combobox';
+import { Separator } from '@/core/primitives/separator';
 
 // Tiptap UI
+import { TEXT_COLORS, useColorText } from '@/core/ui/color-text-button';
 import {
-  TEXT_COLORS,
-  useColorText,
-} from "@/core/ui/color-text-button"
-import {
-  HIGHLIGHT_COLORS,
-  useColorHighlight,
-} from "@/core/ui/color-highlight-button"
-import type { RecentColor } from "@/core/ui/color-text-popover"
-import {
-  getColorByValue,
-  useRecentColors,
-} from "@/core/ui/color-text-popover"
+    HIGHLIGHT_COLORS,
+    useColorHighlight,
+} from '@/core/ui/color-highlight-button';
+import type { RecentColor } from '@/core/ui/color-text-popover';
+import { getColorByValue, useRecentColors } from '@/core/ui/color-text-popover';
 
 // Icons
-import { PaintBucketIcon } from "@/core/icons/paint-bucket-icon"
-import { ChevronRightIcon } from "@/core/icons/chevron-right-icon"
-import { TextColorSmallIcon } from "@/core/icons/text-color-small-icon"
-import { usePacepardEditor } from "@/hooks/use-pacepard-editor"
+import { PaintBucketIcon } from '@/core/icons/paint-bucket-icon';
+import { ChevronRightIcon } from '@/core/icons/chevron-right-icon';
+import { TextColorSmallIcon } from '@/core/icons/text-color-small-icon';
+import { usePacepardEditor } from '@/hooks/use-pacepard-editor';
 
 interface ColorMenuItemProps {
-  color: { value: string; label: string }
+    color: { value: string; label: string };
 }
 
 const TextColorMenuItem: React.FC<ColorMenuItemProps> = ({ color }) => {
-  const { addRecentColor } = useRecentColors()
-  const { isActive, handleColorText, label } = useColorText({
-    label: color.label,
-    textColor: color.value,
-    onApplied: ({ color, label }) =>
-      addRecentColor({ type: "text", label, value: color }),
-  })
+    const { addRecentColor } = useRecentColors();
+    const { isActive, handleColorText, label } = useColorText({
+        label: color.label,
+        textColor: color.value,
+        onApplied: ({ color, label }) =>
+            addRecentColor({ type: 'text', label, value: color }),
+    });
 
-  return (
-    <MenuItem
-      render={
-        <Button
-          data-style="ghost"
-          data-active-state={isActive ? "on" : "off"}
-        />
-      }
-      onClick={handleColorText}
-    >
-      <span className="tiptap-button-color-text" style={{ color: color.value }}>
-        <TextColorSmallIcon
-          className="tiptap-button-icon"
-          style={{ color: color.value, flexGrow: 1 }}
-        />
-      </span>
-      <span className="tiptap-button-text">{label}</span>
-    </MenuItem>
-  )
-}
+    return (
+        <MenuItem
+            render={
+                <Button
+                    data-style="ghost"
+                    data-active-state={isActive ? 'on' : 'off'}
+                />
+            }
+            onClick={handleColorText}
+        >
+            <span
+                className="tiptap-button-color-text"
+                style={{ color: color.value }}
+            >
+                <TextColorSmallIcon
+                    className="tiptap-button-icon"
+                    style={{ color: color.value, flexGrow: 1 }}
+                />
+            </span>
+            <span className="tiptap-button-text">{label}</span>
+        </MenuItem>
+    );
+};
 
 const HighlightColorMenuItem: React.FC<ColorMenuItemProps> = ({ color }) => {
-  const { addRecentColor } = useRecentColors()
-  const { isActive, handleColorHighlight, label } = useColorHighlight({
-    label: color.label,
-    highlightColor: color.value,
-    mode: "node",
-    onApplied: ({ color, label }) =>
-      addRecentColor({ type: "highlight", label, value: color }),
-  })
+    const { addRecentColor } = useRecentColors();
+    const { isActive, handleColorHighlight, label } = useColorHighlight({
+        label: color.label,
+        highlightColor: color.value,
+        mode: 'node',
+        onApplied: ({ color, label }) =>
+            addRecentColor({ type: 'highlight', label, value: color }),
+    });
 
-  return (
-    <MenuItem
-      render={
-        <Button
-          data-style="ghost"
-          data-active-state={isActive ? "on" : "off"}
-        />
-      }
-      onClick={handleColorHighlight}
-    >
-      <span
-        className="tiptap-button-highlight"
-        style={{ "--highlight-color": color.value } as React.CSSProperties}
-      />
-      <span className="tiptap-button-text">{label}</span>
-    </MenuItem>
-  )
-}
+    return (
+        <MenuItem
+            render={
+                <Button
+                    data-style="ghost"
+                    data-active-state={isActive ? 'on' : 'off'}
+                />
+            }
+            onClick={handleColorHighlight}
+        >
+            <span
+                className="tiptap-button-highlight"
+                style={
+                    { '--highlight-color': color.value } as React.CSSProperties
+                }
+            />
+            <span className="tiptap-button-text">{label}</span>
+        </MenuItem>
+    );
+};
 
 const RecentColorMenuItem: React.FC<{
-  colorObj: RecentColor
+    colorObj: RecentColor;
 }> = ({ colorObj }) => {
-  const colorSet = colorObj.type === "text" ? TEXT_COLORS : HIGHLIGHT_COLORS
-  const color = getColorByValue(colorObj.value, colorSet)
+    const colorSet = colorObj.type === 'text' ? TEXT_COLORS : HIGHLIGHT_COLORS;
+    const color = getColorByValue(colorObj.value, colorSet);
 
-  const ColorComponent =
-    colorObj.type === "text" ? TextColorMenuItem : HighlightColorMenuItem
+    const ColorComponent =
+        colorObj.type === 'text' ? TextColorMenuItem : HighlightColorMenuItem;
 
-  return <ColorComponent color={color} />
-}
+    return <ColorComponent color={color} />;
+};
 
 export interface ColorMenuProps {
-  editor?: Editor | null
-  /**
-   * Custom trigger component. If not provided, uses default paint bucket button.
-   */
-  trigger?: React.ReactNode
-  /**
-   * Label for the color menu trigger
-   * @default "Color"
-   */
-  label?: string
-  /**
-   * Menu placement relative to trigger
-   * @default "right"
-   */
-  placement?: React.ComponentProps<typeof Menu>["placement"]
+    editor?: Editor | null;
+    /**
+     * Custom trigger component. If not provided, uses default paint bucket button.
+     */
+    trigger?: React.ReactNode;
+    /**
+     * Label for the color menu trigger
+     * @default "Color"
+     */
+    label?: string;
+    /**
+     * Menu placement relative to trigger
+     * @default "right"
+     */
+    placement?: React.ComponentProps<typeof Menu>['placement'];
 }
 
 /**
@@ -133,80 +132,86 @@ export interface ColorMenuProps {
  * Includes recent colors, text colors, and highlight colors sections.
  */
 export const ColorMenu: React.FC<ColorMenuProps> = ({
-  editor: providedEditor,
-  trigger,
-  label = "Color",
-  placement = "right",
+    editor: providedEditor,
+    trigger,
+    label = 'Color',
+    placement = 'right',
 }) => {
-  const { editor } = usePacepardEditor(providedEditor)
-  const { recentColors, isInitialized } = useRecentColors()
+    const { editor } = usePacepardEditor(providedEditor);
+    const { recentColors, isInitialized } = useRecentColors();
 
-  const hasColorActions: boolean =
-    !!editor?.can().setMark("textStyle") ||
-    !!editor?.can().setMark("highlight") ||
-    !!editor?.can().toggleNodeBackgroundColor("yellow") ||
-    false
+    const hasColorActions: boolean =
+        !!editor?.can().setMark('textStyle') ||
+        !!editor?.can().setMark('highlight') ||
+        !!editor?.can().toggleNodeBackgroundColor('yellow') ||
+        false;
 
-  if (!editor || !hasColorActions) {
-    return null
-  }
+    if (!editor || !hasColorActions) {
+        return null;
+    }
 
-  const defaultTrigger = (
-    <MenuItem
-      render={
-        <MenuButton
-          render={
-            <Button data-style="ghost">
-              <PaintBucketIcon className="tiptap-button-icon" />
-              <span className="tiptap-button-text">{label}</span>
-              <Spacer />
-              <ChevronRightIcon className="tiptap-button-icon" />
-            </Button>
-          }
+    const defaultTrigger = (
+        <MenuItem
+            render={
+                <MenuButton
+                    render={
+                        <Button data-style="ghost">
+                            <PaintBucketIcon className="tiptap-button-icon" />
+                            <span className="tiptap-button-text">{label}</span>
+                            <Spacer />
+                            <ChevronRightIcon className="tiptap-button-icon" />
+                        </Button>
+                    }
+                />
+            }
         />
-      }
-    />
-  )
+    );
 
-  return (
-    <Menu placement={placement} trigger={trigger || defaultTrigger}>
-      <MenuContent portal>
-        <ComboboxList>
-          {/* Recent Colors */}
-          {isInitialized && recentColors.length > 0 && (
-            <MenuGroup>
-              <MenuGroupLabel>Recent colors</MenuGroupLabel>
-              {recentColors.map((colorObj) => (
-                <RecentColorMenuItem key={colorObj.value} colorObj={colorObj} />
-              ))}
-              <Separator orientation="horizontal" />
-            </MenuGroup>
-          )}
+    return (
+        <Menu placement={placement} trigger={trigger || defaultTrigger}>
+            <MenuContent portal>
+                <ComboboxList>
+                    {/* Recent Colors */}
+                    {isInitialized && recentColors.length > 0 && (
+                        <MenuGroup>
+                            <MenuGroupLabel>Recent colors</MenuGroupLabel>
+                            {recentColors.map((colorObj) => (
+                                <RecentColorMenuItem
+                                    key={colorObj.value}
+                                    colorObj={colorObj}
+                                />
+                            ))}
+                            <Separator orientation="horizontal" />
+                        </MenuGroup>
+                    )}
 
-          {/* Text Colors */}
-          <MenuGroup>
-            <MenuGroupLabel>Text color</MenuGroupLabel>
-            {TEXT_COLORS.map((textColor) => (
-              <TextColorMenuItem key={textColor.value} color={textColor} />
-            ))}
-          </MenuGroup>
+                    {/* Text Colors */}
+                    <MenuGroup>
+                        <MenuGroupLabel>Text color</MenuGroupLabel>
+                        {TEXT_COLORS.map((textColor) => (
+                            <TextColorMenuItem
+                                key={textColor.value}
+                                color={textColor}
+                            />
+                        ))}
+                    </MenuGroup>
 
-          <Separator orientation="horizontal" />
+                    <Separator orientation="horizontal" />
 
-          {/* Background Colors */}
-          <MenuGroup>
-            <MenuGroupLabel>Background color</MenuGroupLabel>
-            {HIGHLIGHT_COLORS.map((highlightColor) => (
-              <HighlightColorMenuItem
-                key={highlightColor.value}
-                color={highlightColor}
-              />
-            ))}
-          </MenuGroup>
-        </ComboboxList>
-      </MenuContent>
-    </Menu>
-  )
-}
+                    {/* Background Colors */}
+                    <MenuGroup>
+                        <MenuGroupLabel>Background color</MenuGroupLabel>
+                        {HIGHLIGHT_COLORS.map((highlightColor) => (
+                            <HighlightColorMenuItem
+                                key={highlightColor.value}
+                                color={highlightColor}
+                            />
+                        ))}
+                    </MenuGroup>
+                </ComboboxList>
+            </MenuContent>
+        </Menu>
+    );
+};
 
-export { TextColorMenuItem, HighlightColorMenuItem, RecentColorMenuItem }
+export { TextColorMenuItem, HighlightColorMenuItem, RecentColorMenuItem };

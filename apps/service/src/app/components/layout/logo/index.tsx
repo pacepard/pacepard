@@ -1,12 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
 const Logo = ({ sticky }: { sticky: boolean }) => {
     return (
-        <Link
-            href="/"
-            className="flex items-center min-w-0 flex-shrink-0"
-        >
+        <Link href="/" className="flex items-center min-w-0 flex-shrink-0">
             <div
                 className="
                     relative
@@ -26,7 +23,7 @@ const Logo = ({ sticky }: { sticky: boolean }) => {
                     className={`
                         w-full h-auto object-contain
                         transition-all duration-300
-                        ${sticky ? "invert-0" : "invert"}
+                        ${sticky ? 'invert-0' : 'invert'}
                     `}
                 />
             </div>
