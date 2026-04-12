@@ -8,4 +8,4 @@ services:
     pull_policy: always
     restart: unless-stopped
     expose:
-      - "3000"
+      - "80"

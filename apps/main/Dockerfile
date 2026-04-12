@@ -46,12 +46,10 @@ COPY --from=base /app/apps/main/dist /usr/share/caddy
 # Copy Caddyfile for SPA routing and configuration
 COPY --from=base /app/apps/main/Caddyfile /etc/caddy/Caddyfile
 
-# Expose port 3000
-EXPOSE 3000
+EXPOSE 80
 
-# Health check (must match Caddyfile bind :3000, not default port 80)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1/ || exit 1
 
 # Start Caddy (runs as non-root by default)
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

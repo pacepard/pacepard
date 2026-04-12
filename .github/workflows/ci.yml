@@ -158,11 +158,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
-      - name: Setup Turborepo cache
-        uses: turborepo/cache-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
