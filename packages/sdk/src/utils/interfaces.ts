@@ -19,7 +19,6 @@ import Team from '@/dtos/team.dto';
 import Squad from '@/dtos/squad.dto';
 import Submission from '@/dtos/submission.dto';
 import Entry from '@/dtos/entry.dto';
-import Hackathon from '@/dtos/hackathon.dto';
 import Form, { IBlock, IQuestion, IResponse } from '@/dtos/form.dto';
 
 export interface IApiError {

@@ -1,5 +1,5 @@
 import Entry from "@/dtos/entry.dto";
-import Hackathon from "@/dtos/hackathon.dto";
+import type { IHackathon } from "@/dtos/hackathon.dto";
 import Submission from "@/dtos/submission.dto";
 import User from "@/dtos/user.dto";
 
@@ -25,7 +25,7 @@ interface Form {
     styles: Record<string, any>; // css 
     
     // relationships
-    hackathon: Hackathon | any;
+    hackathon: IHackathon | any;
     entries: Array<Entry | any>;
     submission: Array<Submission | any>;   
 

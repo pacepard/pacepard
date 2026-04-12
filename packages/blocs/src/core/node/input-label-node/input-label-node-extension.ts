@@ -93,12 +93,20 @@ export const InputLabelNode = Node.create<InputLabelNodeOptions>({
     return {
       setInputLabel:
         (attrs?: { level?: number; placeholder?: string }) =>
-        ({ commands }: { commands: { setNode: (name: string, attrs?: Record<string, unknown>) => boolean } }) =>
-          commands.setNode("inputLabel", { level: 4, placeholder: DEFAULT_PLACEHOLDER, ...attrs }),
+        ({ commands }) =>
+          commands.setNode("inputLabel", {
+            level: 4,
+            placeholder: DEFAULT_PLACEHOLDER,
+            ...attrs,
+          }),
       toggleInputLabel:
         (attrs?: { level?: number; placeholder?: string }) =>
-        ({ commands }: { commands: { toggleNode: (name: string, attrs?: Record<string, unknown>) => boolean } }) =>
-          commands.toggleNode("inputLabel", { level: 4, placeholder: DEFAULT_PLACEHOLDER, ...attrs }),
+        ({ commands }) =>
+          commands.toggleNode("paragraph", "inputLabel", {
+            level: 4,
+            placeholder: DEFAULT_PLACEHOLDER,
+            ...attrs,
+          }),
     }
   },
 })

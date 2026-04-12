@@ -1,4 +1,4 @@
-import Hackathon from '@/dtos/hackathon.dto';
+import type { IHackathon } from '@/dtos/hackathon.dto';
 import Project from '@/dtos/project.dto';
 import User from '@/dtos/user.dto';
 import Guest from '@/dtos/guest.dto';
@@ -15,7 +15,7 @@ interface Workspace {
     members: Array<User>; // members of a business OR organisation that owns the workspace
     invites: Array<User>; // members of a business OR organisation that owns the workspace who hasnt accepted invites
 
-    hackathons: Array<Hackathon>;
+    hackathons: Array<IHackathon>;
     projects: Array<Project>; // challeges or projects that a business created
 
     mentors: Array<Guest>; // mentors (guests with type: MENTOR) who can mentor an entry or submission in the workspace

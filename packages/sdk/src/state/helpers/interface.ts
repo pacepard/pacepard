@@ -2,7 +2,7 @@ import Admin from "@/dtos/admin.dto"
 import Business from "@/dtos/business.dto"
 import Entry from "@/dtos/entry.dto"
 import Form, { IBlock, IQuestion, IResponse } from "@/dtos/form.dto"
-import Hackathon from "@/dtos/hackathon.dto"
+import type { IHackathon } from "@/dtos/hackathon.dto"
 import Plan from "@/dtos/plan.dto"
 import Project from "@/dtos/project.dto"
 import Squad from "@/dtos/squad.dto"
@@ -43,7 +43,7 @@ export interface ICoreResource {
 }
 
 export interface IHackDomain {
-    hackathons: Array<Hackathon>;
+    hackathons: Array<IHackathon>;
     entries: Array<Entry>;
     submissions: Array<Submission>;
     squad: Array<Squad>;
@@ -66,7 +66,7 @@ export interface IUserContext {
     business: Business,
     admin: Admin,
 
-    hackathon: Hackathon,
+    hackathon: IHackathon,
     entry: Entry,
     submission: Submission,
     squad: Squad,
@@ -100,7 +100,7 @@ export interface IAppContext {
     business: Business,
     admin: Admin,
 
-    hackathon: Hackathon,
+    hackathon: IHackathon,
     entry: Entry,
     submission: Submission,
     squad: Squad

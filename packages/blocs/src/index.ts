@@ -68,7 +68,6 @@ export {
 } from "./core/node/form-input/form-input-extension"
 export type { FormInputAttrs } from "./core/node/form-input/form-input-types"
 export type { ShortAnswerAttrs, InputType, InputMode } from "./core/node/short-answer-node/short-answer-types"
-export type { TextAreaNodeAttrs } from "./core/node/textarea-node/textarea-node-types"
 export { TableKit } from "./core/node/table-node/extensions/table-node-extension"
 export { TableHandleExtension } from "./core/node/table-node/extensions/table-handle/table-handle"
 export { ListNormalizationExtension } from "./core/extenstions/list-normalization-extension"

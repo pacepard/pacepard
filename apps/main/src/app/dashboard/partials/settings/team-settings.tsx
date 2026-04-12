@@ -79,6 +79,7 @@ const TeamSettings = () => {
             const response = await PacepardAPI.workspace.updateWorkspace({
                 id: workspace.id,
                 name: data.teamName,
+                description: workspace.description ?? '',
             });
 
             if (response.error === false) {

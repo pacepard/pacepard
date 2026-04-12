@@ -1,6 +1,6 @@
 import type Admin from "@/dtos/admin.dto";
 import Entry from "@/dtos/entry.dto";
-import Hackathon from "@/dtos/hackathon.dto";
+import type { IHackathon } from "@/dtos/hackathon.dto";
 import Project from "@/dtos/project.dto";
 import Squad from "@/dtos/squad.dto";
 import Submission from "@/dtos/submission.dto";
@@ -51,7 +51,7 @@ interface Business {
     transactions: Array<Transaction | any>;
     templates: Array<Template | any>
 
-    hackathons: Array<Hackathon | any>;
+    hackathons: Array<IHackathon | any>;
     entries: Array<Entry | any>;
     submissions: Array<Submission | any>;
     squad: Array<Squad | any>;

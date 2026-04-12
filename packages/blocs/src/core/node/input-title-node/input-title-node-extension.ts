@@ -93,12 +93,20 @@ export const InputTitleNode = Node.create<InputTitleNodeOptions>({
     return {
       setInputTitle:
         (attrs?: { level?: number; placeholder?: string }) =>
-        ({ commands }: { commands: { setNode: (name: string, attrs?: Record<string, unknown>) => boolean } }) =>
-          commands.setNode("inputTitle", { level: 2, placeholder: DEFAULT_PLACEHOLDER, ...attrs }),
+        ({ commands }) =>
+          commands.setNode("inputTitle", {
+            level: 2,
+            placeholder: DEFAULT_PLACEHOLDER,
+            ...attrs,
+          }),
       toggleInputTitle:
         (attrs?: { level?: number; placeholder?: string }) =>
-        ({ commands }: { commands: { toggleNode: (name: string, attrs?: Record<string, unknown>) => boolean } }) =>
-          commands.toggleNode("inputTitle", { level: 2, placeholder: DEFAULT_PLACEHOLDER, ...attrs }),
+        ({ commands }) =>
+          commands.toggleNode("paragraph", "inputTitle", {
+            level: 2,
+            placeholder: DEFAULT_PLACEHOLDER,
+            ...attrs,
+          }),
     }
   },
 })

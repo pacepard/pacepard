@@ -78,7 +78,7 @@ export const TextAreaNode = Node.create<TextAreaNodeOptions>({
     return {
       insertLongAnswer:
         (attrs: Partial<TextAreaNodeAttrs> = {}) =>
-        ({ chain }: { chain: () => { insertContent: (c: unknown) => { run: () => boolean } } }) =>
+        ({ chain }) =>
           chain()
             .insertContent({
               type: nodeName,
