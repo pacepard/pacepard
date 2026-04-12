@@ -141,6 +141,7 @@ jobs:
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM }}
           TIPTAP_PRO_TOKEN: ${{ secrets.TIPTAP_PRO_TOKEN }}
+          VITE_APP_API_URL: ${{ vars.API_URL }}
         run: |
           OWNER="${{ steps.meta.outputs.owner }}"
           FLOAT="${{ steps.meta.outputs.float }}"
@@ -150,6 +151,7 @@ jobs:
             --build-arg TURBO_TOKEN \
             --build-arg TURBO_TEAM \
             --build-arg TIPTAP_PRO_TOKEN \
+            --build-arg VITE_APP_API_URL \
             -f "${{ matrix.dockerfile }}" \
             -t "ghcr.io/${OWNER}/${{ matrix.image }}:${FLOAT}" \
             -t "ghcr.io/${OWNER}/${{ matrix.image }}:${FLOAT}-${SHA}" \
