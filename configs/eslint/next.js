@@ -43,16 +43,6 @@ export const nextJsConfig = [
     settings: { react: { version: "detect" } },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
-
-      // indentation
-      indent: ["error", 4],
-      "@typescript-eslint/indent": ["error", 4],
-
-      // spacing
-      "react/jsx-indent": ["error", 4],
-      "react/jsx-indent-props": ["error", 4],
-
-      // react settings
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
     },

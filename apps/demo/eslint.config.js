@@ -1,4 +1,4 @@
-import { config } from '@pacepard/configs/eslint/react-internal'
+import { config } from '@pacepard/configs/eslint/react-internal.js'
 
 export default [
   {

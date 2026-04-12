@@ -1,4 +1,4 @@
-import { config } from '@pacepard/configs/eslint/base'
+import { config } from '@pacepard/configs/eslint/base.js'
 
 export default [
   {

@@ -5,9 +5,11 @@
   "private": true,
   "exports": {
     "./base": "./base.js",
+    "./base.js": "./base.js",
     "./next-js": "./next.js",
     "./next.js": "./next.js",
-    "./react-internal": "./react-internal.js"
+    "./react-internal": "./react-internal.js",
+    "./react-internal.js": "./react-internal.js"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^15.4.5",
