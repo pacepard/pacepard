@@ -62,10 +62,11 @@ tmp/
 .travis.yml
 .gitlab-ci.yml
 
-# Docker
-Dockerfile*
-docker-compose*.yml
-.dockerignore
+# Docker — root only. A bare `Dockerfile*` would also ignore `apps/api/Dockerfile` etc.,
+# which can break BuildKit when COPYing those app trees.
+/Dockerfile*
+/docker-compose*.yml
+/.dockerignore
 
 # Linting
 .eslintcache
@@ -77,11 +78,7 @@ docker-compose*.yml
 # Turborepo
 .turbo/
 
-# apps/web image: shrink context (see apps/web/Dockerfile). Root + configs/ still sent.
+# One root .dockerignore applies to every image (api, web, main, service). Do not list
+# apps/* or packages/* that any Dockerfile COPYs or that pnpm lockfile resolves.
 tooling/
-apps/api
 apps/demo
-apps/main
-apps/service
-packages/blocs
-packages/sdk
