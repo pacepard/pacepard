@@ -25,11 +25,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Repository secret TIPTAP_PRO_TOKEN: TipTap Pro registry token (https://cloud.tiptap.dev/) - required
+# for @tiptap-pro/* (see root .npmrc). Same secret as deploy.yml Docker builds.
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '9.0.0'
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TIPTAP_PRO_TOKEN: ${{ secrets.TIPTAP_PRO_TOKEN }}
 
 jobs:
   validate:
