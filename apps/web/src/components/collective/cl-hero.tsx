@@ -13,12 +13,13 @@ export default function ClHero() {
                 <div className="flex flex-col items-start justify-start gap-8 text-left md:items-center md:justify-center md:text-center">
                     <div className="w-full min-w-0 max-w-2xl space-y-6 md:mx-auto">
                         <h1 className="text-balance text-4xl font-regular tracking-tight text-foreground md:text-5xl">
-                            Where teams work better, and together
+                            The learning and growth platform that makes you
+                            AI-native
                         </h1>
                         <p className="max-w-lg text-lg leading-relaxed text-muted-foreground md:mx-auto">
-                            This where you learn in teams and capture knowledge,
-                            find answers, and automate projects. Now a team of 7
-                            feels like 70.
+                            Say goodbye to passive learning. You learn by doing.
+                            Work with AI agent workflows. Build job-critical
+                            skills for an AI-first world.
                         </p>
                         <div className="flex flex-wrap items-center justify-start gap-4 md:justify-center">
                             <Button

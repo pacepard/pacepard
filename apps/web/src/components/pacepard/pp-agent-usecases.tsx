@@ -222,7 +222,7 @@ const defaultUseCases: AgentUseCase[] = [
 
 export function PPAgentUsecases({
     className,
-    label = 'See what Custom Agents can do',
+    label = '  See what you can do as an AI-native talent',
     useCases = defaultUseCases,
 }: {
     className?: string;

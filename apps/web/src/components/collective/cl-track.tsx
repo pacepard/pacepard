@@ -4,15 +4,16 @@ import { cn } from '@pacepard/ui/lib/utils';
 
 export type TrackCardVariant = 'mint' | 'pale';
 
+/** Live badge fill — same on every card regardless of footer stripe color. */
+const LIVE_BADGE_FILL = '#ffdc5d';
+
 const VARIANT = {
     mint: {
-        surface: '#f91ce4', //#E0EAE9',
         gold: '#f91ce4', //#F2D36B',
         article:
             'rounded border border-zinc-900/10 shadow-lg shadow-zinc-950/10',
     },
     pale: {
-        surface: '#F1F5F4',
         gold: '#ffdc5d',
         article:
             'rounded border border-zinc-900/[0.06] shadow-sm shadow-zinc-950/5',
@@ -30,11 +31,7 @@ function badgeClass(variant: TrackCardVariant, b: TrackBadgeVariant): string {
     const type = 'text-xs font-semibold tracking-wide';
 
     if (b === 'live') {
-        return cn(
-            shape,
-            type,
-            variant === 'pale' ? 'text-zinc-900' : 'text-white',
-        );
+        return cn(shape, type, 'text-zinc-900');
     }
     if (variant === 'pale') {
         return cn(
@@ -65,6 +62,8 @@ export type TrackCardProps = {
     className?: string;
     /** `pale` matches the masonry grid reference (light card + brighter gold). */
     cardVariant?: TrackCardVariant;
+    /** Bottom stripe only; Live badges always use yellow. Defaults to variant gold. */
+    stripeColor?: string;
 };
 
 export function TrackCard({
@@ -77,17 +76,16 @@ export function TrackCard({
     productImages,
     className,
     cardVariant = 'mint',
+    stripeColor,
 }: TrackCardProps) {
     const v = VARIANT[cardVariant];
+    const barColor = stripeColor ?? v.gold;
 
     return (
         <article
             className={cn('relative overflow-hidden ', v.article, className)}
         >
-            <div
-                className="relative px-6 pb-28 pt-6"
-                style={{ backgroundColor: v.surface }}
-            >
+            <div className="relative bg-white px-6 pb-28 pt-6">
                 <div className="flex flex-wrap items-center gap-2">
                     {badges.map((b) => (
                         <span
@@ -95,7 +93,7 @@ export function TrackCard({
                             className={badgeClass(cardVariant, b.variant)}
                             style={
                                 b.variant === 'live'
-                                    ? { backgroundColor: v.gold }
+                                    ? { backgroundColor: LIVE_BADGE_FILL }
                                     : undefined
                             }
                         >
@@ -103,13 +101,13 @@ export function TrackCard({
                         </span>
                     ))}
                 </div>
-                <h2 className="mt-5 text-balance text-xl font-bold tracking-tight text-zinc-950 sm:text-[21px] sm:leading-snug">
+                <h2 className="mt-5 text-balance text-xl font-semibold tracking-tight text-zinc-950 sm:text-[21px] sm:leading-snug">
                     {title}
                 </h2>
-                <p className="mt-3 max-w-[178px] text-pretty text-[13px] leading-relaxed text-zinc-900 sm:max-w-none sm:text-sm md:text-[15px]">
+                <p className="mt-3 max-w- text-pretty leading-relaxed text-muted-foreground sm:max-w-none text-lg]">
                     {description}
                 </p>
-                <p className="mt-6 text-sm font-semibold text-zinc-950 sm:text-base">
+                <p className="mt-6 text-lg font-regular text-muted-foreground">
                     {instructor}
                 </p>
                 {productImages && productImages.length > 0 && (
@@ -117,7 +115,7 @@ export function TrackCard({
                         {productImages.map((img, i) => (
                             <div
                                 key={i}
-                                className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full"
+                                className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl"
                             >
                                 <Image
                                     src={img.src}
@@ -131,16 +129,16 @@ export function TrackCard({
                 )}
             </div>
             <div
-                className="relative h-[61px] w-full sm:h-[72px] md:h-[85px]"
+                className="relative h-[21px] w-full "
                 style={{
-                    backgroundColor: v.gold,
+                    backgroundColor: barColor,
                     backgroundImage:
                         'repeating-linear-gradient(105deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 6px)',
                 }}
                 aria-hidden
             />
             <div className="pointer-events-none absolute bottom-0 right-0 h-[min(52vw,168px)] w-[min(52vw,142px)] sm:h-[180px] sm:w-[150px] md:h-[200px] md:w-[168px]">
-                <div className="relative h-full w-full">
+                {/* <div className="relative h-full w-full">
                     <Image
                         src={imageSrc}
                         alt={imageAlt}
@@ -148,7 +146,7 @@ export function TrackCard({
                         className="object-contain object-bottom"
                         sizes="(max-width: 768px) 52vw, 168px"
                     />
-                </div>
+                </div> */}
             </div>
         </article>
     );

@@ -220,7 +220,7 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
 ];
 
-export function PPApprenticeship({
+export function PPApprenticeshipIntro({
     className,
     items = defaultItems,
     defaultOpenId,
@@ -266,10 +266,6 @@ export function PPApprenticeship({
                                     AI-native and zero distraction environment
                                 </h2>
                             </div>
-
-                            <p className="text-lg text-muted-foreground">
-                                Here&apos;s how it works:
-                            </p>
 
                             {/* <button
                                 type="button"
@@ -331,4 +327,4 @@ export function PPApprenticeship({
     );
 }
 
-export default PPApprenticeship;
+export default PPApprenticeshipIntro;
