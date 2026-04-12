@@ -84,6 +84,8 @@ USER nodejs
 # Standard port is 5015, but Coolify will map dynamically
 EXPOSE 5015
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:${APP_PORT:-5015}/api/v1/me || exit 1
 
 # Start API in production mode
 # ⚠️ IMPORTANT: Do NOT set NODE_ENV here if using Coolify!
