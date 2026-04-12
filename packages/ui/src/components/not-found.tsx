@@ -1,6 +1,13 @@
 import * as React from "react"
 import { cn } from "@pacepard/ui/lib/utils"
 
+type NotFoundLinkProps = {
+  to?: string
+  href?: string
+  className?: string
+  children?: React.ReactNode
+}
+
 interface NotFoundProps {
   className?: string
   title?: string
@@ -8,7 +15,7 @@ interface NotFoundProps {
   buttonText?: string
   onReturnHome?: () => void
   homeHref?: string
-  LinkComponent?: React.ComponentType<any>
+  LinkComponent?: React.ComponentType<NotFoundLinkProps>
 }
 
 export function NotFound({

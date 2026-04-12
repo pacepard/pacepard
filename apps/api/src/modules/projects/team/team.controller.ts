@@ -196,52 +196,6 @@ export const getTeam: RequestHandler = asyncHandler(
 );
 
 /**
- * @name generateTeamShareableLink
- * @description Generates a shareable link for a team
- * @route POST /teams/:id/invite/shareable-link
- * @access  Private
- */
-export const generateTeamShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await teamService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`team:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
  * @name updateTeam
  * @description Updates team information
  * @route PUT /teams/:id
@@ -265,52 +219,6 @@ export const updateTeam: RequestHandler = asyncHandler(
             );
         }
 
-        try {
-            await redisWrapper.deleteData(`team:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
- * @name generateTeamShareableLink
- * @description Generates a shareable link for a team
- * @route POST /teams/:id/invite/shareable-link
- * @access  Private
- */
-export const generateTeamShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await teamService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
         try {
             await redisWrapper.deleteData(`team:${id}`);
         } catch (cacheError) {
@@ -374,52 +282,6 @@ export const addTeamMember: RequestHandler = asyncHandler(
 );
 
 /**
- * @name generateTeamShareableLink
- * @description Generates a shareable link for a team
- * @route POST /teams/:id/invite/shareable-link
- * @access  Private
- */
-export const generateTeamShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await teamService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`team:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
  * @name removeTeamMember
  * @description Removes a member from a team
  * @route DELETE /teams/:teamId/members/:userId
@@ -449,52 +311,6 @@ export const removeTeamMember: RequestHandler = asyncHandler(
 
         try {
             await redisWrapper.deleteData(`team:${teamId}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
- * @name generateTeamShareableLink
- * @description Generates a shareable link for a team
- * @route POST /teams/:id/invite/shareable-link
- * @access  Private
- */
-export const generateTeamShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await teamService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`team:${id}`);
         } catch (cacheError) {
             console.error('Cache invalidation failed:', cacheError);
         }
@@ -545,52 +361,6 @@ export const updateTeamMemberRole: RequestHandler = asyncHandler(
 
         try {
             await redisWrapper.deleteData(`team:${teamId}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
- * @name generateTeamShareableLink
- * @description Generates a shareable link for a team
- * @route POST /teams/:id/invite/shareable-link
- * @access  Private
- */
-export const generateTeamShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await teamService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`team:${id}`);
         } catch (cacheError) {
             console.error('Cache invalidation failed:', cacheError);
         }
@@ -665,52 +435,6 @@ export const rotateMember: RequestHandler = asyncHandler(
 );
 
 /**
- * @name generateTeamShareableLink
- * @description Generates a shareable link for a team
- * @route POST /teams/:id/invite/shareable-link
- * @access  Private
- */
-export const generateTeamShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await teamService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`team:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
  * @name deleteTeam
  * @description Deletes a team
  * @route DELETE /teams/:id
@@ -733,52 +457,6 @@ export const deleteTeam: RequestHandler = asyncHandler(
             );
         }
 
-        try {
-            await redisWrapper.deleteData(`team:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
- * @name generateTeamShareableLink
- * @description Generates a shareable link for a team
- * @route POST /teams/:id/invite/shareable-link
- * @access  Private
- */
-export const generateTeamShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Team ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await teamService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
         try {
             await redisWrapper.deleteData(`team:${id}`);
         } catch (cacheError) {

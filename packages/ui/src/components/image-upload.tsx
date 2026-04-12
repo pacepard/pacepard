@@ -55,12 +55,6 @@ const sizeClasses = {
   lg: "w-24 h-24",
 }
 
-const iconSizeClasses = {
-  sm: "text-2xl",
-  md: "text-[36px]",
-  lg: "text-4xl",
-}
-
 export function ImageUpload({
   value,
   onChange,

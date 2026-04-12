@@ -97,7 +97,7 @@ class ShareableLinkService {
             separator: '-',
         });
 
-        if (encryptedToken.error || !encryptedToken.data) {
+        if (!encryptedToken) {
             result.error = true;
             result.code = 500;
             result.message = 'Failed to encrypt token';
@@ -113,7 +113,7 @@ class ShareableLinkService {
             linkType,
             resourceId,
             createdBy,
-            token: encryptedToken.data,
+            token: encryptedToken,
             expiresAt,
             linkName,
             metadata,
@@ -179,7 +179,7 @@ class ShareableLinkService {
             separator: '-',
         });
 
-        if (encryptedToken.error || !encryptedToken.data) {
+        if (!encryptedToken) {
             result.error = true;
             result.code = 500;
             result.message = 'Failed to process token';
@@ -188,7 +188,7 @@ class ShareableLinkService {
 
         // Find the link
         const link = await shareableLinkRepository.findShareableLinkByToken(
-            encryptedToken.data,
+            encryptedToken,
         );
 
         if (!link) {
@@ -231,7 +231,7 @@ class ShareableLinkService {
         }
 
         // Increment access count
-        await shareableLinkRepository.incrementAccessCount(encryptedToken.data);
+        await shareableLinkRepository.incrementAccessCount(encryptedToken);
 
         result.message = 'Shareable link is valid';
         result.data = {
@@ -287,14 +287,14 @@ class ShareableLinkService {
                 separator: '-',
             });
 
-            if (encryptResult.error || !encryptResult.data) {
+            if (!encryptResult) {
                 result.error = true;
                 result.code = 500;
                 result.message = 'Failed to process token';
                 return result;
             }
 
-            encryptedToken = encryptResult.data;
+            encryptedToken = encryptResult;
         }
 
         // Revoke the link(s)
@@ -408,7 +408,7 @@ class ShareableLinkService {
             separator: '-',
         });
 
-        if (encryptedToken.error || !encryptedToken.data) {
+        if (!encryptedToken) {
             result.error = true;
             result.code = 500;
             result.message = 'Failed to process token';
@@ -433,7 +433,7 @@ class ShareableLinkService {
         }
 
         const updateResult = await shareableLinkRepository.updateShareableLink(
-            encryptedToken.data,
+            encryptedToken,
             resourceId,
             linkType,
             updateData,
@@ -498,12 +498,12 @@ class ShareableLinkService {
                 separator: '-',
             });
 
-            if (encryptToken.error || !encryptToken.data) {
+            if (!encryptToken) {
                 throw new Error('Failed to encrypt token during generation');
             }
 
             const existingLink = await ShareableLink.findOne({
-                token: encryptToken.data,
+                token: encryptToken,
             });
             exists = !!existingLink;
             attempts++;

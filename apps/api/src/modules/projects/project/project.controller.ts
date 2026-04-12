@@ -188,52 +188,6 @@ export const getWorkspaceProjects: RequestHandler = asyncHandler(
 );
 
 /**
- * @name generateProjectShareableLink
- * @description Generates a shareable link for a project
- * @route POST /projects/:id/invite/shareable-link
- * @access  Private
- */
-export const generateProjectShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await projectService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`project:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
  * @name updateProject
  * @description Updates project information
  * @route PUT /projects/:id
@@ -263,52 +217,6 @@ export const updateProject: RequestHandler = asyncHandler(
             );
         }
 
-        try {
-            await redisWrapper.deleteData(`project:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
- * @name generateProjectShareableLink
- * @description Generates a shareable link for a project
- * @route POST /projects/:id/invite/shareable-link
- * @access  Private
- */
-export const generateProjectShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await projectService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
         try {
             await redisWrapper.deleteData(`project:${id}`);
         } catch (cacheError) {
@@ -370,52 +278,6 @@ export const deleteProject: RequestHandler = asyncHandler(
 );
 
 /**
- * @name generateProjectShareableLink
- * @description Generates a shareable link for a project
- * @route POST /projects/:id/invite/shareable-link
- * @access  Private
- */
-export const generateProjectShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await projectService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`project:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
  * @name addMember
  * @description Adds a member to a project
  * @route POST /projects/:id/members
@@ -442,52 +304,6 @@ export const addMember: RequestHandler = asyncHandler(
             );
         }
 
-        try {
-            await redisWrapper.deleteData(`project:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
- * @name generateProjectShareableLink
- * @description Generates a shareable link for a project
- * @route POST /projects/:id/invite/shareable-link
- * @access  Private
- */
-export const generateProjectShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await projectService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
         try {
             await redisWrapper.deleteData(`project:${id}`);
         } catch (cacheError) {
@@ -547,52 +363,6 @@ export const removeMember: RequestHandler = asyncHandler(
 );
 
 /**
- * @name generateProjectShareableLink
- * @description Generates a shareable link for a project
- * @route POST /projects/:id/invite/shareable-link
- * @access  Private
- */
-export const generateProjectShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await projectService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`project:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
  * @name publishProject
  * @description Publishes a project
  * @route POST /projects/:id/publish
@@ -632,52 +402,6 @@ export const publishProject: RequestHandler = asyncHandler(
 );
 
 /**
- * @name generateProjectShareableLink
- * @description Generates a shareable link for a project
- * @route POST /projects/:id/invite/shareable-link
- * @access  Private
- */
-export const generateProjectShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await projectService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
-        try {
-            await redisWrapper.deleteData(`project:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
  * @name closeProject
  * @description Closes a project
  * @route POST /projects/:id/close
@@ -700,52 +424,6 @@ export const closeProject: RequestHandler = asyncHandler(
             );
         }
 
-        try {
-            await redisWrapper.deleteData(`project:${id}`);
-        } catch (cacheError) {
-            console.error('Cache invalidation failed:', cacheError);
-        }
-
-        res.status(200).json({
-            error: false,
-            errors: [],
-            data: result.data,
-            message: result.message,
-            status: 200,
-        });
-    },
-);
-
-/**
- * @name generateProjectShareableLink
- * @description Generates a shareable link for a project
- * @route POST /projects/:id/invite/shareable-link
- * @access  Private
- */
-export const generateProjectShareableLink: RequestHandler = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        if (!userId) return next(new ErrorResponse('Unauthorized', 401, []));
-
-        const { id } = req.params;
-        if (!id)
-            return next(new ErrorResponse('Project ID is required', 400, []));
-
-        const { expiresInDays } = req.body;
-
-        const result = await projectService.generateShareableLink(
-            id,
-            userId,
-            expiresInDays || 7,
-        );
-
-        if (result.error) {
-            return next(
-                new ErrorResponse(result.message, result.code || 500, []),
-            );
-        }
-
-        // Invalidate cache
         try {
             await redisWrapper.deleteData(`project:${id}`);
         } catch (cacheError) {
