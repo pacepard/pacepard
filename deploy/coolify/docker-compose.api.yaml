@@ -1,6 +1,7 @@
 # Coolify: Build Pack = Docker Compose. Point "Docker Compose Location" to this file.
 # Env: GHCR_ORG (lowercase), IMAGE_TAG = development | staging | production
 # CI image: ghcr.io/${GHCR_ORG}/pacepard-api:${IMAGE_TAG}
+# unauthorized on pull -> register ghcr.io in Coolify or make package public (see docs/coolify-monorepo-setup.md 4.5.1).
 services:
   api:
     image: ghcr.io/${GHCR_ORG}/pacepard-api:${IMAGE_TAG}

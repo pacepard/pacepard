@@ -3,7 +3,13 @@
 #   GHCR_ORG = GitHub org or user (lowercase), e.g. pacepard
 #   IMAGE_TAG = floating tag CI pushes: development | staging | production
 # CI image: ghcr.io/${GHCR_ORG}/pacepard-web:${IMAGE_TAG}
-# Private GHCR: configure registry credentials on the server / in Coolify.
+#
+# If deploy logs show: unauthorized / manifests/staging — GHCR rejected the pull.
+# Fix: add ghcr.io credentials in Coolify (Docker registry UI), or make the GHCR package public.
+# Never commit PATs into this file; use Coolify / GitHub Actions secrets only.
+#
+# Large image: if deploy fails after long "Extracting" with exit 255, see docs
+# coolify-monorepo-setup.md section 4.5.2 (timeout / OOM / disk).
 services:
   web:
     image: ghcr.io/${GHCR_ORG}/pacepard-web:${IMAGE_TAG}
