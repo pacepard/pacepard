@@ -87,8 +87,13 @@ COPY --chown=nodejs:nodejs --from=base /app/apps/web/.next ./apps/web/.next
 COPY --chown=nodejs:nodejs --from=base /app/apps/web/public ./apps/web/public
 COPY --chown=nodejs:nodejs --from=base /app/apps/web/src ./apps/web/src
 
-# Create .npmrc file to set store location (workspace-level config)
-RUN echo "store-dir=/app/.pnpm-store" > /app/.npmrc
+# TipTap Pro + scoped registries live in the root .npmrc copied above — do not overwrite it.
+# Append store-dir only (pnpm reads ${TIPTAP_PRO_TOKEN} from env at install time).
+RUN echo "store-dir=/app/.pnpm-store" >> /app/.npmrc
+
+# Same build-arg as base so pnpm can resolve @tiptap-pro/* during this stage's install.
+ARG TIPTAP_PRO_TOKEN=""
+ENV TIPTAP_PRO_TOKEN=$TIPTAP_PRO_TOKEN
 
 # Install dependencies as root (before switching to nodejs user)
 # BuildKit cache mounts don't respect filesystem permissions, so we must install as root
