@@ -27,7 +27,8 @@ concurrency:
 
 # TIPTAP_PRO_TOKEN: TipTap NPM token (Cloud > My features > Pro extensions). Can live on the repo
 # or on GitHub Environments development | staging | production — jobs below use `environment:` so
-# env-scoped secrets are visible (same pattern as deploy.yml).
+# env-scoped secrets are visible (same pattern as deploy.yml). If the secret is missing, pnpm may
+# warn while reading .npmrc (${TIPTAP_PRO_TOKEN}); fork PRs usually cannot access repository secrets.
 env:
   NODE_VERSION: '20'
   PNPM_VERSION: '9.0.0'
