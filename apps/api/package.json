@@ -13,6 +13,7 @@
         "start": "node dist/server.js",
         "start:worker": "node dist/src/queues/workers/runWorker.js",
         "build": "tsc --incremental --skipLibCheck && tsc-alias && ts-add-js-extension --dir=dist --include=dist && copyfiles -u 1 \"src/_data/**/*\" \"src/views/**/*\" dist/",
+        "check-types": "tsc --noEmit",
         "staging": "NODE_ENV=staging node dist/server.js",
         "prod": "NODE_ENV=production node dist/server.js",
         "test": "NODE_OPTIONS=--experimental-vm-modules jest",

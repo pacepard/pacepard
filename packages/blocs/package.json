@@ -3,6 +3,10 @@
     "version": "0.0.0",
     "private": true,
     "sideEffects": false,
+    "scripts": {
+        "lint": "eslint .",
+        "check-types": "tsc --noEmit"
+    },
     "main": "./src/index.ts",
     "types": "./src/index.ts",
     "exports": {
@@ -104,6 +108,7 @@
     },
     "devDependencies": {
         "@ariakit/react": "^0.4.21",
+        "eslint": "^9.39.1",
         "@pacepard/configs/eslint": "workspace:*",
         "@pacepard/configs/typescript": "workspace:*",
         "@types/is-hotkey": "^0.1.10",

@@ -31,6 +31,7 @@
     "test:api:integration": "turbo run test:integration --filter=@pacepard/api",
     "test:api:modules": "turbo run test:modules --filter=@pacepard/api",
     "check-types": "turbo run check-types",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx}\"",
     "lint": "turbo lint",
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx}\"",

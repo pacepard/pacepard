@@ -1309,6 +1309,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.10)
+      eslint:
+        specifier: ^9.39.1
+        version: 9.39.2(jiti@2.6.1)
       sass-embedded:
         specifier: ^1.97.2
         version: 1.97.3
@@ -1358,6 +1361,9 @@ importers:
       react-router-dom:
         specifier: ^7.10.1
         version: 7.13.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
 
   packages/ui:
     dependencies:

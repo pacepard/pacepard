@@ -12,6 +12,10 @@
       "outputs": [".next/**", "dist/**"]
     },
     "lint": {},
+    "check-types": {
+      "dependsOn": ["^check-types"],
+      "outputs": []
+    },
     "@pacepard/api-docs#build": {
       "dependsOn": [],
       "cache": false,

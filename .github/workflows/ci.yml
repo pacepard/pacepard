@@ -96,7 +96,7 @@ jobs:
         run: pnpm check-types
 
       - name: Format check
-        run: pnpm format --check || true
+        run: pnpm format:check || true
         continue-on-error: true
 
   test:
