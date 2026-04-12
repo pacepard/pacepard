@@ -64,6 +64,10 @@ COPY --from=base --chown=nodejs:nodejs /app/configs ./configs
 # Copy API package.json BEFORE install (required for pnpm workspace resolution)
 COPY --from=base --chown=nodejs:nodejs /app/apps/api/package.json ./apps/api/
 
+# Same build-arg as base: pnpm reads ${TIPTAP_PRO_TOKEN} from .npmrc for @tiptap-pro/* (workspace packages).
+ARG TIPTAP_PRO_TOKEN=""
+ENV TIPTAP_PRO_TOKEN=$TIPTAP_PRO_TOKEN
+
 # Install only production dependencies (pnpm needs all package.json files present)
 RUN pnpm install --frozen-lockfile --prod
 
