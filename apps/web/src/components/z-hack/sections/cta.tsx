@@ -33,7 +33,7 @@ export default function CallToAction() {
                             asChild
                             size="lg"
                             variant="outline"
-                            className="h-10.5 rounded-md px-5 border-brand bg-background dark:bg-white text-black"
+                            className="h-10.5 rounded-md px-5 border-brand bg-background text-black"
                         >
                             <Link href="#link">
                                 <span className="text-nowrap">

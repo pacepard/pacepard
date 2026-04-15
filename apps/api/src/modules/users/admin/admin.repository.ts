@@ -2,7 +2,7 @@ import { FilterQuery } from 'mongoose';
 import mongoose from 'mongoose';
 import Admin from './admin.model';
 import { IAdminDoc } from './admin.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

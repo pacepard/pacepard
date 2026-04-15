@@ -1,7 +1,7 @@
 import { FilterQuery } from 'mongoose';
 import Talent from './talent.model';
 import { ITalentDoc } from './talent.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult, IPagination } from '../../../utils/interfaces.util';
 
 /**

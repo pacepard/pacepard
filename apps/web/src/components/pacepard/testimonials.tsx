@@ -121,10 +121,10 @@ export function Testimonials({ className }: { className?: string }) {
         >
             <div className="mb-12 px-4 text-left md:mb-16 md:px-6 md:text-center">
                 <h2 className="text-4xl font-regular tracking-tight text-foreground md:text-5xl">
-                    Join other
+                    Join others becoming 
                 </h2>
                 <h2 className="mt-1 text-4xl font-regular tracking-tight text-muted-foreground md:text-5xl">
-                    AI-native talents.
+               AI-native talent.
                 </h2>
                 {/* Join other AI-native talents who are learning and growing by doing. */}
             </div>

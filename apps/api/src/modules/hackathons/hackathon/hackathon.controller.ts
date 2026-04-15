@@ -14,7 +14,7 @@ import redisWrapper from '../../../middlewares/redis.mdw';
 import invitationService from '../../platform/Invitation/invitation.service';
 import { InvitationType } from '../../platform/Invitation/invitation.interface';
 import { InviteTokenDTO } from '../../platform/Invitation/invitation.dto';
-import emailService from '../../../services/email.service';
+import emailService from '../../internals/email.service';
 import { EMAIL_CONFIG } from '../../../configs/email.config';
 import userRepository from '../../users/user/user.repository';
 import authService from '../../authentication/auth/auth.service';

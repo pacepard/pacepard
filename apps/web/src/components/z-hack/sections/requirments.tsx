@@ -3,7 +3,7 @@ import EntryRequirements from '@/components/z-hack/containers/entry-req';
 
 const Requirements = () => {
     return (
-        //bg-[#171717] text-white py-16 pt-20 md:py-32 dark:bg-[#171717]
+        //bg-[#171717] text-white py-16 pt-20 md:py-32
         <section className="bg-black text-white py-16 pt-20 md:py-32 px-6 md:px-40">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
                 {/* Entry Requirements */}

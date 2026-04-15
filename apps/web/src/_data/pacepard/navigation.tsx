@@ -62,12 +62,12 @@ export const NavigationItems: NavigationItem[] = [
     //         },
     //     ],
     // },
-    { label: 'Learn', href: '/apprenticeship' },
+    { label: 'Learn', href: '/learn' },
     { label: 'Hackathon', href: '/hackathon' },
 
     { label: 'Research', href: '/research' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'FAQ', href: '/faq' },
+    // { label: 'FAQ', href: '/faq' },
     // { label: '', href: '/open-source' },
     // {
     //     label: 'Open Source',

@@ -6,7 +6,7 @@ import {
     dateToday,
     strIncludesEs6,
 } from '@btffamily/pacitude';
-import SystemService from '../../../services/system.service';
+import SystemService from '../../internals/system.service';
 
 import {
     LoginDTO,

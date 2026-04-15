@@ -1,7 +1,7 @@
 import { FilterQuery } from 'mongoose';
 import Guest from './guest.model';
 import { IGuestDoc } from './guest.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

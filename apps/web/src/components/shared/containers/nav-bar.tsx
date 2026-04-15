@@ -70,11 +70,10 @@ export const Navbar = () => {
                             className="flex shrink-0 items-center gap-2"
                         >
                             <Image
-                                src="blocks/pacepard1.svg"
+                                src="blocks/pacepard.svg"
                                 alt="pacepard logo"
                                 width={150}
                                 height={20}
-                                className="dark:invert"
                             />
                         </Link>
 
@@ -150,7 +149,6 @@ export const Navbar = () => {
 
                     {/* Auth Buttons and Theme Toggle (right side) */}
                     <div className="flex items-center gap-2.5">
-                        {/* <ThemeToggle /> */}
 
                         <div className="flex items-center gap-2.5 max-lg:hidden">
                             {!scrolled && (
@@ -180,7 +178,7 @@ export const Navbar = () => {
                                         size="lg"
                                         className="text-sm md:text-base"
                                     >
-                                        <Link href="/apprenticeship">
+                                        <Link href="/learn">
                                             <span className="">
                                                 Get Started
                                             </span>
@@ -346,7 +344,7 @@ export const Navbar = () => {
                                     <Link
                                         href="#" // Replace with actual X/Twitter link
                                         aria-label="Follow on X (Twitter)"
-                                        className="w-9 h-9 bg-accent dark:bg-accent hover:bg-primary dark:hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 bg-accent hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <X className="w-5 h-5" />
@@ -354,7 +352,7 @@ export const Navbar = () => {
                                     <Link
                                         href="#" // Replace with actual LinkedIn link
                                         aria-label="Follow on LinkedIn"
-                                        className="w-9 h-9 bg-accent dark:bg-accent hover:bg-primary dark:hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
+                                        className="w-9 h-9 bg-accent hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
                                         onClick={() => setIsMenuOpen(false)}
                                     >
                                         <Linkedin className="w-5 h-5" />

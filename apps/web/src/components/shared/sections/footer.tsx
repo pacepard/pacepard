@@ -12,9 +12,6 @@ import {
     LinkedInIcon,
     XIcon,
 } from '@/components/shared/containers/social-icons';
-import Image from 'next/image';
-import Link from 'next/link';
-
 // Map the string IDs from the data file to the actual imported icon components
 const SOCIAL_ICON_MAP = {
     github: GitHubIcon,
@@ -44,7 +41,6 @@ export default function Footer() {
                                         alt="pacepard logo"
                                         width={250}
                                         height={20}
-                                        className="dark:invert"
                                     />
                                 </Link> */}
                             </div>
@@ -65,7 +61,7 @@ export default function Footer() {
                                         <a
                                             key={social.id}
                                             href={social.href}
-                                            className="w-9 h-9 bg-accent dark:bg-accent hover:bg-primary dark:hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
+                                            className="w-9 h-9 bg-accent hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
                                             aria-label={social.ariaLabel}
                                         >
                                             <IconComponent className="w-4 h-4" />
@@ -100,7 +96,16 @@ export default function Footer() {
                                                         }
                                                         className="text-lg text-neutral-400 hover:text-primary transition-colors"
                                                     >
-                                                        {link.label}
+                                                        <span className="inline-flex items-center gap-2">
+                                                            {link.label}
+                                                            {section.title ===
+                                                                'Product' &&
+                                                            linkIndex === 0 ? (
+                                                                <span className="rounded-md bg-green-50 px-2 py-0.5 text-xs font-medium text-green-600">
+                                                                    New
+                                                                </span>
+                                                            ) : null}
+                                                        </span>
                                                     </a>
                                                 </li>
                                             ),
@@ -113,7 +118,7 @@ export default function Footer() {
 
                     {/* Pacepard Text */}
                     <div className="mt-24 flex justify-center ">
-                        <span className="text-[4.5rem] md:text-[12rem] lg:text-[15rem] lg:text-[17.6rem] font-bold select-none leading-none bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 dark:from-neutral-950 to-neutral-200 dark:to-neutral-800 inset-x-0">
+                        <span className="text-[4.5rem] md:text-[12rem] lg:text-[15rem] lg:text-[17.6rem] font-bold select-none leading-none bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-200 inset-x-0">
                             {BRAND_INFO.name}
                         </span>
                     </div>
@@ -126,12 +131,12 @@ export default function Footer() {
                         />
                     </div>
                     <div className="flex flex-col items-start justify-between gap-6 sm:flex-row pt-8">
-                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-neutral-800">
                             <p className="text-sm text-neutral-500">
                                 {FOOTER_BOTTOM_TEXT.madeBy}
                             </p>
                         </div>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-500">
+                        <p className="text-sm text-neutral-500">
                             &copy; {currentYear}{' '}
                             <a
                                 href={FOOTER_BOTTOM_TEXT.copyrightHref}

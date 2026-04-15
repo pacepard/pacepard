@@ -160,9 +160,9 @@ export type PPFeatureShowcaseItem = {
 const defaultItems: PPFeatureShowcaseItem[] = [
     {
         id: 'qa',
-        title: 'Join a sprint',
+        title: 'Fetch your task',
         description:
-            'Run hackathons your way, in-person or online! Define your themes, tracks, and judging criteria.',
+            'Load assigned tasks and quests with full context, requirements, and expected outputs.',
         accent: ACCENT.orange,
         icon: (
             <IconCircle color={ACCENT.orange}>
@@ -172,9 +172,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'select-task',
-        title: 'Select Task(s)',
+        title: 'Start in your environment',
         description:
-            'Draft challenges and hackathons with our smart instructions and templates. No need to start from scratch each time.',
+            'Execute tasks with  your preferred tools, setup and workflows, not a sandbox.',
         accent: ACCENT.purple,
         icon: (
             <IconCircle color={ACCENT.purple}>
@@ -184,9 +184,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'complete-task',
-        title: 'Complete task(s)',
+        title: 'Build in iterations',
         description:
-            'See where teams stand from kickoff through build to demo day.',
+            'Execute the task in small cycles. Test, improve, and refine based on your pace.',
         accent: ACCENT.teal,
         icon: (
             <IconCircle color={ACCENT.teal}>
@@ -195,10 +195,10 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         ),
     },
     {
-        id: 'get-feedback',
+        id: 'Sync and submit work',
         title: 'Get Feedback',
         description:
-            'Self-serve answers so organizers spend less time repeating the basics.',
+            'Push progress, submit tasks, and connect outputs back to Pacepard.',
         accent: ACCENT.pink,
         icon: (
             <IconCircle color={ACCENT.pink}>
@@ -208,9 +208,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'improve-weekly',
-        title: 'Improve weekly',
+        title: 'Track progress and unlock next work',
         description:
-            'Self-serve answers so organizers spend less time repeating the basics.',
+            'Receive feedback, complete milestones, and unlock new quests or assignments.',
         accent: ACCENT.pink,
         icon: (
             <IconCircle color={ACCENT.pink}>
@@ -224,7 +224,7 @@ export function PPApprenticeship({
     className,
     items = defaultItems,
     defaultOpenId,
-    staticPreviewSrc = '/blocks/terminal.png',
+    staticPreviewSrc = '/blocks/monoq.png',
     staticPreviewAlt = 'Feature showcase preview',
     staticPreviewBg = '#38b6ff', //'#ff751f', //green
 }: {

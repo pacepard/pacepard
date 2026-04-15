@@ -41,7 +41,7 @@ export default function AboutSection() {
     };
 
     return (
-        <section className="py-20 md:py-32 px-4 bg-secondary dark:bg-yellow-100 mt-20 overflow-hidden ">
+        <section className="py-20 md:py-32 px-4 bg-secondary mt-20 overflow-hidden ">
             <div className="max-w-5xl mx-auto" ref={heroRef}>
                 <div className="flex flex-col lg:flex-row items-start gap-8">
                     {/* Right side - Content */}

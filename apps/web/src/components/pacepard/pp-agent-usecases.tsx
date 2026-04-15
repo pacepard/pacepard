@@ -6,7 +6,7 @@ export type AgentUseCase = {
     id: string;
     label: string;
     href: string;
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
     highlight?: boolean;
 };
 
@@ -189,31 +189,31 @@ function IconCustomDark() {
 const defaultUseCases: AgentUseCase[] = [
     {
         id: 'triage',
-        label: 'Triage product feedback',
+        label: 'Break down product problems into execution steps.',
         href: '#',
         icon: <IconTriageBlue />,
     },
     {
         id: 'support',
-        label: 'Resolve support tickets in Slack',
+        label: 'Work directly inside live systems and codebases',
         href: '#',
         icon: <IconSupportOrange />,
     },
     {
         id: 'security',
-        label: 'Respond to security alerts faster',
+        label: 'Use AI to plan, debug, and accelerate decisions.',
         href: '#',
         icon: <IconSecurityRed />,
     },
     {
         id: 'reporting',
-        label: 'Automate weekly reporting',
+        label: 'Fluency in agentic tooling, workflows, and AI systems',
         href: '#',
         icon: <IconReportingGreen />,
     },
     {
         id: 'custom',
-        label: 'Create your own Custom Agent',
+        label: 'Expand your Human AI collaboration today. ',
         href: '#',
         icon: <IconCustomDark />,
         highlight: true,
@@ -237,13 +237,30 @@ export function PPAgentUsecases({
                     className,
                 )}
             >
-                {label && (
+                 <div className="flex flex-wrap items-start justify-between gap-4 mb-10">
+                    <div className="space-y-4">
+                        {/* <p className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                            <span>The Pacepard way</span>
+                            <span className="rounded-md bg-green-50 px-2 py-0.5 text-xs font-medium text-green-600">
+                                Learn
+                            </span>
+                        </p> */}
+                        <h2
+                            id="pp-feature-showcase-heading"
+                            className="max-w-2xl text-4xl font-regular tracking-tight text-foreground md:text-5xl"
+                        >
+                            AI-native and job-ready capabilities you will unlock
+                        </h2>
+                    </div>
+                </div>
+
+                {/* {label && (
                     <p className="mb-4 text-lg text-muted-foreground">
                         {label}
                     </p>
-                )}
+                )} */}
                 <div className="flex flex-wrap gap-3">
-                    {useCases.map((item) => (
+                    {useCases.map((item, index) => (
                         <Link
                             key={item.id}
                             href={item.href}
@@ -264,9 +281,11 @@ export function PPAgentUsecases({
                                 )}
                             >
                                 {item.label}{' '}
-                                <span className="inline-block transition-transform group-hover:translate-x-0.5">
-                                    →
-                                </span>
+                                {index === useCases.length - 1 ? (
+                                    <span className="ml-1 inline-block text-2xl leading-none transition-transform group-hover:translate-x-0.5">
+                                        
+                                    </span>
+                                ) : null}
                             </span>
                         </Link>
                     ))}

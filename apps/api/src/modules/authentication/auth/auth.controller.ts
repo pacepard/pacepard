@@ -15,8 +15,8 @@ import {
     PasswordType,
     UserType,
 } from '../../users/user/user.interface';
-import emailService from '../../../services/email.service';
-import tokenService from '../../../services/token.service';
+import emailService from '../../internals/email.service';
+import tokenService from '../../internals/token.service';
 import { IUserDoc } from '../../users/user/user.interface';
 import userService from '../../users/user/user.service';
 

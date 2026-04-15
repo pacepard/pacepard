@@ -13,7 +13,7 @@ import { IListQuery } from '@/utils/interfaces';
 import { ICollection } from '@/state/helpers/interface';
 import useNetwork from '../shared/useNetwork';
 import useAuth from './useAuth';
-import { pacepardAPIClient } from '@/api/clients/pacepard';
+import { pacepardAPIClient } from '@/api/_base/config';
 
 interface ISendUsersUpdate {
     title: string;

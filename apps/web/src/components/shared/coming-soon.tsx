@@ -124,7 +124,7 @@ export function ComingSoonPanel({
             <div className="container mx-auto max-w-6xl px-4 md:px-6">
                 <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
                     <div className="min-w-0 flex-1 space-y-6 text-left">
-                        <div className="inline-flex items-center rounded-md border border-border bg-muted/50 px-3 py-1 text-sm font-medium text-muted-foreground">
+                        <div className="inline-flex items-center rounded-full border border-border bg-green-100 px-3 py-1 text-sm font-medium text-green-600">
                             {badgeLabel}
                         </div>
                         <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-5xl">

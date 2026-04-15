@@ -1,5 +1,6 @@
 import React, { useMemo, useReducer } from 'react';
 
+import { WebAuthPlatformBridge } from '@/auth/platform/web';
 import UserContext from './userContext';
 import UserReducer from './userReducer';
 
@@ -285,7 +286,7 @@ const UserState = (props: any) => {
 
     return (
         <UserContext.Provider value={contextValues}>
-            {props.children}
+            <WebAuthPlatformBridge>{props.children}</WebAuthPlatformBridge>
         </UserContext.Provider>
     );
 };

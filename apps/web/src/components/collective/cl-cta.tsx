@@ -126,12 +126,11 @@ export default function ClCta() {
                     {/* Right: headline, description, CTA */}
                     <div className="flex-1 min-w-0 space-y-6 text-left">
                         <h2 className="text-4xl font-regular tracking-tight text-foreground md:text-5xl">
-                            Become a superhuman
+                            Become AI native today
                         </h2>
                         <p className="max-w-lgleading-relaxed text-muted-foreground text-lg">
-                            Submit your template to the Notion template gallery,
-                            get featured, and even get paid – all in just a few
-                            clicks.
+                            Stop learning alone. Work in teams, solve structured
+                            product tasks, and move faster with AI workflows.
                         </p>
 
                         <div className="flex flex-wrap items-center justify-start gap-4 ">

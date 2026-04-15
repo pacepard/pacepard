@@ -8,8 +8,6 @@ import { useFont } from '@/_data/fonts';
 import { siteConfig } from '@/_data/site-config';
 import { Navbar } from '@/components/shared/containers/nav-bar';
 import Footer from '@/components/shared/sections/footer';
-import { ThemeProvider } from '@/context/theme-provider';
-import PPFunnel from '@/components/pacepard/pp-funnel';
 
 export const metadata: Metadata = {
     title: siteConfig.name,
@@ -113,20 +111,17 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en">
             <body
                 className={`${useFont.variable} antialiased overflow-x-hidden`}
-                suppressHydrationWarning
             >
-                <ThemeProvider>
-                    {/* <PacepardHeader /> */}
-                    <Navbar />
+                {/* <PacepardHeader /> */}
+                <Navbar />
 
-                    {children}
+                {children}
 
-                    {/* <PPFunnel /> */}
-                    <Footer />
-                </ThemeProvider>
+                {/* <PPFunnel /> */}
+                <Footer />
 
                 <Analytics />
                 <SpeedInsights />

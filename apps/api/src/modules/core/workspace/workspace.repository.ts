@@ -2,7 +2,7 @@ import { FilterQuery } from 'mongoose';
 import mongoose from 'mongoose';
 import Workspace from './workspace.model';
 import { IWorkspaceDoc } from './workspace.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

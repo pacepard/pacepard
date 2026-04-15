@@ -121,7 +121,7 @@ export default function PPHeroSection() {
 //                                 >
 //                                     <div
 //                                         aria-hidden
-//                                         className="border-background bg-linear-to-b dark:inset-shadow-2xs to-foreground from-primary relative flex size-5 items-center justify-center rounded border shadow-md shadow-black/20 ring-1 ring-black/10"
+//                                         className="border-background bg-linear-to-b to-foreground from-primary relative flex size-5 items-center justify-center rounded border shadow-md shadow-black/20 ring-1 ring-black/10"
 //                                     >
 //                                         <div className="absolute inset-x-0 inset-y-1.5 border-y border-dotted border-white/25"></div>
 //                                         <div className="absolute inset-x-1.5 inset-y-0 border-x border-dotted border-white/25"></div>

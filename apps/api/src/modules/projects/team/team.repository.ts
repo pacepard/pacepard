@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { FilterQuery, UpdateQuery } from 'mongoose';
 import Team from './team.model';
 import { ITeamDoc } from './team.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

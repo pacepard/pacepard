@@ -2,7 +2,7 @@ import { Job, DoneCallback } from 'bull';
 import logger from '../../utils/logger.util';
 import hackathonService from '../../modules/hackathons/hackathon/hackathon.service';
 import userRepository from '../../modules/users/user/user.repository';
-import emailService from '../../services/email.service';
+import emailService from '../../modules/internals/email.service';
 import { EmailTemplate, EmailService } from '../../utils/enums.util';
 import { HackStatusType } from '../../modules/hackathons/hackathon/hackathon.interface';
 import { SendEmailDTO } from '../../dtos/email.dto';

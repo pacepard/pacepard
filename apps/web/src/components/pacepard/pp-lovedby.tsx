@@ -243,7 +243,7 @@ export function PPLovedBy({
                             id="pp-feature-showcase-heading"
                             className="max-w-2xl text-4xl font-regular tracking-tight text-foreground md:text-5xl"
                         >
-                            Hands-on with pacepard apprenticeship-based learning.
+                            Hands-on through apprenticeship-based training 
                         </h2>
                     </div>
                 </div>

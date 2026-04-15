@@ -13,7 +13,7 @@ import {
     IShareableLinkDoc,
     ShareableLinkType,
 } from './shareable-link.interface';
-import systemService from '../../../services/system.service';
+import systemService from '../../internals/system.service';
 import mongoose from 'mongoose';
 
 /**

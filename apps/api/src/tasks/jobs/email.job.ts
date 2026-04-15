@@ -1,6 +1,6 @@
 import { Job } from 'bull';
 import { IEmailJob, IResult } from '../../utils/interfaces.util';
-import emailService from '../../services/email.service';
+import emailService from '../../modules/internals/email.service';
 import logger from '../../utils/logger.util';
 
 /**

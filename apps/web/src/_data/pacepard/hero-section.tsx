@@ -6,18 +6,10 @@ export const heroData = {
         'Pacepard is where organizations and African talents come together to invent the future, learn by doing, earn rewards, and unlock long-term loyalty',
 
     mockup: {
-        light: {
-            src: '/blocks/bg-pacepard.png',
-            alt: 'innovation image',
-            width: 2700,
-            height: 1440,
-        },
-        dark: {
-            src: '/blocks/bg-pacepard.png',
-            alt: 'innovation image',
-            width: 2700,
-            height: 1440,
-        },
+        src: '/blocks/bg-pacepard.png',
+        alt: 'innovation image',
+        width: 2700,
+        height: 1440,
     },
 
     button1: {

@@ -1,16 +1,9 @@
-'use client';
-
-import { useEffect, useState } from 'react';
-
 import Image from 'next/image';
-
-import { useTheme } from 'next-themes';
 
 import { cn } from '@pacepard/ui/lib/utils';
 
 interface ScreenshotProps {
-    srcLight: string;
-    srcDark?: string;
+    src: string;
     alt: string;
     width: number;
     height: number;
@@ -18,39 +11,19 @@ interface ScreenshotProps {
 }
 
 export default function Screenshot({
-    srcLight,
-    srcDark,
+    src,
     alt,
     width,
     height,
     className,
 }: ScreenshotProps) {
-    const { resolvedTheme } = useTheme();
-    const [src, setSrc] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (resolvedTheme) {
-            setSrc(resolvedTheme === 'light' ? srcLight : srcDark || srcLight);
-        }
-    }, [resolvedTheme, srcLight, srcDark]);
-
-    if (!src) {
-        return (
-            <div
-                style={{ width, height }}
-                className={cn('bg-muted', className)}
-                aria-label={alt}
-            />
-        );
-    }
-
     return (
         <Image
             src={src}
             alt={alt}
             width={width}
             height={height}
-            className={className}
+            className={cn(className)}
         />
     );
 }

@@ -21,6 +21,7 @@ export default function ResearchPage() {
                     href: siteConfig.links.email,
                     external: true,
                 }}
+                 imageSrc='/blocks/login.png'
             />
         </div>
     );

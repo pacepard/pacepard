@@ -10,7 +10,6 @@ import { useScroll } from 'motion/react';
 import { Navigation } from '@/_data/pacepard/navigation';
 import { Logo } from '@/components/shared/containers/logo';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/context/theme-toggle';
 import { cn } from '@pacepard/ui/lib/utils';
 
 const PacepardHeader = () => {
@@ -43,7 +42,6 @@ const PacepardHeader = () => {
                             </Link>
 
                             <div className="flex items-center space-x-2 lg:hidden">
-                                <ThemeToggle className="relative z-20 block cursor-pointer hover:bg-accent " />
                                 <button
                                     onClick={() => setMenuState(!menuState)}
                                     aria-label={
@@ -74,7 +72,7 @@ const PacepardHeader = () => {
                         </div>
 
                         {/* Mobile + CTA section */}
-                        <div className="bg-background mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 in-data-[state=active]:block md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none lg:in-data-[state=active]:flex dark:shadow-none dark:lg:bg-transparent">
+                        <div className="bg-background mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 in-data-[state=active]:block md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none lg:in-data-[state=active]:flex">
                             {/* Mobile navigation */}
                             <div className="lg:hidden">
                                 <ul className="space-y-6 text-base">
@@ -93,10 +91,6 @@ const PacepardHeader = () => {
 
                             {/* Action buttons */}
                             <div className="flex w-full items-start sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <div className="lg:flex relative z-20 cursor-pointer hidden">
-                                    <ThemeToggle />
-                                </div>
-
                                 {!scrolled && (
                                     <>
                                         <Button

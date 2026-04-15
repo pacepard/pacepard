@@ -13,7 +13,7 @@ const items = [
     },
     {
         title: 'Get thousands to stick around your product and technology',
-        image: '/features/cycle-card.svg',
+        image: '/blocks/share.png',
     },
     {
         title: 'Build consistent usage momentum and a healthy feedback loop',

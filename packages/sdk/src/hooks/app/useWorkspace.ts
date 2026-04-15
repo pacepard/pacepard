@@ -9,7 +9,7 @@ import { IListQuery } from '@/utils/interfaces';
 import { ICollection } from '@/state/helpers/interface';
 import { CreateWorkspaceDTO, UpdateWorkspaceDTO } from '@/dtos/workspace.dto';
 import { useCallback } from 'react';
-import { pacepardAPIClient } from '@/api/clients/pacepard';
+import { pacepardAPIClient } from '@/api/_base/config';
 
 const useWorkspace = () => {
     const { appContext } = useContextType();

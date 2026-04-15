@@ -1,11 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
 import Image from 'next/image';
 
 import { clsx } from 'clsx';
-import { useTheme } from 'next-themes';
 
 import { ILogo } from '@/utils/interfaces';
 
@@ -19,26 +16,11 @@ const LogoContainer = ({
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const Logo = (data: ILogo) => {
     const { large, className, ...rest } = data;
-    const { theme } = useTheme();
-    const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    if (!mounted) {
-        return null;
-    }
-
-    const imageSrc =
-        theme === 'dark' ? 'hack/elab-logo.svg' : 'hack/elab-logo-v2.svg';
-
-    // Only pass valid div props (filter out any props not valid for div)
     const divProps: React.HTMLAttributes<HTMLDivElement> = {};
     if (rest.id) divProps.id = rest.id;
     if (rest.style) divProps.style = rest.style;
     if (rest.title) divProps.title = rest.title;
-    // Add more allowed div props as needed
 
     return (
         <>
@@ -48,7 +30,7 @@ const Logo = (data: ILogo) => {
                 {...divProps}
             >
                 <Image
-                    src={imageSrc}
+                    src="hack/elab-logo-v2.svg"
                     alt="Ennovate Lab"
                     className="w-28"
                     width={100}

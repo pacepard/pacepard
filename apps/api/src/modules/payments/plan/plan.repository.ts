@@ -1,7 +1,7 @@
 import mongoose, { Model, FilterQuery } from 'mongoose';
 import Plan from './plan.model';
 import { IPlanDoc, IPlanFilterOptions } from './plan.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

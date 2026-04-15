@@ -5,7 +5,7 @@ import { Check, Minus } from 'lucide-react';
 
 const plans = [
     {
-        name: 'Basic',
+        name: 'Starter',
         price: '₦35,000',
         period: '/month',
         cta: 'Get Started',
@@ -71,11 +71,11 @@ function FeatureValue({ value }: { value: string | boolean }) {
 
 export default function Comparator() {
     return (
-        <section className="bg-background @container py-24">
+        <section className="bg-background @container pt-21">
             <div className="mx-auto max-w-4xl px-6">
                 <div className="text-center">
                     <h2 className="text-balance text-4xl font-regular">
-                        Compare Plans
+                    Flexible plans for builders and teams
                     </h2>
                     <p className="text-muted-foreground mx-auto mt-4 max-w-md text-balance">
                         Find the perfect plan that matches your needs.
@@ -111,9 +111,9 @@ export default function Comparator() {
                                         return (
                                             <div
                                                 key={feature.name}
-                                                className="flex items-center justify-between gap-4 px-4 py-3"
+                                                className="flex items-center justify-between gap-4 px-4 py-3 text-lg"
                                             >
-                                                <span className="text-muted-foreground text-sm">
+                                                <span className="text-muted-foreground">
                                                     {feature.name}
                                                 </span>
                                                 <div className="flex shrink-0 items-center justify-end">
@@ -135,8 +135,8 @@ export default function Comparator() {
                                                 ? 'default'
                                                 : 'outline'
                                         }
-                                        size="sm"
-                                        className="w-full h-11"
+                                        size="lg"
+                                        className="w-full text-lg"
                                     >
                                         <Link
                                             href={plan.link}
@@ -158,9 +158,9 @@ export default function Comparator() {
                         {plans.map((plan) => (
                             <div
                                 key={plan.name}
-                                className={`border-l p-4 text-center ${plan.highlighted ? 'bg-primary/5' : ''}`}
+                                className={`border-l p-4  text-center ${plan.highlighted ? 'bg-primary/5' : ''}`}
                             >
-                                <p className="text-foreground font-medium">
+                                <p className="text-foreground  font-regular">
                                     {plan.name}
                                 </p>
                                 <p className="mt-1">
@@ -179,7 +179,7 @@ export default function Comparator() {
                             key={feature.name}
                             className="grid grid-cols-4 border-b last:border-b-0"
                         >
-                            <div className="text-muted-foreground p-4 text-sm">
+                            <div className="text-muted-foreground p-4 text-lg">
                                 {feature.name}
                             </div>
                             {planKeys.map((plan, idx) => {
@@ -187,7 +187,7 @@ export default function Comparator() {
                                 return (
                                     <div
                                         key={plan}
-                                        className={`flex items-center justify-center border-l p-4 text-sm ${idx === 1 ? 'bg-primary/5' : ''}`}
+                                        className={`flex items-center justify-center border-l p-4 text-lg ${idx === 1 ? 'bg-primary/5' : ''}`}
                                     >
                                         <FeatureValue value={value} />
                                     </div>
@@ -207,7 +207,7 @@ export default function Comparator() {
                                     variant={
                                         plan.highlighted ? 'default' : 'outline'
                                     }
-                                    size="sm"
+                                    size="lg"
                                     className="w-full"
                                 >
                                     <Link

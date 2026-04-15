@@ -17,7 +17,7 @@ export default function Home() {
             <Testimonials />
             {/* <Background> */}
             <PPApprenticeshipIntro />
-            {/* <PPCollective /> */}
+            {/* * <PPCollective />  */}
 
             <ClTestimonials />
 
@@ -30,8 +30,6 @@ export default function Home() {
 
             <PPCTA />
 
-            {/* <PPTestimonials /> */}
-            {/* </Background> */}
         </>
     );
 }

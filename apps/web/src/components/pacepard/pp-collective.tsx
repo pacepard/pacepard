@@ -32,56 +32,56 @@ const useCases = [
         icon: HelpCircle,
         label: 'Simple, customisable setup',
         iconWrapClass:
-            'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-200',
+            'bg-amber-100 text-amber-800',
     },
     {
         href: '#',
         icon: List,
         label: 'Reusable event templates',
         iconWrapClass:
-            'bg-sky-100 text-sky-800 dark:bg-sky-950/50 dark:text-sky-200',
+            'bg-sky-100 text-sky-800',
     },
     {
         href: '#',
         icon: FolderOpen,
         label: 'Track progress at every stage',
         iconWrapClass:
-            'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200',
+            'bg-emerald-100 text-emerald-800',
     },
     {
         href: '#',
         icon: User,
         label: 'Knowledgebase for participants',
         iconWrapClass:
-            'bg-violet-100 text-violet-800 dark:bg-violet-950/50 dark:text-violet-200',
+            'bg-violet-100 text-violet-800',
     },
     {
         href: '#',
         icon: Globe,
         label: 'Organise online, in-person, or hybrid',
         iconWrapClass:
-            'bg-cyan-100 text-cyan-800 dark:bg-cyan-950/50 dark:text-cyan-200',
+            'bg-cyan-100 text-cyan-800',
     },
     {
         href: '#',
         icon: Map,
         label: 'Friendly feedback channels',
         iconWrapClass:
-            'bg-orange-100 text-orange-800 dark:bg-orange-950/50 dark:text-orange-200',
+            'bg-orange-100 text-orange-800',
     },
     {
         href: '#',
         icon: UtensilsCrossed,
         label: 'Drive engagement and adoption',
         iconWrapClass:
-            'bg-teal-100 text-teal-800 dark:bg-teal-950/50 dark:text-teal-200',
+            'bg-teal-100 text-teal-800',
     },
     {
         href: '#',
         icon: Target,
         label: 'Build lasting loyalty',
         iconWrapClass:
-            'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-200',
+            'bg-rose-100 text-rose-800',
     },
 ] as const;
 
@@ -198,7 +198,7 @@ export default function PPCollective() {
                                 className={cn(
                                     'mb-3 inline-flex size-9 items-center justify-center rounded-md transition-colors',
                                     iconWrapClass,
-                                    'group-hover:bg-primary/15 group-hover:text-primary dark:group-hover:bg-primary/20',
+                                    'group-hover:bg-primary/15 group-hover:text-primary',
                                 )}
                             >
                                 <Icon className="size-5" aria-hidden />
@@ -350,7 +350,7 @@ export default function PPCollective() {
 //                         })}
 //                     </div>
 
-//                     {/* Right: dark pricing card */}
+//                     {/* Right: pricing card */}
 //                     <div className="w-full lg:w-[380px] shrink-0 flex flex-col lg:sticky lg:top-8 self-start">
 //                         <div
 //                             className={cn(

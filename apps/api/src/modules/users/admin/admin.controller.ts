@@ -13,7 +13,7 @@ import {
 import { InvitationType } from '../../platform/Invitation/invitation.interface';
 import { InviteTokenDTO } from '../../platform/Invitation/invitation.dto';
 import invitationService from '../../platform/Invitation/invitation.service';
-import emailService from '../../../services/email.service';
+import emailService from '../../internals/email.service';
 import { EMAIL_CONFIG } from '../../../configs/email.config';
 import userRepository from '../user/user.repository';
 import userService from '../user/user.service';

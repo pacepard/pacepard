@@ -1,7 +1,7 @@
 import mongoose, { FilterQuery } from 'mongoose';
 import Subscription from './subscription.model';
 import { ISubscriptionDoc } from './subscription.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

@@ -35,8 +35,8 @@ import { genUserCode } from '../../../utils/code.util';
 import storageService from '../../platform/storage/storage.service';
 import { IFile } from '../../../utils/interfaces.util';
 import roleService from '@/modules/authentication/role/role.service';
-import tokenService from '../../../services/token.service';
-import emailService from '../../../services/email.service';
+import tokenService from '../../internals/token.service';
+import emailService from '../../internals/email.service';
 
 type ObjectId = Types.ObjectId;
 

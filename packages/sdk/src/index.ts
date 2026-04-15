@@ -14,7 +14,7 @@ export { default as idempotentService } from './services/idempotent';
 export { QueryProvider } from './services/query';
 
 // SDK Main Class
-export { default as Pacepard, pacepardAPIClient } from './api/clients/pacepard';
+export { default as Pacepard, pacepardAPIClient } from './api/_base/config';
 
 // Types
 export * from './types/types';
@@ -34,6 +34,28 @@ export {
     getProjectPath,
     getChallengePath,
 } from './routes/helper';
+
+// Auth platform (useAuth, useUser; web bridge is inside UserState)
+export {
+    AuthPlatformProvider,
+    useAuthPlatform,
+} from './auth/platform/context';
+export {
+    WebAuthPlatformBridge,
+    createWebAuthPlatform,
+} from './auth/platform/web';
+export type { WebAuthPlatformSetterRef } from './auth/platform/web';
+export type {
+    AuthPlatform,
+    AuthNavigationPort,
+    AuthRoutesConfig,
+    AuthSessionPort,
+    AuthUiPort,
+    AuthUserPrefsPort,
+    PersistAuthPayload,
+} from './auth/platform/types';
+export { defaultAuthRoutes } from './auth/platform/types';
+export { default as useAuth } from './hooks/app/useAuth';
 
 // Contexts
 export { default as UserContext } from './state/user/userContext';

@@ -6,7 +6,7 @@ import { TextEffect } from '@/components/ui/text-effect';
 
 export default function AboutUs() {
     return (
-        <section className="bg-neutral-900 text-white py-16 pt-20 md:py-32 dark:bg-neutral-900">
+        <section className="bg-neutral-900 text-white py-16 pt-20 md:py-32">
             <div className="mx-auto max-w-5xl space-y-8 px-6 md:space-y-12">
                 <img
                     className="rounded-(--radius) grayscale"

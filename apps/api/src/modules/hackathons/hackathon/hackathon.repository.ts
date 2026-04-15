@@ -1,7 +1,7 @@
 import { FilterQuery } from 'mongoose';
 import Hackathon from './hackathon.model';
 import { IHackathonDoc } from './hackathon.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

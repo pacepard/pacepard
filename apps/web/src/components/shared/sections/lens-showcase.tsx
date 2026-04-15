@@ -40,8 +40,7 @@ export default function LensShowcase() {
                     <div className="flex justify-center">
                         <Mockup type="responsive">
                             <Screenshot
-                                srcLight={images[index] ?? images[0] ?? ''}
-                                srcDark={images[index] ?? images[0] ?? ''}
+                                src={images[index] ?? images[0] ?? ''}
                                 alt="Lens App"
                                 width={275}
                                 height={380}

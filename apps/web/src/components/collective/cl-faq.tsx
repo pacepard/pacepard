@@ -42,7 +42,7 @@ export default function ClFAQ() {
             <div className="mx-auto max-w-2xl px-6">
                 <div className="space-y-12">
                     <h2 className="text-foreground text-center text-4xl font-semibold">
-                        Your questions answered
+                        Frequently Asked Questions
                     </h2>
 
                     <Accordion

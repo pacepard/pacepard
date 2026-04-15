@@ -14,7 +14,7 @@ import {
 
 export default function FAQ() {
     return (
-        <section className="bg-amber-100 py-16 pt-20 md:py-32 dark:bg-[#171717]">
+        <section className="bg-amber-100 py-16 pt-20 md:py-32">
             <div className="mx-auto max-w-5xl px-4 md:px-6">
                 <div className="flex flex-col gap-10 md:flex-row md:gap-16">
                     {/* Left Section */}
@@ -27,7 +27,7 @@ export default function FAQ() {
                                 {hackFaqSection.description} <br />
                                 <Link
                                     href={hackFaqSection.contactLink}
-                                    className="text-black dark:text-brand font-medium hover:underline"
+                                    className="text-black font-medium hover:underline"
                                 >
                                     {hackFaqSection.contactText}
                                 </Link>

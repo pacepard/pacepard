@@ -26,14 +26,14 @@ export default function PPCTA() {
                     <div className="flex-1 min-w-0 space-y-6 text-left">
                         <h2 className="text-4xl font-regular tracking-tight text-foreground  md:text-5xl">
                             <span className="text-muted-foreground">
-                                The world's best got{' '}
+                                The world&apos;s best got{' '}
                             </span>
                             <br />
                             better by doing.
                         </h2>
-                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
-                            Join open hackathons, co-create with global
-                            companies, or host your own innovation challenges.
+                        <p className="max-w-md text-lg leading-relaxed text-muted-foreground">
+                            Stop learning alone. Work in teams, solve structured
+                            product tasks, and move faster with AI workflows.
                         </p>
                         <div className="flex flex-wrap items-center gap-4">
                             <Button

@@ -4,7 +4,7 @@ import ErrorResponse from '../utils/error.util';
 import userRepository from '../modules/users/user/user.repository';
 import asyncHandler from './async.mdw';
 import { IUserDoc } from '@/modules/users/user/user.interface';
-import tokenService from '@/services/token.service';
+import tokenService from '@/modules/internals/token.service';
 import authService from '../modules/authentication/auth/auth.service';
 
 /**

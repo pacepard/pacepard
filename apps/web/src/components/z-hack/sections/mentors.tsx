@@ -4,7 +4,7 @@ import { mentors, mentorSection } from '@/_data/hack/mentors';
 
 const MentorSection = () => {
     return (
-        <section className="py-16 pt-20 md:py-32 dark:bg-[#171717]">
+        <section className="py-16 pt-20 md:py-32">
             <div className="mx-auto max-w-5xl px-6">
                 {/* Heading */}
                 <div className="mt-16 gap-4 sm:grid sm:grid-cols-2">
@@ -48,7 +48,7 @@ const MentorSection = () => {
                                         </span>
                                         <a
                                             href={mentor.link}
-                                            className="inline-block translate-y-8 text-sm tracking-wide transition-all duration-500 group-hover:translate-y-0 group-hover:text-primary-600 dark:group-hover:text-primary-400"
+                                            className="inline-block translate-y-8 text-sm tracking-wide transition-all duration-500 group-hover:translate-y-0 group-hover:text-primary-600"
                                         >
                                             Linkedin
                                         </a>

@@ -24,7 +24,7 @@ const useCases = [
         description:
             'Tailor flows to your team without wrestling with complex configuration.',
         iconWrapClass:
-            'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-200',
+            'bg-amber-100 text-amber-800',
     },
     {
         href: '#',
@@ -33,7 +33,7 @@ const useCases = [
         description:
             'Clone proven structures and ship consistent events faster every time.',
         iconWrapClass:
-            'bg-sky-100 text-sky-800 dark:bg-sky-950/50 dark:text-sky-200',
+            'bg-sky-100 text-sky-800',
     },
     {
         href: '#',
@@ -42,7 +42,7 @@ const useCases = [
         description:
             'See where teams stand from kickoff through build to demo day.',
         iconWrapClass:
-            'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200',
+            'bg-emerald-100 text-emerald-800',
     },
     {
         href: '#',
@@ -51,7 +51,7 @@ const useCases = [
         description:
             'Self-serve answers so organizers spend less time repeating the basics.',
         iconWrapClass:
-            'bg-violet-100 text-violet-800 dark:bg-violet-950/50 dark:text-violet-200',
+            'bg-violet-100 text-violet-800',
     },
     {
         href: '#',
@@ -60,7 +60,7 @@ const useCases = [
         description:
             'One workspace for any format—remote, on-site, or mixed events.',
         iconWrapClass:
-            'bg-cyan-100 text-cyan-800 dark:bg-cyan-950/50 dark:text-cyan-200',
+            'bg-cyan-100 text-cyan-800',
     },
     {
         href: '#',
@@ -69,7 +69,7 @@ const useCases = [
         description:
             'Collect structured input before, during, and after the hackathon.',
         iconWrapClass:
-            'bg-orange-100 text-orange-800 dark:bg-orange-950/50 dark:text-orange-200',
+            'bg-orange-100 text-orange-800',
     },
     {
         href: '#',
@@ -78,7 +78,7 @@ const useCases = [
         description:
             'Nudges and visibility that keep participants showing up and shipping.',
         iconWrapClass:
-            'bg-teal-100 text-teal-800 dark:bg-teal-950/50 dark:text-teal-200',
+            'bg-teal-100 text-teal-800',
     },
     {
         href: '#',
@@ -87,7 +87,7 @@ const useCases = [
         description:
             'Turn one-off hackathons into relationships and communities that last.',
         iconWrapClass:
-            'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-200',
+            'bg-rose-100 text-rose-800',
     },
 ] as const;
 
@@ -141,7 +141,7 @@ export default function PPGo() {
                                     className={cn(
                                         'mb-3 inline-flex size-9 items-center justify-center rounded-md transition-colors',
                                         iconWrapClass,
-                                        'group-hover:bg-primary/15 group-hover:text-primary dark:group-hover:bg-primary/20',
+                                        'group-hover:bg-primary/15 group-hover:text-primary',
                                     )}
                                 >
                                     <Icon className="size-5" aria-hidden />

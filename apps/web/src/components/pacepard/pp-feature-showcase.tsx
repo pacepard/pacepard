@@ -9,6 +9,8 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { cn } from '@pacepard/ui/lib/utils';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
 /** Replace these SVGs with your own assets while keeping the same props API. */
 export function FeatureIconQa(props: React.SVGProps<SVGSVGElement>) {
@@ -162,9 +164,9 @@ export type PPFeatureShowcaseItem = {
 const defaultItems: PPFeatureShowcaseItem[] = [
     {
         id: 'qa',
-        title: 'Custom hackathons setup',
+        title: 'Design event outcomes',
         description:
-            'Run hackathons your way, in-person or online! Define your themes, tracks, and judging criteria.',
+            'Set clear outcomes with docs, APIs, videos, etc so participants start using your product. And this  keeps participants active across your ecosystem.',
         accent: ACCENT.orange,
         icon: (
             <IconCircle color={ACCENT.orange}>
@@ -174,9 +176,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'routing',
-        title: 'Reusable event templates',
+        title: 'Custom setup and launch in 10mins',
         description:
-            'Draft challenges and hackathons with our smart instructions and templates. No need to start from scratch each time.',
+            'Create the hackathon using reusable templates, register participants, and launch with a custom marketing website.',
         accent: ACCENT.purple,
         icon: (
             <IconCircle color={ACCENT.purple}>
@@ -186,9 +188,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'reporting',
-        title: 'Track progress at every stage',
+        title: 'Activate participants',
         description:
-            'See where teams stand from kickoff through build to demo day.',
+            'Onboard builders fast with context, resources, and structured guidance so they can start building immediately.',
         accent: ACCENT.teal,
         icon: (
             <IconCircle color={ACCENT.teal}>
@@ -198,9 +200,21 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'custom',
-        title: 'Knowledgebase for participants',
+        title: 'Track and support progress',
         description:
-            'Self-serve answers so organizers spend less time repeating the basics.',
+            'Monitor teams, projects, and engagement in real time while enabling continuous feedback and mentor support.',
+        accent: ACCENT.pink,
+        icon: (
+            <IconCircle color={ACCENT.pink}>
+                <FeatureIconCreate className="size-5" />
+            </IconCircle>
+        ),
+    },
+    {
+        id: 'retain',
+        title: 'Evaluate, reward, and retain',
+        description:
+            'Review submissions, run judging, celebrate winners, and convert top participants into long term users or contributors.',
         accent: ACCENT.pink,
         icon: (
             <IconCircle color={ACCENT.pink}>
@@ -255,14 +269,21 @@ export function PPFeatureShowcase({
                                 </h2>
                             </div>
 
-                            <button
+
+                            <Button
                                 type="button"
                                 className="inline-flex items-center gap-1.5 text-foreground transition-opacity hover:opacity-80 hover:underline"
                                 aria-label="Learn more"
+                                variant="link"
+                                asChild
                             >
-                                Learn more
-                                <ChevronRightCircle className="size-8" />
-                            </button>
+                                <Link href="/hackathon">
+                                    Learn more
+                                    <ChevronRightCircle className="size-8" />
+                                </Link>
+                            </Button>
+
+        
                         </div>
 
                         <Accordion

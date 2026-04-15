@@ -6,7 +6,7 @@ import { TextEffect } from '@/components/ui/text-effect';
 
 export default function Location() {
     return (
-        <section className="bg-amber-100 dark:bg-neutral-900 py-20 px-6 md:px-16">
+        <section className="bg-amber-100 py-20 px-6 md:px-16">
             <div className="max-w-5xl mx-auto flex flex-col-reverse md:flex-row items-center md:items-start justify-between gap-20">
                 {/* Left Section — Text + Button */}
                 <div className="flex-1 w-full text-left">
@@ -72,7 +72,7 @@ export default function Location() {
                             asChild
                             size="lg"
                             variant="outline"
-                            className="h-10.5 rounded-md px-5 border-brand bg-background dark:bg-white text-black">
+                            className="h-10.5 rounded-md px-5 border-brand bg-background text-black">
                             <Link href="#link">
                                 <span className="text-nowrap">Become a mentor</span>
                             </Link>

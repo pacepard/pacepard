@@ -3,7 +3,7 @@ export const BRAND_INFO = {
     initial: 'd',
     initialBgColor: '#a3f443',
     description:
-        'We are dedicated to ensuring that artificial intelligence serves human learning goals and systems.',
+        'We are a research lab dedicated to ensuring that artificial intelligence serves human learning goals and systems.'
 };
 
 // Data structure for social media links
@@ -31,18 +31,23 @@ export const FOOTER_LINKS_DATA = [
         title: 'Product',
         links: [
             {
-                label: 'Organize your hackathon',
-                href: '#',
+                label: 'Apprenticeship',
+                href: '/learn',
                 external: true, // Flag for target="_blank" and rel="noopener noreferrer"
             },
             {
-                label: 'Browse Hackathons',
-                href: '#',
+                label: 'Hackathons',
+                href: '/hackathon',
                 external: false,
             },
             {
-                label: 'Browse Apprenticeships',
-                href: '#',
+                label: 'Learn',
+                href: '/learn',
+                external: false,
+            },
+            {
+                label: 'Pricing',
+                href: '/pricing',
                 external: false,
             },
         ],
@@ -56,12 +61,17 @@ export const FOOTER_LINKS_DATA = [
                 external: false,
             },
             {
-                label: 'Changelog',
+                label: 'Research',
+                href: '/research',
+                external: false,
+            },
+            {
+                label: 'Roadmap',
                 href: '#',
                 external: false,
             },
             {
-                label: 'Contact Sales',
+                label: 'Join community',
                 href: '#',
                 external: false,
             },

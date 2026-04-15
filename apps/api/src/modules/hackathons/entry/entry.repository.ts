@@ -1,7 +1,7 @@
 import { FilterQuery } from 'mongoose';
 import Entry from './entry.model';
 import { IEntryDoc } from './entry.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

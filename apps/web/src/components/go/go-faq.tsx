@@ -71,7 +71,7 @@ export default function GoFAQ() {
             <div className="mx-auto max-w-2xl px-6">
                 <div className="space-y-12">
                     <h2 className="text-left text-4xl font-regular tracking-tight text-foreground">
-                        Your questions answered
+                        Frequently Asked Questions
                     </h2>
 
                     <Accordion

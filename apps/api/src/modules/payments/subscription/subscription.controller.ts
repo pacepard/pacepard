@@ -5,7 +5,7 @@ import { IUserDoc } from '../../users/user/user.interface';
 import talentService from '../../users/talent/talent.service';
 import businessService from '../../users/business/business.service';
 import subscriptionService from './subscription.service';
-import systemService from '../../../services/system.service';
+import systemService from '../../internals/system.service';
 import subscriptionIntentService from './subscription intent/subscriptionIntent.service';
 import {
     CreateSubscriptionIntentDTO,

@@ -29,7 +29,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
                 { label: 'AI', variant: 'ai' },
                 { label: 'Live', variant: 'live' },
             ],
-            title: 'Technical product Management',
+            title: 'Technical Product Management',
             description:
                 'Learn how to use AI-native product skills  to test concepts, validate assumptions, and ship better products faster.',
             instructor: 'With apprenticeships on:',
@@ -56,7 +56,7 @@ const TRACK_COLUMNS: TrackEntry[][] = [
             productImages: [
                 { src: '/logos/n8n.png', alt: 'N8N' },
                 { src: '/logos/claude.png', alt: 'Claude' },
-                { src: '/logos/notion.svg', alt: 'Notion' },
+                { src: '/logos/notion.png', alt: 'Notion' },
                 { src: '/logos/cursor.png', alt: 'Cursor' },
             ],
             stripeColor: '#7dd3fc',

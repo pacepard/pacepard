@@ -9,6 +9,9 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { cn } from '@pacepard/ui/lib/utils';
+import { Button } from '../ui/button';
+import router from 'next/router';
+import Link from 'next/link';
 
 /** Replace these SVGs with your own assets while keeping the same props API. */
 export function FeatureIconQa(props: React.SVGProps<SVGSVGElement>) {
@@ -160,9 +163,9 @@ export type PPFeatureShowcaseItem = {
 const defaultItems: PPFeatureShowcaseItem[] = [
     {
         id: 'qa',
-        title: 'Join a sprint',
+        title: 'Join a product sprint',
         description:
-            'Run hackathons your way, in-person or online! Define your themes, tracks, and judging criteria.',
+            'Understand the problem, scope, and expected outcomes based on the product context.',
         accent: ACCENT.orange,
         icon: (
             <IconCircle color={ACCENT.orange}>
@@ -172,9 +175,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'select-task',
-        title: 'Select Task(s)',
+        title: 'Learn through quests',
         description:
-            'Draft challenges and hackathons with our smart instructions and templates. No need to start from scratch each time.',
+            'Apply learning by solving tasks inside open source and socio-good products.',
         accent: ACCENT.purple,
         icon: (
             <IconCircle color={ACCENT.purple}>
@@ -184,9 +187,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'complete-task',
-        title: 'Complete task(s)',
+        title: 'Collaborate in teams',
         description:
-            'See where teams stand from kickoff through build to demo day.',
+            'Work in nano and micro teams, rotate across projects to gain cross-functional capabilities.',
         accent: ACCENT.teal,
         icon: (
             <IconCircle color={ACCENT.teal}>
@@ -196,9 +199,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
     },
     {
         id: 'get-feedback',
-        title: 'Get Feedback',
+        title: 'Get human feedback',
         description:
-            'Self-serve answers so organizers spend less time repeating the basics.',
+            'Join group sessions and 1 on 1 mentor calls to get direct feedback from mentors and other builders.',
         accent: ACCENT.pink,
         icon: (
             <IconCircle color={ACCENT.pink}>
@@ -207,10 +210,10 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         ),
     },
     {
-        id: 'improve-weekly',
+        id: 'Iterate, grow, and ship',
         title: 'Improve weekly',
         description:
-            'Self-serve answers so organizers spend less time repeating the basics.',
+            'Improve through repetition, complete harder quests, and deliver real outcomes in live systems.',
         accent: ACCENT.pink,
         icon: (
             <IconCircle color={ACCENT.pink}>
@@ -224,7 +227,7 @@ export function PPApprenticeshipIntro({
     className,
     items = defaultItems,
     defaultOpenId,
-    staticPreviewSrc = '/blocks/terminal.png',
+    staticPreviewSrc = '/blocks/monoq.png',
     staticPreviewAlt = 'Feature showcase preview',
     staticPreviewBg = '#38b6ff', //'#ff751f', //green
 }: {
@@ -263,18 +266,22 @@ export function PPApprenticeshipIntro({
                                     id="pp-feature-showcase-heading"
                                     className="max-w-md md:max-w-lg text-4xl font-regular tracking-tight text-foreground md:text-5xl"
                                 >
-                                    AI-native and zero distraction environment
+                                    Introducing Pacepard Apprenticeship 1.0
                                 </h2>
                             </div>
 
-                            {/* <button
+                            <Button
                                 type="button"
                                 className="inline-flex items-center gap-1.5 text-foreground transition-opacity hover:opacity-80 hover:underline"
                                 aria-label="Learn more"
+                                variant="link"
+                                asChild
                             >
-                                Learn more
-                                <ChevronRightCircle className="size-8" />
-                            </button> */}
+                                <Link href="/learn">
+                                    Learn more
+                                    <ChevronRightCircle className="size-8" />
+                                </Link>
+                            </Button>
                         </div>
 
                         <Accordion

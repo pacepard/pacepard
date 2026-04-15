@@ -21,7 +21,7 @@ export const siteConfig = {
     },
     contact: {
         telephone: '+2348170848057',
-        email: 'hello@pacepard',
+        email: 'hello@pacepard.com',
     },
 };
 

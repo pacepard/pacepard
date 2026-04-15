@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import Task from './task.model';
 import { ITaskDoc } from './task.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 class TaskRepository extends RepositoryService<ITaskDoc> {

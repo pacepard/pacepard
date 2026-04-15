@@ -10,7 +10,6 @@ import { useScroll } from 'motion/react';
 import { Navigation } from '@/_data/hack/navigation';
 import { Logo } from '@/components/z-hack/containers/logo';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/context/theme-toggle';
 import { cn } from '@pacepard/ui/lib/utils';
 
 const Header = () => {
@@ -43,8 +42,6 @@ const Header = () => {
                             </Link>
 
                             <div className="flex items-center space-x-2 lg:hidden">
-                                <ThemeToggle className="relative z-20 block cursor-pointer hover:bg-accent " />
-
                                 <button
                                     onClick={() => setMenuState(!menuState)}
                                     aria-label={
@@ -75,7 +72,7 @@ const Header = () => {
                             </div>
                         </div>
 
-                        <div className="bg-background mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 in-data-[state=active]:block md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none lg:in-data-[state=active]:flex dark:shadow-none dark:lg:bg-transparent">
+                        <div className="bg-background mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 in-data-[state=active]:block md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none lg:in-data-[state=active]:flex">
                             <div className="lg:hidden">
                                 <ul className="space-y-6 text-base">
                                     {Navigation.map((item, index) => (
@@ -92,17 +89,13 @@ const Header = () => {
                             </div>
 
                             <div className="flex w-full items-start sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <div className="lg:flex relative z-20 cursor-pointer hidden">
-                                    <ThemeToggle />
-                                </div>
-
                                 {!scrolled && (
                                     <>
                                         <Button
                                             asChild
                                             variant="link"
                                             size="sm"
-                                            className=" rounded-md border-brand bg-background dark:bg-white text-black"
+                                            className=" rounded-md border-brand bg-background text-black"
                                         >
                                             <Link href="#">
                                                 <span className="">Login</span>

@@ -13,13 +13,14 @@ export default function LoginPage() {
         <div className="py-16 md:py-24">
             <ComingSoonPanel
                 title="Sign in"
-                description="The new web sign-in experience is still in progress. You can open the Pacepard app with your existing workspace link below, or return to the marketing site."
+                description="The web sign-in experience is still in progress.  We will be launching soon. You can return to the homepage." // its a new platform now
                 primaryAction={{
                     label: 'Open app',
                     href: siteConfig.getStartedUrl,
                     external: true,
                 }}
                 secondaryAction={{ label: 'Back to home', href: '/' }}
+               
             />
         </div>
     );

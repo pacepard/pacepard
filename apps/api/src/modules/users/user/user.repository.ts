@@ -1,9 +1,9 @@
 import { FilterQuery } from 'mongoose';
 import User from './user.model';
 import { IUserDoc } from './user.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
-import tokenService from '../../../services/token.service';
+import tokenService from '../../internals/token.service';
 
 /**
  * User Repository
