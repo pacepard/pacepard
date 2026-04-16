@@ -1,4 +1,4 @@
-import AxiosService from '../core/axios';
+import AxiosService from '../_base/axios';
 import AuthAPI from '../clients/auth';
 import WorkspaceAPI from '../clients/workspace';
 import UserAPI from '../clients/user';

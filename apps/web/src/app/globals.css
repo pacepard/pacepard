@@ -184,6 +184,21 @@
       transform: translate3d(0, calc(-100% - var(--gap, 1rem)), 0);
     }
   }
+
+  /* Pacepard route loader (see PacepardIconLoader) */
+  --animate-pacepard-loader: pacepard-loader-breathe 1.2s ease-in-out infinite;
+
+  @keyframes pacepard-loader-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(0.94);
+      opacity: 0.82;
+    }
+  }
 }
 
 @utility animate-marquee {
@@ -192,6 +207,10 @@
 
 @utility animate-marquee-vertical {
   animation: var(--animate-marquee-vertical);
+}
+
+@utility animate-pacepard-loader {
+  animation: var(--animate-pacepard-loader);
 }
 
 @utility container {

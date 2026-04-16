@@ -167,7 +167,9 @@ export default function ClCta() {
                                 )}
                             >
                                 <Link
-                                    href="#"
+                                    href="https://tally.so/r/J9zP7J"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2"
                                 >
                                     <Calendar

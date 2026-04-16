@@ -9,7 +9,7 @@ const plans = [
         price: '₦35,000',
         period: '/month',
         cta: 'Get Started',
-        link: 'https://paystack.shop/pay/pacepard-starter',
+        link: 'https://paystack.shop/pay/pacepard-basic',
     },
     {
         name: 'Pro',
@@ -17,14 +17,14 @@ const plans = [
         period: '/month',
         cta: 'Select Plan',
         highlighted: true,
-        link: 'https://paystack.shop/pay/pacepard-pro',
+        link: 'https://paystack.shop/pay/pacepard-standard',
     },
     {
         name: 'Team',
         price: '₦124,000',
         period: '/month',
         cta: 'Select Plan',
-        link: 'https://paystack.shop/pay/pacepard-membership',
+        link: 'https://paystack.shop/pay/pacepard-premium',
     },
 ];
 
@@ -77,8 +77,8 @@ export default function Comparator() {
                     <h2 className="text-balance text-4xl font-regular">
                     Flexible plans for builders and teams
                     </h2>
-                    <p className="text-muted-foreground mx-auto mt-4 max-w-md text-balance">
-                        Find the perfect plan that matches your needs.
+                    <p className="text-muted-foreground text-lg mx-auto mt-4 max-w-md text-balance">
+                        Find the perfect membership plan that matches your needs.
                     </p>
                 </div>
 

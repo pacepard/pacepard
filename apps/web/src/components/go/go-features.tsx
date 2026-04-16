@@ -17,7 +17,7 @@ const items = [
     },
     {
         title: 'Build consistent usage momentum and a healthy feedback loop',
-        image: '/features/overview-card.svg',
+        image: '/blocks/loop.png',
     },
 ];
 

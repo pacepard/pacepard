@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { useFont } from '@/_data/fonts';
 import { siteConfig } from '@/_data/site-config';
 import { Navbar } from '@/components/shared/containers/nav-bar';
+import { InitialLoadGate } from '@/components/shared/initial-load-gate';
 import Footer from '@/components/shared/sections/footer';
 
 export const metadata: Metadata = {
@@ -115,13 +116,15 @@ export default function RootLayout({
             <body
                 className={`${useFont.variable} antialiased overflow-x-hidden`}
             >
-                {/* <PacepardHeader /> */}
-                <Navbar />
+                <InitialLoadGate>
+                    {/* <PacepardHeader /> */}
+                    <Navbar />
 
-                {children}
+                    {children}
 
-                {/* <PPFunnel /> */}
-                <Footer />
+                    {/* <PPFunnel /> */}
+                    <Footer />
+                </InitialLoadGate>
 
                 <Analytics />
                 <SpeedInsights />

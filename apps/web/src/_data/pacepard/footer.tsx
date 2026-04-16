@@ -55,25 +55,25 @@ export const FOOTER_LINKS_DATA = [
     {
         title: 'Company',
         links: [
-            {
-                label: 'About us',
-                href: '#',
-                external: false,
-            },
+            // {
+            //     label: 'About us',
+            //     href: ' ',
+            //     external: false,
+            // },
             {
                 label: 'Research',
                 href: '/research',
                 external: false,
             },
-            {
-                label: 'Roadmap',
-                href: '#',
-                external: false,
-            },
+            // {
+            //     label: 'Roadmap',
+            //     href: ' ',
+            //     external: false,
+            // },
             {
                 label: 'Join community',
-                href: '#',
-                external: false,
+                href: 'https://chat.whatsapp.com/GnyMgiJL7szJ2s0AZsYDA1?mode=gi_t',
+                external: true,
             },
         ],
     },

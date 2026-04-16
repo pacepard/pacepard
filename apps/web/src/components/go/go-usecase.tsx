@@ -61,7 +61,7 @@ const bottomItems = [
             'Get participants up to speed quickly so they can create better projects and add real value to your product.',
         images: [
             {
-                src: '/resource-allocation/discussions.svg',
+                src: '/blocks/base.png',
                 alt: 'Task discussions interface',
                 width: 320,
                 height: 103,
@@ -77,7 +77,7 @@ const bottomItems = [
             'Integrate channels for continuous feedback and insights from participants.',
         images: [
             {
-                src: '/resource-allocation/notifications.svg',
+                src: '/blocks/feedback.png',
                 alt: 'Notifications interface',
                 width: 305,
                 height: 280,
