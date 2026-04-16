@@ -13,17 +13,17 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 
 import { IconCirclePng } from './icon-circle-png';
-import { pickIconAt } from './pacepard-icon-paths';
+import { ICON_SRC } from './pacepard-icon-paths';
 
 function apprenticeshipFeatureIcon(
-    index: number,
     accent: string,
     title: string,
+    src: string,
 ) {
     return (
         <IconCirclePng
             backgroundColor={accent}
-            src={pickIconAt(index)}
+            src={src}
             alt={title}
         />
     );
@@ -69,9 +69,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Understand the problem, scope, and expected outcomes based on the product context.',
         accent: ACCENT.orange,
         icon: apprenticeshipFeatureIcon(
-            0,
             ACCENT.orange,
             'Join a product sprint',
+            ICON_SRC.decision,
         ),
     },
     {
@@ -81,9 +81,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Apply learning by solving tasks inside open source and socio-good products.',
         accent: ACCENT.purple,
         icon: apprenticeshipFeatureIcon(
-            1,
             ACCENT.purple,
             'Learn through quests',
+            ICON_SRC.task,
         ),
     },
     {
@@ -93,9 +93,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Work in nano and micro teams, rotate across projects to gain cross-functional capabilities.',
         accent: ACCENT.teal,
         icon: apprenticeshipFeatureIcon(
-            2,
             ACCENT.teal,
             'Collaborate in teams',
+            ICON_SRC.converse,
         ),
     },
     {
@@ -105,9 +105,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Join group sessions and 1 on 1 mentor calls to get direct feedback from mentors and other builders.',
         accent: ACCENT.pink,
         icon: apprenticeshipFeatureIcon(
-            3,
             ACCENT.pink,
             'Get human feedback',
+            ICON_SRC.feedback,
         ),
     },
     {
@@ -116,7 +116,11 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         description:
             'Improve through repetition, complete harder quests, and deliver real outcomes in live systems.',
         accent: ACCENT.indigo,
-        icon: apprenticeshipFeatureIcon(4, ACCENT.indigo, 'Improve weekly'),
+        icon: apprenticeshipFeatureIcon(
+            ACCENT.indigo,
+            'Improve weekly',
+            ICON_SRC.check,
+        ),
     },
 ];
 

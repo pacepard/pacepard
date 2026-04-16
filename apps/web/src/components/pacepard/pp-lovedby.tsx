@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cn } from '@pacepard/ui/lib/utils';
 
 import { IconCirclePng } from './icon-circle-png';
-import { pickIconAt } from './pacepard-icon-paths';
+import { ICON_SRC } from './pacepard-icon-paths';
 
 /** Same ring colors as apprenticeship / showcase accordions. */
 const ACCENT = {
@@ -12,14 +12,11 @@ const ACCENT = {
     pink: '#EC4899',
 } as const;
 
-/** Distinct slice from apprenticeship (0+) and agent use cases (10+). */
-const LOVEDBY_ICON_OFFSET = 15;
-
-function lovedByFeatureIcon(index: number, accent: string, title: string) {
+function lovedByFeatureIcon(accent: string, title: string, src: string) {
     return (
         <IconCirclePng
             backgroundColor={accent}
-            src={pickIconAt(LOVEDBY_ICON_OFFSET + index)}
+            src={src}
             alt={title}
             imageSize={24}
         />
@@ -38,36 +35,36 @@ const defaultUseCases: AgentUseCase[] = [
         id: 'triage',
         label: 'Learn and ship like a real product team.',
         icon: lovedByFeatureIcon(
-            0,
             ACCENT.orange,
             'Learn and ship like a real product team.',
+            ICON_SRC.comp,
         ),
     },
     {
         id: 'support',
         label: 'Train inside open source and socio-good products.',
         icon: lovedByFeatureIcon(
-            1,
             ACCENT.purple,
             'Train inside open source and socio-good products.',
+            ICON_SRC.edu,
         ),
     },
     {
         id: 'security',
         label: 'Join office hours to get direct and immediate feedback.',
         icon: lovedByFeatureIcon(
-            2,
             ACCENT.teal,
             'Join office hours to get direct and immediate feedback.',
+            ICON_SRC.feedback,
         ),
     },
     {
         id: 'reporting',
         label: 'Build deep technical and non-technical skills. ',
         icon: lovedByFeatureIcon(
-            3,
             ACCENT.pink,
             'Build deep technical and non-technical skills.',
+            ICON_SRC.star,
         ),
     },
 ];

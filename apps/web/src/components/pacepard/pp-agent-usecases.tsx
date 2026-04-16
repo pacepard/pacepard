@@ -3,10 +3,7 @@ import Link from 'next/link';
 import { cn } from '@pacepard/ui/lib/utils';
 
 import { IconCirclePng } from './icon-circle-png';
-import { pickIconAt } from './pacepard-icon-paths';
-
-/** Offset so agent cards use a different slice of `PACEPARD_ICON_PNGS` than apprenticeship rows. */
-const AGENT_ICON_OFFSET = 10;
+import { ICON_SRC } from './pacepard-icon-paths';
 
 export type AgentUseCase = {
     id: string;
@@ -24,7 +21,7 @@ const defaultUseCases: AgentUseCase[] = [
         icon: (
             <IconCirclePng
                 bgClassName="bg-blue-500"
-                src={pickIconAt(AGENT_ICON_OFFSET)}
+                src={ICON_SRC.decision}
                 alt="Break down product problems into execution steps."
                 imageSize={24}
             />
@@ -37,7 +34,7 @@ const defaultUseCases: AgentUseCase[] = [
         icon: (
             <IconCirclePng
                 bgClassName="bg-orange-500"
-                src={pickIconAt(AGENT_ICON_OFFSET + 1)}
+                src={ICON_SRC.comp}
                 alt="Work directly inside live systems and codebases"
                 imageSize={24}
             />
@@ -50,7 +47,7 @@ const defaultUseCases: AgentUseCase[] = [
         icon: (
             <IconCirclePng
                 bgClassName="bg-red-500"
-                src={pickIconAt(AGENT_ICON_OFFSET + 2)}
+                src={ICON_SRC.converse}
                 alt="Use AI to plan, debug, and accelerate decisions."
                 imageSize={24}
             />
@@ -63,7 +60,7 @@ const defaultUseCases: AgentUseCase[] = [
         icon: (
             <IconCirclePng
                 bgClassName="bg-green-500"
-                src={pickIconAt(AGENT_ICON_OFFSET + 3)}
+                src={ICON_SRC.settings}
                 alt="Fluency in agentic tooling, workflows, and AI systems"
                 imageSize={24}
             />
@@ -72,11 +69,11 @@ const defaultUseCases: AgentUseCase[] = [
     {
         id: 'custom',
         label: 'Expand your Human AI collaboration today. ',
-        href: '#',
+        href: '/pricing',
         icon: (
             <IconCirclePng
                 bgClassName="bg-violet-600"
-                src={pickIconAt(AGENT_ICON_OFFSET + 4)}
+                src={ICON_SRC.star}
                 alt="Expand your Human AI collaboration today."
                 imageSize={24}
             />

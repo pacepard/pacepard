@@ -11,17 +11,17 @@ import {
 import { cn } from '@pacepard/ui/lib/utils';
 
 import { IconCirclePng } from './icon-circle-png';
-import { pickIconAt } from './pacepard-icon-paths';
+import { ICON_SRC } from './pacepard-icon-paths';
 
 function apprenticeshipFeatureIcon(
-    index: number,
     accent: string,
     title: string,
+    src: string,
 ) {
     return (
         <IconCirclePng
             backgroundColor={accent}
-            src={pickIconAt(index)}
+            src={src}
             alt={title}
         />
     );
@@ -51,9 +51,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Load assigned tasks and quests with full context, requirements, and expected outputs.',
         accent: ACCENT.orange,
         icon: apprenticeshipFeatureIcon(
-            0,
             ACCENT.orange,
             'Fetch your task',
+            ICON_SRC.task,
         ),
     },
     {
@@ -63,9 +63,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Execute tasks with  your preferred tools, setup and workflows, not a sandbox.',
         accent: ACCENT.purple,
         icon: apprenticeshipFeatureIcon(
-            1,
             ACCENT.purple,
             'Start in your environment',
+            ICON_SRC.settings,
         ),
     },
     {
@@ -75,9 +75,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Execute the task in small cycles. Test, improve, and refine based on your pace.',
         accent: ACCENT.teal,
         icon: apprenticeshipFeatureIcon(
-            2,
             ACCENT.teal,
             'Build in iterations',
+            ICON_SRC.move,
         ),
     },
     {
@@ -86,7 +86,11 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         description:
             'Push progress, submit tasks, and connect outputs back to Pacepard.',
         accent: ACCENT.pink,
-        icon: apprenticeshipFeatureIcon(3, ACCENT.pink, 'Get Feedback'),
+        icon: apprenticeshipFeatureIcon(
+            ACCENT.pink,
+            'Get Feedback',
+            ICON_SRC.feedback,
+        ),
     },
     {
         id: 'improve-weekly',
@@ -95,9 +99,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Receive feedback, complete milestones, and unlock new quests or assignments.',
         accent: ACCENT.indigo,
         icon: apprenticeshipFeatureIcon(
-            4,
             ACCENT.indigo,
             'Track progress and unlock next work',
+            ICON_SRC.list,
         ),
     },
 ];

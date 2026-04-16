@@ -13,17 +13,17 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 
 import { IconCirclePng } from './icon-circle-png';
-import { pickIconAt } from './pacepard-icon-paths';
+import { ICON_SRC } from './pacepard-icon-paths';
 
 function apprenticeshipFeatureIcon(
-    index: number,
     accent: string,
     title: string,
+    src: string,
 ) {
     return (
         <IconCirclePng
             backgroundColor={accent}
-            src={pickIconAt(index)}
+            src={src}
             alt={title}
         />
     );
@@ -50,6 +50,7 @@ const ACCENT = {
     purple: '#A855F7',
     teal: '#0D9488',
     pink: '#EC4899',
+    indigo: '#6366F1',
 } as const;
 
 export type PPFeatureShowcaseItem = {
@@ -68,9 +69,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Set clear outcomes with docs, APIs, videos, etc so participants start using your product. And this  keeps participants active across your ecosystem.',
         accent: ACCENT.orange,
         icon: apprenticeshipFeatureIcon(
-            0,
             ACCENT.orange,
             'Design event outcomes',
+            ICON_SRC.decision,
         ),
     },
     {
@@ -80,9 +81,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Create the hackathon using reusable templates, register participants, and launch with a custom marketing website.',
         accent: ACCENT.purple,
         icon: apprenticeshipFeatureIcon(
-            1,
             ACCENT.purple,
             'Custom setup and launch in 10mins',
+            ICON_SRC.settings,
         ),
     },
     {
@@ -92,9 +93,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Onboard builders fast with context, resources, and structured guidance so they can start building immediately.',
         accent: ACCENT.teal,
         icon: apprenticeshipFeatureIcon(
-            2,
             ACCENT.teal,
             'Activate participants',
+            ICON_SRC.edu,
         ),
     },
     {
@@ -104,9 +105,9 @@ const defaultItems: PPFeatureShowcaseItem[] = [
             'Monitor teams, projects, and engagement in real time while enabling continuous feedback and mentor support.',
         accent: ACCENT.pink,
         icon: apprenticeshipFeatureIcon(
-            3,
             ACCENT.pink,
             'Track and support progress',
+            ICON_SRC.report,
         ),
     },
     {
@@ -114,11 +115,11 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         title: 'Evaluate, reward, and retain',
         description:
             'Review submissions, run judging, celebrate winners, and convert top participants into long term users or contributors.',
-        accent: ACCENT.pink,
+        accent: ACCENT.indigo,
         icon: apprenticeshipFeatureIcon(
-            4,
-            ACCENT.pink,
+            ACCENT.indigo,
             'Evaluate, reward, and retain',
+            ICON_SRC.star,
         ),
     },
 ];
