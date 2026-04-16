@@ -196,7 +196,7 @@ export const Navbar = () => {
                                     className="text-sm md:text-base"
                                 >
                                     <Link href="mailto:hello@pacepard.com">
-                                        <span>Contact sales</span>
+                                        <span>Get Started</span>
                                         <ArrowRightToLineIcon />
                                     </Link>
                                 </Button>

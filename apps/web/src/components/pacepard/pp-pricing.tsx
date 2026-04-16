@@ -5,14 +5,14 @@ import { Check, Minus } from 'lucide-react';
 
 const plans = [
     {
-        name: 'Starter',
+        name: 'Basic',
         price: '₦35,000',
         period: '/month',
         cta: 'Get Started',
         link: 'https://paystack.shop/pay/pacepard-basic',
     },
     {
-        name: 'Pro',
+        name: 'Standard',
         price: '₦85,000',
         period: '/month',
         cta: 'Select Plan',
@@ -20,7 +20,7 @@ const plans = [
         link: 'https://paystack.shop/pay/pacepard-standard',
     },
     {
-        name: 'Team',
+        name: 'Premium',
         price: '₦124,000',
         period: '/month',
         cta: 'Select Plan',

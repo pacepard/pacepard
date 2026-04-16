@@ -8,7 +8,7 @@
 #     deploy/coolify/docker-compose.web.yaml | .api.yaml | .app.yaml | .service.yaml
 #     Set Coolify environment variables GHCR_ORG (lowercase GitHub org/user) and
 #     IMAGE_TAG = development | staging | production. Compose pulls image only (no build:).
-#     pacepard-service: use compose only where CI pushes (production).
+#     pacepard-service: CI pushes on every production (master) push so :production exists for Coolify.
 #
 # Floating tag = environment; CI also pushes immutable :<env>-<shortsha>.
 # Private GHCR: registry credentials in Coolify (ghcr.io + read-only PAT with read:packages).
@@ -332,12 +332,12 @@ jobs:
             -t "ghcr.io/${OWNER}/pacepard-app:${FLOAT}-${SHA}" \
             .
 
-  # Service app: production only (no GHCR push / Coolify deploy for staging or development).
+  # Service app: production only — always push image on master so GHCR tag exists for Coolify pulls.
   build-service:
     name: Build and push (pacepard-service)
     runs-on: ubuntu-latest
     needs: [determine-environment, detect-changes]
-    if: needs.determine-environment.outputs.env == 'production' && needs.detect-changes.outputs.service == 'true'
+    if: needs.determine-environment.outputs.env == 'production'
     timeout-minutes: 30
     environment:
       name: production

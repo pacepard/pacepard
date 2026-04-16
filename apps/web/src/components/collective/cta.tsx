@@ -1,26 +1,19 @@
-'use client';
-
-import React from 'react';
-import Link from 'next/link';
-import { ArrowRightToLineIcon, Calendar } from 'lucide-react';
-import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
+import { cn } from '@pacepard/ui/lib/utils';
+import { ArrowRightToLineIcon, Calendar } from 'lucide-react';
+import Link from 'next/link';
 
-export default function ClHero() {
+const PpGoCTA = () => {
     return (
-        <section className="w-full bg-background pt-14 pb-12 md:pt-24 md:pb-16">
-            <div className="container mx-auto max-w-6xl px-4 md:px-6">
-                <div className="flex flex-col items-start justify-start gap-8 text-left md:items-center md:justify-center md:text-center">
-                    <div className="w-full min-w-0 max-w-2xl space-y-6 md:mx-auto">
-                        <h1 className="text-balance text-4xl font-regular tracking-tight text-foreground md:text-5xl">
-                            The learning and growth platform that makes you
-                            AI-native
-                        </h1>
-                        <p className="max-w-lg text-lg leading-relaxed text-muted-foreground md:mx-auto">
-                            Say goodbye to passive learning. You learn by doing.
-                            Work with AI agent workflows. Build job-critical
-                            skills for an AI-first world.
-                        </p>
+        <section>
+            <div className="py-24 bg-neutral-50">
+                <div className="mx-auto max-w-5xl px-6">
+                    <div className="flex flex-wrap items-center justify-between gap-6">
+                        <div>
+                            <h2 className="text-foreground text-balance text-3xl font-regular lg:text-4xl">
+                            What do I do to become AI-native?
+                            </h2>
+                        </div>
                         <div className="flex flex-wrap items-center justify-start gap-4 md:justify-center">
                             <Button
                                 asChild
@@ -74,4 +67,6 @@ export default function ClHero() {
             </div>
         </section>
     );
-}
+};
+
+export default PpGoCTA;

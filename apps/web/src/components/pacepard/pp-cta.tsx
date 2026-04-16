@@ -46,7 +46,7 @@ export default function PPCTA() {
                                 )}
                             >
                                 <Link
-                                    href="/apprenticeship"
+                                    href="/learn"
                                     className="inline-flex items-center gap-2"
                                 >
                                     Choose a program

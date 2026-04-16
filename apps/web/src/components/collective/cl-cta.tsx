@@ -144,10 +144,10 @@ export default function ClCta() {
                                 )}
                             >
                                 <Link
-                                    href="#"
+                                    href="/pricing"
                                     className="inline-flex items-center gap-2"
                                 >
-                                    Choose program
+                                    Choose a plan
                                     <ArrowRightToLineIcon
                                         className="size-4"
                                         strokeWidth={2.5}
@@ -167,7 +167,7 @@ export default function ClCta() {
                                 )}
                             >
                                 <Link
-                                    href="https://tally.so/r/J9zP7J"
+                                    href="https://tally.so/r/44NJNX"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2"

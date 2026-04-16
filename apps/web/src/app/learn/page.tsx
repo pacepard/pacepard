@@ -6,6 +6,7 @@ import ClTracks from '@/components/collective/cl-tracks';
 import PPApprenticeship from '@/components/pacepard/pp-apprenticship';
 import PPAgentUsecases from '@/components/pacepard/pp-agent-usecases';
 import PPLovedBy from '@/components/pacepard/pp-lovedby';
+import PpGoCTA from '@/components/collective/cta';
 
 const Collective = () => {
     return (
@@ -17,11 +18,14 @@ const Collective = () => {
             <Background>
 
                 <PPLovedBy/>
+                <PpGoCTA/>
                 <PPApprenticeship />
                 <PPAgentUsecases />
              
                 {/* <PPCollective /> */}
                 {/* <ClUsecase /> */}
+
+                <PpGoCTA/>
                 <ClTestimonials />
                 {/* <ClFAQ /> */}
 

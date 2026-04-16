@@ -1,4 +1,5 @@
-# Coolify: production only (CI does not push pacepard-service for staging/development).
+# Coolify: production — CI pushes pacepard-service on every master push (tag production).
+# Staging/development: no GHCR push for this image; use production compose or a custom registry tag.
 # Env: GHCR_ORG (lowercase), IMAGE_TAG = production
 # CI image: ghcr.io/${GHCR_ORG}/pacepard-service:${IMAGE_TAG}
 # unauthorized on pull -> register ghcr.io in Coolify or make package public (see docs/coolify-monorepo-setup.md 4.5.1).
