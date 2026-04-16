@@ -1,6 +1,30 @@
 import * as React from 'react';
 import { cn } from '@pacepard/ui/lib/utils';
-import { ChevronRightCircle } from 'lucide-react';
+
+import { IconCirclePng } from './icon-circle-png';
+import { pickIconAt } from './pacepard-icon-paths';
+
+/** Same ring colors as apprenticeship / showcase accordions. */
+const ACCENT = {
+    orange: '#F97316',
+    purple: '#A855F7',
+    teal: '#0D9488',
+    pink: '#EC4899',
+} as const;
+
+/** Distinct slice from apprenticeship (0+) and agent use cases (10+). */
+const LOVEDBY_ICON_OFFSET = 15;
+
+function lovedByFeatureIcon(index: number, accent: string, title: string) {
+    return (
+        <IconCirclePng
+            backgroundColor={accent}
+            src={pickIconAt(LOVEDBY_ICON_OFFSET + index)}
+            alt={title}
+            imageSize={24}
+        />
+    );
+}
 
 export type AgentUseCase = {
     id: string;
@@ -9,217 +33,51 @@ export type AgentUseCase = {
     highlight?: boolean;
 };
 
-function IconTriageBlue() {
-    return (
-        <span className="flex size-10 items-center justify-center rounded-full bg-blue-500">
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#111"
-                strokeWidth="1.9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="size-6"
-                aria-hidden
-            >
-                <path d="M5.2 4.8h11.1l-.3 14.3H4.9z" fill="white" />
-                <path d="M5.2 4.8h11.1l-.3 14.3H4.9z" />
-                <path d="m8 12.4 2.1 3.7 4.4-7.2" />
-                <circle cx="8.7" cy="8.8" r="0.8" fill="#111" stroke="none" />
-                <circle cx="11.9" cy="8.8" r="0.8" fill="#111" stroke="none" />
-            </svg>
-        </span>
-    );
-}
-
-function IconSupportOrange() {
-    return (
-        <span className="flex size-10 items-center justify-center rounded-full bg-orange-500">
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#111"
-                strokeWidth="1.9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="size-6"
-                aria-hidden
-            >
-                <path d="m6 12 3-5h8l3 5-3 5H9z" fill="white" />
-                <path d="m6 12 3-5h8l3 5-3 5H9z" />
-                <circle cx="10.4" cy="12" r="0.9" fill="#111" stroke="none" />
-                <circle cx="13.8" cy="12" r="0.9" fill="#111" stroke="none" />
-            </svg>
-        </span>
-    );
-}
-
-function IconSecurityRed() {
-    return (
-        <span className="flex size-10 items-center justify-center rounded-full bg-red-500">
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#111"
-                strokeWidth="1.9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="size-6"
-                aria-hidden
-            >
-                <path d="M4.8 5.2h14.4v13.4H4.8z" fill="white" />
-                <path d="M4.8 5.2h14.4v13.4H4.8z" />
-                <path d="M7.3 8.9h9.4" />
-                <path d="M7.3 12h7.2" />
-                <path d="M7.3 15.1h6.2" />
-                <circle cx="17.5" cy="16.5" r="1.1" fill="#111" stroke="none" />
-            </svg>
-        </span>
-    );
-}
-
-function IconReportingGreen() {
-    return (
-        <span className="flex size-10 items-center justify-center rounded-full bg-green-500">
-            <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#111"
-                strokeWidth="1.9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="size-6"
-                aria-hidden
-            >
-                <path
-                    d="M4.4 8.1c2.4-1.3 4.4-1.3 7 0v10.3c-2.3-1.4-4.5-1.4-7 0z"
-                    fill="white"
-                />
-                <path
-                    d="M11.4 8.1c2.6-1.3 4.6-1.3 8 0v10.3c-2.8-1.4-5.2-1.4-8 0z"
-                    fill="white"
-                />
-                <path d="M4.4 8.1c2.4-1.3 4.4-1.3 7 0v10.3c-2.3-1.4-4.5-1.4-7 0z" />
-                <path d="M11.4 8.1c2.6-1.3 4.6-1.3 8 0v10.3c-2.8-1.4-5.2-1.4-8 0z" />
-                <path d="M11.4 8.1v10.3" />
-                <circle cx="10.2" cy="9.8" r="0.8" fill="#111" stroke="none" />
-                <circle cx="14.1" cy="9.8" r="0.8" fill="#111" stroke="none" />
-            </svg>
-        </span>
-    );
-}
-
-function IconCustomDark() {
-    return (
-        <span className="flex items-center">
-            <span className="flex size-9 items-center justify-center rounded-full bg-blue-500 ring-2 ring-white z-30">
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#111"
-                    strokeWidth="1.9"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-5"
-                    aria-hidden
-                >
-                    <path d="M5.2 4.8h11.1l-.3 14.3H4.9z" fill="white" />
-                    <path d="M5.2 4.8h11.1l-.3 14.3H4.9z" />
-                    <path d="m8 12.4 2.1 3.7 4.4-7.2" />
-                </svg>
-            </span>
-            <span className="flex size-9 -ml-1 items-center justify-center rounded-full bg-orange-500 ring-2 ring-white z-20">
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#111"
-                    strokeWidth="1.9"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-5"
-                    aria-hidden
-                >
-                    <path d="m6 12 3-5h8l3 5-3 5H9z" fill="white" />
-                    <path d="m6 12 3-5h8l3 5-3 5H9z" />
-                    <circle
-                        cx="10.4"
-                        cy="12"
-                        r="0.9"
-                        fill="#111"
-                        stroke="none"
-                    />
-                    <circle
-                        cx="13.8"
-                        cy="12"
-                        r="0.9"
-                        fill="#111"
-                        stroke="none"
-                    />
-                </svg>
-            </span>
-            <span className="flex size-9 -ml-1 items-center justify-center rounded-full bg-green-500 ring-2 ring-w z-10">
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#111"
-                    strokeWidth="1.9"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="size-5"
-                    aria-hidden
-                >
-                    <path
-                        d="M4.4 8.1c2.4-1.3 4.4-1.3 7 0v10.3c-2.3-1.4-4.5-1.4-7 0z"
-                        fill="white"
-                    />
-                    <path
-                        d="M11.4 8.1c2.6-1.3 4.6-1.3 8 0v10.3c-2.8-1.4-5.2-1.4-8 0z"
-                        fill="white"
-                    />
-                    <path d="M4.4 8.1c2.4-1.3 4.4-1.3 7 0v10.3c-2.3-1.4-4.5-1.4-7 0z" />
-                    <path d="M11.4 8.1c2.6-1.3 4.6-1.3 8 0v10.3c-2.8-1.4-5.2-1.4-8 0z" />
-                    <path d="M11.4 8.1v10.3" />
-                </svg>
-            </span>
-        </span>
-    );
-}
-
 const defaultUseCases: AgentUseCase[] = [
     {
         id: 'triage',
         label: 'Learn and ship like a real product team.',
-        icon: <IconTriageBlue />,
+        icon: lovedByFeatureIcon(
+            0,
+            ACCENT.orange,
+            'Learn and ship like a real product team.',
+        ),
     },
     {
         id: 'support',
         label: 'Train inside open source and socio-good products.',
-        icon: <IconSupportOrange />,
+        icon: lovedByFeatureIcon(
+            1,
+            ACCENT.purple,
+            'Train inside open source and socio-good products.',
+        ),
     },
     {
         id: 'security',
         label: 'Join office hours to get direct and immediate feedback.',
-        icon: <IconSecurityRed />,
+        icon: lovedByFeatureIcon(
+            2,
+            ACCENT.teal,
+            'Join office hours to get direct and immediate feedback.',
+        ),
     },
     {
         id: 'reporting',
         label: 'Build deep technical and non-technical skills. ',
-        icon: <IconReportingGreen />,
+        icon: lovedByFeatureIcon(
+            3,
+            ACCENT.pink,
+            'Build deep technical and non-technical skills.',
+        ),
     },
-    // {
-    //     id: 'custom',
-    //     label: 'Create your own Custom Agent',
-    //     icon: <IconCustomDark />,
-    //     highlight: true,
-    // },
 ];
 
 export function PPLovedBy({
     className,
-    label = 'See what Custom Agents can do',
     useCases = defaultUseCases,
 }: {
     className?: string;
+    /** Optional; reserved if a subtitle above the grid is re-enabled. */
     label?: string;
     useCases?: AgentUseCase[];
 }) {

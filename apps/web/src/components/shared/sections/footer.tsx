@@ -37,7 +37,7 @@ export default function Footer() {
                                     className="flex shrink-0 items-center gap-2"
                                 >
                                     <Image
-                                        src="blocks/pacepard1.svg"
+                                        src="/blocks/pacepard.svg"
                                         alt="pacepard logo"
                                         width={250}
                                         height={20}
@@ -61,10 +61,10 @@ export default function Footer() {
                                         <a
                                             key={social.id}
                                             href={social.href}
-                                            className="w-9 h-9 bg-accent hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
+                                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-transparent bg-accent text-foreground transition-colors hover:border-primary/15 hover:bg-primary hover:text-primary-foreground"
                                             aria-label={social.ariaLabel}
                                         >
-                                            <IconComponent className="w-4 h-4" />
+                                            <IconComponent className="h-4 w-4 shrink-0 [&_path]:fill-current" />
                                         </a>
                                     );
                                 })}

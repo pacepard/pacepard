@@ -12,119 +12,20 @@ import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 
-/** Replace these SVGs with your own assets while keeping the same props API. */
-export function FeatureIconQa(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#111111"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-            {...props}
-        >
-            <path d="M5.2 4.8h11.1l-.3 14.3H4.9z" fill="white" />
-            <path d="M5.2 4.8h11.1l-.3 14.3H4.9z" />
-            <path d="m8 12.4 2.1 3.7 4.4-7.2" />
-            <circle cx="8.7" cy="8.8" r="0.8" fill="#111111" stroke="none" />
-            <circle cx="11.9" cy="8.8" r="0.8" fill="#111111" stroke="none" />
-            <path d="M13.6 6.6 16.4 2.9" />
-        </svg>
-    );
-}
+import { IconCirclePng } from './icon-circle-png';
+import { pickIconAt } from './pacepard-icon-paths';
 
-export function FeatureIconTaskRouting(props: React.SVGProps<SVGSVGElement>) {
+function apprenticeshipFeatureIcon(
+    index: number,
+    accent: string,
+    title: string,
+) {
     return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#111111"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-            {...props}
-        >
-            <path d="m6 12 3-5h8l3 5-3 5H9z" fill="white" />
-            <path d="m6 12 3-5h8l3 5-3 5H9z" />
-            <circle cx="10.4" cy="12" r="0.9" fill="#111111" stroke="none" />
-            <circle cx="13.8" cy="12" r="0.9" fill="#111111" stroke="none" />
-        </svg>
-    );
-}
-
-export function FeatureIconReporting(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#111111"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-            {...props}
-        >
-            <path
-                d="M4.4 8.1c2.4-1.3 4.4-1.3 7 0v10.3c-2.3-1.4-4.5-1.4-7 0z"
-                fill="white"
-            />
-            <path
-                d="M11.4 8.1c2.6-1.3 4.6-1.3 8 0v10.3c-2.8-1.4-5.2-1.4-8 0z"
-                fill="white"
-            />
-            <path d="M4.4 8.1c2.4-1.3 4.4-1.3 7 0v10.3c-2.3-1.4-4.5-1.4-7 0z" />
-            <path d="M11.4 8.1c2.6-1.3 4.6-1.3 8 0v10.3c-2.8-1.4-5.2-1.4-8 0z" />
-            <path d="M11.4 8.1v10.3" />
-            <circle cx="10.2" cy="9.8" r="0.8" fill="#111111" stroke="none" />
-            <circle cx="14.1" cy="9.8" r="0.8" fill="#111111" stroke="none" />
-        </svg>
-    );
-}
-
-export function FeatureIconCreate(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#111111"
-            strokeWidth="1.9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-            {...props}
-        >
-            <path d="M4.8 5.2h14.4v13.4H4.8z" fill="white" />
-            <path d="M4.8 5.2h14.4v13.4H4.8z" />
-            <path d="M7.3 8.9h9.4" />
-            <path d="M7.3 12h7.2" />
-            <path d="M7.3 15.1h6.2" />
-            <circle cx="17.5" cy="16.5" r="1.1" fill="#111111" stroke="none" />
-        </svg>
-    );
-}
-
-function IconCircle({
-    color,
-    children,
-    className,
-}: {
-    color: string;
-    children: React.ReactNode;
-    className?: string;
-}) {
-    return (
-        <span
-            className={cn(
-                'flex size-10 shrink-0 items-center justify-center rounded-full text-black',
-                className,
-            )}
-            style={{ backgroundColor: color }}
-        >
-            {children}
-        </span>
+        <IconCirclePng
+            backgroundColor={accent}
+            src={pickIconAt(index)}
+            alt={title}
+        />
     );
 }
 
@@ -151,8 +52,6 @@ const ACCENT = {
     pink: '#EC4899',
 } as const;
 
-const PANEL_BG = '#E6F4F1';
-
 export type PPFeatureShowcaseItem = {
     id: string;
     title: string;
@@ -168,10 +67,10 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         description:
             'Set clear outcomes with docs, APIs, videos, etc so participants start using your product. And this  keeps participants active across your ecosystem.',
         accent: ACCENT.orange,
-        icon: (
-            <IconCircle color={ACCENT.orange}>
-                <FeatureIconQa className="size-5" />
-            </IconCircle>
+        icon: apprenticeshipFeatureIcon(
+            0,
+            ACCENT.orange,
+            'Design event outcomes',
         ),
     },
     {
@@ -180,10 +79,10 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         description:
             'Create the hackathon using reusable templates, register participants, and launch with a custom marketing website.',
         accent: ACCENT.purple,
-        icon: (
-            <IconCircle color={ACCENT.purple}>
-                <FeatureIconTaskRouting className="size-5" />
-            </IconCircle>
+        icon: apprenticeshipFeatureIcon(
+            1,
+            ACCENT.purple,
+            'Custom setup and launch in 10mins',
         ),
     },
     {
@@ -192,10 +91,10 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         description:
             'Onboard builders fast with context, resources, and structured guidance so they can start building immediately.',
         accent: ACCENT.teal,
-        icon: (
-            <IconCircle color={ACCENT.teal}>
-                <FeatureIconReporting className="size-5" />
-            </IconCircle>
+        icon: apprenticeshipFeatureIcon(
+            2,
+            ACCENT.teal,
+            'Activate participants',
         ),
     },
     {
@@ -204,10 +103,10 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         description:
             'Monitor teams, projects, and engagement in real time while enabling continuous feedback and mentor support.',
         accent: ACCENT.pink,
-        icon: (
-            <IconCircle color={ACCENT.pink}>
-                <FeatureIconCreate className="size-5" />
-            </IconCircle>
+        icon: apprenticeshipFeatureIcon(
+            3,
+            ACCENT.pink,
+            'Track and support progress',
         ),
     },
     {
@@ -216,10 +115,10 @@ const defaultItems: PPFeatureShowcaseItem[] = [
         description:
             'Review submissions, run judging, celebrate winners, and convert top participants into long term users or contributors.',
         accent: ACCENT.pink,
-        icon: (
-            <IconCircle color={ACCENT.pink}>
-                <FeatureIconCreate className="size-5" />
-            </IconCircle>
+        icon: apprenticeshipFeatureIcon(
+            4,
+            ACCENT.pink,
+            'Evaluate, reward, and retain',
         ),
     },
 ];

@@ -30,7 +30,7 @@ const Logo = (data: ILogo) => {
                 {...divProps}
             >
                 <Image
-                    src="blocks/pacepard.svg"
+                    src="/blocks/pacepard.svg"
                     alt="Damola Oladipo"
                     className="w-26"
                     width={100}

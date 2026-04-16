@@ -64,13 +64,14 @@ export const Navbar = () => {
                     )}
                 >
                     {/* Logo and Desktop Navigation */}
+                    
                     <div className="flex items-center gap-6">
                         <Link
                             href="/"
                             className="flex shrink-0 items-center gap-2"
                         >
                             <Image
-                                src="blocks/pacepard.svg"
+                                src="/blocks/pacepard.svg"
                                 alt="pacepard logo"
                                 width={150}
                                 height={20}
@@ -342,7 +343,7 @@ export const Navbar = () => {
                                 {/* Social Icons container */}
                                 <div className="flex space-x-6">
                                     <Link
-                                        href="#" // Replace with actual X/Twitter link
+                                        href="https://x.com/pacepard" // Replace with actual X/Twitter link
                                         aria-label="Follow on X (Twitter)"
                                         className="w-9 h-9 bg-accent hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
                                         onClick={() => setIsMenuOpen(false)}
@@ -350,7 +351,7 @@ export const Navbar = () => {
                                         <X className="w-5 h-5" />
                                     </Link>
                                     <Link
-                                        href="#" // Replace with actual LinkedIn link
+                                        href="https://www.linkedin.com/company/pacepard" // Replace with actual LinkedIn link
                                         aria-label="Follow on LinkedIn"
                                         className="w-9 h-9 bg-accent hover:bg-primary rounded-lg flex items-center justify-center transition-colors"
                                         onClick={() => setIsMenuOpen(false)}
