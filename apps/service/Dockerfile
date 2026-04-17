@@ -76,6 +76,10 @@ RUN mkdir -p /app/.pnpm-store /app/.local/share/pnpm /app/.tmp && \
 # Switch to nodejs user BEFORE installing to avoid store path conflicts
 USER nodejs
 
+# Same build-arg as base: pnpm reads ${TIPTAP_PRO_TOKEN} from .npmrc for @tiptap-pro/*.
+ARG TIPTAP_PRO_TOKEN=""
+ENV TIPTAP_PRO_TOKEN=$TIPTAP_PRO_TOKEN
+
 # Install all dependencies (needed for TypeScript to load next.config.ts)
 # Next.js requires TypeScript at runtime to load next.config.ts
 # We need to install for the entire workspace to resolve workspace:* dependencies

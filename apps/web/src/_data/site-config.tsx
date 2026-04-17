@@ -1,5 +1,5 @@
 export const siteConfig = {
-    name: 'Pacepard - making AI-Native superhumans',
+    name: 'Pacepard • tightly-knit AI-native learning platform',
     title: 'Pacepard',
     url: 'https://www.pacepard.com',
     getStartedUrl: 'https://www.app.pacepard.com/login',
@@ -10,7 +10,7 @@ export const siteConfig = {
         docs: 'https://github.com/pacepard',
     },
     description:
-        'Pacepard helps African tech talents unlock their superhuman potential. We support the development of Open Source Software that solves problems faced daily by Africans, and we are creating points of entry into machine learning research.',
+        'The next-gen AI-native learning platform',
     links: {
         creator: '@pacepard',
         twitter: 'https://x.com/pacepard',
