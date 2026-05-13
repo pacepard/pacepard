@@ -1,7 +1,7 @@
 import { IResult } from '../../../utils/interfaces.util';
 import { IBusinessDoc } from '../../users/business/business.interface';
 import { Random } from '@btffamily/pacitude';
-import { IPlanPaystackCode } from '../plan/plan.interface';
+import { IPlanPaystackCode, IPlanPricing } from '../plan/plan.interface';
 import planService from '../plan/plan.service';
 import { ITalentDoc } from '../../users/talent/talent.interface';
 import transactionService from '../transaction/transaction.service';
@@ -26,6 +26,7 @@ import businessRepository from '@/modules/users/business/business.repository';
 import talentRepository from '@/modules/users/talent/talent.repository';
 import planRepository from '../plan/plan.repository';
 import { cancelSubscription } from '../paystack/paystack.service';
+import transactionRepository from '../transaction/transaction.repository';
 
 class SubscriptionService {
     /**
@@ -155,12 +156,14 @@ class SubscriptionService {
         const { error, data: baseUser } = await userRepository.findUser(
             String(intent.userId),
         );
-        if (!baseUser.isEmailVerified) {
-            result.code = 403;
-            result.error = true;
-            result.message = 'Please verify email to complete subscription';
-            return result;
-        }
+
+        // Missing Field isEmailVerified on User Document
+        // if (!baseUser.isEmailVerified) {
+        //     result.code = 403;
+        //     result.error = true;
+        //     result.message = 'Please verify email to complete subscription';
+        //     return result;
+        // }
 
         const updatedIntent = await subscriptionIntentService.updateState(
             String(intent._id),
@@ -222,9 +225,11 @@ class SubscriptionService {
 
         const { currency, interval } = updatedIntent;
 
-        const { trial, paystackCodes } = planResult?.plan;
+        const { trial, paystackCodes, pricing } = planResult?.plan;
 
         const planCode = this.getPlanCode(currency, interval, paystackCodes);
+
+        const planAmount = this.getPlanAmount(currency, interval, pricing);
 
         //4 call transaction service and return url to client
 
@@ -234,6 +239,7 @@ class SubscriptionService {
             {
                 trial: true,
                 planCode,
+                planAmount,
                 email: userProfile.email,
                 currency,
                 reference: subReference,
@@ -283,6 +289,37 @@ class SubscriptionService {
             return interval === BillingFrequency.MONTHLY
                 ? planCodes.dollarMonthly
                 : planCodes.dollarYearly;
+        }
+
+        throw new Error('Unsupported currency or billing interval');
+    }
+
+    /**
+     * @name getPlanAmount
+     *@description Resolves the correct Plan amount based on currency and billing interval.
+     * @param currency - The billing currency (e.g. NGN or USD)
+     * @param interval - The billing interval (MONTHLY or YEARLY)
+     * @param pricing - Object containing all Plan amount for the plan
+     *
+     * @returns The matching Plan amount
+     *
+     * @throws {Error} If the currency or interval is unsupported
+     */
+    private getPlanAmount(
+        currency: string,
+        interval: string,
+        pricing: IPlanPricing,
+    ) {
+        if (currency === Currency.NGN) {
+            return interval === BillingFrequency.MONTHLY
+                ? pricing.naira.monthly
+                : pricing.naira.yearly;
+        }
+
+        if (currency === Currency.USD) {
+            return interval === BillingFrequency.MONTHLY
+                ? pricing.dollar.monthly
+                : pricing.dollar.yearly;
         }
 
         throw new Error('Unsupported currency or billing interval');
@@ -351,7 +388,6 @@ class SubscriptionService {
                 return result;
             }
         }
-
         // add meta data to skip subscription check
         const activeSubscription =
             await this.hasActiveSubscription(userProfile);
@@ -392,9 +428,11 @@ class SubscriptionService {
 
         const { currency, interval } = intent;
 
-        const { trial, paystackCodes } = planResult.plan;
+        const { trial, pricing, paystackCodes } = planResult?.plan;
 
         const planCode = this.getPlanCode(currency, interval, paystackCodes);
+
+        const planAmount = this.getPlanAmount(currency, interval, pricing);
 
         const subReference = this.newReference(String(intent._id));
 
@@ -402,6 +440,7 @@ class SubscriptionService {
             {
                 trial: false,
                 planCode,
+                planAmount,
                 email: userProfile.email,
                 currency,
                 reference: subReference,
@@ -449,6 +488,7 @@ class SubscriptionService {
                 String(intent._id),
                 SubscriptionIntentState.FAILED,
             );
+            console.log('move intent to failed', intent);
             result.error = true;
             result.code = 400;
             result.message =
@@ -465,6 +505,7 @@ class SubscriptionService {
                     String(intent._id),
                     SubscriptionIntentState.PAYMENT_PROCESSING,
                 );
+                console.log('moved intent to payment processing', userProfile);
                 return this.handlePaymentProcessing(intent, userProfile);
 
             case subRefStatus.FAILED:
@@ -519,7 +560,27 @@ class SubscriptionService {
         };
 
         // if (intent.metaData?.paymentConfirmedAt) {
-        //     // await this.handleSubscriptionCreating(updatedIntent,userProfile,transactionData);
+        //     console.log(
+        //         'Transaction already comfirmed at:',
+        //         intent.metaData?.paymentConfirmedAt,
+        //     );
+        //     // first fetch transaction record with reference found in intent
+        //     const transactionRecord =
+        //         await transactionRepository.findTransactionByReference(
+        //             intent.transactionReference,
+        //         );
+
+        //     if (transactionRecord.error) {
+        //         result.error = true;
+        //         result.message = "Couldn't verify payment. kindly retry";
+        //         return result;
+        //     }
+
+        //     await this.handleSubscriptionCreating(
+        //         intent,
+        //         userProfile,
+        //         transactionRecord.data,
+        //     );
         //     result.message =
         //         'Payment already confirmed, setting up subscription';
         //     return result;
@@ -533,6 +594,7 @@ class SubscriptionService {
                 String(intent._id),
                 SubscriptionIntentState.FAILED,
             );
+
             result.error = true;
             result.code = 400;
             result.message =
@@ -541,10 +603,11 @@ class SubscriptionService {
         }
 
         // Verify payment is confirmed after webhook processing and transaction marked as successful to db
-        const { error, data: transactionData } =
+        // const { error, data: transactionData } =
+        const verificationResult =
             await transactionService.verifyPaymentForSub(transactionReference);
 
-        if (error || !transactionData) {
+        if (verificationResult.error || !verificationResult.data) {
             subscriptionIntentService.updateState(
                 String(intent._id),
                 SubscriptionIntentState.FAILED,
@@ -556,12 +619,11 @@ class SubscriptionService {
                 "Payment verification failed. Couldn't confirm payment. Please kindly retry subscription process";
         }
 
-        if (transactionData.status !== subRefStatus.SUCCESS) {
+        if (verificationResult.data.status !== subRefStatus.SUCCESS) {
             subscriptionIntentService.updateState(
                 String(intent._id),
                 SubscriptionIntentState.FAILED,
             );
-
             result.error = true;
             result.code = 400;
             result.message =
@@ -583,7 +645,7 @@ class SubscriptionService {
         await this.handleSubscriptionCreating(
             updatedIntent,
             userProfile,
-            transactionData,
+            verificationResult.data,
         );
 
         result.message = 'Payment confirmed, setting up subscription';
@@ -670,6 +732,11 @@ class SubscriptionService {
                     authCode: transactionData?.card.authCode,
                 };
 
+                await this.updateTrialUsage(
+                    userType,
+                    String(userProfile._id),
+                    String(intent.planId),
+                );
                 break;
 
             default:
@@ -806,6 +873,8 @@ class SubscriptionService {
         planId: string,
         intent: ISubscriptionIntentDoc,
     ): Promise<PlanAvailability> {
+        console.log('checking plan availabilty');
+
         const planAvailability = await planService.getPlanAvailability(planId);
 
         if (!planAvailability.isAvailable) {
@@ -882,6 +951,7 @@ class SubscriptionService {
         dto: {
             trial: boolean;
             planCode: string;
+            planAmount: number;
             email: string;
             currency: Currency;
             reference: string;
@@ -905,11 +975,12 @@ class SubscriptionService {
             const cardAmount = Math.round(
                 CARD_TOKENIZATION_AMOUNT[dto.currency],
             ); // kobo
+
             const paymentResult =
                 await transactionService.initializeTransaction(
                     {
                         email: dto.email,
-                        amount: cardAmount,
+                        amount: String(cardAmount),
                         currency: dto.currency,
                         reference: dto.reference,
                         callbackUrl:
@@ -925,9 +996,11 @@ class SubscriptionService {
             {
                 email: dto.email,
                 planCode: dto.planCode,
+                awaitingAmount: String(dto.planAmount),
+                currency: dto.currency,
                 reference: dto.reference,
                 callbackUrl:
-                    'https://unaxiomatically-adopted-antwan.ngrok-free.dev/subscription/verify',
+                    'https://unaxiomatically-adopted-antwan.ngrok-free.dev/api/v1/subscriptions/verify',
             },
             userProfile,
         );
@@ -1030,7 +1103,7 @@ class SubscriptionService {
             subscriptionResult.data.status === SubscriptionStatus.CANCELED ||
             subscriptionResult.data.status === SubscriptionStatus.EXPIRED
         ) {
-            result.message = 'Subscription already cancled or expired';
+            result.message = 'Subscription already canceled or expired';
             return result;
         }
 

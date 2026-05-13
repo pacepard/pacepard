@@ -8,6 +8,8 @@ import { genSlug } from '../../../utils/helpers.util';
 import { genUserCode } from '../../../utils/code.util';
 import roleService from '../../authentication/role/role.service';
 import PermissionService from '../../authentication/permission/permission.service';
+import mongoose from 'mongoose';
+import Talent from './talent.model';
 
 class TalentService {
     public result: IResult;
@@ -198,27 +200,32 @@ class TalentService {
             data: {},
         };
 
-        const talentResult = await talentRepository.findOne(
-            { user: userId },
-            {
-                populate: [
-                    { path: 'workspaces' },
-                    { path: 'hackathons' },
-                    { path: 'teams' },
-                    { path: 'projects' },
-                    { path: 'squad' },
-                ],
-            },
-        );
+        const talent = await Talent.findOne({
+            user: userId,
+        });
 
-        if (talentResult.error || !talentResult.data) {
-            result.error = true;
-            result.code = 404;
-            result.message = 'Talent profile not found';
-            return result;
-        }
+        // const talentResult = await talentRepository.findOne(
+        //     { user: userId },
 
-        result.data = talentResult.data;
+        //     {
+        //         populate: [
+        //             { path: 'workspaces' },
+        //             { path: 'hackathons' },
+        //             { path: 'teams' },
+        //             { path: 'projects' },
+        //             { path: 'squad' },
+        //         ],
+        //     },
+        // );
+
+        // if (talentResult.error || !talentResult.data) {
+        //     result.error = true;
+        //     result.code = 404;
+        //     result.message = 'Talent profile not found';
+        //     return result;
+        // }
+
+        result.data = talent;
         result.message = 'Talent profile retrieved successfully';
         return result;
     }

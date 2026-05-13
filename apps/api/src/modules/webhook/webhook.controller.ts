@@ -16,6 +16,7 @@ export const handlePaystack = asyncHandler(
 
         // verify paystack signature here (implementation depends on your secret and hashing method)
         // if (!verifyWebhookSignature(signature, eventData)) {
+        //     console.log("wrong paystack signature")
         //     return res.sendStatus(400); // Invalid signature
         // }
         const verify = verifyWebhookSignature(signature as string, eventData);
@@ -23,8 +24,6 @@ export const handlePaystack = asyncHandler(
 
         console.log('Paystack Webhook Event Received:', eventData);
 
-        res.sendStatus(200);
-
-        await 
+        // res.sendStatus(200);
     },
 );

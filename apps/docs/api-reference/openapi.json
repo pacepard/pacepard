@@ -1768,7 +1768,7 @@
                     },
                     "otpType": {
                         "type": "string",
-                        "enum": ["registration", "password_reset"]
+                        "enum": ["register", "password_reset"]
                     }
                 }
             },
@@ -1782,7 +1782,7 @@
                     },
                     "otpType": {
                         "type": "string",
-                        "enum": ["registration", "password_reset"]
+                        "enum": ["register", "password_reset"]
                     }
                 }
             },
@@ -2558,7 +2558,7 @@
                     },
                     "interval": {
                         "type": "string",
-                        "enum": ["month", "year"]
+                        "enum": ["monthly", "yearly"]
                     }
                 }
             },

@@ -10,6 +10,9 @@ import {
     ISubscriptionIntentDoc,
     SubscriptionIntentState,
 } from './subscription intent/subscriptionIntent.interface';
+import userRepository from '@/modules/users/user/user.repository';
+import talentService from '@/modules/users/talent/talent.service';
+import businessService from '@/modules/users/business/business.service';
 
 /**
  * @name newSubscription
@@ -20,7 +23,7 @@ import {
 
 export const newSubscription: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
+        const userId = (req as any).user?._id.toString();
         const user: IUserDoc = (req as any).user;
         const userProfile = (req as any).userProfile;
 
@@ -138,9 +141,6 @@ export const newSubscription: RequestHandler = asyncHandler(
  */
 export const handleCallback: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
-        const user: IUserDoc = (req as any).user;
-        const userProfile = (req as any).userProfile;
         const { reference } = req.query;
 
         if (!reference) {
@@ -148,6 +148,7 @@ export const handleCallback: RequestHandler = asyncHandler(
                 new ErrorResponse('Missing Subscription reference', 400, []),
             );
         }
+
         // find intent by reference
         const intent =
             await subscriptionIntentService.findByTransactionReference(
@@ -158,6 +159,48 @@ export const handleCallback: RequestHandler = asyncHandler(
             return next(
                 new ErrorResponse('Invalid subscription reference', 404, []),
             );
+        }
+
+        const userResult = await userRepository.findById(String(intent.userId));
+        if (userResult.error || !userResult.data) {
+            return next(new ErrorResponse('Could not resolve user', 401, []));
+        }
+
+        let userProfile = null;
+
+        if (userResult.data.isTalent) {
+            console.log('fetching,user profile');
+
+            const talentProfile = await talentService.getTalentProfile(
+                String(intent.userId),
+            );
+
+            if (talentProfile.error || !talentProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        talentProfile.message || 'Talent profile not found',
+                        talentProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = talentProfile.data;
+        }
+
+        if (userResult.data.isBusiness) {
+            const businessProfile = await businessService.getBusinessProfile(
+                String(intent.userId),
+            );
+            if (businessProfile.error || !businessProfile.data) {
+                return next(
+                    new ErrorResponse(
+                        businessProfile.message || 'Business profile not found',
+                        businessProfile.code || 404,
+                        [],
+                    ),
+                );
+            }
+            userProfile = businessProfile.data;
         }
 
         const result = await subscriptionService.handleSubscriptionIntent(

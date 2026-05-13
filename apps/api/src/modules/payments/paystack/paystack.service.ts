@@ -29,7 +29,7 @@ export const initializePayment = async (
     try {
         const response = await paystack.transaction.initialize({
             email: dto.email,
-            amount: '1000000',
+            amount: dto.amount,
             plan: dto.plan,
             reference: dto.reference,
             callback_url: dto.callbackUrl,

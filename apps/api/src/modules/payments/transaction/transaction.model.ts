@@ -64,8 +64,8 @@ const TransactionSchema = new Schema<ITransactionDoc>(
         unitFee: { type: Number, default: 0 },
 
         // provider
-        providerName: { type: String, required: true },
-        providerRef: { type: String, required: true },
+        providerName: { type: String, required: false },
+        providerRef: { type: String, required: false },
         providerData: { type: Schema.Types.Mixed },
 
         // metadata

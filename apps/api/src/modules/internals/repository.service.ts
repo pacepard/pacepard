@@ -97,7 +97,7 @@ class RepositoryService<T extends Document> {
             const shouldPopulate =
                 typeof populate === 'boolean' ? populate : false;
 
-            let query = this.model.findById(id);
+            let query = this.model.findById(new mongoose.Types.ObjectId(id));
 
             if (shouldPopulate && dataPop.length > 0) {
                 query = query.populate(dataPop);
@@ -326,8 +326,13 @@ class RepositoryService<T extends Document> {
         // Process filter (remove options and process operators)
         const processedFilter = this.processFilter(filter);
 
+        // console.log('original filter:', filter);
+        // console.log('processed filter:', processedFilter);
+
         try {
-            let query: any = this.model.findOne(processedFilter);
+            let query: any = this.model.findOne(filter);
+
+            // console.log('query:', query);
 
             // Select fields
             if (select) {
@@ -357,6 +362,7 @@ class RepositoryService<T extends Document> {
             }
 
             const document = await query.lean();
+            console.log('here', document);
 
             if (!document) {
                 result.error = true;

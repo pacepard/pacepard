@@ -20,6 +20,7 @@ import {
 } from './transaction.interface';
 import transactionRepository from './transaction.repository';
 import { IBusinessDoc } from '@/modules/users/business/business.interface';
+import mongoose from 'mongoose';
 
 /**
  * Responsible for handling transactions. Paystack-based
@@ -57,7 +58,7 @@ class TransactionService {
             );
         }
 
-        if (amount != null && amount <= 0) {
+        if (amount != null && Number(amount) <= 0) {
             throw new Error('Amount must be positive');
         }
 
@@ -67,6 +68,16 @@ class TransactionService {
             const newReference = `PCPD-TXN-${Date.now()}`;
             referenceToUse = newReference;
         }
+
+        //if amount is provided initialize with amount
+
+        // const response = await initializePayment({
+        //     email,
+        //     amount: String(amount),
+        //     currency,
+        //     reference: referenceToUse,
+        //     callbackUrl,
+        // });
 
         let responseType: PaymentInitResult;
 
@@ -100,10 +111,10 @@ class TransactionService {
         // create transaction locally
         const transaction = await this.createPendingTransaction(
             {
-                amount: Number(amount) ?? 0,
-                currency,
+                amount: amount ? Number(amount) : Number(dto.awaitingAmount),
+                currency: currency,
                 reference: referenceToUse,
-                userId: userProfile.user.id.toString(),
+                userId: userProfile.user,
             },
             userProfile,
         );
@@ -147,6 +158,19 @@ class TransactionService {
             default:
                 throw new Error('Unhandled payment init result');
         }
+
+        //     if (!response?.status) {
+        //         result.error = true;
+        //         result.code = 402;
+        //         result.message =
+        //             response.message ??
+        //             "We're having trouble initializing your payment. Please try again shortly";
+        //         return result;
+        //     }
+
+        //     result.message = 'Please proceed with checkout';
+        //     result.data = response?.data;
+        //     return result;
     }
 
     /**
@@ -175,10 +199,12 @@ class TransactionService {
         }
 
         // we mark transactionsuccessfull with webhook only
-        // await this.markTransactionSuccessful(
-        //     response.data.reference,
-        //     response.data,
-        // );
+        await this.markTransactionSuccessful(
+            response.data.reference,
+            response.data,
+        );
+
+        console.log('Transaction marked successful', response.data.reference);
 
         result.data = {
             status: response.data.status,
@@ -296,8 +322,8 @@ class TransactionService {
                 {
                     email: providerData.customer.email,
                     code: providerData.customer.customer_code,
-                    planName: providerData.plan.name,
-                    planCode: providerData.plan.plan_code,
+                    planName: providerData.plan?.name,
+                    planCode: providerData.plan?.plan_code,
                 },
             ],
             channel: providerData.channel,
@@ -318,8 +344,6 @@ class TransactionService {
             transaction._id,
             updateTrans,
         );
-
-        console.log(updateResult);
     }
 
     /**
@@ -359,6 +383,7 @@ class TransactionService {
             code: 200,
             data: {},
         };
+
         // find transaction and check status
         const findResult =
             await transactionRepository.findTransactionByReference(reference);
@@ -371,14 +396,20 @@ class TransactionService {
         }
         const transaction = findResult.data as any;
 
+        console.log('Transaction found:', transaction);
+
         if (
             transaction.status === TransactionStatus.SUCCESS &&
             transaction.webhookProcessed
         ) {
+            console.log('Transaction succes and webhook processed');
             result.message = 'Transaction already marked as successful';
             result.data = transaction;
             return result;
         }
+
+        result.message = 'Transaction still processing';
+        return result;
     }
 
     /**
@@ -400,7 +431,7 @@ class TransactionService {
             reference: dto.reference,
             currency: dto.currency,
             amount: dto.amount,
-            user: dto.userId,
+            user: new mongoose.Types.ObjectId(dto.userId),
             userProfile: userProfile,
         });
 

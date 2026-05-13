@@ -19,8 +19,10 @@ const subscriptionRoutes: Router = Router({
 // middleware to add userProfile to req object
 const addUserProfile = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const userId = (req as any).user?.id;
+        const userId = (req as any).user?._id;
         const user: IUserDoc = (req as any).user;
+
+        console.log('user trying to subscribe', user.email);
 
         if (!userId) {
             return next(new ErrorResponse('Unauthorized', 401, []));
@@ -31,9 +33,10 @@ const addUserProfile = asyncHandler(
         let userProfile = null;
 
         if (user.isTalent) {
-            const talentProfile = await talentService.getTalentProfile(
-                String(userId),
-            );
+            console.log('fetching,user profile');
+
+            const talentProfile = await talentService.getTalentProfile(userId);
+
             if (talentProfile.error || !talentProfile.data) {
                 return next(
                     new ErrorResponse(

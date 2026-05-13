@@ -1,7 +1,7 @@
 import mongoose, { FilterQuery } from 'mongoose';
 import Transaction from './transaction.model';
 import { ITransactionDoc } from './transaction.interface';
-import RepositoryService from '../../../services/repository.service';
+import RepositoryService from '@/modules/internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
 
 /**

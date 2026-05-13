@@ -11,6 +11,7 @@ const ACTIVE_STATES = [
     SubscriptionIntentState.AWAITING_PAYMENT,
     SubscriptionIntentState.PAYMENT_PROCESSING,
     SubscriptionIntentState.VALIDATING,
+    SubscriptionIntentState.SUBSCRIPTION_CREATING,
 ];
 
 class SubscriptionIntentService {

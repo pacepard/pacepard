@@ -64,7 +64,7 @@ export enum TransactionType {
 
 export enum TransactionStatus {
     PENDING = 'PENDING',
-    SUCCESS = 'SUCCESS',
+    SUCCESS = 'success',
     FAILED = 'FAILED',
     CANCELLED = 'CANCELLED',
 }

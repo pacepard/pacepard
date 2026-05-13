@@ -3,6 +3,7 @@ import Plan from './plan.model';
 import { IPlanDoc, IPlanFilterOptions } from './plan.interface';
 import RepositoryService from '../../internals/repository.service';
 import { IResult } from '../../../utils/interfaces.util';
+import Plan from './plan.model';
 
 /**
  * Plan Repository
@@ -47,7 +48,17 @@ class PlanRepository extends RepositoryService<IPlanDoc> {
         planId: string,
         populate = false,
     ): Promise<IResult> {
-        return this.findById(planId, populate);
+        const result: IResult = {
+            error: false,
+            message: '',
+            code: 200,
+            data: {},
+        };
+
+        const plan = await Plan.findById(planId);
+        // return this.findById(planId, populate);
+        result.data = plan;
+        return result;
     }
 
     /**

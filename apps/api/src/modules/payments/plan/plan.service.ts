@@ -562,7 +562,7 @@ class PlanService {
             !codes ||
             !codes.nairaMonthly ||
             !codes.nairaYearly ||
-            !codes.dollarMonthly ||
+            // !codes.dollarMonthly ||
             !codes.dollarYearly
         ) {
             // all paystack plan codes must be aavailable for plan to be avialable
@@ -573,6 +573,7 @@ class PlanService {
         result.data = {
             trial: plan.trial,
             paystackCodes: plan.paystackPlanCodes,
+            pricing: plan.pricing,
         };
         return result;
     }

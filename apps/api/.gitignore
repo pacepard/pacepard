@@ -71,3 +71,5 @@ coverage
 # Turbo
 .turbo
 .turbo/
+
+.harry.test.ts

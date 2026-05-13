@@ -51,6 +51,7 @@ export interface TransactionInitializationResult {
 export interface SubscriptionDTO {
     email: string;
     amount?: string;
+    awaitingAmount?: string;
     planCode?: string;
     currency?: string;
     reference: string;

@@ -33,7 +33,7 @@ import authMapper from './auth.mapper';
  */
 export const registerUser: RequestHandler = asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
-        const { email, password, userType }: RegisterUserDTO = req.body;
+        const { email, password, userType }: RegisteUserDTO = req.body;
 
         const validate = await authService.validateRegister(req.body);
         if (validate.error) {

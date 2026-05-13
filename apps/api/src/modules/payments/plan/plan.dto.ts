@@ -52,5 +52,6 @@ export interface planAvailabilityDTO {
     data: {
         trial: IPlanTrial;
         paystackCodes: IPlanPaystackCode;
+        pricing: IPlanPricing;
     } | null;
 }

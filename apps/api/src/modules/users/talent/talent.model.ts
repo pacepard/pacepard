@@ -79,6 +79,12 @@ const TalentSchema = new Schema<ITalentDoc>(
         subscription: {
             type: Schema.Types.ObjectId,
             ref: DbModels.SUBSCRIPTION,
+            default: null,
+        },
+        trial: {
+            hasUsedTrial: { type: Boolean, default: null },
+            planCode: { type: String, defualt: null },
+            usedAt: { type: Date, default: null },
         },
         transactions: [
             { type: Schema.Types.ObjectId, ref: DbModels.TRANSACTION },
