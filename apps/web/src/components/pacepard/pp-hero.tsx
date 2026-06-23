@@ -6,6 +6,7 @@ import { ArrowRightToLineIcon, Calendar } from 'lucide-react';
 import { cn } from '@pacepard/ui/lib/utils';
 import { Button } from '@/components/ui/button';
 
+export default function PPHeroSection() {
     return (
         <section className="mb-24 w-full bg-background pt-14 md:pt-24">
             <div className="container mx-auto max-w-7xl px-4 md:px-6">
@@ -75,6 +76,7 @@ import { Button } from '@/components/ui/button';
     );
 }
 
+// Legacy hero (reference)
 // import React from 'react';
 // import Link from 'next/link';
 // import { Button } from '@/components/ui/button';
