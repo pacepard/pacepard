@@ -16,10 +16,8 @@
 # GitHub: Actions "Read and write" (packages: write) or PAT with write:packages.
 # Secrets: COOLIFY_API_TOKEN, COOLIFY_APP_UUID_* ; optional TURBO_TOKEN.
 # TIPTAP_PRO_TOKEN: TipTap Pro Extensions NPM token (https://cloud.tiptap.dev/v2/features/pro-extensions).
-# Must allow @tiptap-pro/extension-ai for your plan. Put on the repo OR on each GitHub Environment
-# (development, staging, production) — image build jobs use the same environment so env-only secrets work.
-# Docker: build uses `docker buildx ... --build-arg TIPTAP_PRO_TOKEN` (no =value) so bash never expands
-# `$` inside the token when passing it to BuildKit.
+# Required for pacepard-app and pacepard-api Docker builds (blocs / editor deps). pacepard-web does not
+# use TipTap Pro — its Dockerfile installs only @pacepard/web... and apps/web/docker.npmrc.
 # Variables: COOLIFY_API_URL, TURBO_TEAM, per-env URLs.
 
 name: Deploy
@@ -235,21 +233,11 @@ jobs:
           echo "sha=$SHA" >> $GITHUB_OUTPUT
           echo "float=$FLOAT" >> $GITHUB_OUTPUT
 
-      - name: Check TipTap registry token
-        env:
-          TIPTAP_PRO_TOKEN: ${{ secrets.TIPTAP_PRO_TOKEN }}
-        run: |
-          if [ -z "$TIPTAP_PRO_TOKEN" ]; then
-            echo "::error::TIPTAP_PRO_TOKEN is empty."
-            exit 1
-          fi
-
       - name: Build and push Docker image
         env:
           DOCKER_BUILDKIT: 1
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-          TIPTAP_PRO_TOKEN: ${{ secrets.TIPTAP_PRO_TOKEN }}
         run: |
           OWNER="${{ steps.meta.outputs.owner }}"
           FLOAT="${{ steps.meta.outputs.float }}"
@@ -260,7 +248,6 @@ jobs:
             --cache-to type=gha,mode=max,scope=pacepard-web \
             --build-arg TURBO_TOKEN \
             --build-arg TURBO_TEAM \
-            --build-arg TIPTAP_PRO_TOKEN \
             -f apps/web/Dockerfile \
             -t "ghcr.io/${OWNER}/pacepard-web:${FLOAT}" \
             -t "ghcr.io/${OWNER}/pacepard-web:${FLOAT}-${SHA}" \
