@@ -2,8 +2,8 @@
 # Set resource env in Coolify (required):
 #   GHCR_ORG = GitHub org or user (lowercase), e.g. pacepard
 #   IMAGE_TAG = floating tag CI pushes: development | staging | production
-# CI image: ghcr.io/${GHCR_ORG}/pacepard-web:${IMAGE_TAG}
 # Coolify Domains example: https://pacepard.com — container port 3000 (include https://).
+# Runtime: image uses Next.js standalone (node apps/web/server.js), not `next start`.
 #
 # If deploy logs show: unauthorized / manifests/staging — GHCR rejected the pull.
 # Fix: add ghcr.io credentials in Coolify (Docker registry UI), or make the GHCR package public.

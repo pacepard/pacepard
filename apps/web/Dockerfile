@@ -42,13 +42,9 @@ RUN --mount=type=cache,target=/app/.turbo \
 
 
 # =========================
-# Production stage
+# Production stage (Next.js standalone — no pnpm install at runtime)
 # =========================
 FROM node:20-alpine AS production
-
-RUN corepack enable \
-  && corepack prepare pnpm@9.0.0 --activate \
-  && apk add --no-cache curl bash
 
 RUN addgroup -g 1001 -S nodejs \
   && adduser -S nodejs -u 1001
@@ -57,37 +53,19 @@ WORKDIR /app
 
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
-    CI=true \
-    PNPM_STORE_DIR=/app/.pnpm-store \
-    NODE_OPTIONS="--max-old-space-size=4096"
+    PORT=3000 \
+    HOSTNAME=0.0.0.0
 
-RUN mkdir -p /app/.pnpm-store && \
-    chmod 777 /app/.pnpm-store
-
-COPY --chown=nodejs:nodejs --from=base /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
-COPY --chown=nodejs:nodejs --from=base /app/.npmrc ./.npmrc
-COPY --chown=nodejs:nodejs --from=base /app/packages/ui ./packages/ui
-COPY --chown=nodejs:nodejs --from=base /app/configs ./configs
-COPY --chown=nodejs:nodejs --from=base /app/apps/web/package.json ./apps/web/
-COPY --chown=nodejs:nodejs --from=base /app/apps/web/next.config.* ./apps/web/
-COPY --chown=nodejs:nodejs --from=base /app/apps/web/tsconfig.json ./apps/web/
-
-COPY --chown=nodejs:nodejs --from=base /app/apps/web/.next ./apps/web/.next
-COPY --chown=nodejs:nodejs --from=base /app/apps/web/public ./apps/web/public
-COPY --chown=nodejs:nodejs --from=base /app/apps/web/src ./apps/web/src
-
-RUN echo "store-dir=/app/.pnpm-store" >> /app/.npmrc
-
-RUN --mount=type=cache,target=/app/.pnpm-store \
-    sh -c 'unset NODE_ENV && pnpm install --frozen-lockfile --prefer-offline --filter @pacepard/web...'
-
-RUN chown -R nodejs:nodejs /app
+# Monorepo standalone layout: server at apps/web/server.js (see outputFileTracingRoot)
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=base --chown=nodejs:nodejs /app/apps/web/public ./apps/web/public
 
 USER nodejs
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', r => process.exit(r.statusCode === 200 ? 0 : 1))"
+  CMD node -e "require('http').get('http://127.0.0.1:3000', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
-CMD ["pnpm", "--filter", "@pacepard/web", "start"]
+CMD ["node", "apps/web/server.js"]
